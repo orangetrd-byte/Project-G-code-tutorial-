@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Project G-Code Tutorial — Learn CNC G-code like Duolingo. Bite-sized lessons, interactive quizzes, and instant feedback for machinists.">
+  <meta name="theme-color" content="#0F1923">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="G-Code">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Project G-Code Tutorial</title>
+  <!-- Google Fonts: Inter + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-wrapper">
+
+  <!-- ── TOP BAR ─────────────────────────────────────────── -->
+  <header class="top-bar">
+    <div class="top-bar__logo">
+      <span class="bracket">[</span>G<span class="bracket">]</span> Project G-Code
+    </div>
+    <div class="top-bar__streak" id="streak-val">🔥 0</div>
+    <div class="top-bar__xp" id="xp-bar-current">0 XP</div>
+  </header>
+
+  <!-- ── HOME SCREEN ──────────────────────────────────────── -->
+  <section class="screen active" id="screen-home">
+    <div class="home-scroll">
+      <!-- Hero / progress block -->
+      <div class="hero-block">
+        <div class="hero-greeting">Your learning path</div>
+        <div class="hero-title">Master <span>G-Code</span>,<br>one block at a time.</div>
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-fill" id="xp-bar-fill" style="width:0%"></div>
+        </div>
+        <div class="xp-bar-label">
+          <span id="xp-bar-current-2">0 XP</span>
+          <span id="xp-bar-next">0/0 lessons</span>
+        </div>
+      </div>
+
+      <!-- Unit cards -->
+      <div class="section-label">Curriculum</div>
+      <div id="unit-list"></div>
+    </div>
+  </section>
+
+  <!-- ── LESSON SCREEN ─────────────────────────────────────── -->
+  <section class="screen" id="screen-lesson">
+    <div class="lesson-header">
+      <button class="back-btn" id="back-btn" aria-label="Back to lessons">←</button>
+      <div class="lesson-progress-bar">
+        <div class="lesson-progress-fill" id="lesson-progress-fill" style="width:0%"></div>
+      </div>
+      <span class="lesson-step-count" id="lesson-step-count">0/0</span>
+    </div>
+    <div class="lesson-content" id="lesson-content">
+      <!-- Rendered by JS -->
+    </div>
+    <div class="lesson-footer">
+      <button class="btn-primary" id="lesson-action-btn" disabled>Continue</button>
+    </div>
+  </section>
+
+  <!-- ── REFERENCE SCREEN ──────────────────────────────────── -->
+  <section class="screen" id="screen-reference">
+    <div class="ref-scroll">
+      <input type="search" class="ref-search" id="ref-search" placeholder="Search G-code, M-code…" autocomplete="off">
+      <div id="ref-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROGRESS SCREEN ───────────────────────────────────── -->
+  <section class="screen" id="screen-progress">
+    <div class="progress-scroll">
+      <div class="streak-card">
+        <span class="streak-flame">🔥</span>
+        <div>
+          <div class="streak-val" id="prog-streak">0</div>
+          <div class="streak-lbl">Day Streak</div>
+        </div>
+      </div>
+      <div class="prog-hero">
+        <div class="prog-hero__total" id="prog-total-xp">0</div>
+        <div class="prog-hero__label">Total XP Earned</div>
+      </div>
+      <div class="section-label">Unit Progress</div>
+      <div id="prog-unit-list"></div>
+    </div>
+  </section>
+
+  <!-- ── BOTTOM NAV ────────────────────────────────────────── -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-screen="screen-home">
+      <span class="icon">🏠</span>Learn
+    </button>
+    <button class="nav-btn" data-screen="screen-reference">
+      <span class="icon">📚</span>Reference
+    </button>
+    <button class="nav-btn" data-screen="screen-progress">
+      <span class="icon">📊</span>Progress
+    </button>
+  </nav>
+
+  <!-- ── TOAST ─────────────────────────────────────────────── -->
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<!-- Data & App -->
+<script src="data/lessons.js"></script>
+<script src="js/app.js"></script>
+
+<!-- PWA Service Worker Registration -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('[SW] Registered:', reg.scope))
+        .catch(err => console.warn('[SW] Registration failed:', err));
+    });
+  }
+</script>
+</body>
+</html>
