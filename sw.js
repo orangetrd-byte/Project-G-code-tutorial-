@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v1.0';
+const CACHE_VERSION = 'pgct-v1.1-tracks';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
@@ -13,6 +13,8 @@ const PRECACHE_ASSETS = [
   './css/style.css',
   './js/app.js',
   './data/lessons.js',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
   './manifest.json',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap'
 ];

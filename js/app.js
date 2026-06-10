@@ -8,6 +8,8 @@
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
   // Loaded from localStorage
+  trackId: 'cnc',
+  profiles: {},
   xp: 0,
   streak: 0,
   lastStudyDate: null,
@@ -21,28 +23,94 @@ const State = {
   sessionCorrect: 0,
   sessionTotal: 0,
 
-  save() {
-    const persist = {
+  defaultProfile() {
+    return {
+      xp: 0,
+      streak: 0,
+      lastStudyDate: null,
+      completedLessons: [],
+      lessonScores: {},
+    };
+  },
+
+  activeProfile() {
+    if (!this.profiles[this.trackId]) this.profiles[this.trackId] = this.defaultProfile();
+    return this.profiles[this.trackId];
+  },
+
+  applyProfile(profile) {
+    this.xp = profile.xp || 0;
+    this.streak = profile.streak || 0;
+    this.lastStudyDate = profile.lastStudyDate || null;
+    this.completedLessons = profile.completedLessons || [];
+    this.lessonScores = profile.lessonScores || {};
+  },
+
+  syncProfile() {
+    this.profiles[this.trackId] = {
       xp: this.xp,
       streak: this.streak,
       lastStudyDate: this.lastStudyDate,
       completedLessons: this.completedLessons,
       lessonScores: this.lessonScores,
     };
-    try { localStorage.setItem('pgct_state', JSON.stringify(persist)); } catch(e) {}
+  },
+
+  save() {
+    this.syncProfile();
+    const persist = {
+      trackId: this.trackId,
+      profiles: this.profiles,
+    };
+    try { localStorage.setItem('pgct_state_v2', JSON.stringify(persist)); } catch(e) {}
   },
 
   load() {
     try {
-      const raw = localStorage.getItem('pgct_state');
-      if (!raw) return;
+      const raw = localStorage.getItem('pgct_state_v2');
+      if (!raw) {
+        this.migrateLegacyState();
+        return;
+      }
       const d = JSON.parse(raw);
-      this.xp = d.xp || 0;
-      this.streak = d.streak || 0;
-      this.lastStudyDate = d.lastStudyDate || null;
-      this.completedLessons = d.completedLessons || [];
-      this.lessonScores = d.lessonScores || {};
+      this.trackId = getTrack(d.trackId) ? d.trackId : 'cnc';
+      this.profiles = d.profiles || {};
+      this.applyProfile(this.activeProfile());
     } catch(e) {}
+  },
+
+  migrateLegacyState() {
+    try {
+      const raw = localStorage.getItem('pgct_state');
+      if (!raw) {
+        this.applyProfile(this.activeProfile());
+        return;
+      }
+      const d = JSON.parse(raw);
+      this.profiles.cnc = {
+        xp: d.xp || 0,
+        streak: d.streak || 0,
+        lastStudyDate: d.lastStudyDate || null,
+        completedLessons: d.completedLessons || [],
+        lessonScores: d.lessonScores || {},
+      };
+      this.trackId = 'cnc';
+      this.applyProfile(this.activeProfile());
+      this.save();
+    } catch(e) {
+      this.applyProfile(this.activeProfile());
+    }
+  },
+
+  switchTrack(trackId) {
+    if (!getTrack(trackId) || trackId === this.trackId) return;
+    this.save();
+    this.trackId = trackId;
+    this.currentLesson = null;
+    this.currentStep = 0;
+    this.currentQuizAnswered = false;
+    this.applyProfile(this.activeProfile());
+    this.save();
   },
 
   isLessonDone(id) { return this.completedLessons.includes(id); },
@@ -51,13 +119,13 @@ const State = {
     // Unit 1, lesson 1 always unlocked
     if (lesson.unit === 1 && lesson.lesson === 1) return true;
     // Within a unit: previous lesson must be done
-    const prev = LESSONS.find(l => l.unit === lesson.unit && l.lesson === lesson.lesson - 1);
+    const prev = getLessons().find(l => l.unit === lesson.unit && l.lesson === lesson.lesson - 1);
     if (prev && !this.isLessonDone(prev.id)) return false;
     // First lesson of a new unit: last lesson of previous unit must be done
     if (lesson.lesson === 1 && lesson.unit > 1) {
-      const prevUnit = UNITS.find(u => u.id === lesson.unit - 1);
+      const prevUnit = getUnits().find(u => u.id === lesson.unit - 1);
       if (prevUnit) {
-        const lastOfPrev = LESSONS.filter(l => l.unit === prevUnit.id)
+        const lastOfPrev = getLessons().filter(l => l.unit === prevUnit.id)
           .sort((a,b) => b.lesson - a.lesson)[0];
         return lastOfPrev ? this.isLessonDone(lastOfPrev.id) : false;
       }
@@ -71,7 +139,7 @@ const State = {
     }
     this.lessonScores[lessonId] = { correct, total };
     // Award XP
-    const lesson = LESSONS.find(l => l.id === lessonId);
+    const lesson = getLessons().find(l => l.id === lessonId);
     const bonus = Math.round((correct / Math.max(total,1)) * (lesson?.xp || 10));
     this.xp += bonus;
     // Streak
@@ -86,13 +154,13 @@ const State = {
   },
 
   getUnitProgress(unitId) {
-    const unitLessons = LESSONS.filter(l => l.unit === unitId);
+    const unitLessons = getLessons().filter(l => l.unit === unitId);
     const done = unitLessons.filter(l => this.isLessonDone(l.id)).length;
     return { done, total: unitLessons.length };
   },
 
   getTotalProgress() {
-    return { done: this.completedLessons.length, total: LESSONS.length };
+    return { done: this.completedLessons.length, total: getLessons().length };
   }
 };
 
@@ -304,8 +372,82 @@ const REF_DATA = [
 ];
 
 // ─── UI HELPERS ───────────────────────────────────────────────
+const PRINTING_REF_DATA = [
+  {
+    category: "Motion",
+    codes: [
+      { code: "G0", name: "Rapid Move", body: `<p>Fast positioning move. Printers often treat G0 like G1 depending on firmware.</p><pre>G0 X100 Y100</pre>` },
+      { code: "G1", name: "Controlled Move", body: `<p>Main print move. Coordinates move the nozzle; E controls extrusion; F controls feedrate.</p><pre>G1 X82.4 Y104.2 E0.036 F1800</pre>` },
+      { code: "G28", name: "Home Axes", body: `<p>Homes one or more axes to known machine positions.</p><pre>G28 ; home all axes</pre>` },
+      { code: "G29", name: "Bed Leveling", body: `<p>Runs bed probing or leveling on many firmware setups. Behavior varies by printer firmware.</p>` },
+    ]
+  },
+  {
+    category: "Temperature",
+    codes: [
+      { code: "M104", name: "Set Hotend Temp", body: `<p>Sets nozzle temperature and continues immediately.</p><pre>M104 S210</pre>` },
+      { code: "M109", name: "Set Hotend Temp and Wait", body: `<p>Sets nozzle temperature and waits until the target is reached.</p><pre>M109 S210</pre>` },
+      { code: "M140", name: "Set Bed Temp", body: `<p>Sets heated bed temperature and continues immediately.</p><pre>M140 S60</pre>` },
+      { code: "M190", name: "Set Bed Temp and Wait", body: `<p>Sets heated bed temperature and waits until the target is reached.</p><pre>M190 S60</pre>` },
+    ]
+  },
+  {
+    category: "Extrusion",
+    codes: [
+      { code: "G92", name: "Set Position", body: `<p>Often used to reset the extruder position before printing or after priming.</p><pre>G92 E0</pre>` },
+      { code: "M82", name: "Absolute Extrusion", body: `<p>Sets the extruder to absolute positioning mode.</p>` },
+      { code: "M83", name: "Relative Extrusion", body: `<p>Sets the extruder to relative positioning mode.</p>` },
+    ]
+  },
+  {
+    category: "Printer Controls",
+    codes: [
+      { code: "M106", name: "Fan On / Set Speed", body: `<p>Controls part cooling fan speed.</p><pre>M106 S255</pre>` },
+      { code: "M107", name: "Fan Off", body: `<p>Turns the part cooling fan off.</p>` },
+      { code: "M84", name: "Disable Motors", body: `<p>Disables stepper motors after a print or during shutdown.</p>` },
+    ]
+  }
+];
+
 function $(sel) { return document.querySelector(sel); }
 function $$(sel) { return [...document.querySelectorAll(sel)]; }
+
+function getTrack(trackId = State.trackId) {
+  return (typeof TRACKS !== 'undefined' && TRACKS[trackId]) ? TRACKS[trackId] : TRACKS.cnc;
+}
+
+function getLessons() {
+  return getTrack().lessons;
+}
+
+function getUnits() {
+  return getTrack().units;
+}
+
+function getRefData() {
+  return State.trackId === 'printing' ? PRINTING_REF_DATA : REF_DATA;
+}
+
+function updateTrackSwitcher() {
+  $$('.track-btn').forEach(btn => {
+    const active = btn.dataset.track === State.trackId;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+}
+
+function initTrackSwitcher() {
+  $$('.track-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      State.switchTrack(btn.dataset.track);
+      renderHome();
+      renderReference();
+      renderProgress();
+      showScreen('screen-home');
+      showToast(`${getTrack().name} track selected`);
+    });
+  });
+}
 
 function showScreen(id) {
   $$('.screen').forEach(s => s.classList.remove('active'));
@@ -328,18 +470,25 @@ function showToast(msg, type = '') {
 
 // ─── HOME SCREEN ──────────────────────────────────────────────
 function renderHome() {
+  const track = getTrack();
+  const lessons = getLessons();
+  const units = getUnits();
   const container = $('#unit-list');
   container.innerHTML = '';
   const { done, total } = State.getTotalProgress();
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
+  const title = track.title.replace('G-Code', '<span>G-Code</span>');
+  $('.hero-title').innerHTML = `${title},<br>one block at a time.`;
   $('#xp-bar-fill').style.width = Math.min(pct, 100) + '%';
   $('#xp-bar-current').textContent = State.xp + ' XP';
+  $('#xp-bar-current-2').textContent = State.xp + ' XP';
   $('#xp-bar-next').textContent = done + '/' + total + ' lessons';
   $('#streak-val').textContent = '🔥 ' + State.streak;
+  updateTrackSwitcher();
 
-  UNITS.forEach(unit => {
-    const unitLessons = LESSONS.filter(l => l.unit === unit.id);
+  units.forEach(unit => {
+    const unitLessons = lessons.filter(l => l.unit === unit.id);
     const { done: uDone } = State.getUnitProgress(unit.id);
     const locked = !State.isLessonUnlocked(unitLessons[0]);
 
@@ -381,7 +530,7 @@ function renderHome() {
 
 // ─── LESSON ENGINE ────────────────────────────────────────────
 function startLesson(lessonId) {
-  const lesson = LESSONS.find(l => l.id === lessonId);
+  const lesson = getLessons().find(l => l.id === lessonId);
   if (!lesson) return;
   if (!State.isLessonUnlocked(lesson)) { showToast('Complete the previous lesson first!', 'error'); return; }
 
@@ -589,7 +738,7 @@ function renderReference() {
   const container = $('#ref-list');
   container.innerHTML = '';
 
-  REF_DATA.forEach(cat => {
+  getRefData().forEach(cat => {
     const section = document.createElement('div');
     section.className = 'ref-category';
     section.innerHTML = `<div class="ref-category-title">${cat.category}</div>`;
@@ -613,7 +762,8 @@ function renderReference() {
   });
 
   // Search
-  $('#ref-search').addEventListener('input', e => {
+  $('#ref-search').value = '';
+  $('#ref-search').oninput = e => {
     const q = e.target.value.toLowerCase();
     $$('.ref-card').forEach(card => {
       const text = card.textContent.toLowerCase();
@@ -624,18 +774,19 @@ function renderReference() {
       const visible = [...parent.querySelectorAll('.ref-card')].some(c => c.style.display !== 'none');
       parent.style.display = visible ? '' : 'none';
     });
-  });
+  };
 }
 
 // ─── PROGRESS SCREEN ─────────────────────────────────────────
 function renderProgress() {
+  const units = getUnits();
   $('#prog-total-xp').textContent = State.xp;
   $('#prog-streak').textContent = State.streak;
 
   const container = $('#prog-unit-list');
   container.innerHTML = '';
 
-  UNITS.forEach(unit => {
+  units.forEach(unit => {
     const { done, total } = State.getUnitProgress(unit.id);
     const pct = total > 0 ? Math.round((done / total) * 100) : 0;
     const el = document.createElement('div');
@@ -675,6 +826,7 @@ function initNav() {
 document.addEventListener('DOMContentLoaded', () => {
   State.load();
   initNav();
+  initTrackSwitcher();
   renderHome();
   showScreen('screen-home');
   console.log('%c[Project G-Code Tutorial] Ready.', 'color:#7FDBCA;font-family:monospace');

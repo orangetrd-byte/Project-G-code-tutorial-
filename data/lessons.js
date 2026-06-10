@@ -669,7 +669,158 @@ const UNITS = [
   { id: 4, name: "Tooling & Offsets", icon: "🎯", color: "#5C2D6B", lessons: 2 }
 ];
 
+const PRINTING_LESSONS = [
+  {
+    id: "p-u1-l1",
+    unit: 1,
+    unitName: "Printer Foundations",
+    lesson: 1,
+    title: "What 3D Printer G-Code Does",
+    icon: "3D",
+    xp: 10,
+    theory: `
+      <p>3D printer G-code controls motion, temperature, extrusion, fans, and machine setup.
+      A slicer writes most of it, but knowing the blocks helps you tune, debug, and inspect prints.</p>
+      <pre>G1 X82.4 Y104.2 E0.036 F1800</pre>
+      <p>Breaking that down:</p>
+      <ul>
+        <li><code>G1</code> - controlled move</li>
+        <li><code>X82.4 Y104.2</code> - nozzle position on the bed</li>
+        <li><code>E0.036</code> - amount of filament to extrude</li>
+        <li><code>F1800</code> - feedrate in mm/min</li>
+      </ul>
+      <p>Printer G-code is usually metric. Most slicers use millimeters for X, Y, Z, and E values.</p>
+    `,
+    visual: "block-anatomy",
+    quiz: [
+      {
+        type: "multiple-choice",
+        question: "In 3D printer G-code, what does the E value usually control?",
+        options: ["Bed temperature", "Extrusion amount", "Fan speed", "Home position"],
+        answer: 1,
+        explanation: "The E axis controls extruder movement. More E value means more filament is pushed through the nozzle."
+      },
+      {
+        type: "multiple-choice",
+        question: "Which axis usually controls nozzle height above the print bed?",
+        options: ["X", "Y", "Z", "F"],
+        answer: 2,
+        explanation: "Z is the vertical axis. Layer changes and first-layer height are controlled through Z movement."
+      },
+      {
+        type: "fill-blank",
+        question: "Complete the controlled move command:\n___ X50 Y50 E1.2 F1200",
+        answer: "G1",
+        hint: "G1 is the normal printing move",
+        explanation: "G1 is the controlled move used for most print paths. It may move with or without extrusion."
+      }
+    ]
+  },
+  {
+    id: "p-u1-l2",
+    unit: 1,
+    unitName: "Printer Foundations",
+    lesson: 2,
+    title: "Homing and Bed Leveling",
+    icon: "XY",
+    xp: 10,
+    theory: `
+      <p>Before printing, the machine needs to know where its axes are. Homing moves each axis
+      to its endstop or sensor so the printer can establish machine zero.</p>
+      <pre>G28 ; home all axes</pre>
+      <p>Many printers also probe the bed before printing:</p>
+      <pre>G29 ; run bed leveling probe</pre>
+      <p>Not every printer uses <code>G29</code> the same way. Bed leveling behavior depends on firmware
+      such as Marlin, Klipper, or RepRapFirmware.</p>
+    `,
+    visual: "",
+    quiz: [
+      {
+        type: "multiple-choice",
+        question: "What does G28 usually do on a 3D printer?",
+        options: ["Heat the nozzle", "Home the axes", "Turn on the fan", "Start extrusion"],
+        answer: 1,
+        explanation: "G28 homes the axes. It tells the printer to find known machine positions using endstops or sensors."
+      },
+      {
+        type: "multiple-choice",
+        question: "Why run a bed leveling command before printing?",
+        options: [
+          "To measure bed shape and compensate for tilt or unevenness",
+          "To increase nozzle temperature",
+          "To pause the printer",
+          "To change filament diameter"
+        ],
+        answer: 0,
+        explanation: "A probing routine measures the bed so the printer can compensate during the first layers."
+      }
+    ]
+  },
+  {
+    id: "p-u1-l3",
+    unit: 1,
+    unitName: "Printer Foundations",
+    lesson: 3,
+    title: "Hotend and Bed Temperature",
+    icon: "TEMP",
+    xp: 15,
+    theory: `
+      <p>Temperature commands use M-codes. Some set a target and continue immediately; others wait.</p>
+      <pre>M104 S210 ; set nozzle to 210 C and continue
+M109 S210 ; set nozzle to 210 C and wait
+M140 S60  ; set bed to 60 C and continue
+M190 S60  ; set bed to 60 C and wait</pre>
+      <p>Slicers usually heat the bed first, then the nozzle, then start motion after both are ready.</p>
+    `,
+    visual: "",
+    quiz: [
+      {
+        type: "multiple-choice",
+        question: "Which command sets nozzle temperature and waits until it is reached?",
+        options: ["M104", "M109", "M140", "M190"],
+        answer: 1,
+        explanation: "M109 sets the hotend target temperature and waits before continuing."
+      },
+      {
+        type: "multiple-choice",
+        question: "Which command controls the heated bed and waits?",
+        options: ["M104", "M109", "M140", "M190"],
+        answer: 3,
+        explanation: "M190 sets the bed target temperature and waits until the bed reaches that target."
+      },
+      {
+        type: "fill-blank",
+        question: "Set the nozzle to 215 C without waiting:\nM___ S215",
+        answer: "104",
+        hint: "M104 sets hotend temperature and continues",
+        explanation: "M104 sets the hotend target temperature but does not wait for it to finish heating."
+      }
+    ]
+  }
+];
+
+const PRINTING_UNITS = [
+  { id: 1, name: "Printer Foundations", icon: "3D", color: "#2D5986", lessons: 3 }
+];
+
+const TRACKS = {
+  cnc: {
+    id: "cnc",
+    name: "CNC",
+    title: "Master CNC G-Code",
+    lessons: LESSONS,
+    units: UNITS
+  },
+  printing: {
+    id: "printing",
+    name: "3D Printing",
+    title: "Master 3D Printer G-Code",
+    lessons: PRINTING_LESSONS,
+    units: PRINTING_UNITS
+  }
+};
+
 // Export for use in app
 if (typeof module !== "undefined") {
-  module.exports = { LESSONS, UNITS };
+  module.exports = { LESSONS, UNITS, PRINTING_LESSONS, PRINTING_UNITS, TRACKS };
 }
