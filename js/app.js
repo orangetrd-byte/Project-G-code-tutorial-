@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.11.1';
+const APP_BUILD = '2026.06.11.2';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -13,6 +13,7 @@ const State = {
   trackId: 'cnc',
   language: 'en',
   theme: 'dark',
+  setupComplete: false,
   profiles: {},
   xp: 0,
   streak: 0,
@@ -66,6 +67,7 @@ const State = {
       trackId: this.trackId,
       language: this.language,
       theme: this.theme,
+      setupComplete: this.setupComplete,
       profiles: this.profiles,
     };
     try { localStorage.setItem('pgct_state_v2', JSON.stringify(persist)); } catch(e) {}
@@ -82,6 +84,7 @@ const State = {
       this.trackId = getTrack(d.trackId) ? d.trackId : 'cnc';
       this.language = d.language === 'es' ? 'es' : 'en';
       this.theme = d.theme === 'light' ? 'light' : 'dark';
+      this.setupComplete = d.setupComplete === true;
       this.profiles = d.profiles || {};
       this.applyProfile(this.activeProfile());
     } catch(e) {}
@@ -103,6 +106,7 @@ const State = {
         lessonScores: d.lessonScores || {},
       };
       this.trackId = 'cnc';
+      this.setupComplete = false;
       this.applyProfile(this.activeProfile());
       this.save();
     } catch(e) {
@@ -124,6 +128,11 @@ const State = {
   setPreference(key, value) {
     if (key === 'language') this.language = value === 'es' ? 'es' : 'en';
     if (key === 'theme') this.theme = value === 'light' ? 'light' : 'dark';
+    this.save();
+  },
+
+  completeSetup() {
+    this.setupComplete = true;
     this.save();
   },
 
@@ -445,6 +454,8 @@ const UI_TEXT = {
     progress: 'Progress',
     settings: 'Settings',
     settingsSubtitle: 'App preferences',
+    setupSubtitle: 'Choose language and theme before you start.',
+    startLearning: 'Start Learning',
     language: 'Language',
     languageHelp: 'Choose the app interface language.',
     english: 'English',
@@ -466,6 +477,8 @@ const UI_TEXT = {
     progress: 'Progreso',
     settings: 'Ajustes',
     settingsSubtitle: 'Preferencias de la app',
+    setupSubtitle: 'Elige idioma y tema antes de empezar.',
+    startLearning: 'Empezar',
     language: 'Idioma',
     languageHelp: 'Elige el idioma de la interfaz.',
     english: 'Ingles',
@@ -513,6 +526,7 @@ function initTrackSwitcher() {
 }
 
 function showScreen(id) {
+  if (!State.setupComplete && id !== 'screen-settings') id = 'screen-settings';
   $$('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
   if (el) { el.classList.add('active'); el.scrollTop = 0; }
@@ -548,7 +562,7 @@ function updateStaticText() {
   const settingsTitle = $('#screen-settings .settings-title');
   const settingsSubtitle = $('#screen-settings .settings-subtitle');
   if (settingsTitle) settingsTitle.textContent = t('settings');
-  if (settingsSubtitle) settingsSubtitle.textContent = t('settingsSubtitle');
+  if (settingsSubtitle) settingsSubtitle.textContent = State.setupComplete ? t('settingsSubtitle') : t('setupSubtitle');
 
   const rows = $$('#screen-settings .settings-row');
   if (rows[0]) {
@@ -568,6 +582,8 @@ function updateStaticText() {
   if (buildLabel) buildLabel.textContent = t('build');
   const buildNumber = $('#build-number');
   if (buildNumber) buildNumber.textContent = APP_BUILD;
+  const setupButton = $('#setup-complete-btn');
+  if (setupButton) setupButton.textContent = t('startLearning');
 
   const heroGreeting = $('.hero-greeting');
   if (heroGreeting) heroGreeting.textContent = t('path');
@@ -592,6 +608,7 @@ function updateSettingsControls() {
 
 function renderSettings() {
   applyTheme();
+  document.body.classList.toggle('setup-required', !State.setupComplete);
   updateStaticText();
   updateSettingsControls();
 }
@@ -605,6 +622,27 @@ function initSettings() {
       renderProgress();
     });
   });
+
+  $('#setup-complete-btn')?.addEventListener('click', () => {
+    State.completeSetup();
+    renderSettings();
+    renderHome();
+    showScreen('screen-home');
+  });
+}
+
+function finishLoading() {
+  const splash = $('#loading-splash');
+  window.setTimeout(() => {
+    splash?.classList.add('done');
+    renderSettings();
+    if (State.setupComplete) {
+      renderHome();
+      showScreen('screen-home');
+    } else {
+      showScreen('screen-settings');
+    }
+  }, 1900);
 }
 
 // ─── AUDIO FEEDBACK ───────────────────────────────────────────
@@ -1027,6 +1065,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initSettings();
   renderSettings();
   renderHome();
-  showScreen('screen-home');
+  finishLoading();
   console.log('%c[Project G-Code Tutorial] Ready.', 'color:#7FDBCA;font-family:monospace');
 });

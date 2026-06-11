@@ -70,6 +70,71 @@ body {
   overflow-x: hidden;
 }
 
+.loading-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-bg);
+  padding: 1.25rem;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+.loading-splash.done {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.loading-code {
+  width: min(100%, 420px);
+  background: var(--c-code-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-float);
+  overflow: hidden;
+}
+.loading-code__bar {
+  display: flex;
+  gap: 6px;
+  padding: 0.75rem 0.9rem;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+}
+.loading-code__bar span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--c-border);
+}
+.loading-code__bar span:nth-child(1) { background: var(--c-wrong); }
+.loading-code__bar span:nth-child(2) { background: var(--c-accent); }
+.loading-code__bar span:nth-child(3) { background: var(--c-correct); }
+.loading-code pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  min-height: 150px;
+}
+.type-line {
+  display: block;
+  width: 0;
+  max-width: max-content;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--c-accent);
+  animation: typeLine 0.55s steps(34, end) forwards, caretBlink 0.7s step-end infinite;
+}
+.type-line.l2 { animation-delay: 0.45s; }
+.type-line.l3 { animation-delay: 0.9s; }
+.type-line.l4 { animation-delay: 1.35s; }
+@keyframes typeLine {
+  to { width: 100%; }
+}
+@keyframes caretBlink {
+  50% { border-color: transparent; }
+}
+
 /* ─── TYPOGRAPHY ─────────────────────────────────────────── */
 h1, h2, h3, h4 {
   font-family: var(--f-display);
@@ -909,6 +974,8 @@ strong { color: var(--c-text); font-weight: 600; }
   font-family: var(--f-display);
   color: var(--c-accent);
 }
+.setup-complete-btn { display: none; }
+body.setup-required .setup-complete-btn { display: block; }
 
 /* ─── VISUAL AIDS (inline SVG diagrams) ──────────────────── */
 .visual-aid {
