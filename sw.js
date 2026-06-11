@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.1-retry-typing-sound';
+const CACHE_VERSION = 'pgct-v2.2-loading-cursor';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
