@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.11.8';
+const APP_BUILD = '2026.06.11.9';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -25,6 +25,7 @@ const State = {
   currentLesson: null,
   currentStep: 0,       // 0 = theory, 1..n = quiz questions
   currentQuizAnswered: false,
+  retryCurrentLesson: false,
   sessionCorrect: 0,
   sessionTotal: 0,
 
@@ -633,6 +634,7 @@ function initSettings() {
 
 function finishLoading() {
   const splash = $('#loading-splash');
+  playStartupTypingSound();
   window.setTimeout(() => {
     splash?.classList.add('done');
     renderSettings();
@@ -717,6 +719,22 @@ const AudioFeedback = {
   }
 };
 
+function playStartupTypingSound() {
+  const ctx = AudioFeedback.getContext();
+  if (!ctx) return;
+  const start = ctx.currentTime + 0.06;
+  const clicks = [
+    0, 0.11, 0.19, 0.3, 0.39, 0.51, 0.62, 0.73,
+    1.02, 1.12, 1.23, 1.34, 1.48, 1.59,
+    2.02, 2.12, 2.25, 2.36, 2.46, 2.58, 2.7,
+    3.06, 3.18, 3.29, 3.43, 3.55, 3.68, 3.82
+  ];
+  clicks.forEach((offset, i) => {
+    const freq = i % 5 === 0 ? 720 : 980 + ((i % 3) * 90);
+    AudioFeedback.tone(freq, start + offset, 0.024, 0.018, 'square');
+  });
+}
+
 // ─── HOME SCREEN ──────────────────────────────────────────────
 function renderHome() {
   const track = getTrack();
@@ -787,6 +805,7 @@ function startLesson(lessonId) {
   State.currentLesson = lesson;
   State.currentStep = 0;
   State.currentQuizAnswered = false;
+  State.retryCurrentLesson = false;
   State.sessionCorrect = 0;
   State.sessionTotal = lesson.quiz.length;
 
@@ -865,8 +884,7 @@ function renderQuiz(container, q, idx) {
         State.currentQuizAnswered = true;
         AudioFeedback.play(correct);
         showExplanation(q.explanation);
-        $('#lesson-action-btn').textContent = isLastStep() ? 'Finish Lesson 🎉' : 'Next →';
-        $('#lesson-action-btn').className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
+        setAnsweredAction(correct);
         showToast(correct ? '✅ Correct!' : '❌ Not quite — see explanation', correct ? 'success' : 'error');
       });
     });
@@ -892,7 +910,7 @@ function renderQuiz(container, q, idx) {
     const btn = $('#lesson-action-btn');
     btn.onclick = (e) => {
       if (!State.currentQuizAnswered) { checkFillBlank(q, inp); return; }
-      advanceStep();
+      handleLessonAction();
     };
     return; // skip default button binding below
   }
@@ -908,9 +926,21 @@ function checkFillBlank(q, inp) {
   State.currentQuizAnswered = true;
   AudioFeedback.play(correct);
   showExplanation(q.explanation);
-  $('#lesson-action-btn').textContent = isLastStep() ? 'Finish Lesson 🎉' : 'Next →';
-  $('#lesson-action-btn').className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
+  setAnsweredAction(correct);
   showToast(correct ? '✅ Correct!' : `❌ Answer: ${q.answer}`, correct ? 'success' : 'error');
+}
+
+function setAnsweredAction(correct) {
+  const btn = $('#lesson-action-btn');
+  if (!btn) return;
+  State.retryCurrentLesson = isLastStep() && !correct;
+  if (State.retryCurrentLesson) {
+    btn.textContent = 'Close, Try Again';
+    btn.className = 'btn-primary';
+    return;
+  }
+  btn.textContent = isLastStep() ? 'Finish Lesson 🎉' : 'Next →';
+  btn.className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
 }
 
 function showExplanation(text) {
@@ -986,6 +1016,12 @@ function resetLessonActionBtn() {
 
 function handleLessonAction() {
   if (!State.currentLesson) return;
+  if (State.retryCurrentLesson) {
+    const lessonId = State.currentLesson.id;
+    State.retryCurrentLesson = false;
+    startLesson(lessonId);
+    return;
+  }
   if (State.currentStep === 0 || State.currentQuizAnswered) {
     advanceStep();
   }

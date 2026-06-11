@@ -38,7 +38,7 @@
   --f-code:    'JetBrains Mono', 'Fira Code', monospace;
 
   --nav-h: 64px;
-  --bottom-nav-h: 68px;
+  --bottom-nav-h: 72px;
 }
 
 body.theme-light {
@@ -298,7 +298,7 @@ body.theme-light .top-bar__logo { color: #8A5200; }
   transition: color 0.15s;
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
-.nav-btn .icon { font-size: 1.4rem; }
+.nav-btn .icon { font-size: 1.7rem; }
 .nav-btn.active { color: var(--c-accent); }
 .nav-btn:hover { color: var(--c-text-2); }
 body.theme-light .bottom-nav .nav-btn { color: #566A7B !important; }
@@ -1076,14 +1076,14 @@ body.setup-required .setup-complete-btn { display: block; }
   .hero-title { font-size: 1.15rem; }
   .unit-card { margin-inline: 0.75rem; }
   .lesson-content, .ref-scroll, .progress-scroll, .settings-scroll { padding: 0.85rem; }
-  .nav-btn .icon { font-size: 1.15rem; }
+  .nav-btn .icon { font-size: 1.4rem; }
   .nav-btn { font-size: 0.62rem; }
 }
 
 @media (max-height: 620px) {
   :root {
     --nav-h: 54px;
-    --bottom-nav-h: 60px;
+    --bottom-nav-h: 64px;
   }
   .hero-block { padding: 1.15rem 1rem 0.95rem; }
   .hero-title { font-size: 1.12rem; margin-bottom: 0.75rem; }
@@ -1094,7 +1094,7 @@ body.setup-required .setup-complete-btn { display: block; }
   .lesson-content { padding: 0.9rem; }
   .lesson-footer { padding: 0.75rem 1rem; }
   .btn-primary { padding: 0.8rem; }
-  .nav-btn .icon { font-size: 1.15rem; }
+  .nav-btn .icon { font-size: 1.4rem; }
 }
 
 @supports not (height: 100dvh) {
