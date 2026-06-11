@@ -367,6 +367,11 @@ body.theme-light .track-btn { color: #415364; }
   color: #fff;
   box-shadow: 0 1px 8px rgba(0,0,0,0.25);
 }
+body.theme-light .track-btn.active {
+  color: #FFFFFF;
+  background: #176B5D;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.18);
+}
 
 .xp-bar-wrap {
   background: var(--c-border);
@@ -386,6 +391,12 @@ body.theme-light .track-btn { color: #415364; }
   color: var(--c-text-3);
   display: flex;
   justify-content: space-between;
+}
+body.theme-light .xp-bar-label,
+body.theme-light .unit-card__progress,
+body.theme-light .prog-lessons-done,
+body.theme-light .settings-help {
+  color: #3E5264;
 }
 
 .section-label {
@@ -505,6 +516,11 @@ body.theme-light .lesson-row.locked .lesson-row__xp {
   font-size: 0.78rem;
   color: var(--c-accent);
   font-weight: 600;
+}
+body.theme-light .lesson-row__xp,
+body.theme-light .prog-pct,
+body.theme-light .unit-card__badge {
+  color: #7A4700;
 }
 
 /* ─── LESSON SCREEN ───────────────────────────────────────── */
