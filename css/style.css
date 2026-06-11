@@ -118,22 +118,47 @@ body {
   min-height: 150px;
 }
 .type-line {
+  --type-duration: 1.15s;
+  --type-delay: 0s;
   display: block;
   width: 0;
   max-width: max-content;
   overflow: hidden;
   white-space: nowrap;
-  border-right: 2px solid var(--c-accent);
-  animation: typeLine 1.15s steps(34, end) forwards, caretBlink 0.7s step-end infinite;
+  position: relative;
+  animation: typeLine var(--type-duration) steps(34, end) forwards;
+  animation-delay: var(--type-delay);
 }
-.type-line.l2 { animation-delay: 1.05s; }
-.type-line.l3 { animation-delay: 2.1s; }
-.type-line.l4 { animation-delay: 3.15s; }
+.type-line::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1.15em;
+  margin-left: 2px;
+  background: transparent;
+  vertical-align: -0.16em;
+  animation: caretActive var(--type-duration) step-end both;
+  animation-delay: var(--type-delay);
+}
+.type-line.l2 { --type-delay: 1.05s; }
+.type-line.l3 { --type-delay: 2.1s; }
+.type-line.l4 {
+  --type-delay: 3.15s;
+}
+.type-line.l4::after {
+  animation: caretActive var(--type-duration) step-end both, caretBlink 0.7s step-end infinite;
+  animation-delay: var(--type-delay), calc(var(--type-delay) + var(--type-duration));
+}
 @keyframes typeLine {
   to { width: 100%; }
 }
+@keyframes caretActive {
+  0%, 99% { background: var(--c-accent); }
+  100% { background: transparent; }
+}
 @keyframes caretBlink {
-  50% { border-color: transparent; }
+  0%, 100% { background: var(--c-accent); }
+  50% { background: transparent; }
 }
 
 /* ─── TYPOGRAPHY ─────────────────────────────────────────── */
