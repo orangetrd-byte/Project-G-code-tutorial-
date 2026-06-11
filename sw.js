@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v1.9-track-label-contrast';
+const CACHE_VERSION = 'pgct-v2.0-fullscreen-celebration';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [

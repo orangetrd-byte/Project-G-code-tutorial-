@@ -211,7 +211,7 @@ strong { color: var(--c-text); font-weight: 600; }
 
 /* ─── LAYOUT ─────────────────────────────────────────────── */
 .app-wrapper {
-  max-width: 480px;
+  width: 100%;
   margin: 0 auto;
   height: 100dvh;
   min-height: 100dvh;
@@ -275,7 +275,6 @@ body.theme-light .top-bar__logo { color: #8A5200; }
 .bottom-nav {
   flex: 0 0 var(--bottom-nav-h);
   width: 100%;
-  max-width: 480px;
   height: var(--bottom-nav-h);
   background: var(--c-surface);
   border-top: 1px solid var(--c-border);

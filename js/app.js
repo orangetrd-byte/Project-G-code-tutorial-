@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.11.7';
+const APP_BUILD = '2026.06.11.8';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -691,6 +691,26 @@ const AudioFeedback = {
     this.tone(165, now + 0.08, 0.2, 0.045, 'triangle');
   },
 
+  lessonComplete() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    this.tone(523.25, now, 0.12, 0.055);
+    this.tone(659.25, now + 0.1, 0.12, 0.055);
+    this.tone(783.99, now + 0.2, 0.18, 0.06);
+  },
+
+  unitComplete() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    this.tone(523.25, now, 0.11, 0.06);
+    this.tone(659.25, now + 0.09, 0.11, 0.06);
+    this.tone(783.99, now + 0.18, 0.11, 0.06);
+    this.tone(1046.5, now + 0.3, 0.24, 0.07);
+    this.tone(1318.5, now + 0.43, 0.22, 0.045, 'triangle');
+  },
+
   play(isCorrect) {
     if (isCorrect) this.correct();
     else this.wrong();
@@ -917,7 +937,13 @@ function advanceStep() {
 
 function finishLesson() {
   const lesson = State.currentLesson;
+  const wasLessonDone = State.isLessonDone(lesson.id);
+  const beforeUnitProgress = State.getUnitProgress(lesson.unit);
   const xpEarned = State.completeLesson(lesson.id, State.sessionCorrect, State.sessionTotal);
+  const afterUnitProgress = State.getUnitProgress(lesson.unit);
+  const completedUnitNow = !wasLessonDone && beforeUnitProgress.done < beforeUnitProgress.total && afterUnitProgress.done === afterUnitProgress.total;
+  if (completedUnitNow) AudioFeedback.unitComplete();
+  else AudioFeedback.lessonComplete();
 
   const content = $('#lesson-content');
   content.innerHTML = `
