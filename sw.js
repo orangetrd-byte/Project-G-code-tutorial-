@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v1.7-fit-screen';
+const CACHE_VERSION = 'pgct-v1.8-light-readability';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
