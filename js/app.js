@@ -5,10 +5,14 @@
 
 'use strict';
 
+const APP_BUILD = '2026.06.11.1';
+
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
   // Loaded from localStorage
   trackId: 'cnc',
+  language: 'en',
+  theme: 'dark',
   profiles: {},
   xp: 0,
   streak: 0,
@@ -60,6 +64,8 @@ const State = {
     this.syncProfile();
     const persist = {
       trackId: this.trackId,
+      language: this.language,
+      theme: this.theme,
       profiles: this.profiles,
     };
     try { localStorage.setItem('pgct_state_v2', JSON.stringify(persist)); } catch(e) {}
@@ -74,6 +80,8 @@ const State = {
       }
       const d = JSON.parse(raw);
       this.trackId = getTrack(d.trackId) ? d.trackId : 'cnc';
+      this.language = d.language === 'es' ? 'es' : 'en';
+      this.theme = d.theme === 'light' ? 'light' : 'dark';
       this.profiles = d.profiles || {};
       this.applyProfile(this.activeProfile());
     } catch(e) {}
@@ -110,6 +118,12 @@ const State = {
     this.currentStep = 0;
     this.currentQuizAnswered = false;
     this.applyProfile(this.activeProfile());
+    this.save();
+  },
+
+  setPreference(key, value) {
+    if (key === 'language') this.language = value === 'es' ? 'es' : 'en';
+    if (key === 'theme') this.theme = value === 'light' ? 'light' : 'dark';
     this.save();
   },
 
@@ -424,6 +438,55 @@ function getUnits() {
   return getTrack().units;
 }
 
+const UI_TEXT = {
+  en: {
+    learn: 'Learn',
+    reference: 'Reference',
+    progress: 'Progress',
+    settings: 'Settings',
+    settingsSubtitle: 'App preferences',
+    language: 'Language',
+    languageHelp: 'Choose the app interface language.',
+    english: 'English',
+    spanish: 'Spanish',
+    theme: 'Theme',
+    themeHelp: 'Choose light or dark mode.',
+    dark: 'Dark',
+    light: 'Light',
+    build: 'Build',
+    path: 'Your learning path',
+    curriculum: 'Curriculum',
+    unitProgress: 'Unit Progress',
+    totalXp: 'Total XP Earned',
+    dayStreak: 'Day Streak',
+  },
+  es: {
+    learn: 'Aprender',
+    reference: 'Referencia',
+    progress: 'Progreso',
+    settings: 'Ajustes',
+    settingsSubtitle: 'Preferencias de la app',
+    language: 'Idioma',
+    languageHelp: 'Elige el idioma de la interfaz.',
+    english: 'Ingles',
+    spanish: 'Espanol',
+    theme: 'Tema',
+    themeHelp: 'Elige modo claro u oscuro.',
+    dark: 'Oscuro',
+    light: 'Claro',
+    build: 'Version',
+    path: 'Tu ruta de aprendizaje',
+    curriculum: 'Curriculo',
+    unitProgress: 'Progreso por unidad',
+    totalXp: 'XP total ganado',
+    dayStreak: 'Racha de dias',
+  }
+};
+
+function t(key) {
+  return (UI_TEXT[State.language] && UI_TEXT[State.language][key]) || UI_TEXT.en[key] || key;
+}
+
 function getRefData() {
   return State.trackId === 'printing' ? PRINTING_REF_DATA : REF_DATA;
 }
@@ -466,6 +529,82 @@ function showToast(msg, type = '') {
   t.className = 'toast show ' + type;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function applyTheme() {
+  document.body.classList.toggle('theme-light', State.theme === 'light');
+  const themeColor = State.theme === 'light' ? '#F4F7FA' : '#0F1923';
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
+}
+
+function updateStaticText() {
+  document.documentElement.lang = State.language === 'es' ? 'es' : 'en';
+  const nav = $$('.nav-btn');
+  if (nav[0]) nav[0].innerHTML = `<span class="icon">🏠</span>${t('learn')}`;
+  if (nav[1]) nav[1].innerHTML = `<span class="icon">📚</span>${t('reference')}`;
+  if (nav[2]) nav[2].innerHTML = `<span class="icon">📊</span>${t('progress')}`;
+  if (nav[3]) nav[3].innerHTML = `<span class="icon">⚙</span>${t('settings')}`;
+
+  const settingsTitle = $('#screen-settings .settings-title');
+  const settingsSubtitle = $('#screen-settings .settings-subtitle');
+  if (settingsTitle) settingsTitle.textContent = t('settings');
+  if (settingsSubtitle) settingsSubtitle.textContent = t('settingsSubtitle');
+
+  const rows = $$('#screen-settings .settings-row');
+  if (rows[0]) {
+    rows[0].querySelector('.settings-label').textContent = t('language');
+    rows[0].querySelector('.settings-help').textContent = t('languageHelp');
+    rows[0].querySelector('[data-value="en"]').textContent = t('english');
+    rows[0].querySelector('[data-value="es"]').textContent = t('spanish');
+  }
+  if (rows[1]) {
+    rows[1].querySelector('.settings-label').textContent = t('theme');
+    rows[1].querySelector('.settings-help').textContent = t('themeHelp');
+    rows[1].querySelector('[data-value="dark"]').textContent = t('dark');
+    rows[1].querySelector('[data-value="light"]').textContent = t('light');
+  }
+
+  const buildLabel = $('#screen-settings .build-row span');
+  if (buildLabel) buildLabel.textContent = t('build');
+  const buildNumber = $('#build-number');
+  if (buildNumber) buildNumber.textContent = APP_BUILD;
+
+  const heroGreeting = $('.hero-greeting');
+  if (heroGreeting) heroGreeting.textContent = t('path');
+  const homeLabel = $('#screen-home .section-label');
+  if (homeLabel) homeLabel.textContent = t('curriculum');
+  const progressLabel = $('#screen-progress .section-label');
+  if (progressLabel) progressLabel.textContent = t('unitProgress');
+  const totalXpLabel = $('.prog-hero__label');
+  if (totalXpLabel) totalXpLabel.textContent = t('totalXp');
+  const streakLabel = $('.streak-lbl');
+  if (streakLabel) streakLabel.textContent = t('dayStreak');
+}
+
+function updateSettingsControls() {
+  $$('.settings-choice').forEach(btn => {
+    const key = btn.dataset.setting;
+    const active = State[key] === btn.dataset.value;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+}
+
+function renderSettings() {
+  applyTheme();
+  updateStaticText();
+  updateSettingsControls();
+}
+
+function initSettings() {
+  $$('.settings-choice').forEach(btn => {
+    btn.addEventListener('click', () => {
+      State.setPreference(btn.dataset.setting, btn.dataset.value);
+      renderSettings();
+      renderHome();
+      renderProgress();
+    });
+  });
 }
 
 // ─── AUDIO FEEDBACK ───────────────────────────────────────────
@@ -532,6 +671,7 @@ function renderHome() {
 
   const title = track.title.replace('G-Code', '<span>G-Code</span>');
   $('.hero-title').innerHTML = `${title},<br>one block at a time.`;
+  updateStaticText();
   $('#xp-bar-fill').style.width = Math.min(pct, 100) + '%';
   $('#xp-bar-current').textContent = State.xp + ' XP';
   $('#xp-bar-current-2').textContent = State.xp + ' XP';
@@ -834,6 +974,7 @@ function renderReference() {
 // ─── PROGRESS SCREEN ─────────────────────────────────────────
 function renderProgress() {
   const units = getUnits();
+  updateStaticText();
   $('#prog-total-xp').textContent = State.xp;
   $('#prog-streak').textContent = State.streak;
 
@@ -863,6 +1004,7 @@ function initNav() {
       const target = btn.dataset.screen;
       if (target === 'screen-reference') renderReference();
       if (target === 'screen-progress') renderProgress();
+      if (target === 'screen-settings') renderSettings();
       if (target === 'screen-home') renderHome();
       showScreen(target);
     });
@@ -879,8 +1021,11 @@ function initNav() {
 // ─── BOOT ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   State.load();
+  applyTheme();
   initNav();
   initTrackSwitcher();
+  initSettings();
+  renderSettings();
   renderHome();
   showScreen('screen-home');
   console.log('%c[Project G-Code Tutorial] Ready.', 'color:#7FDBCA;font-family:monospace');

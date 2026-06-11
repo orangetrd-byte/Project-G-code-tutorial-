@@ -102,6 +102,46 @@
     </div>
   </section>
 
+  <section class="screen" id="screen-settings">
+    <div class="settings-scroll">
+      <div class="settings-header">
+        <div class="settings-title">Settings</div>
+        <div class="settings-subtitle">App preferences</div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Language</div>
+            <div class="settings-help">Choose the app interface language.</div>
+          </div>
+          <div class="settings-segment" role="group" aria-label="Language">
+            <button class="settings-choice active" type="button" data-setting="language" data-value="en">English</button>
+            <button class="settings-choice" type="button" data-setting="language" data-value="es">Spanish</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Theme</div>
+            <div class="settings-help">Choose light or dark mode.</div>
+          </div>
+          <div class="settings-segment" role="group" aria-label="Theme">
+            <button class="settings-choice active" type="button" data-setting="theme" data-value="dark">Dark</button>
+            <button class="settings-choice" type="button" data-setting="theme" data-value="light">Light</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="build-row">
+          <span>Build</span>
+          <strong id="build-number">--</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ── BOTTOM NAV ────────────────────────────────────────── -->
   <nav class="bottom-nav">
     <button class="nav-btn active" data-screen="screen-home">
@@ -112,6 +152,9 @@
     </button>
     <button class="nav-btn" data-screen="screen-progress">
       <span class="icon">📊</span>Progress
+    </button>
+    <button class="nav-btn" data-screen="screen-settings">
+      <span class="icon">⚙</span>Settings
     </button>
   </nav>
 
