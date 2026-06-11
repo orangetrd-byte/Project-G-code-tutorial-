@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v1.1-tracks';
+const CACHE_VERSION = 'pgct-v1.2-audio-feedback';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [

@@ -468,6 +468,58 @@ function showToast(msg, type = '') {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+// ─── AUDIO FEEDBACK ───────────────────────────────────────────
+const AudioFeedback = {
+  ctx: null,
+
+  getContext() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return null;
+      this.ctx = new AudioCtx();
+    }
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    return this.ctx;
+  },
+
+  tone(freq, start, duration, gainValue, type = 'sine') {
+    const ctx = this.getContext();
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, start);
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(gainValue, start + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + duration + 0.02);
+  },
+
+  correct() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    this.tone(660, now, 0.11, 0.055);
+    this.tone(880, now + 0.09, 0.14, 0.05);
+  },
+
+  wrong() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    this.tone(220, now, 0.16, 0.06, 'triangle');
+    this.tone(165, now + 0.08, 0.2, 0.045, 'triangle');
+  },
+
+  play(isCorrect) {
+    if (isCorrect) this.correct();
+    else this.wrong();
+  }
+};
+
 // ─── HOME SCREEN ──────────────────────────────────────────────
 function renderHome() {
   const track = getTrack();
@@ -613,6 +665,7 @@ function renderQuiz(container, q, idx) {
         });
         if (correct) State.sessionCorrect++;
         State.currentQuizAnswered = true;
+        AudioFeedback.play(correct);
         showExplanation(q.explanation);
         $('#lesson-action-btn').textContent = isLastStep() ? 'Finish Lesson 🎉' : 'Next →';
         $('#lesson-action-btn').className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
@@ -655,6 +708,7 @@ function checkFillBlank(q, inp) {
   inp.disabled = true;
   if (correct) State.sessionCorrect++;
   State.currentQuizAnswered = true;
+  AudioFeedback.play(correct);
   showExplanation(q.explanation);
   $('#lesson-action-btn').textContent = isLastStep() ? 'Finish Lesson 🎉' : 'Next →';
   $('#lesson-action-btn').className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
