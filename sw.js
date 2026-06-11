@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v1.5-slower-startup';
+const CACHE_VERSION = 'pgct-v1.6-slowest-startup';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
