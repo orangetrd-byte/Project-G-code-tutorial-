@@ -123,11 +123,11 @@ body {
   overflow: hidden;
   white-space: nowrap;
   border-right: 2px solid var(--c-accent);
-  animation: typeLine 0.55s steps(34, end) forwards, caretBlink 0.7s step-end infinite;
+  animation: typeLine 0.75s steps(34, end) forwards, caretBlink 0.7s step-end infinite;
 }
-.type-line.l2 { animation-delay: 0.45s; }
-.type-line.l3 { animation-delay: 0.9s; }
-.type-line.l4 { animation-delay: 1.35s; }
+.type-line.l2 { animation-delay: 0.65s; }
+.type-line.l3 { animation-delay: 1.3s; }
+.type-line.l4 { animation-delay: 1.95s; }
 @keyframes typeLine {
   to { width: 100%; }
 }

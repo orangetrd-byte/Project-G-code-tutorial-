@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.11.2';
+const APP_BUILD = '2026.06.11.3';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -642,7 +642,7 @@ function finishLoading() {
     } else {
       showScreen('screen-settings');
     }
-  }, 1900);
+  }, 2800);
 }
 
 // ─── AUDIO FEEDBACK ───────────────────────────────────────────
