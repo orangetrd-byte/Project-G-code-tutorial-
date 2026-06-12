@@ -599,6 +599,24 @@ body.theme-light .lesson-row.locked .lesson-row__title,
 body.theme-light .lesson-row.locked .lesson-row__xp {
   color: #7A8792;
 }
+.review-row {
+  margin: 0.45rem 0.85rem 0.25rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background: rgba(245,166,35,0.08);
+}
+.review-row:not(.locked) {
+  border-color: rgba(245,166,35,0.5);
+}
+body.theme-light .review-row {
+  background: #FFF7E8;
+  border-color: #D9B66A;
+}
+.review-row .lesson-row__title {
+  font-family: var(--f-display);
+  font-weight: 700;
+}
 
 .lesson-dot {
   width: 32px;

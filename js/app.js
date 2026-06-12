@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.12.3';
+const APP_BUILD = '2026.06.12.4';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -19,14 +19,18 @@ const State = {
   streak: 0,
   lastStudyDate: null,
   completedLessons: [], // array of lesson ids
+  completedReviews: [], // array of unit review ids
   lessonScores: {},     // { lessonId: { correct, total } }
 
   // Runtime only
   currentLesson: null,
+  currentReviewUnit: null,
+  currentMode: 'lesson',
   currentStep: 0,       // 0 = theory, 1..n = quiz questions
   currentQuizAnswered: false,
   retryCurrentLesson: false,
   lessonFinished: false,
+  missedQuestions: [],
   sessionCorrect: 0,
   sessionTotal: 0,
 
@@ -36,6 +40,7 @@ const State = {
       streak: 0,
       lastStudyDate: null,
       completedLessons: [],
+      completedReviews: [],
       lessonScores: {},
     };
   },
@@ -50,6 +55,7 @@ const State = {
     this.streak = profile.streak || 0;
     this.lastStudyDate = profile.lastStudyDate || null;
     this.completedLessons = profile.completedLessons || [];
+    this.completedReviews = profile.completedReviews || [];
     this.lessonScores = profile.lessonScores || {};
   },
 
@@ -59,6 +65,7 @@ const State = {
       streak: this.streak,
       lastStudyDate: this.lastStudyDate,
       completedLessons: this.completedLessons,
+      completedReviews: this.completedReviews,
       lessonScores: this.lessonScores,
     };
   },
@@ -140,6 +147,19 @@ const State = {
 
   isLessonDone(id) { return this.completedLessons.includes(id); },
 
+  reviewId(unitId) { return `${this.trackId}-unit-${unitId}-review`; },
+
+  isUnitReviewDone(unitId) { return this.completedReviews.includes(this.reviewId(unitId)); },
+
+  updateStreak() {
+    const today = new Date().toDateString();
+    if (this.lastStudyDate !== today) {
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+      this.streak = (this.lastStudyDate === yesterday) ? this.streak + 1 : 1;
+      this.lastStudyDate = today;
+    }
+  },
+
   isLessonUnlocked(lesson) {
     // Unit 1, lesson 1 always unlocked
     if (lesson.unit === 1 && lesson.lesson === 1) return true;
@@ -167,13 +187,17 @@ const State = {
     const lesson = getLessons().find(l => l.id === lessonId);
     const bonus = Math.round((correct / Math.max(total,1)) * (lesson?.xp || 10));
     this.xp += bonus;
-    // Streak
-    const today = new Date().toDateString();
-    if (this.lastStudyDate !== today) {
-      const yesterday = new Date(Date.now() - 86400000).toDateString();
-      this.streak = (this.lastStudyDate === yesterday) ? this.streak + 1 : 1;
-      this.lastStudyDate = today;
-    }
+    this.updateStreak();
+    this.save();
+    return bonus;
+  },
+
+  completeUnitReview(unitId, correct, total) {
+    const id = this.reviewId(unitId);
+    if (!this.completedReviews.includes(id)) this.completedReviews.push(id);
+    const bonus = Math.round((correct / Math.max(total, 1)) * 25);
+    this.xp += bonus;
+    this.updateStreak();
     this.save();
     return bonus;
   },
@@ -761,6 +785,8 @@ function renderHome() {
     const unitLessons = lessons.filter(l => l.unit === unit.id);
     const { done: uDone } = State.getUnitProgress(unit.id);
     const locked = !State.isLessonUnlocked(unitLessons[0]);
+    const canReview = unitLessons.length > 0 && uDone === unitLessons.length;
+    const reviewDone = State.isUnitReviewDone(unit.id);
 
     const card = document.createElement('div');
     card.className = 'unit-card';
@@ -785,6 +811,11 @@ function renderHome() {
               <div class="lesson-row__xp">${l.xp} XP</div>
             </div>`;
         }).join('')}
+        <div class="lesson-row review-row ${!canReview ? 'locked' : ''}" data-unit-review="${unit.id}">
+          <div class="lesson-dot ${reviewDone ? 'done' : canReview ? 'active' : ''}">${reviewDone ? '✓' : '?'}</div>
+          <div class="lesson-row__title">Unit Review</div>
+          <div class="lesson-row__xp">${reviewDone ? 'Done' : '25 XP'}</div>
+        </div>
       </div>`;
     container.appendChild(card);
   });
@@ -794,6 +825,12 @@ function renderHome() {
     row.addEventListener('click', () => {
       const id = row.dataset.lessonId;
       if (id) startLesson(id);
+    });
+  });
+  $$('.review-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const unitId = parseInt(row.dataset.unitReview, 10);
+      if (unitId) startUnitReview(unitId);
     });
   });
 }
@@ -813,7 +850,7 @@ function renderMotivation() {
   const phaseNow = total > 0 ? Math.min(done + 1, total) : 0;
   const nextTitle = nextLesson ? nextLesson.title : 'Track complete';
   const nextMeta = nextLesson
-    ? `Unit ${nextLesson.unit} - Lesson ${nextLesson.lesson} - ${nextLesson.quiz.length} questions`
+    ? `Unit ${nextLesson.unit} - Lesson ${nextLesson.lesson} - learning phase`
     : 'Switch tracks or review the reference tab.';
   const badges = [
     { icon: 'OK', name: 'First Lesson', unlocked: done >= 1 },
@@ -849,29 +886,71 @@ function startLesson(lessonId) {
   if (!State.isLessonUnlocked(lesson)) { showToast('Complete the previous lesson first!', 'error'); return; }
 
   State.currentLesson = lesson;
+  State.currentReviewUnit = null;
+  State.currentMode = 'lesson';
   State.currentStep = 0;
   State.currentQuizAnswered = false;
   State.retryCurrentLesson = false;
   State.lessonFinished = false;
+  State.missedQuestions = [];
   State.sessionCorrect = 0;
-  State.sessionTotal = lesson.quiz.length;
+  State.sessionTotal = 0;
 
   renderLessonStep();
   showScreen('screen-lesson');
 }
 
+function startUnitReview(unitId, questions = null) {
+  const unit = getUnits().find(item => item.id === unitId);
+  if (!unit) return;
+  const unitLessons = getLessons().filter(lesson => lesson.unit === unitId);
+  const canReview = unitLessons.length > 0 && unitLessons.every(lesson => State.isLessonDone(lesson.id));
+  if (!canReview) { showToast('Finish the unit lessons first.', 'error'); return; }
+
+  State.currentLesson = {
+    id: `review-${unitId}`,
+    unit: unitId,
+    lesson: 'Review',
+    title: `${unit.name} Review`,
+    icon: unit.icon,
+    xp: 25,
+    theory: '',
+    visual: '',
+    quiz: questions || buildUnitReviewQuestions(unitId)
+  };
+  State.currentReviewUnit = unitId;
+  State.currentMode = 'review';
+  State.currentStep = 1;
+  State.currentQuizAnswered = false;
+  State.retryCurrentLesson = false;
+  State.lessonFinished = false;
+  State.missedQuestions = [];
+  State.sessionCorrect = 0;
+  State.sessionTotal = State.currentLesson.quiz.length;
+
+  renderLessonStep();
+  showScreen('screen-lesson');
+}
+
+function buildUnitReviewQuestions(unitId) {
+  return getLessons()
+    .filter(lesson => lesson.unit === unitId)
+    .flatMap(lesson => lesson.quiz.map(q => ({ ...q })))
+    .slice(0, 10);
+}
+
 function renderLessonStep() {
   const lesson = State.currentLesson;
-  const totalSteps = 1 + lesson.quiz.length; // theory + quizzes
+  const totalSteps = State.currentMode === 'review' ? lesson.quiz.length : 1;
   const step = State.currentStep;
-  const isTheory = step === 0;
+  const isTheory = State.currentMode === 'lesson';
   const actionBtn = $('#lesson-action-btn');
   actionBtn.onclick = null;
 
   // Progress bar
-  const pct = Math.round((step / totalSteps) * 100);
+  const pct = State.currentMode === 'review' ? Math.round(((step - 1) / totalSteps) * 100) : 0;
   $('#lesson-progress-fill').style.width = pct + '%';
-  $('#lesson-step-count').textContent = `${step}/${totalSteps}`;
+  $('#lesson-step-count').textContent = State.currentMode === 'review' ? `${step}/${totalSteps}` : '0/1';
 
   const content = $('#lesson-content');
   content.innerHTML = '';
@@ -879,12 +958,12 @@ function renderLessonStep() {
   if (isTheory) {
     content.innerHTML = `
       <div class="step-card active">
-        <div class="step-label">Theory · Lesson ${lesson.lesson}</div>
+        <div class="step-label">Phase ${lesson.unit}.${lesson.lesson}</div>
         <div class="step-title">${lesson.title}</div>
         <div class="theory-body">${lesson.theory}</div>
         ${Visuals.render(lesson.visual)}
       </div>`;
-    $('#lesson-action-btn').textContent = 'Start Quiz →';
+    $('#lesson-action-btn').textContent = 'Complete Lesson →';
     $('#lesson-action-btn').disabled = false;
     $('#lesson-action-btn').className = 'btn-primary';
     State.currentQuizAnswered = true; // theory always "answered"
@@ -906,7 +985,7 @@ function renderQuiz(container, q, idx) {
   if (q.type === 'multiple-choice') {
     const letters = ['A','B','C','D'];
     div.innerHTML = `
-      <div class="step-label">Quiz · Question ${idx + 1}</div>
+      <div class="step-label">Unit Review · Question ${idx + 1}</div>
       <div class="quiz-question">${q.question}</div>
       <div class="options-list">
         ${q.options.map((opt, i) => `
@@ -930,6 +1009,7 @@ function renderQuiz(container, q, idx) {
           b.disabled = true;
         });
         if (correct) State.sessionCorrect++;
+        else if (State.currentMode === 'review') State.missedQuestions.push(q);
         State.currentQuizAnswered = true;
         AudioFeedback.play(correct);
         showExplanation(q.explanation);
@@ -940,7 +1020,7 @@ function renderQuiz(container, q, idx) {
 
   } else if (q.type === 'fill-blank') {
     div.innerHTML = `
-      <div class="step-label">Quiz · Question ${idx + 1}</div>
+      <div class="step-label">Unit Review · Question ${idx + 1}</div>
       <div class="quiz-question">${q.question}</div>
       <div class="fill-blank-wrap">
         <input type="text" class="fill-blank-input" id="fill-input" 
@@ -967,6 +1047,7 @@ function checkFillBlank(q, inp) {
   inp.classList.add(correct ? 'correct' : 'wrong');
   inp.disabled = true;
   if (correct) State.sessionCorrect++;
+  else if (State.currentMode === 'review') State.missedQuestions.push(q);
   State.currentQuizAnswered = true;
   AudioFeedback.play(correct);
   showExplanation(q.explanation + (usedShortGCode ? ' G0 and G00 style codes are both used depending on the control or post. The leading zero form is common in teaching material because it is easier to scan.' : ''));
@@ -984,10 +1065,15 @@ function normalizeCodeAnswer(value) {
 function setAnsweredAction(correct) {
   const btn = $('#lesson-action-btn');
   if (!btn) return;
-  State.retryCurrentLesson = isLastStep() && !correct;
+  State.retryCurrentLesson = State.currentMode === 'lesson' && isLastStep() && !correct;
   if (State.retryCurrentLesson) {
     btn.textContent = 'Close, Try Again';
     btn.className = 'btn-primary';
+    return;
+  }
+  if (State.currentMode === 'review') {
+    btn.textContent = isLastStep() ? 'Finish Review' : 'Next →';
+    btn.className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
     return;
   }
   btn.textContent = isLastStep() ? 'Finish Lesson 🎉' : 'Next →';
@@ -1006,9 +1092,10 @@ function isLastStep() {
 
 function advanceStep() {
   State.currentStep++;
-  const totalSteps = 1 + State.currentLesson.quiz.length;
+  const totalSteps = State.currentMode === 'review' ? State.currentLesson.quiz.length : 1;
 
-  if (State.currentStep >= totalSteps) {
+  if ((State.currentMode === 'review' && State.currentStep > totalSteps) ||
+      (State.currentMode === 'lesson' && State.currentStep >= totalSteps)) {
     finishLesson();
   } else {
     State.currentQuizAnswered = false;
@@ -1019,6 +1106,12 @@ function advanceStep() {
 function finishLesson() {
   const lesson = State.currentLesson;
   State.lessonFinished = true;
+  if (State.currentMode === 'review') {
+    finishUnitReview();
+    return;
+  }
+  State.sessionCorrect = 1;
+  State.sessionTotal = 1;
   const wasLessonDone = State.isLessonDone(lesson.id);
   const beforeUnitProgress = State.getUnitProgress(lesson.unit);
   const xpEarned = State.completeLesson(lesson.id, State.sessionCorrect, State.sessionTotal);
@@ -1036,8 +1129,8 @@ function finishLesson() {
       <div class="xp-badge">+${xpEarned} XP earned</div>
       <div class="stat-row">
         <div class="stat-chip">
-          <div class="stat-chip__val">${State.sessionCorrect}/${State.sessionTotal}</div>
-          <div class="stat-chip__lbl">Correct</div>
+          <div class="stat-chip__val">${lesson.unit}.${lesson.lesson}</div>
+          <div class="stat-chip__lbl">Phase</div>
         </div>
         <div class="stat-chip">
           <div class="stat-chip__val">${State.streak}</div>
@@ -1056,6 +1149,53 @@ function finishLesson() {
   $('#lesson-action-btn').className = 'btn-primary accent-btn';
 }
 
+function finishUnitReview() {
+  const lesson = State.currentLesson;
+  const missed = State.missedQuestions.length;
+  const content = $('#lesson-content');
+
+  if (missed > 0) {
+    content.innerHTML = `
+      <div class="complete-screen review-retry-screen">
+        <div class="complete-icon">↻</div>
+        <div class="complete-title">Review Missed Questions</div>
+        <div class="complete-subtitle">${missed} question${missed === 1 ? '' : 's'} need another pass.</div>
+        <div class="xp-badge">${State.sessionCorrect}/${State.sessionTotal} correct so far</div>
+      </div>`;
+    $('#lesson-progress-fill').style.width = '100%';
+    $('#lesson-step-count').textContent = 'Review';
+    $('#lesson-action-btn').textContent = 'Retry Missed Questions';
+    $('#lesson-action-btn').className = 'btn-primary accent-btn';
+    State.lessonFinished = true;
+    return;
+  }
+
+  const xpEarned = State.completeUnitReview(State.currentReviewUnit, State.sessionCorrect, State.sessionTotal);
+  AudioFeedback.unitComplete();
+  content.innerHTML = `
+    <div class="complete-screen">
+      <div class="complete-icon">✓</div>
+      <div class="complete-title">Unit Review Complete</div>
+      <div class="complete-subtitle">${lesson.title}</div>
+      <div class="xp-badge">+${xpEarned} XP earned</div>
+      <div class="stat-row">
+        <div class="stat-chip">
+          <div class="stat-chip__val">${State.sessionCorrect}/${State.sessionTotal}</div>
+          <div class="stat-chip__lbl">Correct</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-chip__val">${State.streak}</div>
+          <div class="stat-chip__lbl">Day Streak</div>
+        </div>
+      </div>
+    </div>`;
+
+  $('#lesson-progress-fill').style.width = '100%';
+  $('#lesson-step-count').textContent = 'Done!';
+  $('#lesson-action-btn').textContent = 'Back to Lessons';
+  $('#lesson-action-btn').className = 'btn-primary accent-btn';
+}
+
 function resetLessonActionBtn() {
   const btn = $('#lesson-action-btn');
   btn.onclick = null;
@@ -1064,6 +1204,10 @@ function resetLessonActionBtn() {
 function handleLessonAction() {
   if (!State.currentLesson) return;
   if (State.lessonFinished) {
+    if (State.currentMode === 'review' && State.missedQuestions.length > 0) {
+      startUnitReview(State.currentReviewUnit, State.missedQuestions);
+      return;
+    }
     renderHome();
     showScreen('screen-home');
     State.lessonFinished = false;
