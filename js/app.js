@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.12.11';
+const APP_BUILD = '2026.06.12.12';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -714,13 +714,6 @@ function finishLoading() {
   playStartupTypingSound();
   window.setTimeout(() => {
     splash?.classList.add('done');
-    renderSettings();
-    if (State.setupComplete) {
-      renderHome();
-      showScreen('screen-home');
-    } else {
-      showScreen('screen-settings');
-    }
   }, 4800);
 }
 
@@ -1582,6 +1575,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSettings();
   renderSettings();
   renderHome();
+  showScreen(State.setupComplete ? 'screen-home' : 'screen-settings');
   finishLoading();
   console.log('%c[Project G-Code Tutorial] Ready.', 'color:#7FDBCA;font-family:monospace');
 });
