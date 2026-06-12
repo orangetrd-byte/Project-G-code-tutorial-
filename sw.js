@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.15-printing-units';
+const CACHE_VERSION = 'pgct-v2.16-mgp-build-info';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
