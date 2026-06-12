@@ -469,7 +469,8 @@ body.theme-light .motivation-card {
   line-height: 1.35;
 }
 body.theme-light .motivation-sub { color: #3E5264; }
-.weak-review-card {
+.weak-review-card,
+.track-review-card {
   width: 100%;
   display: flex;
   align-items: center;
@@ -486,7 +487,8 @@ body.theme-light .motivation-sub { color: #3E5264; }
   cursor: pointer;
   box-shadow: 0 10px 22px rgba(0,0,0,0.16);
 }
-.weak-review-card:active { transform: translateY(1px); }
+.weak-review-card:active,
+.track-review-card:active { transform: translateY(1px); }
 .weak-review-card__mark {
   width: 42px;
   height: 42px;
@@ -501,28 +503,34 @@ body.theme-light .motivation-sub { color: #3E5264; }
   font-size: 1.15rem;
 }
 .weak-review-card strong,
-.weak-review-card em {
+.weak-review-card em,
+.track-review-card strong,
+.track-review-card em {
   display: block;
 }
-.weak-review-card strong {
+.weak-review-card strong,
+.track-review-card strong {
   font-family: var(--f-display);
   font-size: 0.95rem;
   line-height: 1.2;
 }
-.weak-review-card em {
+.weak-review-card em,
+.track-review-card em {
   margin-top: 0.2rem;
   color: var(--c-text-3);
   font-size: 0.76rem;
   line-height: 1.35;
   font-style: normal;
 }
+body.theme-light .track-review-card,
 body.theme-light .weak-review-card {
   background: linear-gradient(90deg, #FFF2D7, #EAF7F3);
   color: #142536;
   border-color: #D8A845;
   box-shadow: 0 8px 20px rgba(35,52,68,0.1);
 }
-body.theme-light .weak-review-card em { color: #3E5264; }
+body.theme-light .weak-review-card em,
+body.theme-light .track-review-card em { color: #3E5264; }
 .badge-strip {
   display: flex;
   gap: 0.5rem;

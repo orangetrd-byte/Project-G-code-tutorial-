@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.16 | Build 2026.06.12.01';
+const APP_BUILD = 'MGP | Version v2.17 | Build 2026.06.12.02';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -197,6 +197,14 @@ const State = {
 
   completeWeakReview(correct, total) {
     const bonus = Math.max(5, Math.round((correct / Math.max(total, 1)) * 15));
+    this.xp += bonus;
+    this.updateStreak();
+    this.save();
+    return bonus;
+  },
+
+  completeTrackReview(correct, total) {
+    const bonus = Math.max(8, Math.round((correct / Math.max(total, 1)) * 20));
     this.xp += bonus;
     this.updateStreak();
     this.save();
@@ -890,14 +898,15 @@ function renderMotivation() {
   if (!panel) return;
   const { done, total } = State.getTotalProgress();
   const nextLesson = getNextLesson();
+  const trackComplete = total > 0 && done === total;
   const weakCount = State.weakQuestions.length;
   const today = new Date().toDateString();
   const dailyDone = State.lastStudyDate === today;
   const phaseNow = total > 0 ? Math.min(done + 1, total) : 0;
-  const nextTitle = nextLesson ? nextLesson.title : 'Track complete';
+  const nextTitle = nextLesson ? nextLesson.title : 'Path mastered';
   const nextMeta = nextLesson
     ? `Unit ${nextLesson.unit} - Lesson ${nextLesson.lesson} - learning phase`
-    : 'Switch tracks or review the reference tab.';
+    : 'Run a mixed review to keep the codes fresh.';
   const badges = [
     { icon: 'OK', name: 'First Lesson', unlocked: done >= 1 },
     { icon: '3x', name: '3 Day Streak', unlocked: State.streak >= 3 },
@@ -926,6 +935,15 @@ function renderMotivation() {
         </span>
       </button>
     ` : ''}
+    ${trackComplete ? `
+      <button class="track-review-card" type="button" id="track-review-btn">
+        <span class="weak-review-card__mark">∞</span>
+        <span>
+          <strong>Mixed review unlocked</strong>
+          <em>Keep practicing across the full ${getTrack().name} path while new units are added.</em>
+        </span>
+      </button>
+    ` : ''}
     <div class="badge-strip">
       ${badges.map(badge => `
         <div class="badge-chip ${badge.unlocked ? 'unlocked' : 'locked'}">
@@ -934,6 +952,7 @@ function renderMotivation() {
       `).join('')}
     </div>`;
   $('#weak-review-btn')?.addEventListener('click', startWeakReview);
+  $('#track-review-btn')?.addEventListener('click', startTrackReview);
 }
 
 function startLesson(lessonId) {
@@ -1008,6 +1027,64 @@ function buildUnitReviewQuestions(unitId) {
     round++;
   }
   return mixed;
+}
+
+function buildTrackReviewQuestions() {
+  const unitBuckets = getUnits().map(unit => getLessons()
+    .filter(lesson => lesson.unit === unit.id)
+    .flatMap(lesson => lesson.quiz.map(q => ({
+      ...q,
+      sourceLessonId: lesson.id,
+      sourceTitle: lesson.title,
+      sourceUnit: lesson.unit
+    }))));
+  const mixed = [];
+  let round = 0;
+  while (mixed.length < 12 && unitBuckets.some(bucket => bucket[round])) {
+    unitBuckets.forEach(bucket => {
+      if (bucket[round] && mixed.length < 12) mixed.push({ ...bucket[round] });
+    });
+    round++;
+  }
+  return mixed;
+}
+
+function startTrackReview(questions = null) {
+  const { done, total } = State.getTotalProgress();
+  if (total === 0 || done < total) {
+    showToast('Finish the path to unlock mixed review.', 'error');
+    return;
+  }
+  const reviewQuestions = questions || buildTrackReviewQuestions();
+  if (reviewQuestions.length === 0) {
+    showToast('No review questions available yet.', 'error');
+    return;
+  }
+
+  State.currentLesson = {
+    id: 'track-review',
+    unit: 'Review',
+    lesson: 'Mixed',
+    title: `${getTrack().name} Mixed Review`,
+    icon: '∞',
+    xp: 20,
+    theory: '',
+    visual: '',
+    quiz: reviewQuestions
+  };
+  State.currentReviewUnit = null;
+  State.currentMode = 'track-review';
+  State.currentStep = 1;
+  State.currentQuizAnswered = false;
+  State.retryCurrentLesson = false;
+  State.lessonFinished = false;
+  State.missedQuestions = [];
+  State.practiceQuestions = null;
+  State.sessionCorrect = 0;
+  State.sessionTotal = reviewQuestions.length;
+
+  renderLessonStep();
+  showScreen('screen-lesson');
 }
 
 function startWeakReview() {
@@ -1161,12 +1238,13 @@ function renderQuiz(container, q, idx) {
 }
 
 function isReviewLikeMode() {
-  return State.currentMode === 'review' || State.currentMode === 'weak-review';
+  return State.currentMode === 'review' || State.currentMode === 'weak-review' || State.currentMode === 'track-review';
 }
 
 function getQuizModeLabel() {
   if (State.currentMode === 'lesson') return 'Practice Check';
   if (State.currentMode === 'weak-review') return 'Weak Spot Review';
+  if (State.currentMode === 'track-review') return 'Mixed Review';
   return 'Unit Review';
 }
 
@@ -1263,6 +1341,10 @@ function finishLesson() {
   }
   if (State.currentMode === 'weak-review') {
     finishWeakReview();
+    return;
+  }
+  if (State.currentMode === 'track-review') {
+    finishTrackReview();
     return;
   }
   if (State.missedQuestions.length > 0) {
@@ -1370,6 +1452,53 @@ function finishWeakReview() {
   State.lessonFinished = true;
 }
 
+function finishTrackReview() {
+  const missed = State.missedQuestions.length;
+  const content = $('#lesson-content');
+
+  if (missed > 0) {
+    content.innerHTML = `
+      <div class="complete-screen review-retry-screen">
+        <div class="complete-icon">↻</div>
+        <div class="complete-title">Mixed Review Needs Another Pass</div>
+        <div class="complete-subtitle">${missed} question${missed === 1 ? '' : 's'} need another pass.</div>
+        <div class="xp-badge">${State.sessionCorrect}/${State.sessionTotal} correct so far</div>
+      </div>`;
+    $('#lesson-progress-fill').style.width = '100%';
+    $('#lesson-step-count').textContent = 'Review';
+    $('#lesson-action-btn').textContent = 'Retry Missed Questions';
+    $('#lesson-action-btn').className = 'btn-primary accent-btn';
+    State.lessonFinished = true;
+    return;
+  }
+
+  const xpEarned = State.completeTrackReview(State.sessionCorrect, State.sessionTotal);
+  AudioFeedback.lessonComplete();
+  content.innerHTML = `
+    <div class="complete-screen">
+      <div class="complete-icon">∞</div>
+      <div class="complete-title">Mixed Review Complete</div>
+      <div class="complete-subtitle">The path stays open for practice while more units are added.</div>
+      <div class="xp-badge">+${xpEarned} XP earned</div>
+      <div class="stat-row">
+        <div class="stat-chip">
+          <div class="stat-chip__val">${State.sessionCorrect}/${State.sessionTotal}</div>
+          <div class="stat-chip__lbl">Correct</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-chip__val">${State.xp}</div>
+          <div class="stat-chip__lbl">Total XP</div>
+        </div>
+      </div>
+    </div>`;
+
+  $('#lesson-progress-fill').style.width = '100%';
+  $('#lesson-step-count').textContent = 'Done!';
+  $('#lesson-action-btn').textContent = 'Back to Lessons';
+  $('#lesson-action-btn').className = 'btn-primary accent-btn';
+  State.lessonFinished = true;
+}
+
 function finishUnitReview() {
   const lesson = State.currentLesson;
   const missed = State.missedQuestions.length;
@@ -1425,6 +1554,10 @@ function resetLessonActionBtn() {
 function handleLessonAction() {
   if (!State.currentLesson) return;
   if (State.lessonFinished) {
+    if (State.currentMode === 'track-review' && State.missedQuestions.length > 0) {
+      startTrackReview(State.missedQuestions);
+      return;
+    }
     if (State.currentMode === 'weak-review' && State.missedQuestions.length > 0) {
       State.currentLesson.quiz = State.missedQuestions;
       State.missedQuestions = [];
