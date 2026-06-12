@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.7-progress-light-polish';
+const CACHE_VERSION = 'pgct-v2.8-toolpath-learning-map';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
