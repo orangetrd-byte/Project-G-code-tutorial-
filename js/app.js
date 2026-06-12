@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.12.6';
+const APP_BUILD = '2026.06.12.7';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -789,7 +789,7 @@ function renderHome() {
     const reviewDone = State.isUnitReviewDone(unit.id);
 
     const card = document.createElement('div');
-    card.className = 'unit-card';
+    card.className = `unit-card track-${State.trackId} unit-${unit.id}`;
     card.innerHTML = `
       <div class="unit-card__header">
         <div class="unit-card__icon">${unit.icon}</div>

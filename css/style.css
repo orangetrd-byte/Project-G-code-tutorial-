@@ -532,6 +532,54 @@ body.theme-light .badge-chip.unlocked {
   cursor: pointer;
   box-shadow: var(--shadow-card);
 }
+.unit-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.42;
+  background:
+    linear-gradient(115deg, transparent 0 55%, rgba(255,255,255,0.035) 55% 56%, transparent 56%),
+    repeating-linear-gradient(90deg, transparent 0 28px, rgba(127,219,202,0.05) 28px 29px);
+}
+.unit-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.28;
+}
+.unit-card > * {
+  position: relative;
+  z-index: 1;
+}
+.unit-card.track-cnc.unit-1::after {
+  background:
+    linear-gradient(90deg, transparent 58%, rgba(127,219,202,0.16) 58% 60%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0 22px, rgba(245,166,35,0.16) 22px 23px);
+}
+.unit-card.track-cnc.unit-2::after {
+  background:
+    radial-gradient(ellipse at 88% 70%, transparent 0 34%, rgba(127,219,202,0.18) 35% 36%, transparent 37%),
+    linear-gradient(135deg, transparent 0 58%, rgba(245,166,35,0.2) 58% 60%, transparent 60%);
+}
+.unit-card.track-cnc.unit-3::after {
+  background:
+    repeating-radial-gradient(circle at 86% 34%, transparent 0 13px, rgba(127,219,202,0.13) 14px 15px),
+    linear-gradient(90deg, transparent 0 66%, rgba(245,166,35,0.16) 66% 68%, transparent 68%);
+}
+.unit-card.track-cnc.unit-4::after {
+  background:
+    radial-gradient(circle at 84% 28%, transparent 0 15px, rgba(245,166,35,0.22) 16px 17px, transparent 18px),
+    radial-gradient(circle at 84% 28%, transparent 0 31px, rgba(127,219,202,0.16) 32px 33px, transparent 34px),
+    linear-gradient(0deg, transparent 0 66%, rgba(255,255,255,0.08) 66% 67%, transparent 67%);
+}
+.unit-card.track-printing.unit-1::after {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 18px, rgba(127,219,202,0.12) 18px 19px),
+    repeating-linear-gradient(90deg, transparent 0 18px, rgba(245,166,35,0.12) 18px 19px),
+    radial-gradient(circle at 86% 32%, rgba(127,219,202,0.18), transparent 24%);
+}
 body.theme-light .unit-card,
 body.theme-light .ref-card,
 body.theme-light .prog-unit-card,
@@ -548,6 +596,13 @@ body.theme-light .unit-card {
   border-color: #A9B9C7;
   box-shadow: 0 8px 22px rgba(35,52,68,0.09), inset 0 1px 0 rgba(255,255,255,0.95);
 }
+body.theme-light .unit-card::before {
+  opacity: 0.55;
+  background:
+    linear-gradient(115deg, transparent 0 55%, rgba(23,107,93,0.06) 55% 56%, transparent 56%),
+    repeating-linear-gradient(90deg, transparent 0 28px, rgba(23,107,93,0.045) 28px 29px);
+}
+body.theme-light .unit-card::after { opacity: 0.36; }
 .unit-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-float); }
 .unit-card:active { transform: translateY(0); }
 
