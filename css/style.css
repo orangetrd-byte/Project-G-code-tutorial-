@@ -423,6 +423,92 @@ body.theme-light .settings-help {
   color: #3E5264;
 }
 
+.motivation-panel {
+  padding: 1rem 1rem 0;
+}
+.motivation-row {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 0.75rem;
+}
+.motivation-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: 0.85rem;
+  min-width: 0;
+}
+body.theme-light .motivation-card {
+  background: #FFFFFF;
+  border-color: #B5C2CE;
+  box-shadow: 0 1px 4px rgba(24,42,56,0.08);
+}
+.motivation-card.complete {
+  border-color: rgba(47,191,113,0.7);
+}
+.motivation-kicker {
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-accent);
+  margin-bottom: 0.2rem;
+}
+.motivation-title {
+  font-family: var(--f-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--c-text);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.motivation-sub {
+  margin-top: 0.25rem;
+  color: var(--c-text-3);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+body.theme-light .motivation-sub { color: #3E5264; }
+.badge-strip {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.75rem 0 0.1rem;
+}
+.badge-chip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 30px;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--c-border);
+  color: var(--c-text-3);
+  background: rgba(255,255,255,0.03);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.badge-chip span {
+  font-family: var(--f-display);
+  font-size: 0.68rem;
+}
+.badge-chip.unlocked {
+  color: #FFFFFF;
+  border-color: rgba(47,191,113,0.7);
+  background: rgba(47,191,113,0.24);
+}
+body.theme-light .badge-chip {
+  color: #566A7B;
+  background: #FFFFFF;
+  border-color: #B5C2CE;
+}
+body.theme-light .badge-chip.unlocked {
+  color: #155D32;
+  background: #DDF5E6;
+  border-color: #65B982;
+}
+
 .section-label {
   padding: 1.25rem 1.25rem 0.5rem;
   font-size: 0.75rem;
@@ -1099,6 +1185,8 @@ body.setup-required .setup-complete-btn { display: block; }
   .top-bar__streak, .top-bar__xp { font-size: 0.78rem; }
   .hero-block { padding: 1.25rem 1rem 1rem; }
   .hero-title { font-size: 1.15rem; }
+  .motivation-panel { padding-inline: 0.75rem; }
+  .motivation-row { grid-template-columns: 1fr; gap: 0.55rem; }
   .unit-card { margin-inline: 0.75rem; }
   .lesson-content, .ref-scroll, .progress-scroll, .settings-scroll { padding: 0.85rem; }
   .nav-btn .icon { font-size: 1.4rem; }
@@ -1112,6 +1200,9 @@ body.setup-required .setup-complete-btn { display: block; }
   }
   .hero-block { padding: 1.15rem 1rem 0.95rem; }
   .hero-title { font-size: 1.12rem; margin-bottom: 0.75rem; }
+  .motivation-panel { padding-top: 0.75rem; }
+  .motivation-card { padding: 0.7rem; }
+  .badge-strip { padding-top: 0.55rem; }
   .section-label { padding-top: 0.85rem; }
   .unit-card__header { padding: 0.8rem 1rem 0.65rem; }
   .lesson-row { padding: 0.5rem 1rem; }

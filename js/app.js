@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.12.1';
+const APP_BUILD = '2026.06.12.2';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -754,6 +754,7 @@ function renderHome() {
   $('#xp-bar-next').textContent = done + '/' + total + ' lessons';
   $('#streak-val').textContent = '🔥 ' + State.streak;
   updateTrackSwitcher();
+  renderMotivation();
 
   units.forEach(unit => {
     const unitLessons = lessons.filter(l => l.unit === unit.id);
@@ -797,6 +798,50 @@ function renderHome() {
 }
 
 // ─── LESSON ENGINE ────────────────────────────────────────────
+function getNextLesson() {
+  return getLessons().find(lesson => !State.isLessonDone(lesson.id) && State.isLessonUnlocked(lesson)) || null;
+}
+
+function renderMotivation() {
+  const panel = $('#motivation-panel');
+  if (!panel) return;
+  const { done, total } = State.getTotalProgress();
+  const nextLesson = getNextLesson();
+  const today = new Date().toDateString();
+  const dailyDone = State.lastStudyDate === today;
+  const phaseNow = total > 0 ? Math.min(done + 1, total) : 0;
+  const nextTitle = nextLesson ? nextLesson.title : 'Track complete';
+  const nextMeta = nextLesson
+    ? `Unit ${nextLesson.unit} - Lesson ${nextLesson.lesson} - ${nextLesson.quiz.length} questions`
+    : 'Switch tracks or review the reference tab.';
+  const badges = [
+    { icon: 'OK', name: 'First Lesson', unlocked: done >= 1 },
+    { icon: '3x', name: '3 Day Streak', unlocked: State.streak >= 3 },
+    { icon: 'XP', name: '100 XP', unlocked: State.xp >= 100 }
+  ];
+
+  panel.innerHTML = `
+    <div class="motivation-row">
+      <div class="motivation-card ${dailyDone ? 'complete' : ''}">
+        <div class="motivation-kicker">Daily Goal</div>
+        <div class="motivation-title">${dailyDone ? 'Done for today' : 'Finish 1 lesson'}</div>
+        <div class="motivation-sub">${dailyDone ? 'Come back tomorrow to keep the streak alive.' : 'One short lesson keeps your streak moving.'}</div>
+      </div>
+      <div class="motivation-card next-card">
+        <div class="motivation-kicker">Phase ${phaseNow}/${total}</div>
+        <div class="motivation-title">${nextTitle}</div>
+        <div class="motivation-sub">${nextMeta}</div>
+      </div>
+    </div>
+    <div class="badge-strip">
+      ${badges.map(badge => `
+        <div class="badge-chip ${badge.unlocked ? 'unlocked' : 'locked'}">
+          <span>${badge.icon}</span>${badge.name}
+        </div>
+      `).join('')}
+    </div>`;
+}
+
 function startLesson(lessonId) {
   const lesson = getLessons().find(l => l.id === lessonId);
   if (!lesson) return;
