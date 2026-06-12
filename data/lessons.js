@@ -820,6 +820,743 @@ const TRACKS = {
   }
 };
 
+const LESSON_QUESTION_EXPANSIONS = {
+  "u1-l1": [
+    {
+      type: "multiple-choice",
+      question: "In this block, what does the semicolon start?\nG00 X1.000 Z0.100 ; move clear",
+      options: ["A tool change", "A comment", "A feedrate", "A coordinate"],
+      answer: 1,
+      explanation: "A semicolon starts a comment on many controls. The machine ignores the text after it."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this rapid move?\n___ X2.000 Z0.100",
+      options: ["G00", "M05", "F0.012", "T0101"],
+      answer: 0,
+      explanation: "G00 is the rapid positioning command. X and Z give the destination."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which word tells the machine what action or motion mode to use?\nN010 G01 X1.250 Z-0.500 F0.012",
+      options: ["N010", "G01", "X1.250", "F0.012"],
+      answer: 1,
+      explanation: "The G-word is the command. Here, G01 means controlled linear feed."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which part is the feedrate in this block?\nG01 X1.250 Z-0.500 F0.012",
+      options: ["G01", "X1.250", "Z-0.500", "F0.012"],
+      answer: 3,
+      explanation: "The F word sets feedrate. On many lathes this may be inches per revolution."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which line is only a comment?",
+      options: ["G00 X2.000 Z0.100", "(ROUGH TURN OD)", "M03 S800", "G01 Z-1.000 F0.012"],
+      answer: 1,
+      explanation: "Text inside parentheses is a comment on many controls. It helps the reader but does not cut metal."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the letter used for feedrate in this block:\nG01 X1.000 Z-0.250 ___0.010",
+      answer: "F",
+      hint: "Feedrate word",
+      explanation: "F is the feedrate word. It tells the machine how fast to make the controlled move."
+    },
+    {
+      type: "multiple-choice",
+      question: "What does one block of G-code usually represent?",
+      options: ["One complete part program", "One line of instructions", "Only a tool number", "Only a comment"],
+      answer: 1,
+      explanation: "A block is one line of G-code. The control reads blocks in order."
+    }
+  ],
+  "u1-l2": [
+    {
+      type: "multiple-choice",
+      question: "What is missing from this absolute-positioning setup line?\n___ G20 G40",
+      options: ["G90", "G91", "M30", "T0101"],
+      answer: 0,
+      explanation: "G90 selects absolute positioning, where positions are measured from program zero."
+    },
+    {
+      type: "multiple-choice",
+      question: "If Z0 is the part face, which value moves into the part?",
+      options: ["Z0.500", "Z0.100", "Z-0.500", "ZHOME"],
+      answer: 2,
+      explanation: "Negative Z moves into the part from the face on a typical lathe setup."
+    },
+    {
+      type: "multiple-choice",
+      question: "On most lathes in diameter mode, X2.000 means:",
+      options: ["2.000 inch diameter", "2.000 inch radius", "2.000 inches in Z", "2.000 RPM"],
+      answer: 0,
+      explanation: "Lathe X values commonly represent diameter, not radius."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the code for incremental positioning:",
+      answer: "G91",
+      hint: "Incremental mode measures from the current position",
+      explanation: "G91 is incremental positioning. Each move is measured from the current location."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which axis runs along the spindle centerline on a lathe?",
+      options: ["X", "Y", "Z", "E"],
+      answer: 2,
+      explanation: "Z runs along the spindle centerline. X controls diameter."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this coordinate move?\nG00 X2.000 ___0.100",
+      options: ["Z", "S", "M", "T"],
+      answer: 0,
+      explanation: "Z is the axis word for the position along the spindle centerline."
+    },
+    {
+      type: "multiple-choice",
+      question: "In absolute mode, X and Z positions are measured from:",
+      options: ["The previous line", "The program zero point", "The tool number", "The feed override knob"],
+      answer: 1,
+      explanation: "G90 absolute mode measures positions from program zero."
+    }
+  ],
+  "u1-l3": [
+    {
+      type: "multiple-choice",
+      question: "What does the O-number usually identify?\nO1001",
+      options: ["Program number", "Spindle speed", "Feedrate", "Tool offset"],
+      answer: 0,
+      explanation: "The O-number identifies the program."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from the end of this simple program?\n...\nM05\n___",
+      options: ["M30", "G91", "F0.012", "X0"],
+      answer: 0,
+      explanation: "M30 ends the program and rewinds it to the beginning."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which line turns the spindle off?",
+      options: ["M03", "M05", "M30", "G00"],
+      answer: 1,
+      explanation: "M05 turns the spindle off."
+    },
+    {
+      type: "multiple-choice",
+      question: "What does a safety block help prevent?",
+      options: ["Wrong leftover modal settings", "Operator login errors", "Network errors", "Low coolant level only"],
+      answer: 0,
+      explanation: "A safety block resets important modes so old modal states do not carry into the program."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the M-code that ends and rewinds a program:",
+      answer: "M30",
+      hint: "Common program ending code",
+      explanation: "M30 ends the program and returns it to the start."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which line is a tool description comment?",
+      options: ["(TOOL: T0101 OD ROUGH)", "G00 X2.000", "M03 S800", "G01 Z-1.000"],
+      answer: 0,
+      explanation: "Parentheses are commonly used for comments and descriptions."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this spindle start line?\nS800 ___",
+      options: ["M03", "G54", "G00", "F0.012"],
+      answer: 0,
+      explanation: "M03 starts the spindle clockwise. S800 sets the speed."
+    }
+  ],
+  "u2-l1": [
+    {
+      type: "multiple-choice",
+      question: "What should G00 usually be used for?",
+      options: ["Cutting at feedrate", "Positioning in clear space", "Threading", "Turning coolant off"],
+      answer: 1,
+      explanation: "G00 is rapid positioning. It should be used when the tool is clear of the part."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this rapid line?\nG00 X2.500 ___0.100",
+      options: ["Z", "F", "M", "S"],
+      answer: 0,
+      explanation: "Z0.100 gives the Z clearance position."
+    },
+    {
+      type: "multiple-choice",
+      question: "Why is G00 risky near the part?",
+      options: ["It moves at rapid speed", "It always turns off coolant", "It changes tool offsets", "It ends the program"],
+      answer: 0,
+      explanation: "Rapid speed leaves little time to react. Keep clearance before using G00."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which block is safest for approaching before a cut?",
+      options: ["G00 X0.500 Z-0.500", "G00 X2.500 Z0.100", "M30", "G91 X-5.000"],
+      answer: 1,
+      explanation: "X2.500 Z0.100 is a clearance position before feeding into the cut."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the rapid positioning code:",
+      answer: "G00",
+      hint: "Rapid traverse",
+      explanation: "G00 is rapid positioning."
+    },
+    {
+      type: "multiple-choice",
+      question: "If G00 is modal, what happens on the next line if no new motion code is given?",
+      options: ["G00 remains active", "The program ends", "The spindle reverses", "Feedrate doubles"],
+      answer: 0,
+      explanation: "Modal motion codes remain active until another motion code changes them."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which word in G00 X2.500 Z0.100 is the motion command?",
+      options: ["G00", "X2.500", "Z0.100", "None"],
+      answer: 0,
+      explanation: "G00 is the motion command. X and Z are coordinates."
+    }
+  ],
+  "u2-l2": [
+    {
+      type: "multiple-choice",
+      question: "What does G01 mean?",
+      options: ["Rapid move", "Linear feed move", "Arc clockwise", "End program"],
+      answer: 1,
+      explanation: "G01 is a controlled straight-line feed move."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this feed move?\nG01 Z-1.000 ___0.012",
+      options: ["F", "S", "M", "T"],
+      answer: 0,
+      explanation: "F sets the feedrate for a controlled G01 move."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which line is a controlled cutting move?",
+      options: ["G00 X2.000 Z0.100", "G01 Z-1.000 F0.012", "M30", "(ROUGH PASS)"],
+      answer: 1,
+      explanation: "G01 with a feedrate is used for controlled cutting moves."
+    },
+    {
+      type: "multiple-choice",
+      question: "Why should a feedrate be present before cutting?",
+      options: ["It controls cutting speed of the move", "It names the program", "It homes the machine", "It selects the tool"],
+      answer: 0,
+      explanation: "Feedrate controls how fast the tool feeds through material."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the linear feed code:",
+      answer: "G01",
+      hint: "Straight controlled move",
+      explanation: "G01 is the linear feed command."
+    },
+    {
+      type: "multiple-choice",
+      question: "In G01 X1.500 Z-0.750 F0.012, what does Z-0.750 describe?",
+      options: ["Spindle speed", "Z destination", "Tool number", "Coolant state"],
+      answer: 1,
+      explanation: "Z-0.750 is the destination along the Z axis."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which code would cancel G01 motion by switching back to rapid?",
+      options: ["G00", "M05", "M30", "T0101"],
+      answer: 0,
+      explanation: "G00 switches the active motion mode to rapid positioning."
+    }
+  ],
+  "u2-l3": [
+    {
+      type: "multiple-choice",
+      question: "What does G02 usually mean?",
+      options: ["Counterclockwise arc", "Clockwise arc", "Rapid move", "Program stop"],
+      answer: 1,
+      explanation: "G02 is clockwise circular interpolation."
+    },
+    {
+      type: "multiple-choice",
+      question: "What does G03 usually mean?",
+      options: ["Counterclockwise arc", "Clockwise arc", "Tool change", "Spindle off"],
+      answer: 0,
+      explanation: "G03 is counterclockwise circular interpolation."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this CCW arc line?\n___ X2.000 Z-0.500 R0.250 F0.008",
+      options: ["G03", "G00", "M03", "G90"],
+      answer: 0,
+      explanation: "G03 commands a counterclockwise arc."
+    },
+    {
+      type: "multiple-choice",
+      question: "In an arc block, what does R usually describe?",
+      options: ["Arc radius", "RPM", "Rapid mode", "Return point"],
+      answer: 0,
+      explanation: "R specifies the arc radius on controls that support R-format arcs."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the clockwise arc code:",
+      answer: "G02",
+      hint: "Clockwise circular move",
+      explanation: "G02 is the clockwise arc command."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which line is an arc move?",
+      options: ["G02 X1.000 Z-0.250 R0.125 F0.006", "G00 X2.000 Z0.100", "M05", "(ARC PASS)"],
+      answer: 0,
+      explanation: "G02 with endpoint coordinates and an R value defines an arc move."
+    },
+    {
+      type: "multiple-choice",
+      question: "Why should arc direction be checked carefully?",
+      options: ["Wrong direction cuts the wrong shape", "It changes the program number", "It always homes the machine", "It disables the tool offset"],
+      answer: 0,
+      explanation: "G02 and G03 cut opposite directions. Choosing the wrong one changes the path."
+    }
+  ],
+  "u3-l1": [
+    {
+      type: "multiple-choice",
+      question: "What does G96 control?",
+      options: ["Constant surface speed", "Rapid position", "End program", "Tool number"],
+      answer: 0,
+      explanation: "G96 turns on constant surface speed mode."
+    },
+    {
+      type: "multiple-choice",
+      question: "What does G97 control?",
+      options: ["Fixed RPM mode", "Incremental mode", "Thread pitch", "Coolant"],
+      answer: 0,
+      explanation: "G97 sets fixed spindle RPM mode."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this spindle line?\nG97 S800 ___",
+      options: ["M03", "G00", "F0.012", "X2.0"],
+      answer: 0,
+      explanation: "M03 starts the spindle clockwise after S sets the speed."
+    },
+    {
+      type: "multiple-choice",
+      question: "In G96 S400 M03, what does S400 represent?",
+      options: ["Surface speed target", "X position", "Feedrate", "Program number"],
+      answer: 0,
+      explanation: "With G96, S is the surface speed target."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the fixed RPM spindle mode code:",
+      answer: "G97",
+      hint: "Opposite of constant surface speed",
+      explanation: "G97 selects fixed RPM mode."
+    },
+    {
+      type: "multiple-choice",
+      question: "Why use a spindle speed limit with G96?",
+      options: ["To prevent excessive RPM near center", "To change the tool number", "To cancel comments", "To make G00 slower"],
+      answer: 0,
+      explanation: "CSS can increase RPM as diameter gets smaller, so a limit protects the machine and setup."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which M-code stops the spindle?",
+      options: ["M03", "M04", "M05", "M30"],
+      answer: 2,
+      explanation: "M05 stops the spindle."
+    }
+  ],
+  "u3-l2": [
+    {
+      type: "multiple-choice",
+      question: "What is G71 used for?",
+      options: ["Rough turning cycle", "Rapid positioning", "Spindle stop", "Program end"],
+      answer: 0,
+      explanation: "G71 is a rough turning cycle on many lathe controls."
+    },
+    {
+      type: "multiple-choice",
+      question: "Why use a roughing cycle?",
+      options: ["To remove bulk material using repeated passes", "To write comments", "To set the date", "To disable feedrate"],
+      answer: 0,
+      explanation: "Roughing cycles automate repeated material-removal passes."
+    },
+    {
+      type: "multiple-choice",
+      question: "What does the profile section of a roughing cycle describe?",
+      options: ["The final shape to rough toward", "The operator name", "The coolant tank", "The keyboard shortcut"],
+      answer: 0,
+      explanation: "The cycle follows a defined profile to rough the part shape."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this roughing call?\n___ U0.050 R0.020",
+      options: ["G71", "G00", "M30", "G54"],
+      answer: 0,
+      explanation: "G71 starts the rough turning cycle."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the rough turning cycle code:",
+      answer: "G71",
+      hint: "Lathe roughing cycle",
+      explanation: "G71 is the common OD/ID rough turning cycle."
+    },
+    {
+      type: "multiple-choice",
+      question: "Why leave finish stock during roughing?",
+      options: ["So a finish pass can clean the final size", "So comments run faster", "So the program ends early", "So the spindle stops"],
+      answer: 0,
+      explanation: "Roughing removes most material while leaving stock for a cleaner finish pass."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which is safer before starting a roughing cycle?",
+      options: ["Verify clearances and profile", "Ignore tool offsets", "Start inside the part", "Remove the safety block"],
+      answer: 0,
+      explanation: "Roughing cycles make repeated moves, so clearances and profile endpoints must be checked."
+    }
+  ],
+  "u3-l3": [
+    {
+      type: "multiple-choice",
+      question: "What is G76 used for?",
+      options: ["Threading cycle", "Rapid positioning", "Program rewind", "Bed leveling"],
+      answer: 0,
+      explanation: "G76 is a threading cycle on many lathe controls."
+    },
+    {
+      type: "multiple-choice",
+      question: "What does thread pitch describe?",
+      options: ["Distance from one thread to the next", "Spindle direction only", "Tool color", "Program number"],
+      answer: 0,
+      explanation: "Pitch is the distance between thread crests."
+    },
+    {
+      type: "multiple-choice",
+      question: "Why is spindle speed important during threading?",
+      options: ["The feed must synchronize with spindle rotation", "It changes comments", "It controls screen brightness", "It selects units"],
+      answer: 0,
+      explanation: "Threading must synchronize tool feed with spindle rotation to cut the correct pitch."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this threading cycle call?\n___ X0.900 Z-1.000 P... Q... F0.050",
+      options: ["G76", "G00", "M30", "G54"],
+      answer: 0,
+      explanation: "G76 calls the threading cycle."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the common lathe threading cycle code:",
+      answer: "G76",
+      hint: "Threading cycle",
+      explanation: "G76 is a common multi-pass threading cycle."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which value commonly represents thread lead or pitch in a G76 block?",
+      options: ["F value", "O number", "Comment text", "Tool icon"],
+      answer: 0,
+      explanation: "The F value commonly defines thread lead or pitch."
+    },
+    {
+      type: "multiple-choice",
+      question: "What should be checked before running a threading cycle?",
+      options: ["Thread pitch, start point, and clearance", "Only the app theme", "Only the program comment", "Only the line number"],
+      answer: 0,
+      explanation: "Threading has little room for error, so pitch, start point, and clearance matter."
+    }
+  ],
+  "u4-l1": [
+    {
+      type: "multiple-choice",
+      question: "In T0101, what does the first pair usually identify?",
+      options: ["Tool station", "Feedrate", "Program number", "Coolant state"],
+      answer: 0,
+      explanation: "The first pair commonly identifies the turret station or tool number."
+    },
+    {
+      type: "multiple-choice",
+      question: "In T0101, what does the second pair usually identify?",
+      options: ["Offset number", "Spindle speed", "Z axis", "Comment number"],
+      answer: 0,
+      explanation: "The second pair commonly identifies the geometry/wear offset number."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this tool call?\n___0101",
+      options: ["T", "F", "S", "G"],
+      answer: 0,
+      explanation: "T is the tool-call word."
+    },
+    {
+      type: "multiple-choice",
+      question: "Why are tool offsets important?",
+      options: ["They tell the control where the tool tip actually is", "They start the spindle", "They add comments", "They end the program"],
+      answer: 0,
+      explanation: "Offsets compensate for each tool's measured position."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the tool word letter in this call:\n___0202",
+      answer: "T",
+      hint: "Tool call word",
+      explanation: "T calls the tool and offset."
+    },
+    {
+      type: "multiple-choice",
+      question: "What can happen if the wrong offset is active?",
+      options: ["The tool can cut in the wrong place", "The comment color changes", "The program number changes", "The keyboard stops"],
+      answer: 0,
+      explanation: "Wrong offsets can move the tool to an unsafe or incorrect location."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which is a tool call?",
+      options: ["T0303", "G00", "M30", "(TOOL)"],
+      answer: 0,
+      explanation: "T0303 calls tool 03 with offset 03 on many lathes."
+    }
+  ],
+  "u4-l2": [
+    {
+      type: "multiple-choice",
+      question: "What does G54 usually represent?",
+      options: ["Work offset", "Rapid move", "Spindle stop", "Threading cycle"],
+      answer: 0,
+      explanation: "G54 is a work coordinate offset."
+    },
+    {
+      type: "multiple-choice",
+      question: "Why use a work offset?",
+      options: ["To tell the control where part zero is", "To turn on the fan", "To pick a font", "To skip all safety checks"],
+      answer: 0,
+      explanation: "A work offset connects program zero to the actual setup on the machine."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this common offset line?\n___ G20 G40",
+      options: ["G54", "M30", "F0.012", "T0101"],
+      answer: 0,
+      explanation: "G54 selects the first common work offset."
+    },
+    {
+      type: "multiple-choice",
+      question: "If G54 is wrong, what can happen?",
+      options: ["The whole program can be shifted to the wrong location", "Comments become active motion", "The app language changes", "The machine ignores all M-codes"],
+      answer: 0,
+      explanation: "An incorrect work offset shifts every programmed position."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the most common first work offset code:",
+      answer: "G54",
+      hint: "First work coordinate offset",
+      explanation: "G54 is the first common work coordinate offset."
+    },
+    {
+      type: "multiple-choice",
+      question: "Where is Z0 often set for a turned part?",
+      options: ["Finished part face", "Keyboard edge", "Coolant tank", "Tool holder label"],
+      answer: 0,
+      explanation: "Z0 is commonly set at the finished face of the part."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which line selects a work offset?",
+      options: ["G54", "M05", "T0101", "(OFFSET)"],
+      answer: 0,
+      explanation: "G54 selects a work coordinate offset."
+    },
+    {
+      type: "multiple-choice",
+      question: "What should be verified before pressing cycle start?",
+      options: ["Active work offset and tool offset", "Only the comment spelling", "Only the screen brightness", "Only the app build number"],
+      answer: 0,
+      explanation: "The active work offset and tool offset define where the tool will actually go."
+    }
+  ],
+  "p-u1-l1": [
+    {
+      type: "multiple-choice",
+      question: "In this print move, what does the semicolon start?\nG1 X50 Y50 ; travel to center",
+      options: ["Comment", "Temperature", "Extrusion", "Layer height"],
+      answer: 0,
+      explanation: "A semicolon starts a comment in many 3D printer G-code files."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this print move?\n___ X82.4 Y104.2 E0.036 F1800",
+      options: ["G1", "M104", "G28", "M30"],
+      answer: 0,
+      explanation: "G1 is the controlled move used for most printing paths."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which value controls nozzle position left/right on the bed?",
+      options: ["X", "E", "F", "M"],
+      answer: 0,
+      explanation: "X controls one horizontal bed direction."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which value controls nozzle position front/back on the bed?",
+      options: ["Y", "E", "S", "M"],
+      answer: 0,
+      explanation: "Y controls the other horizontal bed direction."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the letter used for extrusion amount:",
+      answer: "E",
+      hint: "Extruder axis",
+      explanation: "E is the extruder value in most slicer-generated G-code."
+    },
+    {
+      type: "multiple-choice",
+      question: "What does F1800 usually mean in printer G-code?",
+      options: ["Feedrate in mm/min", "Fan at 1800%", "Nozzle at 1800 C", "File number"],
+      answer: 0,
+      explanation: "F sets feedrate, usually in millimeters per minute for printer G-code."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which line is only a comment?",
+      options: [";TYPE:WALL-OUTER", "G1 X20 Y20 E0.5", "M104 S210", "G28"],
+      answer: 0,
+      explanation: "A line beginning with semicolon is a comment."
+    }
+  ],
+  "p-u1-l2": [
+    {
+      type: "multiple-choice",
+      question: "What is missing from this home command?\n___ ; home all axes",
+      options: ["G28", "G1", "M104", "M106"],
+      answer: 0,
+      explanation: "G28 homes the axes."
+    },
+    {
+      type: "multiple-choice",
+      question: "What does G29 often do?",
+      options: ["Runs bed leveling or probing", "Sets nozzle temperature", "Starts the fan", "Ends the print"],
+      answer: 0,
+      explanation: "G29 is commonly used for bed probing/leveling, depending on firmware."
+    },
+    {
+      type: "multiple-choice",
+      question: "Why home before printing?",
+      options: ["So the printer knows its axis positions", "To change filament color", "To turn off heaters", "To delete comments"],
+      answer: 0,
+      explanation: "Homing establishes known machine positions."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which axis is vertical on most 3D printers?",
+      options: ["Z", "X", "Y", "E"],
+      answer: 0,
+      explanation: "Z controls nozzle height above the bed."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the common command for homing all axes:",
+      answer: "G28",
+      hint: "Home command",
+      explanation: "G28 homes the axes."
+    },
+    {
+      type: "multiple-choice",
+      question: "What does a bed probe measure?",
+      options: ["Bed surface height or tilt", "Filament brand", "Screen size", "Wi-Fi strength"],
+      answer: 0,
+      explanation: "Probing measures the bed so the printer can compensate."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which line is a bed leveling command on many printers?",
+      options: ["G29", "M30", "G1 E5", "M05"],
+      answer: 0,
+      explanation: "G29 is commonly used for bed leveling/probing."
+    },
+    {
+      type: "multiple-choice",
+      question: "Why can G29 behavior vary?",
+      options: ["Firmware handles probing differently", "Comments change it", "The app theme changes it", "F always cancels it"],
+      answer: 0,
+      explanation: "Marlin, Klipper, and other firmware may implement probing differently."
+    }
+  ],
+  "p-u1-l3": [
+    {
+      type: "multiple-choice",
+      question: "What does M104 do?",
+      options: ["Set nozzle temperature and continue", "Set bed temperature and wait", "Home all axes", "Run bed leveling"],
+      answer: 0,
+      explanation: "M104 sets the hotend target and continues without waiting."
+    },
+    {
+      type: "multiple-choice",
+      question: "What does M109 do?",
+      options: ["Set nozzle temperature and wait", "Turn fan off", "Home Z only", "End the print"],
+      answer: 0,
+      explanation: "M109 waits until the hotend reaches the target temperature."
+    },
+    {
+      type: "multiple-choice",
+      question: "What does M140 do?",
+      options: ["Set bed temperature and continue", "Set nozzle temperature and wait", "Start extrusion", "Home all axes"],
+      answer: 0,
+      explanation: "M140 sets the bed temperature target and continues."
+    },
+    {
+      type: "multiple-choice",
+      question: "What is missing from this nozzle heat command?\nM104 ___210",
+      options: ["S", "X", "E", "F"],
+      answer: 0,
+      explanation: "S is used for the temperature setpoint in these commands."
+    },
+    {
+      type: "fill-blank",
+      question: "Type the bed temperature command that waits:",
+      answer: "M190",
+      hint: "Bed heat and wait",
+      explanation: "M190 sets bed temperature and waits."
+    },
+    {
+      type: "multiple-choice",
+      question: "Which command waits for the bed to heat?",
+      options: ["M190", "M104", "G28", "G1"],
+      answer: 0,
+      explanation: "M190 waits for the bed temperature target."
+    },
+    {
+      type: "multiple-choice",
+      question: "In M104 S215, what does S215 mean?",
+      options: ["Temperature target", "X position", "Extrusion amount", "Fan speed"],
+      answer: 0,
+      explanation: "S215 sets the target temperature to 215 C."
+    }
+  ]
+};
+
+Object.entries(LESSON_QUESTION_EXPANSIONS).forEach(([lessonId, additions]) => {
+  const lesson = [...LESSONS, ...PRINTING_LESSONS].find(item => item.id === lessonId);
+  if (!lesson) return;
+  lesson.quiz.push(...additions.slice(0, Math.max(0, 10 - lesson.quiz.length)));
+});
+
 // Export for use in app
 if (typeof module !== "undefined") {
   module.exports = { LESSONS, UNITS, PRINTING_LESSONS, PRINTING_UNITS, TRACKS };
