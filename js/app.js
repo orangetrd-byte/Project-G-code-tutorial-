@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.12.2';
+const APP_BUILD = '2026.06.12.3';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -26,6 +26,7 @@ const State = {
   currentStep: 0,       // 0 = theory, 1..n = quiz questions
   currentQuizAnswered: false,
   retryCurrentLesson: false,
+  lessonFinished: false,
   sessionCorrect: 0,
   sessionTotal: 0,
 
@@ -851,6 +852,7 @@ function startLesson(lessonId) {
   State.currentStep = 0;
   State.currentQuizAnswered = false;
   State.retryCurrentLesson = false;
+  State.lessonFinished = false;
   State.sessionCorrect = 0;
   State.sessionTotal = lesson.quiz.length;
 
@@ -863,6 +865,8 @@ function renderLessonStep() {
   const totalSteps = 1 + lesson.quiz.length; // theory + quizzes
   const step = State.currentStep;
   const isTheory = step === 0;
+  const actionBtn = $('#lesson-action-btn');
+  actionBtn.onclick = null;
 
   // Progress bar
   const pct = Math.round((step / totalSteps) * 100);
@@ -950,29 +954,31 @@ function renderQuiz(container, q, idx) {
     inp.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !State.currentQuizAnswered) checkFillBlank(q, inp);
     });
-
-    // Override the Check Answer button to trigger fill check
-    const btn = $('#lesson-action-btn');
-    btn.onclick = (e) => {
-      if (!State.currentQuizAnswered) { checkFillBlank(q, inp); return; }
-      handleLessonAction();
-    };
-    return; // skip default button binding below
   }
 }
 
 function checkFillBlank(q, inp) {
   const userVal = inp.value.trim().replace(/^G|^g/, match => match.toUpperCase());
   const expected = q.answer.trim();
-  const correct = userVal.toUpperCase() === expected.toUpperCase();
+  const normalizedUser = normalizeCodeAnswer(userVal);
+  const normalizedExpected = normalizeCodeAnswer(expected);
+  const correct = normalizedUser === normalizedExpected;
+  const usedShortGCode = correct && /^G[0-9]$/i.test(userVal) && /^G0[0-9]$/i.test(expected);
   inp.classList.add(correct ? 'correct' : 'wrong');
   inp.disabled = true;
   if (correct) State.sessionCorrect++;
   State.currentQuizAnswered = true;
   AudioFeedback.play(correct);
-  showExplanation(q.explanation);
+  showExplanation(q.explanation + (usedShortGCode ? ' G0 and G00 style codes are both used depending on the control or post. The leading zero form is common in teaching material because it is easier to scan.' : ''));
   setAnsweredAction(correct);
   showToast(correct ? '✅ Correct!' : `❌ Answer: ${q.answer}`, correct ? 'success' : 'error');
+}
+
+function normalizeCodeAnswer(value) {
+  return String(value)
+    .trim()
+    .toUpperCase()
+    .replace(/^G([0-9])$/, 'G0$1');
 }
 
 function setAnsweredAction(correct) {
@@ -1012,6 +1018,7 @@ function advanceStep() {
 
 function finishLesson() {
   const lesson = State.currentLesson;
+  State.lessonFinished = true;
   const wasLessonDone = State.isLessonDone(lesson.id);
   const beforeUnitProgress = State.getUnitProgress(lesson.unit);
   const xpEarned = State.completeLesson(lesson.id, State.sessionCorrect, State.sessionTotal);
@@ -1047,24 +1054,33 @@ function finishLesson() {
   $('#lesson-step-count').textContent = 'Done!';
   $('#lesson-action-btn').textContent = 'Back to Lessons';
   $('#lesson-action-btn').className = 'btn-primary accent-btn';
-  $('#lesson-action-btn').onclick = () => {
-    renderHome();
-    showScreen('screen-home');
-    resetLessonActionBtn();
-  };
 }
 
 function resetLessonActionBtn() {
   const btn = $('#lesson-action-btn');
-  btn.onclick = handleLessonAction;
+  btn.onclick = null;
 }
 
 function handleLessonAction() {
   if (!State.currentLesson) return;
+  if (State.lessonFinished) {
+    renderHome();
+    showScreen('screen-home');
+    State.lessonFinished = false;
+    return;
+  }
   if (State.retryCurrentLesson) {
     const lessonId = State.currentLesson.id;
     State.retryCurrentLesson = false;
     startLesson(lessonId);
+    return;
+  }
+  if (State.currentStep > 0 && !State.currentQuizAnswered) {
+    const q = State.currentLesson.quiz[State.currentStep - 1];
+    if (q?.type === 'fill-blank') {
+      const inp = $('#fill-input');
+      if (inp) checkFillBlank(q, inp);
+    }
     return;
   }
   if (State.currentStep === 0 || State.currentQuizAnswered) {
