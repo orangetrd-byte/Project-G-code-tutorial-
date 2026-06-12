@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.11-perfect-practice-required';
+const CACHE_VERSION = 'pgct-v2.12-retention-review';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [

@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.12.9';
+const APP_BUILD = '2026.06.12.10';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -21,6 +21,7 @@ const State = {
   completedLessons: [], // array of lesson ids
   completedReviews: [], // array of unit review ids
   lessonScores: {},     // { lessonId: { correct, total } }
+  weakQuestions: [],     // questions missed and due for focused review
 
   // Runtime only
   currentLesson: null,
@@ -43,6 +44,7 @@ const State = {
       completedLessons: [],
       completedReviews: [],
       lessonScores: {},
+      weakQuestions: [],
     };
   },
 
@@ -58,6 +60,7 @@ const State = {
     this.completedLessons = profile.completedLessons || [];
     this.completedReviews = profile.completedReviews || [];
     this.lessonScores = profile.lessonScores || {};
+    this.weakQuestions = profile.weakQuestions || [];
   },
 
   syncProfile() {
@@ -68,6 +71,7 @@ const State = {
       completedLessons: this.completedLessons,
       completedReviews: this.completedReviews,
       lessonScores: this.lessonScores,
+      weakQuestions: this.weakQuestions,
     };
   },
 
@@ -114,6 +118,7 @@ const State = {
         lastStudyDate: d.lastStudyDate || null,
         completedLessons: d.completedLessons || [],
         lessonScores: d.lessonScores || {},
+        weakQuestions: [],
       };
       this.trackId = 'cnc';
       this.setupComplete = false;
@@ -151,6 +156,52 @@ const State = {
   reviewId(unitId) { return `${this.trackId}-unit-${unitId}-review`; },
 
   isUnitReviewDone(unitId) { return this.completedReviews.includes(this.reviewId(unitId)); },
+
+  questionKey(q) {
+    return `${this.trackId}|${String(q.question || '').trim()}|${String(q.answer || '').trim()}`;
+  },
+
+  trackWeakQuestion(q, lesson = this.currentLesson) {
+    const key = this.questionKey(q);
+    const existing = this.weakQuestions.find(item => item.key === key);
+    const snapshot = {
+      ...q,
+      sourceLessonId: lesson?.id || null,
+      sourceUnit: lesson?.unit || null,
+      sourceTitle: lesson?.title || 'Practice'
+    };
+    if (existing) {
+      existing.misses += 1;
+      existing.lastMissed = Date.now();
+      existing.question = snapshot;
+    } else {
+      this.weakQuestions.push({
+        key,
+        misses: 1,
+        lastMissed: Date.now(),
+        question: snapshot
+      });
+    }
+    this.weakQuestions = this.weakQuestions
+      .sort((a, b) => (b.misses - a.misses) || (b.lastMissed - a.lastMissed))
+      .slice(0, 30);
+    this.save();
+  },
+
+  clearWeakQuestion(q) {
+    const key = this.questionKey(q);
+    const before = this.weakQuestions.length;
+    this.weakQuestions = this.weakQuestions.filter(item => item.key !== key);
+    if (this.weakQuestions.length !== before) this.save();
+  },
+
+  completeWeakReview(correct, total) {
+    const bonus = Math.max(5, Math.round((correct / Math.max(total, 1)) * 15));
+    this.xp += bonus;
+    this.updateStreak();
+    this.save();
+    return bonus;
+  },
 
   updateStreak() {
     const today = new Date().toDateString();
@@ -846,6 +897,7 @@ function renderMotivation() {
   if (!panel) return;
   const { done, total } = State.getTotalProgress();
   const nextLesson = getNextLesson();
+  const weakCount = State.weakQuestions.length;
   const today = new Date().toDateString();
   const dailyDone = State.lastStudyDate === today;
   const phaseNow = total > 0 ? Math.min(done + 1, total) : 0;
@@ -872,6 +924,15 @@ function renderMotivation() {
         <div class="motivation-sub">${nextMeta}</div>
       </div>
     </div>
+    ${weakCount > 0 ? `
+      <button class="weak-review-card" type="button" id="weak-review-btn">
+        <span class="weak-review-card__mark">!</span>
+        <span>
+          <strong>${weakCount} weak spot${weakCount === 1 ? '' : 's'} ready</strong>
+          <em>Quick review of questions you missed before they fade.</em>
+        </span>
+      </button>
+    ` : ''}
     <div class="badge-strip">
       ${badges.map(badge => `
         <div class="badge-chip ${badge.unlocked ? 'unlocked' : 'locked'}">
@@ -879,6 +940,7 @@ function renderMotivation() {
         </div>
       `).join('')}
     </div>`;
+  $('#weak-review-btn')?.addEventListener('click', startWeakReview);
 }
 
 function startLesson(lessonId) {
@@ -936,29 +998,79 @@ function startUnitReview(unitId, questions = null) {
 }
 
 function buildUnitReviewQuestions(unitId) {
-  return getLessons()
+  const lessonBuckets = getLessons()
     .filter(lesson => lesson.unit === unitId)
-    .flatMap(lesson => lesson.quiz.map(q => ({ ...q })))
-    .slice(0, 10);
+    .map(lesson => lesson.quiz.map(q => ({
+      ...q,
+      sourceLessonId: lesson.id,
+      sourceTitle: lesson.title,
+      sourceUnit: lesson.unit
+    })));
+  const mixed = [];
+  let round = 0;
+  while (mixed.length < 10 && lessonBuckets.some(bucket => bucket[round])) {
+    lessonBuckets.forEach(bucket => {
+      if (bucket[round] && mixed.length < 10) mixed.push({ ...bucket[round] });
+    });
+    round++;
+  }
+  return mixed;
+}
+
+function startWeakReview() {
+  if (State.weakQuestions.length === 0) {
+    showToast('No weak spots yet.', 'success');
+    return;
+  }
+  const questions = State.weakQuestions
+    .slice()
+    .sort((a, b) => (b.misses - a.misses) || (b.lastMissed - a.lastMissed))
+    .slice(0, 10)
+    .map(item => ({ ...item.question, weakKey: item.key }));
+
+  State.currentLesson = {
+    id: 'weak-review',
+    unit: 'Review',
+    lesson: 'Weak Spots',
+    title: 'Weak Spot Review',
+    icon: '!',
+    xp: 15,
+    theory: '',
+    visual: '',
+    quiz: questions
+  };
+  State.currentReviewUnit = null;
+  State.currentMode = 'weak-review';
+  State.currentStep = 1;
+  State.currentQuizAnswered = false;
+  State.retryCurrentLesson = false;
+  State.lessonFinished = false;
+  State.missedQuestions = [];
+  State.practiceQuestions = null;
+  State.sessionCorrect = 0;
+  State.sessionTotal = questions.length;
+
+  renderLessonStep();
+  showScreen('screen-lesson');
 }
 
 function getActiveQuestions(lesson = State.currentLesson) {
   if (!lesson) return [];
-  if (State.currentMode === 'lesson') return State.practiceQuestions || lesson.quiz.slice(0, 3);
+  if (State.currentMode === 'lesson') return State.practiceQuestions || lesson.quiz.slice(0, 5);
   return lesson.quiz;
 }
 
 function renderLessonStep() {
   const lesson = State.currentLesson;
   const activeQuestions = getActiveQuestions(lesson);
-  const totalSteps = State.currentMode === 'review' ? activeQuestions.length : 1 + activeQuestions.length;
+  const totalSteps = isReviewLikeMode() ? activeQuestions.length : 1 + activeQuestions.length;
   const step = State.currentStep;
   const isTheory = State.currentMode === 'lesson' && step === 0;
   const actionBtn = $('#lesson-action-btn');
   actionBtn.onclick = null;
 
   // Progress bar
-  const pct = State.currentMode === 'review'
+  const pct = isReviewLikeMode()
     ? Math.round(((step - 1) / totalSteps) * 100)
     : Math.round((step / totalSteps) * 100);
   $('#lesson-progress-fill').style.width = pct + '%';
@@ -997,7 +1109,7 @@ function renderQuiz(container, q, idx) {
   if (q.type === 'multiple-choice') {
     const letters = ['A','B','C','D'];
     div.innerHTML = `
-      <div class="step-label">${State.currentMode === 'lesson' ? 'Practice Check' : 'Unit Review'} · Question ${idx + 1}</div>
+      <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
       <div class="quiz-question">${q.question}</div>
       <div class="options-list">
         ${q.options.map((opt, i) => `
@@ -1020,8 +1132,13 @@ function renderQuiz(container, q, idx) {
           else if (i === chosen && !correct) b.classList.add('wrong');
           b.disabled = true;
         });
-        if (correct) State.sessionCorrect++;
-        else State.missedQuestions.push(q);
+        if (correct) {
+          State.sessionCorrect++;
+          if (State.currentMode === 'weak-review') State.clearWeakQuestion(q);
+        } else {
+          State.missedQuestions.push(q);
+          State.trackWeakQuestion(q);
+        }
         State.currentQuizAnswered = true;
         AudioFeedback.play(correct);
         showExplanation(q.explanation);
@@ -1032,7 +1149,7 @@ function renderQuiz(container, q, idx) {
 
   } else if (q.type === 'fill-blank') {
     div.innerHTML = `
-      <div class="step-label">${State.currentMode === 'lesson' ? 'Practice Check' : 'Unit Review'} · Question ${idx + 1}</div>
+      <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
       <div class="quiz-question">${q.question}</div>
       <div class="fill-blank-wrap">
         <input type="text" class="fill-blank-input" id="fill-input" 
@@ -1048,6 +1165,16 @@ function renderQuiz(container, q, idx) {
       if (e.key === 'Enter' && !State.currentQuizAnswered) checkFillBlank(q, inp);
     });
   }
+}
+
+function isReviewLikeMode() {
+  return State.currentMode === 'review' || State.currentMode === 'weak-review';
+}
+
+function getQuizModeLabel() {
+  if (State.currentMode === 'lesson') return 'Practice Check';
+  if (State.currentMode === 'weak-review') return 'Weak Spot Review';
+  return 'Unit Review';
 }
 
 function getAnswerInputMode(q) {
@@ -1072,8 +1199,13 @@ function checkFillBlank(q, inp) {
   const usedShortGCode = correct && /^G[0-9]$/i.test(userVal) && /^G0[0-9]$/i.test(expected);
   inp.classList.add(correct ? 'correct' : 'wrong');
   inp.disabled = true;
-  if (correct) State.sessionCorrect++;
-  else State.missedQuestions.push(q);
+  if (correct) {
+    State.sessionCorrect++;
+    if (State.currentMode === 'weak-review') State.clearWeakQuestion(q);
+  } else {
+    State.missedQuestions.push(q);
+    State.trackWeakQuestion(q);
+  }
   State.currentQuizAnswered = true;
   AudioFeedback.play(correct);
   showExplanation(q.explanation + (usedShortGCode ? ' G0 and G00 style codes are both used depending on the control or post. The leading zero form is common in teaching material because it is easier to scan.' : ''));
@@ -1097,7 +1229,7 @@ function setAnsweredAction(correct) {
     btn.className = 'btn-primary';
     return;
   }
-  if (State.currentMode === 'review') {
+  if (isReviewLikeMode()) {
     btn.textContent = isLastStep() ? 'Finish Review' : 'Next →';
     btn.className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
     return;
@@ -1118,9 +1250,9 @@ function isLastStep() {
 
 function advanceStep() {
   State.currentStep++;
-  const totalSteps = State.currentMode === 'review' ? getActiveQuestions().length : 1 + getActiveQuestions().length;
+  const totalSteps = isReviewLikeMode() ? getActiveQuestions().length : 1 + getActiveQuestions().length;
 
-  if ((State.currentMode === 'review' && State.currentStep > totalSteps) ||
+  if ((isReviewLikeMode() && State.currentStep > totalSteps) ||
       (State.currentMode === 'lesson' && State.currentStep >= totalSteps)) {
     finishLesson();
   } else {
@@ -1134,6 +1266,10 @@ function finishLesson() {
   State.lessonFinished = true;
   if (State.currentMode === 'review') {
     finishUnitReview();
+    return;
+  }
+  if (State.currentMode === 'weak-review') {
+    finishWeakReview();
     return;
   }
   if (State.missedQuestions.length > 0) {
@@ -1194,6 +1330,53 @@ function showLessonPracticeRetry() {
   State.lessonFinished = true;
 }
 
+function finishWeakReview() {
+  const missed = State.missedQuestions.length;
+  const content = $('#lesson-content');
+
+  if (missed > 0) {
+    content.innerHTML = `
+      <div class="complete-screen review-retry-screen">
+        <div class="complete-icon">↻</div>
+        <div class="complete-title">Keep These Warm</div>
+        <div class="complete-subtitle">${missed} weak spot${missed === 1 ? '' : 's'} need another pass.</div>
+        <div class="xp-badge">${State.sessionCorrect}/${State.sessionTotal} corrected</div>
+      </div>`;
+    $('#lesson-progress-fill').style.width = '100%';
+    $('#lesson-step-count').textContent = 'Review';
+    $('#lesson-action-btn').textContent = 'Retry Weak Spots';
+    $('#lesson-action-btn').className = 'btn-primary accent-btn';
+    State.lessonFinished = true;
+    return;
+  }
+
+  const xpEarned = State.completeWeakReview(State.sessionCorrect, State.sessionTotal);
+  AudioFeedback.lessonComplete();
+  content.innerHTML = `
+    <div class="complete-screen">
+      <div class="complete-icon">✓</div>
+      <div class="complete-title">Weak Spots Cleared</div>
+      <div class="complete-subtitle">Those questions will stay out of review until you miss them again.</div>
+      <div class="xp-badge">+${xpEarned} XP earned</div>
+      <div class="stat-row">
+        <div class="stat-chip">
+          <div class="stat-chip__val">${State.sessionCorrect}/${State.sessionTotal}</div>
+          <div class="stat-chip__lbl">Correct</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-chip__val">${State.weakQuestions.length}</div>
+          <div class="stat-chip__lbl">Weak Spots</div>
+        </div>
+      </div>
+    </div>`;
+
+  $('#lesson-progress-fill').style.width = '100%';
+  $('#lesson-step-count').textContent = 'Done!';
+  $('#lesson-action-btn').textContent = 'Back to Lessons';
+  $('#lesson-action-btn').className = 'btn-primary accent-btn';
+  State.lessonFinished = true;
+}
+
 function finishUnitReview() {
   const lesson = State.currentLesson;
   const missed = State.missedQuestions.length;
@@ -1249,6 +1432,17 @@ function resetLessonActionBtn() {
 function handleLessonAction() {
   if (!State.currentLesson) return;
   if (State.lessonFinished) {
+    if (State.currentMode === 'weak-review' && State.missedQuestions.length > 0) {
+      State.currentLesson.quiz = State.missedQuestions;
+      State.missedQuestions = [];
+      State.currentStep = 1;
+      State.currentQuizAnswered = false;
+      State.lessonFinished = false;
+      State.sessionCorrect = 0;
+      State.sessionTotal = State.currentLesson.quiz.length;
+      renderLessonStep();
+      return;
+    }
     if (State.currentMode === 'review' && State.missedQuestions.length > 0) {
       startUnitReview(State.currentReviewUnit, State.missedQuestions);
       return;
