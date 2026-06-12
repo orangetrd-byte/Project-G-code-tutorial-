@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.6-unit-review-flow';
+const CACHE_VERSION = 'pgct-v2.7-progress-light-polish';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
