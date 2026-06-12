@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.9-unit-background-designs';
+const CACHE_VERSION = 'pgct-v2.10-lesson-practice-checks';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [

@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.12.7';
+const APP_BUILD = '2026.06.12.8';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -894,7 +894,7 @@ function startLesson(lessonId) {
   State.lessonFinished = false;
   State.missedQuestions = [];
   State.sessionCorrect = 0;
-  State.sessionTotal = 0;
+  State.sessionTotal = getActiveQuestions(lesson).length;
 
   renderLessonStep();
   showScreen('screen-lesson');
@@ -939,18 +939,26 @@ function buildUnitReviewQuestions(unitId) {
     .slice(0, 10);
 }
 
+function getActiveQuestions(lesson = State.currentLesson) {
+  if (!lesson) return [];
+  return State.currentMode === 'lesson' ? lesson.quiz.slice(0, 3) : lesson.quiz;
+}
+
 function renderLessonStep() {
   const lesson = State.currentLesson;
-  const totalSteps = State.currentMode === 'review' ? lesson.quiz.length : 1;
+  const activeQuestions = getActiveQuestions(lesson);
+  const totalSteps = State.currentMode === 'review' ? activeQuestions.length : 1 + activeQuestions.length;
   const step = State.currentStep;
-  const isTheory = State.currentMode === 'lesson';
+  const isTheory = State.currentMode === 'lesson' && step === 0;
   const actionBtn = $('#lesson-action-btn');
   actionBtn.onclick = null;
 
   // Progress bar
-  const pct = State.currentMode === 'review' ? Math.round(((step - 1) / totalSteps) * 100) : 0;
+  const pct = State.currentMode === 'review'
+    ? Math.round(((step - 1) / totalSteps) * 100)
+    : Math.round((step / totalSteps) * 100);
   $('#lesson-progress-fill').style.width = pct + '%';
-  $('#lesson-step-count').textContent = State.currentMode === 'review' ? `${step}/${totalSteps}` : '0/1';
+  $('#lesson-step-count').textContent = `${step}/${totalSteps}`;
 
   const content = $('#lesson-content');
   content.innerHTML = '';
@@ -963,13 +971,13 @@ function renderLessonStep() {
         <div class="theory-body">${lesson.theory}</div>
         ${Visuals.render(lesson.visual)}
       </div>`;
-    $('#lesson-action-btn').textContent = 'Complete Lesson →';
+    $('#lesson-action-btn').textContent = 'Start Practice →';
     $('#lesson-action-btn').disabled = false;
     $('#lesson-action-btn').className = 'btn-primary';
     State.currentQuizAnswered = true; // theory always "answered"
   } else {
     const qIdx = step - 1;
-    const q = lesson.quiz[qIdx];
+    const q = activeQuestions[qIdx];
     renderQuiz(content, q, qIdx);
     $('#lesson-action-btn').textContent = 'Check Answer';
     $('#lesson-action-btn').disabled = false;
@@ -985,7 +993,7 @@ function renderQuiz(container, q, idx) {
   if (q.type === 'multiple-choice') {
     const letters = ['A','B','C','D'];
     div.innerHTML = `
-      <div class="step-label">Unit Review · Question ${idx + 1}</div>
+      <div class="step-label">${State.currentMode === 'lesson' ? 'Practice Check' : 'Unit Review'} · Question ${idx + 1}</div>
       <div class="quiz-question">${q.question}</div>
       <div class="options-list">
         ${q.options.map((opt, i) => `
@@ -1020,7 +1028,7 @@ function renderQuiz(container, q, idx) {
 
   } else if (q.type === 'fill-blank') {
     div.innerHTML = `
-      <div class="step-label">Unit Review · Question ${idx + 1}</div>
+      <div class="step-label">${State.currentMode === 'lesson' ? 'Practice Check' : 'Unit Review'} · Question ${idx + 1}</div>
       <div class="quiz-question">${q.question}</div>
       <div class="fill-blank-wrap">
         <input type="text" class="fill-blank-input" id="fill-input" 
@@ -1065,7 +1073,7 @@ function normalizeCodeAnswer(value) {
 function setAnsweredAction(correct) {
   const btn = $('#lesson-action-btn');
   if (!btn) return;
-  State.retryCurrentLesson = State.currentMode === 'lesson' && isLastStep() && !correct;
+  State.retryCurrentLesson = false;
   if (State.retryCurrentLesson) {
     btn.textContent = 'Close, Try Again';
     btn.className = 'btn-primary';
@@ -1087,12 +1095,12 @@ function showExplanation(text) {
 }
 
 function isLastStep() {
-  return State.currentStep >= State.currentLesson.quiz.length;
+  return State.currentStep >= getActiveQuestions().length;
 }
 
 function advanceStep() {
   State.currentStep++;
-  const totalSteps = State.currentMode === 'review' ? State.currentLesson.quiz.length : 1;
+  const totalSteps = State.currentMode === 'review' ? getActiveQuestions().length : 1 + getActiveQuestions().length;
 
   if ((State.currentMode === 'review' && State.currentStep > totalSteps) ||
       (State.currentMode === 'lesson' && State.currentStep >= totalSteps)) {
@@ -1110,8 +1118,6 @@ function finishLesson() {
     finishUnitReview();
     return;
   }
-  State.sessionCorrect = 1;
-  State.sessionTotal = 1;
   const wasLessonDone = State.isLessonDone(lesson.id);
   const beforeUnitProgress = State.getUnitProgress(lesson.unit);
   const xpEarned = State.completeLesson(lesson.id, State.sessionCorrect, State.sessionTotal);
@@ -1129,8 +1135,8 @@ function finishLesson() {
       <div class="xp-badge">+${xpEarned} XP earned</div>
       <div class="stat-row">
         <div class="stat-chip">
-          <div class="stat-chip__val">${lesson.unit}.${lesson.lesson}</div>
-          <div class="stat-chip__lbl">Phase</div>
+          <div class="stat-chip__val">${State.sessionCorrect}/${State.sessionTotal}</div>
+          <div class="stat-chip__lbl">Correct</div>
         </div>
         <div class="stat-chip">
           <div class="stat-chip__val">${State.streak}</div>
