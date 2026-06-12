@@ -1,0 +1,127 @@
+# Project G-Code Tutorial Handoff
+
+## Links
+
+- Live app: https://orangetrd-byte.github.io/Project-G-code-tutorial-/
+- Repository: https://github.com/orangetrd-byte/Project-G-code-tutorial-
+
+## Current App Summary
+
+Project G-Code Tutorial is a browser-based, installable PWA for learning CNC and 3D printer G-code. It is built with vanilla HTML, CSS, and JavaScript. There is no framework, no npm build step, no backend, and no database. The app is intended to stay simple enough to host on GitHub Pages while still feeling like a mobile learning app.
+
+The current learning model is similar to Duolingo or Mimo:
+
+- Short lesson theory
+- Practice questions
+- Immediate right/wrong feedback
+- Explanations after answers
+- XP and streak tracking
+- Locked progression
+- Unit reviews
+- Weak Spot Review for missed questions
+
+## Current Stack
+
+- `index.html` - app shell and screen containers
+- `css/style.css` - full visual system and responsive layout
+- `js/app.js` - state, navigation, lessons, quiz engine, audio, settings, reviews
+- `data/lessons.js` - CNC and 3D printing curriculum data
+- `sw.js` - PWA cache
+- `manifest.json` - install metadata
+
+## Current Build State
+
+- App build: `2026.06.12.11`
+- Service worker cache: `pgct-v2.13-expanded-cnc-path`
+- CNC path: 5 units / 14 lessons
+- 3D printing path: 1 unit / 3 lessons
+- Latest pushed commit at handoff time: `cf78faf` - `Expand CNC curriculum path`
+
+## What Works Well
+
+- The app is easy to open and review through GitHub Pages.
+- The PWA structure is lightweight and offline-capable.
+- CNC and 3D printing are separate tracks with separate progress.
+- Settings include language, theme, and build number.
+- Light and dark themes exist.
+- Startup loading animation and answer sounds exist.
+- Lesson unlocks now require correct practice completion.
+- Missed questions are tracked as weak spots.
+- Weak Spot Review prompts the learner to revisit missed material.
+- Unit reviews mix questions across lessons instead of only pulling from the first lesson.
+- Numeric fill-in answers request numeric or decimal keyboards on mobile.
+
+## Recent Important Changes
+
+- Added weak-question retention tracking.
+- Added Home screen Weak Spot Review prompt.
+- Increased lesson practice checks from 3 to 5 questions.
+- Added beginner-style questions like missing-code and semicolon/comment meaning.
+- Added Unit 5: Inspection & Adjustment.
+- Added lessons for measuring parts, wear offsets, program edits, single block, and dry run.
+- Added a Unit 5 card background treatment.
+- Verified GitHub Pages served the latest build after deployment.
+
+## Current Strengths
+
+- Strong early learning loop.
+- Good fit for mobile browser use.
+- Practical CNC content, not generic textbook wording.
+- Good zero-dependency architecture for a small educational PWA.
+- Easy for outside reviewers to test without installing tools.
+- Retention direction is now started with weak-spot review.
+
+## Current Gaps
+
+- 3D printing track is still much shorter than CNC.
+- Lesson screen and completion screen polish need another pass.
+- Quiz types are still limited to multiple choice and fill-in.
+- Reference tab should be expanded into a stronger shop cheat sheet.
+- Progress screen should eventually show weak areas and mastery.
+- Some older text/emoji encoding artifacts are visible in source and may need cleanup later.
+- No native Android/iPhone wrapper yet.
+
+## Recommended Next Priorities
+
+1. Expand the 3D printing track so it does not feel like a placeholder.
+2. Add more question formats:
+   - block ordering
+   - missing-code selection
+   - unsafe-code spotting
+   - matching code to meaning
+   - choose the safest line
+3. Polish the lesson and completion screens.
+4. Expand Reference with more G-codes, M-codes, tooling, offset, and printer code entries.
+5. Improve Progress to show weak spots, review due, unit mastery, and track-specific stats.
+6. Clean source encoding artifacts when there is time for a careful content pass.
+7. Once browser app feels polished, wrap natively for Android/iPhone.
+
+## Review Notes For Others
+
+Use the live link first:
+
+https://orangetrd-byte.github.io/Project-G-code-tutorial-/
+
+Suggested review checklist:
+
+- Does the app fit the screen on mobile?
+- Is the text readable in light and dark mode?
+- Does the learning path feel motivating?
+- Are lesson explanations clear enough for a beginner?
+- Are CNC and 3D printing concepts kept separate?
+- Do wrong answers make the learner understand what to fix?
+- Does Weak Spot Review make sense?
+- Do unit cards and lesson screens feel polished enough?
+- What question types would make the app more engaging?
+
+## Architecture Cautions
+
+- Keep plain script loading:
+  - `data/lessons.js`
+  - `js/app.js`
+- Do not convert to modules unless the global data pattern is rewritten intentionally.
+- Keep `.codex-remote-attachments/` ignored.
+- Bump both `APP_BUILD` and `CACHE_VERSION` when changing deployed app behavior.
+- Avoid adding a framework unless there is a clear reason.
+- Keep browser/PWA behavior stable before starting native wrapper work.
+
