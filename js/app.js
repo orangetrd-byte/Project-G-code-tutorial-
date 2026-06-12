@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.12.10';
+const APP_BUILD = '2026.06.12.11';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {

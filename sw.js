@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.12-retention-review';
+const CACHE_VERSION = 'pgct-v2.13-expanded-cnc-path';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [

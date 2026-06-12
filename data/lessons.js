@@ -658,6 +658,100 @@ G56   ; Work offset 3</pre>
         explanation: "G54 is the first — and most commonly used — work coordinate offset register. It's the default starting point for most lathe programs."
       }
     ]
+  },
+
+  // ─── UNIT 5: INSPECTION & ADJUSTMENT ───────────────────────
+  {
+    id: "u5-l1",
+    unit: 5,
+    unitName: "Inspection & Adjustment",
+    lesson: 1,
+    title: "Measure, Compare, Adjust",
+    icon: "CHK",
+    xp: 20,
+    theory: `
+      <p>After the first part, the job is not done. You measure the part, compare it to print,
+      then adjust the program or wear offset.</p>
+      <pre>Target OD: 1.0000
+Measured OD: 1.0020
+Correction: remove 0.0020 from diameter</pre>
+      <p>On a lathe in diameter mode, X wear adjustments are usually entered as diameter changes.
+      If the OD is too big by 0.0020, adjust X wear by -0.0020.</p>
+      <p class="callout tip">Make one small correction, rerun, and measure again.</p>
+    `,
+    visual: "tool-offsets",
+    quiz: [
+      { type: "multiple-choice", question: "Target OD is 1.0000 and measured OD is 1.0020. What is the part?", options: ["0.0020 oversized", "0.0020 undersized", "Perfect size", "Missing Z offset"], answer: 0, explanation: "The measured diameter is larger than target by 0.0020." },
+      { type: "multiple-choice", question: "In diameter mode, if an OD is too big by 0.0020, the usual X wear correction is:", options: ["X +0.0020", "X -0.0020", "Z -0.0020", "F +0.0020"], answer: 1, explanation: "A negative X wear correction makes the tool cut a smaller diameter." },
+      { type: "fill-blank", question: "Measured OD is 2.0050, target is 2.0000. How far oversized is it?\n___", answer: "0.0050", hint: "Measured minus target", explanation: "2.0050 - 2.0000 = 0.0050 oversized." },
+      { type: "multiple-choice", question: "Which offset is normally used for small size corrections after touch-off?", options: ["Wear offset", "Program number", "Spindle override", "Coolant switch"], answer: 0, explanation: "Wear offsets are meant for small tool-position corrections." },
+      { type: "multiple-choice", question: "Why make one correction at a time?", options: ["So you know what changed the result", "Because G-code cannot have comments", "Because M03 only works once", "To avoid using G54"], answer: 0, explanation: "One change at a time makes troubleshooting clear." },
+      { type: "fill-blank", question: "Type the common offset type used for small corrections:\n____ offset", answer: "wear", hint: "Small adjustment page", explanation: "Wear offsets are commonly used for small corrections after measuring parts." },
+      { type: "multiple-choice", question: "A Z length is 0.010 too long. Which direction is the correction about?", options: ["Z position", "Spindle RPM", "Program number", "Coolant"], answer: 0, explanation: "Length errors are corrected in the Z direction or Z wear offset." },
+      { type: "multiple-choice", question: "What is the safest habit before changing offsets?", options: ["Confirm the measured error and sign", "Guess and rerun", "Change every tool", "Skip inspection"], answer: 0, explanation: "Most offset mistakes come from using the wrong sign or wrong tool offset." },
+      { type: "multiple-choice", question: "If a bore is too small, what usually needs to happen?", options: ["Move the boring tool to cut larger", "Lower spindle speed only", "Cancel M30", "Remove all comments"], answer: 0, explanation: "A boring tool must cut farther out to make the inside diameter larger." },
+      { type: "multiple-choice", question: "What should you do after making a wear offset change?", options: ["Measure the next part", "Delete the program", "Change every offset", "Ignore the print"], answer: 0, explanation: "Always verify the correction by cutting and measuring again." }
+    ]
+  },
+
+  {
+    id: "u5-l2",
+    unit: 5,
+    unitName: "Inspection & Adjustment",
+    lesson: 2,
+    title: "Wear Offsets vs Program Edits",
+    icon: "ADJ",
+    xp: 20,
+    theory: `
+      <p>Use wear offsets for small tool corrections. Use program edits when the toolpath itself is wrong.</p>
+      <pre>Wear offset: part is 0.0015 oversize
+Program edit: groove is in the wrong Z location</pre>
+      <p>Offsets are fast and reversible. Program edits change the path for every future part.</p>
+    `,
+    visual: "work-offsets",
+    quiz: [
+      { type: "multiple-choice", question: "A turned diameter is 0.001 high but the path is correct. Best first fix?", options: ["Wear offset", "Rewrite the whole program", "Change M30", "Delete G54"], answer: 0, explanation: "Small size corrections are a wear offset job." },
+      { type: "multiple-choice", question: "A groove is programmed at the wrong Z location. Best fix?", options: ["Program edit", "Spindle override", "Coolant off", "Comment only"], answer: 0, explanation: "If the geometry or path is wrong, edit the program." },
+      { type: "fill-blank", question: "If the correction is a tiny tool-position change, use a ____ offset.", answer: "wear", hint: "Small correction offset", explanation: "Wear offsets are used for small tool-position corrections." },
+      { type: "multiple-choice", question: "Which change affects every future run of that program?", options: ["Program edit", "Temporary single-block mode", "Measuring the part", "Reading a comment"], answer: 0, explanation: "A saved program edit changes future runs." },
+      { type: "multiple-choice", question: "A chamfer is missing entirely. What kind of fix is needed?", options: ["Program/toolpath edit", "Only X wear", "Only spindle override", "Only coolant"], answer: 0, explanation: "Missing geometry requires a toolpath or program edit." },
+      { type: "multiple-choice", question: "Which is a bad habit?", options: ["Changing offsets without recording the reason", "Measuring after a correction", "Making one change at a time", "Checking the tool number"], answer: 0, explanation: "Unrecorded changes make troubleshooting hard." },
+      { type: "fill-blank", question: "Program edits change the tool____.", answer: "path", hint: "Where the tool moves", explanation: "Program edits change the path the tool follows." },
+      { type: "multiple-choice", question: "Before editing a proven program, what should you confirm?", options: ["The measured problem is real", "The app theme", "The icon size", "The operator name only"], answer: 0, explanation: "Confirm the issue before changing a program that may already be correct." },
+      { type: "multiple-choice", question: "Which correction is most likely an offset change?", options: ["OD is 0.0015 big", "Tool is cutting wrong feature", "Program ends too early", "Wrong tool called"], answer: 0, explanation: "A small size error on a correct path is typically a wear correction." },
+      { type: "multiple-choice", question: "Why are wear offsets safer for small size changes?", options: ["They are small and reversible", "They erase the program", "They disable G00", "They set metric mode"], answer: 0, explanation: "Wear offsets let you correct size without changing the toolpath." }
+    ]
+  },
+
+  {
+    id: "u5-l3",
+    unit: 5,
+    unitName: "Inspection & Adjustment",
+    lesson: 3,
+    title: "Single Block and Dry Run",
+    icon: "RUN",
+    xp: 20,
+    theory: `
+      <p>Before trusting a new or edited program, prove it carefully. Single block runs one block
+      at a time. Dry run tests motion without cutting at normal conditions.</p>
+      <pre>Single Block ON
+Feed Hold ready
+Rapid override reduced</pre>
+      <p>Use these controls when checking clearances, tool changes, first moves, and any edited line.</p>
+    `,
+    visual: "rapid-path",
+    quiz: [
+      { type: "multiple-choice", question: "What does single block do?", options: ["Runs one block at a time", "Deletes comments", "Turns coolant on", "Changes G54"], answer: 0, explanation: "Single block pauses after each block so you can verify the next move." },
+      { type: "multiple-choice", question: "Why reduce rapid override during prove-out?", options: ["To give time to react", "To improve surface finish", "To change units", "To end the program"], answer: 0, explanation: "Reduced rapid speed gives the operator more time to stop a bad move." },
+      { type: "multiple-choice", question: "Which button should you be ready to use during first run?", options: ["Feed Hold", "Caps Lock", "Print Screen", "Wi-Fi"], answer: 0, explanation: "Feed Hold pauses controlled motion and is a key prove-out habit." },
+      { type: "fill-blank", question: "Running one block at a time is called ____ block.", answer: "single", hint: "One at a time", explanation: "Single block mode runs one program block at a time." },
+      { type: "multiple-choice", question: "When should you be most cautious?", options: ["After a program edit", "After reading a comment", "After opening settings", "After changing app theme"], answer: 0, explanation: "Edited lines need careful prove-out." },
+      { type: "multiple-choice", question: "What should you watch on first motion?", options: ["Clearance and direction", "Only the clock", "Only the part color", "Only the logo"], answer: 0, explanation: "Verify the tool moves the expected direction with safe clearance." },
+      { type: "multiple-choice", question: "What is dry run mainly for?", options: ["Checking motion safely", "Measuring final size", "Replacing offsets", "Turning comments into code"], answer: 0, explanation: "Dry run helps verify motion before normal cutting." },
+      { type: "fill-blank", question: "Type the control mode: ____ Block ON", answer: "Single", hint: "Runs one line at a time", explanation: "Single Block ON is used for careful prove-out." },
+      { type: "multiple-choice", question: "Which move deserves extra attention?", options: ["First rapid after tool change", "A blank comment", "The app build number", "A finished review"], answer: 0, explanation: "The first rapid after a tool change is a common crash point." },
+      { type: "multiple-choice", question: "A safe prove-out mindset is:", options: ["Assume nothing, verify each move", "Assume the program is always safe", "Ignore offsets", "Run at 100% rapid immediately"], answer: 0, explanation: "Good operators verify before trusting the program." }
+    ]
   }
 ];
 
@@ -666,7 +760,8 @@ const UNITS = [
   { id: 1, name: "Foundations",    icon: "📋", color: "#1A6B5C", lessons: 3 },
   { id: 2, name: "Motion Codes",   icon: "⚡", color: "#2D5986", lessons: 3 },
   { id: 3, name: "Turning Ops",    icon: "🔩", color: "#7B4F12", lessons: 3 },
-  { id: 4, name: "Tooling & Offsets", icon: "🎯", color: "#5C2D6B", lessons: 2 }
+  { id: 4, name: "Tooling & Offsets", icon: "🎯", color: "#5C2D6B", lessons: 2 },
+  { id: 5, name: "Inspection & Adjustment", icon: "CHK", color: "#286B4D", lessons: 3 }
 ];
 
 const PRINTING_LESSONS = [

@@ -628,6 +628,12 @@ body.theme-light .badge-chip.unlocked {
     radial-gradient(circle at 84% 28%, transparent 0 31px, rgba(127,219,202,0.16) 32px 33px, transparent 34px),
     linear-gradient(0deg, transparent 0 66%, rgba(255,255,255,0.08) 66% 67%, transparent 67%);
 }
+.unit-card.track-cnc.unit-5::after {
+  background:
+    linear-gradient(90deg, transparent 0 56%, rgba(47,191,113,0.14) 56% 58%, transparent 58%),
+    repeating-linear-gradient(0deg, transparent 0 16px, rgba(245,166,35,0.12) 16px 17px),
+    radial-gradient(circle at 84% 34%, rgba(127,219,202,0.16), transparent 22%);
+}
 .unit-card.track-printing.unit-1::after {
   background:
     repeating-linear-gradient(0deg, transparent 0 18px, rgba(127,219,202,0.12) 18px 19px),
