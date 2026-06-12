@@ -891,11 +891,201 @@ M190 S60  ; set bed to 60 C and wait</pre>
         explanation: "M104 sets the hotend target temperature but does not wait for it to finish heating."
       }
     ]
+  },
+
+  {
+    id: "p-u2-l1",
+    unit: 2,
+    unitName: "Extrusion & Motion",
+    lesson: 1,
+    title: "Extrusion and the E Axis",
+    icon: "E",
+    xp: 15,
+    theory: `
+      <p>The <code>E</code> value controls extruder movement. In most slicer output, extrusion moves use
+      <code>G1</code> with X/Y position plus an E amount.</p>
+      <pre>G1 X82.4 Y104.2 E0.036 F1800</pre>
+      <p>If the nozzle moves without E, it is usually a travel move. If E increases while X/Y moves,
+      filament is being pushed through the nozzle.</p>
+      <p class="callout tip">Extrusion can be absolute or relative depending on firmware and slicer settings.
+      Learn to read the pattern before editing E values by hand.</p>
+    `,
+    visual: "block-anatomy",
+    quiz: [
+      { type: "multiple-choice", question: "In this line, what does E0.036 control?\nG1 X82.4 Y104.2 E0.036 F1800", options: ["Extrusion amount", "Bed temperature", "Fan speed", "Home position"], answer: 0, explanation: "E controls extruder movement. Here it tells the printer to push filament while moving." },
+      { type: "multiple-choice", question: "Which line is most likely printing plastic?", options: ["G1 X20 Y20 E0.45 F1800", "G1 X20 Y20 F9000", "G28", "M104 S210"], answer: 0, explanation: "A G1 move with E increasing usually extrudes filament." },
+      { type: "multiple-choice", question: "A move with X and Y but no E is usually:", options: ["A travel move", "A bed heat command", "A fan command", "A program end"], answer: 0, explanation: "Travel moves reposition the nozzle without extruding." },
+      { type: "fill-blank", question: "Type the letter that usually controls extrusion amount:", answer: "E", hint: "Extruder axis", explanation: "E is the extruder axis value." },
+      { type: "multiple-choice", question: "What happens if too much filament is extruded?", options: ["Over-extrusion", "Bed leveling", "Homing", "Fan off only"], answer: 0, explanation: "Too much extrusion can cause blobs, rough walls, and dimensional errors." },
+      { type: "multiple-choice", question: "What happens if too little filament is extruded?", options: ["Under-extrusion", "Automatic leveling", "Hotend waits", "Program rewind"], answer: 0, explanation: "Too little extrusion can leave gaps, weak walls, and poor layer bonding." },
+      { type: "multiple-choice", question: "Which command is the normal controlled move used for extrusion?", options: ["G1", "G28", "M190", "M107"], answer: 0, explanation: "G1 is the normal controlled move command in printer G-code." },
+      { type: "fill-blank", question: "Complete the printing move:\nG1 X50 Y50 ___1.2 F1200", answer: "E", hint: "Extrusion word", explanation: "E1.2 tells the extruder how much filament movement to command." },
+      { type: "multiple-choice", question: "Why should beginners be careful editing E values?", options: ["Extrusion mode may be absolute or relative", "E always homes the printer", "E only controls the display", "E turns on the fan"], answer: 0, explanation: "Different slicers and firmware can use absolute or relative extrusion." },
+      { type: "multiple-choice", question: "Which value is not a motion coordinate in this line?\nG1 X82 Y104 E0.036 F1800", options: ["F1800", "X82", "Y104", "E0.036"], answer: 0, explanation: "F sets feedrate/speed. X, Y, and E are axis/extrusion values." }
+    ]
+  },
+
+  {
+    id: "p-u2-l2",
+    unit: 2,
+    unitName: "Extrusion & Motion",
+    lesson: 2,
+    title: "Feedrate and Travel Moves",
+    icon: "F",
+    xp: 15,
+    theory: `
+      <p>The <code>F</code> word sets feedrate. In most printer G-code, feedrate is in millimeters per minute.</p>
+      <pre>G1 X40 Y40 F9000  ; fast travel
+G1 X40 Y40 E0.4 F1800 ; slower print move</pre>
+      <p>Travel moves are usually faster because they do not push filament. Print moves are slower so the
+      nozzle can lay down a controlled bead.</p>
+    `,
+    visual: "rapid-path",
+    quiz: [
+      { type: "multiple-choice", question: "In most printer G-code, F1800 means:", options: ["1800 mm/min feedrate", "1800 degrees", "1800 grams", "Fan speed 1800"], answer: 0, explanation: "Printer feedrate is commonly expressed in millimeters per minute." },
+      { type: "multiple-choice", question: "Which line is likely a fast travel move?", options: ["G1 X80 Y80 F9000", "G1 X80 Y80 E0.6 F1500", "M190 S60", "G28"], answer: 0, explanation: "A high-F move without E is usually travel." },
+      { type: "multiple-choice", question: "Which value sets speed in this line?\nG1 X10 Y10 E0.2 F1200", options: ["F1200", "X10", "Y10", "E0.2"], answer: 0, explanation: "F sets feedrate." },
+      { type: "fill-blank", question: "Type the feedrate letter used in printer G-code:", answer: "F", hint: "Speed/feed word", explanation: "F is used for feedrate." },
+      { type: "multiple-choice", question: "Why are print moves often slower than travel moves?", options: ["Plastic needs time to lay down cleanly", "G1 cannot move fast", "Fans turn off motion", "Homing is required"], answer: 0, explanation: "Printing too fast can hurt extrusion consistency and layer quality." },
+      { type: "multiple-choice", question: "A line with no E value usually means:", options: ["No extrusion on that move", "Bed heat only", "Fan full speed", "End print"], answer: 0, explanation: "Without E movement, the nozzle is usually just moving position." },
+      { type: "multiple-choice", question: "What is missing from this speed command?\nG1 X20 Y20 ___3000", options: ["F", "M", "S", "T"], answer: 0, explanation: "F3000 sets the feedrate." },
+      { type: "fill-blank", question: "Complete the fast travel feedrate:\nG1 X100 Y100 F____", answer: "9000", hint: "Common fast travel example from lesson", explanation: "F9000 is the fast travel example used in this lesson." },
+      { type: "multiple-choice", question: "If a travel move is too slow, what may increase?", options: ["Print time", "Bed size", "Nozzle diameter", "Firmware version"], answer: 0, explanation: "Slow travel moves can add unnecessary print time." },
+      { type: "multiple-choice", question: "If print moves are too fast, what can happen?", options: ["Poor extrusion quality", "Automatic homing", "Comments disappear", "The bed turns off"], answer: 0, explanation: "Too-fast print moves can cause under-extrusion, weak walls, or rough surfaces." }
+    ]
+  },
+
+  {
+    id: "p-u2-l3",
+    unit: 2,
+    unitName: "Extrusion & Motion",
+    lesson: 3,
+    title: "Fans and Cooling",
+    icon: "FAN",
+    xp: 15,
+    theory: `
+      <p>Part cooling fans are usually controlled with <code>M106</code> and <code>M107</code>.</p>
+      <pre>M106 S255 ; fan full speed
+M106 S128 ; fan about half speed
+M107      ; fan off</pre>
+      <p>Cooling helps bridges, overhangs, and small layers. Too much cooling can hurt layer bonding on
+      some materials.</p>
+    `,
+    visual: "",
+    quiz: [
+      { type: "multiple-choice", question: "Which command turns the part cooling fan on?", options: ["M106", "M107", "G28", "M190"], answer: 0, explanation: "M106 controls the fan and can set its speed." },
+      { type: "multiple-choice", question: "What does M107 usually do?", options: ["Fan off", "Fan full speed", "Home axes", "Heat bed"], answer: 0, explanation: "M107 turns the part cooling fan off." },
+      { type: "multiple-choice", question: "In M106 S255, what does S255 mean?", options: ["Fan full speed", "Nozzle 255 C", "X position", "Layer number"], answer: 0, explanation: "For M106, S usually sets fan speed from 0 to 255." },
+      { type: "fill-blank", question: "Type the command that turns the fan off:", answer: "M107", hint: "Fan off command", explanation: "M107 turns off the fan." },
+      { type: "multiple-choice", question: "Which command is about half fan speed?", options: ["M106 S128", "M106 S255", "M107", "G28"], answer: 0, explanation: "S128 is roughly half of 255." },
+      { type: "multiple-choice", question: "Cooling is especially useful for:", options: ["Bridges and overhangs", "Changing Wi-Fi", "Homing X", "Ending the print"], answer: 0, explanation: "Cooling helps plastic solidify for bridges, overhangs, and small details." },
+      { type: "multiple-choice", question: "Too much cooling can sometimes cause:", options: ["Poor layer bonding", "Automatic bed leveling", "Nozzle homing", "Program comments"], answer: 0, explanation: "Some materials need heat to bond layers well." },
+      { type: "fill-blank", question: "Complete full fan speed:\nM106 S___", answer: "255", hint: "Maximum 8-bit fan value", explanation: "S255 is commonly full fan speed." },
+      { type: "multiple-choice", question: "Which command changes fan speed without moving the nozzle?", options: ["M106 S200", "G1 X10 Y10", "G28", "M190 S60"], answer: 0, explanation: "M106 controls the fan; it does not move the axes." },
+      { type: "multiple-choice", question: "What is missing from this fan command?\nM106 ___255", options: ["S", "X", "E", "G"], answer: 0, explanation: "S is the parameter used for fan speed." }
+    ]
+  },
+
+  {
+    id: "p-u3-l1",
+    unit: 3,
+    unitName: "Start & End G-Code",
+    lesson: 1,
+    title: "Start G-Code Sequence",
+    icon: "ST",
+    xp: 20,
+    theory: `
+      <p>Start G-code prepares the printer before the first layer. A common sequence homes axes,
+      heats the machine, optionally probes the bed, then primes the nozzle.</p>
+      <pre>G28       ; home
+M190 S60  ; wait for bed
+M109 S210 ; wait for nozzle
+G92 E0    ; reset extruder position</pre>
+      <p>The exact order depends on printer and slicer, but the goal is always the same: start from a
+      known, safe state.</p>
+    `,
+    visual: "program-structure",
+    quiz: [
+      { type: "multiple-choice", question: "What is the main purpose of start G-code?", options: ["Prepare the printer before printing", "End the program", "Turn off all heaters", "Delete comments"], answer: 0, explanation: "Start G-code sets up homing, temperatures, probing, and priming before printing." },
+      { type: "multiple-choice", question: "Which command usually belongs early in start G-code?", options: ["G28", "M84", "M107 only", "M30"], answer: 0, explanation: "G28 homes the printer so it knows its axis positions." },
+      { type: "multiple-choice", question: "Why wait for temperatures before printing?", options: ["Plastic needs correct melt and bed conditions", "Comments require heat", "G1 only works hot", "Fans need bed heat"], answer: 0, explanation: "The nozzle and bed should reach target temperatures before first-layer motion." },
+      { type: "fill-blank", question: "Type the command that homes all axes:", answer: "G28", hint: "Home command", explanation: "G28 homes the axes." },
+      { type: "multiple-choice", question: "What does G92 E0 often do in start G-code?", options: ["Reset extruder position", "Home Z", "Heat bed", "Turn fan off"], answer: 0, explanation: "G92 E0 sets the current extruder position to zero." },
+      { type: "multiple-choice", question: "Which command waits for nozzle temperature?", options: ["M109", "M104", "M140", "M107"], answer: 0, explanation: "M109 waits for the hotend target temperature." },
+      { type: "multiple-choice", question: "Which command waits for bed temperature?", options: ["M190", "M140", "M104", "G1"], answer: 0, explanation: "M190 waits for the bed temperature target." },
+      { type: "fill-blank", question: "Reset extruder position:\nG92 ___0", answer: "E", hint: "Extruder axis", explanation: "G92 E0 resets the extruder position to zero." },
+      { type: "multiple-choice", question: "A start sequence should avoid:", options: ["Moving into the bed before homing", "Waiting for heat", "Homing axes", "Setting temperatures"], answer: 0, explanation: "Motion before known positions can crash into the bed or frame." },
+      { type: "multiple-choice", question: "What can vary between printers?", options: ["Start G-code order and probing commands", "The meaning of X and Y always", "Whether G-code has lines", "Whether comments exist"], answer: 0, explanation: "Printer firmware, probes, and slicer profiles affect the exact start sequence." }
+    ]
+  },
+
+  {
+    id: "p-u3-l2",
+    unit: 3,
+    unitName: "Start & End G-Code",
+    lesson: 2,
+    title: "End G-Code and Safe Shutdown",
+    icon: "END",
+    xp: 20,
+    theory: `
+      <p>End G-code parks the nozzle, turns off heaters and fans, and disables motors when safe.</p>
+      <pre>M104 S0 ; hotend off
+M140 S0 ; bed off
+M107    ; fan off
+G1 X0 Y220 F3000 ; park
+M84     ; disable motors</pre>
+      <p>Good end G-code keeps the hot nozzle away from the finished part and leaves the printer safe.</p>
+    `,
+    visual: "program-structure",
+    quiz: [
+      { type: "multiple-choice", question: "What is the purpose of end G-code?", options: ["Shut down and park safely", "Heat the printer for first layer", "Probe the bed", "Start extrusion"], answer: 0, explanation: "End G-code safely parks and turns things off after printing." },
+      { type: "multiple-choice", question: "Which command turns the hotend target to zero?", options: ["M104 S0", "M109 S210", "G28", "M106 S255"], answer: 0, explanation: "M104 S0 sets hotend target temperature to zero." },
+      { type: "multiple-choice", question: "Which command turns the bed target to zero?", options: ["M140 S0", "M190 S60", "G92 E0", "M107"], answer: 0, explanation: "M140 S0 turns off the heated bed target." },
+      { type: "fill-blank", question: "Type the fan off command:", answer: "M107", hint: "Part cooling fan off", explanation: "M107 turns the fan off." },
+      { type: "multiple-choice", question: "Why park the nozzle away from the part?", options: ["To avoid heat damage or oozing on the print", "To home the printer", "To turn fan on", "To reset E"], answer: 0, explanation: "A hot nozzle sitting on the part can mark or melt it." },
+      { type: "multiple-choice", question: "What does M84 usually do?", options: ["Disable motors", "Heat nozzle", "Probe bed", "Set fan speed"], answer: 0, explanation: "M84 disables stepper motors on many printers." },
+      { type: "multiple-choice", question: "Which line is a parking move?", options: ["G1 X0 Y220 F3000", "M104 S0", "M107", "M84"], answer: 0, explanation: "G1 with X/Y coordinates moves the nozzle to a park position." },
+      { type: "fill-blank", question: "Turn the bed off:\nM140 S___", answer: "0", hint: "Zero target temperature", explanation: "S0 sets the bed target to zero/off." },
+      { type: "multiple-choice", question: "A safe end sequence should turn off:", options: ["Heaters", "The app theme", "Comments", "The slicer name"], answer: 0, explanation: "Heaters should be turned off at the end of a print." },
+      { type: "multiple-choice", question: "Which command is fan off, not heater off?", options: ["M107", "M104 S0", "M140 S0", "M190 S60"], answer: 0, explanation: "M107 turns off the fan." }
+    ]
+  },
+
+  {
+    id: "p-u3-l3",
+    unit: 3,
+    unitName: "Start & End G-Code",
+    lesson: 3,
+    title: "Reading Slicer Comments",
+    icon: ";",
+    xp: 20,
+    theory: `
+      <p>Slicers add comments to organize the file. Comments often start with a semicolon.</p>
+      <pre>;TYPE:WALL-OUTER
+G1 X30 Y40 E0.22 F1500
+;LAYER:12</pre>
+      <p>The printer ignores comments, but they help humans understand features, layers, and toolpath types.</p>
+    `,
+    visual: "",
+    quiz: [
+      { type: "multiple-choice", question: "In printer G-code, what does a semicolon usually start?", options: ["A comment", "A heater command", "A fan command", "A home move"], answer: 0, explanation: "A semicolon starts a comment in many printer G-code files." },
+      { type: "multiple-choice", question: "Which line is only a slicer comment?", options: [";TYPE:WALL-OUTER", "G1 X30 Y40 E0.22", "M104 S210", "G28"], answer: 0, explanation: "The semicolon means the line is a comment for humans." },
+      { type: "multiple-choice", question: "What does ;LAYER:12 help identify?", options: ["The current layer", "Nozzle temperature", "Bed size", "Fan speed only"], answer: 0, explanation: "Layer comments help locate sections of the print file." },
+      { type: "fill-blank", question: "Type the symbol that starts many printer comments:", answer: ";", hint: "Comment character", explanation: "A semicolon starts many printer G-code comments." },
+      { type: "multiple-choice", question: "Does the printer execute the words after a semicolon?", options: ["No, they are ignored as comments", "Yes, always", "Only if heated", "Only on layer 1"], answer: 0, explanation: "Comments are ignored by the firmware." },
+      { type: "multiple-choice", question: "Why are slicer comments useful?", options: ["They help humans understand toolpaths", "They heat the bed", "They change E values", "They home the axes"], answer: 0, explanation: "Comments make the file easier to inspect and debug." },
+      { type: "multiple-choice", question: "Which is most likely an outer wall label?", options: [";TYPE:WALL-OUTER", "M190 S60", "G28", "M107"], answer: 0, explanation: "Slicers often label feature types with comments." },
+      { type: "fill-blank", question: "Complete the layer comment:\n;_____:12", answer: "LAYER", hint: "Layer label", explanation: ";LAYER:12 labels the layer section." },
+      { type: "multiple-choice", question: "What should you edit carefully?", options: ["Motion lines, not just comments", "Only blank lines", "Only app settings", "Only the title"], answer: 0, explanation: "Changing motion or temperature lines affects the print. Comments do not execute." },
+      { type: "multiple-choice", question: "Which line will move and extrude?", options: ["G1 X30 Y40 E0.22 F1500", ";TYPE:WALL-OUTER", ";LAYER:12", "; generated by slicer"], answer: 0, explanation: "G1 with X/Y/E/F is an executable motion/extrusion line." }
+    ]
   }
 ];
 
 const PRINTING_UNITS = [
-  { id: 1, name: "Printer Foundations", icon: "3D", color: "#2D5986", lessons: 3 }
+  { id: 1, name: "Printer Foundations", icon: "3D", color: "#2D5986", lessons: 3 },
+  { id: 2, name: "Extrusion & Motion", icon: "E", color: "#1A6B5C", lessons: 3 },
+  { id: 3, name: "Start & End G-Code", icon: "ST", color: "#7B4F12", lessons: 3 }
 ];
 
 const TRACKS = {

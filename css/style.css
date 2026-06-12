@@ -640,6 +640,18 @@ body.theme-light .badge-chip.unlocked {
     repeating-linear-gradient(90deg, transparent 0 18px, rgba(245,166,35,0.12) 18px 19px),
     radial-gradient(circle at 86% 32%, rgba(127,219,202,0.18), transparent 24%);
 }
+.unit-card.track-printing.unit-2::after {
+  background:
+    radial-gradient(circle at 86% 32%, rgba(245,166,35,0.18), transparent 18%),
+    linear-gradient(90deg, transparent 0 62%, rgba(127,219,202,0.18) 62% 64%, transparent 64%),
+    repeating-linear-gradient(0deg, transparent 0 20px, rgba(255,255,255,0.06) 20px 21px);
+}
+.unit-card.track-printing.unit-3::after {
+  background:
+    linear-gradient(135deg, transparent 0 52%, rgba(245,166,35,0.18) 52% 54%, transparent 54%),
+    repeating-linear-gradient(90deg, transparent 0 24px, rgba(127,219,202,0.1) 24px 25px),
+    radial-gradient(circle at 84% 64%, rgba(127,219,202,0.15), transparent 20%);
+}
 body.theme-light .unit-card,
 body.theme-light .ref-card,
 body.theme-light .prog-unit-card,
