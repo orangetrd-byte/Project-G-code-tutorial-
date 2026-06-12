@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = '2026.06.12.8';
+const APP_BUILD = '2026.06.12.9';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -31,6 +31,7 @@ const State = {
   retryCurrentLesson: false,
   lessonFinished: false,
   missedQuestions: [],
+  practiceQuestions: null,
   sessionCorrect: 0,
   sessionTotal: 0,
 
@@ -893,6 +894,7 @@ function startLesson(lessonId) {
   State.retryCurrentLesson = false;
   State.lessonFinished = false;
   State.missedQuestions = [];
+  State.practiceQuestions = null;
   State.sessionCorrect = 0;
   State.sessionTotal = getActiveQuestions(lesson).length;
 
@@ -925,6 +927,7 @@ function startUnitReview(unitId, questions = null) {
   State.retryCurrentLesson = false;
   State.lessonFinished = false;
   State.missedQuestions = [];
+  State.practiceQuestions = null;
   State.sessionCorrect = 0;
   State.sessionTotal = State.currentLesson.quiz.length;
 
@@ -941,7 +944,8 @@ function buildUnitReviewQuestions(unitId) {
 
 function getActiveQuestions(lesson = State.currentLesson) {
   if (!lesson) return [];
-  return State.currentMode === 'lesson' ? lesson.quiz.slice(0, 3) : lesson.quiz;
+  if (State.currentMode === 'lesson') return State.practiceQuestions || lesson.quiz.slice(0, 3);
+  return lesson.quiz;
 }
 
 function renderLessonStep() {
@@ -1017,7 +1021,7 @@ function renderQuiz(container, q, idx) {
           b.disabled = true;
         });
         if (correct) State.sessionCorrect++;
-        else if (State.currentMode === 'review') State.missedQuestions.push(q);
+        else State.missedQuestions.push(q);
         State.currentQuizAnswered = true;
         AudioFeedback.play(correct);
         showExplanation(q.explanation);
@@ -1032,7 +1036,8 @@ function renderQuiz(container, q, idx) {
       <div class="quiz-question">${q.question}</div>
       <div class="fill-blank-wrap">
         <input type="text" class="fill-blank-input" id="fill-input" 
-          placeholder="Type your answer…" autocomplete="off" autocorrect="off" spellcheck="false">
+          placeholder="Type your answer…" autocomplete="off" autocorrect="off" spellcheck="false"
+          inputmode="${getAnswerInputMode(q)}" pattern="${getAnswerPattern(q)}">
         <div class="hint-text">Hint: ${q.hint}</div>
       </div>
       <div id="explanation-box"></div>`;
@@ -1045,6 +1050,19 @@ function renderQuiz(container, q, idx) {
   }
 }
 
+function getAnswerInputMode(q) {
+  const answer = String(q.answer || '').trim();
+  if (/^-?\d+(\.\d+)?$/.test(answer)) return answer.includes('.') || answer.startsWith('-') ? 'decimal' : 'numeric';
+  return 'text';
+}
+
+function getAnswerPattern(q) {
+  const answer = String(q.answer || '').trim();
+  if (/^\d+$/.test(answer)) return '[0-9]*';
+  if (/^-?\d+(\.\d+)?$/.test(answer)) return '-?[0-9]*[.]?[0-9]*';
+  return '.*';
+}
+
 function checkFillBlank(q, inp) {
   const userVal = inp.value.trim().replace(/^G|^g/, match => match.toUpperCase());
   const expected = q.answer.trim();
@@ -1055,7 +1073,7 @@ function checkFillBlank(q, inp) {
   inp.classList.add(correct ? 'correct' : 'wrong');
   inp.disabled = true;
   if (correct) State.sessionCorrect++;
-  else if (State.currentMode === 'review') State.missedQuestions.push(q);
+  else State.missedQuestions.push(q);
   State.currentQuizAnswered = true;
   AudioFeedback.play(correct);
   showExplanation(q.explanation + (usedShortGCode ? ' G0 and G00 style codes are both used depending on the control or post. The leading zero form is common in teaching material because it is easier to scan.' : ''));
@@ -1118,6 +1136,10 @@ function finishLesson() {
     finishUnitReview();
     return;
   }
+  if (State.missedQuestions.length > 0) {
+    showLessonPracticeRetry();
+    return;
+  }
   const wasLessonDone = State.isLessonDone(lesson.id);
   const beforeUnitProgress = State.getUnitProgress(lesson.unit);
   const xpEarned = State.completeLesson(lesson.id, State.sessionCorrect, State.sessionTotal);
@@ -1153,6 +1175,23 @@ function finishLesson() {
   $('#lesson-step-count').textContent = 'Done!';
   $('#lesson-action-btn').textContent = 'Back to Lessons';
   $('#lesson-action-btn').className = 'btn-primary accent-btn';
+}
+
+function showLessonPracticeRetry() {
+  const missed = State.missedQuestions.length;
+  const content = $('#lesson-content');
+  content.innerHTML = `
+    <div class="complete-screen review-retry-screen">
+      <div class="complete-icon">↻</div>
+      <div class="complete-title">Practice Needs Another Pass</div>
+      <div class="complete-subtitle">${missed} question${missed === 1 ? '' : 's'} must be corrected before the next lesson unlocks.</div>
+      <div class="xp-badge">${State.sessionCorrect}/${State.sessionTotal} correct</div>
+    </div>`;
+  $('#lesson-progress-fill').style.width = '100%';
+  $('#lesson-step-count').textContent = 'Retry';
+  $('#lesson-action-btn').textContent = 'Retry Missed Questions';
+  $('#lesson-action-btn').className = 'btn-primary accent-btn';
+  State.lessonFinished = true;
 }
 
 function finishUnitReview() {
@@ -1212,6 +1251,17 @@ function handleLessonAction() {
   if (State.lessonFinished) {
     if (State.currentMode === 'review' && State.missedQuestions.length > 0) {
       startUnitReview(State.currentReviewUnit, State.missedQuestions);
+      return;
+    }
+    if (State.currentMode === 'lesson' && State.missedQuestions.length > 0) {
+      State.practiceQuestions = State.missedQuestions;
+      State.missedQuestions = [];
+      State.currentStep = 1;
+      State.currentQuizAnswered = false;
+      State.lessonFinished = false;
+      State.sessionCorrect = 0;
+      State.sessionTotal = State.practiceQuestions.length;
+      renderLessonStep();
       return;
     }
     renderHome();
