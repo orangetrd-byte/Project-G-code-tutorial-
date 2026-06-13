@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.18 | Build 2026.06.13.01';
+const APP_BUILD = 'MGP | Version v2.19 | Build 2026.06.13.02';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -567,6 +567,9 @@ const UI_TEXT = {
     settings: 'Settings',
     settingsSubtitle: 'App preferences',
     setupSubtitle: 'Choose language and theme before you start.',
+    setupAppName: 'Project G-Code Tutorial',
+    setupTitle: 'Choose Settings To Begin Learning',
+    setupBody: 'Pick your language and theme, then press Start Learning.',
     startLearning: 'Start Learning',
     language: 'Language',
     languageHelp: 'Choose the app interface language.',
@@ -595,6 +598,9 @@ const UI_TEXT = {
     settings: 'Ajustes',
     settingsSubtitle: 'Preferencias de la app',
     setupSubtitle: 'Elige idioma y tema antes de empezar.',
+    setupAppName: 'Project G-Code Tutorial',
+    setupTitle: 'Elige ajustes para empezar',
+    setupBody: 'Elige idioma y tema, luego presiona Empezar.',
     startLearning: 'Empezar',
     language: 'Idioma',
     languageHelp: 'Elige el idioma de la interfaz.',
@@ -685,6 +691,12 @@ function updateStaticText() {
   const settingsSubtitle = $('#screen-settings .settings-subtitle');
   if (settingsTitle) settingsTitle.textContent = t('settings');
   if (settingsSubtitle) settingsSubtitle.textContent = State.setupComplete ? t('settingsSubtitle') : t('setupSubtitle');
+  const setupNote = $('#setup-note');
+  if (setupNote) {
+    setupNote.querySelector('.setup-note__eyebrow').textContent = t('setupAppName');
+    setupNote.querySelector('.setup-note__title').textContent = t('setupTitle');
+    setupNote.querySelector('.setup-note__body').textContent = t('setupBody');
+  }
 
   const rows = $$('#screen-settings .settings-row');
   if (rows[0]) {

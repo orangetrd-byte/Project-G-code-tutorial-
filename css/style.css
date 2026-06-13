@@ -1345,6 +1345,54 @@ body.theme-light .prog-lessons-done {
   color: var(--c-text-3);
   margin-top: 0.15rem;
 }
+.setup-note {
+  display: none;
+  position: relative;
+  margin: 0 0 1rem;
+  padding: 1.05rem;
+  background: linear-gradient(135deg, rgba(33, 126, 106, 0.2), rgba(245, 166, 35, 0.12)), var(--c-surface);
+  border: 1px solid rgba(127, 219, 202, 0.38);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-card);
+}
+body.setup-required .setup-note {
+  display: block;
+}
+.setup-note::before {
+  content: "[ G ]";
+  position: absolute;
+  right: 1rem;
+  top: 0.85rem;
+  font-family: var(--f-display);
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--c-primary-light);
+}
+.setup-note__eyebrow {
+  max-width: calc(100% - 4rem);
+  font-family: var(--f-display);
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: var(--c-accent);
+}
+.setup-note__title {
+  margin-top: 0.6rem;
+  font-family: var(--f-display);
+  font-size: clamp(1.32rem, 7vw, 2rem);
+  line-height: 1.08;
+  font-weight: 800;
+  color: var(--c-text);
+}
+.setup-note__body {
+  margin-top: 0.55rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--c-text-2);
+}
+body.theme-light .setup-note {
+  background: linear-gradient(135deg, rgba(33, 126, 106, 0.12), rgba(245, 166, 35, 0.12)), #FFFFFF;
+  border-color: rgba(33, 126, 106, 0.32);
+}
 .settings-group {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
