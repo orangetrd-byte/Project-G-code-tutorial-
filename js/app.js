@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.17 | Build 2026.06.12.02';
+const APP_BUILD = 'MGP | Version v2.18 | Build 2026.06.13.01';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -149,6 +149,32 @@ const State = {
   completeSetup() {
     this.setupComplete = true;
     this.save();
+  },
+
+  resetAllData() {
+    try {
+      localStorage.removeItem('pgct_state_v2');
+      localStorage.removeItem('pgct_state');
+    } catch(e) {}
+
+    this.trackId = 'cnc';
+    this.language = 'en';
+    this.theme = 'dark';
+    this.setupComplete = false;
+    this.profiles = {};
+    this.applyProfile(this.activeProfile());
+
+    this.currentLesson = null;
+    this.currentReviewUnit = null;
+    this.currentMode = 'lesson';
+    this.currentStep = 0;
+    this.currentQuizAnswered = false;
+    this.retryCurrentLesson = false;
+    this.lessonFinished = false;
+    this.missedQuestions = [];
+    this.practiceQuestions = null;
+    this.sessionCorrect = 0;
+    this.sessionTotal = 0;
   },
 
   isLessonDone(id) { return this.completedLessons.includes(id); },
@@ -551,6 +577,11 @@ const UI_TEXT = {
     dark: 'Dark',
     light: 'Light',
     build: 'Build',
+    resetData: 'Reset App Data',
+    resetDataHelp: 'Clear progress, XP, streaks, reviews, weak spots, language, and theme on this device.',
+    resetDataButton: 'Reset',
+    resetConfirm: 'Reset all app data? This clears progress, XP, streaks, reviews, weak spots, language, and theme on this device.',
+    resetDone: 'App data cleared. Fresh start ready.',
     path: 'Your learning path',
     curriculum: 'Curriculum',
     unitProgress: 'Unit Progress',
@@ -574,6 +605,11 @@ const UI_TEXT = {
     dark: 'Oscuro',
     light: 'Claro',
     build: 'Version',
+    resetData: 'Restablecer datos',
+    resetDataHelp: 'Borra progreso, XP, racha, repasos, puntos debiles, idioma y tema en este dispositivo.',
+    resetDataButton: 'Restablecer',
+    resetConfirm: 'Restablecer todos los datos? Esto borra progreso, XP, racha, repasos, puntos debiles, idioma y tema en este dispositivo.',
+    resetDone: 'Datos borrados. Inicio limpio listo.',
     path: 'Tu ruta de aprendizaje',
     curriculum: 'Curriculo',
     unitProgress: 'Progreso por unidad',
@@ -668,6 +704,13 @@ function updateStaticText() {
   if (buildLabel) buildLabel.textContent = t('build');
   const buildNumber = $('#build-number');
   if (buildNumber) buildNumber.textContent = APP_BUILD;
+  const resetRow = $('#reset-data-row');
+  if (resetRow) {
+    resetRow.querySelector('.settings-label').textContent = t('resetData');
+    resetRow.querySelector('.settings-help').textContent = t('resetDataHelp');
+  }
+  const resetButton = $('#reset-data-btn');
+  if (resetButton) resetButton.textContent = t('resetDataButton');
   const setupButton = $('#setup-complete-btn');
   if (setupButton) setupButton.textContent = t('startLearning');
 
@@ -714,6 +757,16 @@ function initSettings() {
     renderSettings();
     renderHome();
     showScreen('screen-home');
+  });
+
+  $('#reset-data-btn')?.addEventListener('click', () => {
+    if (!window.confirm(t('resetConfirm'))) return;
+    State.resetAllData();
+    renderSettings();
+    renderHome();
+    renderProgress();
+    showScreen('screen-settings');
+    showToast(t('resetDone'), 'success');
   });
 }
 

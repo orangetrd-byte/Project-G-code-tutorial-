@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.17-endless-review';
+const CACHE_VERSION = 'pgct-v2.18-clean-reset';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [

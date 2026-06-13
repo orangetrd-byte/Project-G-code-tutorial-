@@ -1406,6 +1406,33 @@ body.theme-light .prog-lessons-done {
   font-family: var(--f-display);
   color: var(--c-accent);
 }
+.settings-danger-group {
+  border-color: rgba(239, 85, 112, 0.36);
+}
+.settings-danger-row {
+  align-items: center;
+}
+.settings-danger-btn {
+  min-height: 42px;
+  border: 1px solid rgba(239, 85, 112, 0.6);
+  border-radius: var(--r-sm);
+  background: rgba(239, 85, 112, 0.12);
+  color: #FF8CA1;
+  font-family: var(--f-body);
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.settings-danger-btn:active {
+  transform: translateY(1px);
+}
+body.theme-light .settings-danger-group {
+  border-color: rgba(196, 44, 72, 0.3);
+}
+body.theme-light .settings-danger-btn {
+  background: rgba(196, 44, 72, 0.08);
+  color: #A92B43;
+}
 .setup-complete-btn { display: none; }
 body.setup-required .setup-complete-btn { display: block; }
 
