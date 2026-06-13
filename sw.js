@@ -1,10 +1,10 @@
 // ============================================================
-//  Project G-Code Tutorial — Service Worker
-//  Cache-first strategy for offline PWA support.
+//  Project G-Code Tutorial - Service Worker
+//  Network-first for app files, cache fallback for offline use.
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.20-why-first';
+const CACHE_VERSION = 'pgct-v2.21-network-refresh';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
@@ -19,7 +19,6 @@ const PRECACHE_ASSETS = [
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap'
 ];
 
-// ─── INSTALL: pre-cache static assets ────────────────────────
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -28,7 +27,12 @@ self.addEventListener('install', event => {
   );
 });
 
-// ─── ACTIVATE: clean up old caches ───────────────────────────
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -41,30 +45,41 @@ self.addEventListener('activate', event => {
   );
 });
 
-// ─── FETCH: cache-first with network fallback ─────────────────
+function shouldNetworkFirst(request) {
+  const url = new URL(request.url);
+  if (request.mode === 'navigate') return true;
+  if (url.origin !== location.origin) return false;
+  return request.destination === 'script' ||
+    request.destination === 'style' ||
+    url.pathname.endsWith('/index.html') ||
+    url.pathname.endsWith('/data/lessons.js');
+}
+
+function putFreshResponse(request, response) {
+  if (!response || response.status !== 200 || response.type === 'opaque') return response;
+  const cloned = response.clone();
+  caches.open(CACHE_NAME).then(cache => cache.put(request, cloned));
+  return response;
+}
+
 self.addEventListener('fetch', event => {
-  // Skip non-GET and chrome-extension requests
   if (event.request.method !== 'GET') return;
   if (event.request.url.startsWith('chrome-extension://')) return;
+
+  if (shouldNetworkFirst(event.request)) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => putFreshResponse(event.request, response))
+        .catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html')))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
       return fetch(event.request)
-        .then(response => {
-          if (!response || response.status !== 200 || response.type === 'opaque') {
-            return response;
-          }
-          const cloned = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, cloned));
-          return response;
-        })
-        .catch(() => {
-          // Offline fallback for navigation requests
-          if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
-        });
+        .then(response => putFreshResponse(event.request, response));
     })
   );
 });
