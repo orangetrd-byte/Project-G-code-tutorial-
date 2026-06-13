@@ -138,6 +138,7 @@ Each lesson object has this shape:
   title: "What Is G-Code?",
   icon: "📋",           // Displayed on home screen
   xp: 10,               // Max XP this lesson can award
+  why: "Why this concept matters before syntax/details",
   theory: `<p>HTML string...</p>`,  // Rendered as innerHTML
   visual: "block-anatomy",          // Key into Visuals.render()
   quiz: [               // Array of quiz question objects
@@ -375,6 +376,18 @@ No terminal, no build step required.
 
 ## Extending the Curriculum
 
+### Why-Before-How Curriculum Rule
+
+Every new lesson should explain why the concept matters before showing syntax or asking quiz questions. Use the `why` field for the short reason, then use `theory` for the how-to details.
+
+Good why statements should answer:
+
+- What machine behavior does this concept control?
+- What mistake does this help prevent?
+- Why should a learner care before memorizing the code?
+
+Keep it practical, short, and tied to the lesson objective.
+
 ### Adding a Lesson
 
 In `data/lessons.js`, append a new object to the `LESSONS` array:
@@ -388,6 +401,7 @@ In `data/lessons.js`, append a new object to the `LESSONS` array:
   title: "G17 — XY Plane Selection",
   icon: "🔲",
   xp: 15,
+  why: "Explain why this concept matters before syntax/details.",
   theory: `<p>Your theory HTML here...</p>`,
   visual: "xy-plane",   // Add matching entry to Visuals.render() in app.js
   quiz: [

@@ -19,7 +19,7 @@ Phase 1: Curriculum Reliability
 
 ## Planned Ideas
 
-- Strengthen why-before-how curriculum rules.
+- Strengthen why-before-how curriculum rules by adding a visible lesson reason before syntax/details.
 - Keep streaks as accountability only; avoid adding noisy reward systems.
 - Add more visual logic blocks for coordinates, motion, offsets, cycles, and troubleshooting patterns.
 - Plan an optional practice workspace later, after lesson reliability and review behavior are stable.

@@ -13,6 +13,7 @@ const LESSONS = [
     unitName: "Foundations",
     lesson: 1,
     title: "What Is G-Code?",
+    why: "G-code is the link between an idea and machine motion. Understanding that every block tells the machine what to do prevents guessing when a program moves wrong.",
     icon: "📋",
     xp: 10,
     theory: `
@@ -69,6 +70,7 @@ const LESSONS = [
     unitName: "Foundations",
     lesson: 2,
     title: "The Coordinate System",
+    why: "Coordinates decide where the tool actually goes. If X, Z, zero, or diameter mode are misunderstood, even correct-looking code can cut the wrong place.",
     icon: "📐",
     xp: 10,
     theory: `
@@ -128,6 +130,7 @@ const LESSONS = [
     unitName: "Foundations",
     lesson: 3,
     title: "Program Structure",
+    why: "Program structure makes code predictable. Knowing the setup, safety, cutting, and ending sections helps you find problems before the machine runs.",
     icon: "🗂️",
     xp: 15,
     theory: `
@@ -201,6 +204,7 @@ N110 M30                   ; End program, rewind
     unitName: "Motion Codes",
     lesson: 1,
     title: "G00 — Rapid Positioning",
+    why: "Rapid moves are useful because they save time, but dangerous because they leave little time to react. The reason for G00 is positioning, not cutting.",
     icon: "⚡",
     xp: 15,
     theory: `
@@ -256,6 +260,7 @@ N110 M30                   ; End program, rewind
     unitName: "Motion Codes",
     lesson: 2,
     title: "G01 — Linear Feed",
+    why: "Feed moves are controlled cutting moves. Understanding why G01 uses feedrate explains when the tool is meant to cut instead of just travel.",
     icon: "➡️",
     xp: 15,
     theory: `
@@ -315,6 +320,7 @@ G01 X1.750 Z-1.500 F0.010</pre>
     unitName: "Motion Codes",
     lesson: 3,
     title: "G02 & G03 — Arc Moves",
+    why: "Arc direction changes the actual toolpath. Understanding the shape first makes the code letters easier to remember and easier to troubleshoot.",
     icon: "🔄",
     xp: 20,
     theory: `

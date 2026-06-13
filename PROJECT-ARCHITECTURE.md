@@ -1,4 +1,4 @@
-﻿# G-Code Tutorial Project Architecture
+# G-Code Tutorial Project Architecture
 
 ## Project Purpose
 
@@ -38,4 +38,4 @@ Those belong in CNC Cell Planner, CNC Work Helper, Green Hat, or Helper dependin
 
 ## Development Philosophy
 
-Teach clearly first. Keep lessons safe, focused, and easy to review before expanding content depth.
+Teach clearly first. Every lesson should explain why the concept matters before teaching syntax or procedure. Keep lessons safe, focused, and easy to review before expanding content depth.

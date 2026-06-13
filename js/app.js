@@ -1215,10 +1215,16 @@ function renderLessonStep() {
   content.innerHTML = '';
 
   if (isTheory) {
+    const whyBlock = lesson.why ? `
+      <div class="why-card">
+        <div class="why-label">Why this matters</div>
+        <div class="why-text">${lesson.why}</div>
+      </div>` : '';
     content.innerHTML = `
       <div class="step-card active">
         <div class="step-label">Phase ${lesson.unit}.${lesson.lesson}</div>
         <div class="step-title">${lesson.title}</div>
+        ${whyBlock}
         <div class="theory-body">${lesson.theory}</div>
         ${Visuals.render(lesson.visual)}
       </div>`;
