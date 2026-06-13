@@ -476,3 +476,19 @@ These are not implemented but architecturally straightforward to add:
 ---
 
 *Project G-Code Tutorial is part of the `orangetrd-byte` CNC tool ecosystem, alongside Green Hat (beginner lathe companion) and CNC Cell Planner (production scheduling).*
+## Assistant Change Guidelines
+
+Before making code or file changes in this repo:
+
+1. Clarify the learning goal, audience level, constraints, assumptions, and measurable success criteria.
+2. Use structured output for lesson plans, explanations, quiz changes, risks, and troubleshooting.
+3. Compare options before changing curriculum structure, lesson flow, scoring, progress storage, dependencies, or AI behavior.
+4. Use brainstorming for lesson ideas, practice questions, review prompts, and learning-track concepts.
+5. Give technical explanations when changing G-code concepts, 3D printing concepts, quiz logic, progress logic, or assistant fallback paths.
+6. Draft concise documentation or handoff notes for user-facing curriculum and workflow changes.
+7. Use a troubleshooting checklist before fixing bugs in lessons, quizzes, mixed review, progress, storage, or PWA behavior.
+8. Use learning paths as a core design tool for curriculum and skill progression.
+9. Assess risks before adding generated content, AI fallback, scoring changes, curriculum changes, or track-mixing behavior.
+10. Optimize only for a named goal such as learning clarity, reliability, readability, speed, offline use, or safe educational scope.
+
+Permanent rule: MGP must remain visible in build/version information and cannot be removed, hidden, renamed, or replaced.
