@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.24 | Build 2026.06.14.03';
+const APP_BUILD = 'MGP | Version v2.25 | Build 2026.06.14.04';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1318,6 +1318,32 @@ function getCorrectAnswerText(q) {
   }
   return String(q.answer || '').trim();
 }
+
+function renderQuestionContext(q) {
+  const lesson = getLessons().find(item => item.id === q.sourceLessonId) || State.currentLesson;
+  if (!lesson) return '';
+  const model = getLessonModelLine(lesson);
+  const why = lesson.why || '';
+  if (!model && !why) return '';
+  return `
+    <div class="question-context-card">
+      <div class="question-context-card__label">Before you answer</div>
+      ${why ? `<div class="question-context-card__why">${why}</div>` : ''}
+      ${model ? `<div class="question-context-card__model"><span>Model</span><code>${model}</code></div>` : ''}
+    </div>`;
+}
+
+function getLessonModelLine(lesson) {
+  const html = lesson.theory || '';
+  const match = html.match(/<pre>([\s\S]*?)<\/pre>/i);
+  if (!match) return '';
+  return match[1]
+    .replace(/<[^>]+>/g, '')
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .find(line => line && !line.startsWith('%')) || '';
+}
+
 function renderQuiz(container, q, idx) {
   const div = document.createElement('div');
   div.className = 'step-card active';
@@ -1326,6 +1352,7 @@ function renderQuiz(container, q, idx) {
     const letters = ['A','B','C','D'];
     div.innerHTML = `
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
+      ${renderQuestionContext(q)}
       <div class="quiz-question">${q.question}</div>
       <div class="options-list">
         ${q.options.map((opt, i) => `
@@ -1366,6 +1393,7 @@ function renderQuiz(container, q, idx) {
   } else if (q.type === 'fill-blank') {
     div.innerHTML = `
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
+      ${renderQuestionContext(q)}
       <div class="quiz-question">${q.question}</div>
       <div class="fill-blank-wrap">
         <input type="text" class="fill-blank-input" id="fill-input" 

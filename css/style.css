@@ -1047,6 +1047,49 @@ body.theme-light .weak-question-card {
   line-height: 1.5;
   white-space: pre-line;
 }
+.question-context-card {
+  background: rgba(245, 166, 35, 0.09);
+  border: 1px solid rgba(245, 166, 35, 0.26);
+  border-radius: var(--r-md);
+  padding: 0.8rem;
+  margin-bottom: 0.95rem;
+}
+.question-context-card__label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  margin-bottom: 0.35rem;
+}
+.question-context-card__why {
+  color: var(--c-text-2);
+  line-height: 1.45;
+  font-size: 0.9rem;
+}
+.question-context-card__model {
+  margin-top: 0.6rem;
+  display: grid;
+  gap: 0.25rem;
+}
+.question-context-card__model span {
+  color: var(--c-text-3);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.question-context-card__model code {
+  display: block;
+  background: var(--c-code-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 0.55rem 0.65rem;
+  color: var(--c-primary-light);
+  white-space: pre-wrap;
+}
+body.theme-light .question-context-card {
+  background: rgba(245, 166, 35, 0.12);
+}
 
 .options-list { display: flex; flex-direction: column; gap: 0.65rem; }
 
