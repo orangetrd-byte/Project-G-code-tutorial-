@@ -994,6 +994,47 @@ body.theme-light .lesson-row__xp {
 body.theme-light .weak-relearn-card {
   background: #F7FAFC;
 }
+.weak-question-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.weak-question-card {
+  background: rgba(127, 219, 202, 0.08);
+  border: 1px solid rgba(127, 219, 202, 0.28);
+  border-radius: var(--r-md);
+  padding: 0.9rem;
+}
+.weak-question-card__label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-primary-light);
+}
+.weak-question-card__prompt {
+  margin-top: 0.4rem;
+  color: var(--c-text);
+  font-weight: 800;
+  line-height: 1.45;
+  white-space: pre-line;
+}
+.weak-question-card__answer {
+  margin-top: 0.55rem;
+  color: var(--c-text-2);
+}
+.weak-question-card__answer strong {
+  color: var(--c-accent);
+}
+.weak-question-card__explain {
+  margin-top: 0.45rem;
+  color: var(--c-text-2);
+  line-height: 1.45;
+}
+body.theme-light .weak-question-card {
+  background: rgba(33, 126, 106, 0.08);
+  border-color: rgba(33, 126, 106, 0.24);
+}
 .theory-body p { margin-bottom: 0.85rem; }
 .theory-body ul, .theory-body ol { margin-bottom: 0.85rem; }
 

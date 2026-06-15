@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.22 | Build 2026.06.14.01';
+const APP_BUILD = 'MGP | Version v2.23 | Build 2026.06.14.02';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1296,7 +1296,27 @@ function renderWeakReviewIntro(questions) {
       <div class="weak-relearn-list">
         ${lessonCards || '<div class="weak-relearn-card"><div class="weak-relearn-card__title">Quick refresher</div><p>Read the explanation carefully, then retry the missed question.</p></div>'}
       </div>
+      <div class="weak-question-list">
+        ${questions.slice(0, 5).map((q, i) => renderWeakQuestionReminder(q, i)).join('')}
+      </div>
     </div>`;
+}
+
+function renderWeakQuestionReminder(q, idx) {
+  return `
+    <div class="weak-question-card">
+      <div class="weak-question-card__label">Missed question ${idx + 1}</div>
+      <div class="weak-question-card__prompt">${q.question}</div>
+      <div class="weak-question-card__answer">Correct answer: <strong>${getCorrectAnswerText(q)}</strong></div>
+      <div class="weak-question-card__explain">${q.explanation || 'Read the answer, then retry it.'}</div>
+    </div>`;
+}
+
+function getCorrectAnswerText(q) {
+  if (q.type === 'multiple-choice' && Array.isArray(q.options)) {
+    return q.options[q.answer] || String(q.answer);
+  }
+  return String(q.answer || '').trim();
 }
 function renderQuiz(container, q, idx) {
   const div = document.createElement('div');
