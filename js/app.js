@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.21 | Build 2026.06.13.04';
+const APP_BUILD = 'MGP | Version v2.22 | Build 2026.06.14.01';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -559,6 +559,19 @@ function getUnits() {
   return getTrack().units;
 }
 
+function shuffleCopy(items) {
+  const copy = (items || []).slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function pickQuestions(questions, count) {
+  return shuffleCopy(questions).slice(0, Math.min(count, questions.length));
+}
+
 const UI_TEXT = {
   en: {
     learn: 'Learn',
@@ -996,7 +1009,7 @@ function renderMotivation() {
         <span class="weak-review-card__mark">!</span>
         <span>
           <strong>${weakCount} weak spot${weakCount === 1 ? '' : 's'} ready</strong>
-          <em>Quick review of questions you missed before they fade.</em>
+          <em>Review the lesson idea, then retry what you missed.</em>
         </span>
       </button>
     ` : ''}
@@ -1033,7 +1046,7 @@ function startLesson(lessonId) {
   State.retryCurrentLesson = false;
   State.lessonFinished = false;
   State.missedQuestions = [];
-  State.practiceQuestions = null;
+  State.practiceQuestions = pickQuestions(lesson.quiz, 5);
   State.sessionCorrect = 0;
   State.sessionTotal = getActiveQuestions(lesson).length;
 
@@ -1077,7 +1090,7 @@ function startUnitReview(unitId, questions = null) {
 function buildUnitReviewQuestions(unitId) {
   const lessonBuckets = getLessons()
     .filter(lesson => lesson.unit === unitId)
-    .map(lesson => lesson.quiz.map(q => ({
+    .map(lesson => shuffleCopy(lesson.quiz).map(q => ({
       ...q,
       sourceLessonId: lesson.id,
       sourceTitle: lesson.title,
@@ -1091,13 +1104,13 @@ function buildUnitReviewQuestions(unitId) {
     });
     round++;
   }
-  return mixed;
+  return shuffleCopy(mixed);
 }
 
 function buildTrackReviewQuestions() {
   const unitBuckets = getUnits().map(unit => getLessons()
     .filter(lesson => lesson.unit === unit.id)
-    .flatMap(lesson => lesson.quiz.map(q => ({
+    .flatMap(lesson => shuffleCopy(lesson.quiz).map(q => ({
       ...q,
       sourceLessonId: lesson.id,
       sourceTitle: lesson.title,
@@ -1111,7 +1124,7 @@ function buildTrackReviewQuestions() {
     });
     round++;
   }
-  return mixed;
+  return shuffleCopy(mixed);
 }
 
 function startTrackReview(questions = null) {
@@ -1157,7 +1170,7 @@ function startWeakReview() {
     showToast('No weak spots yet.', 'success');
     return;
   }
-  const questions = State.weakQuestions
+  const questions = shuffleCopy(State.weakQuestions)
     .slice()
     .sort((a, b) => (b.misses - a.misses) || (b.lastMissed - a.lastMissed))
     .slice(0, 10)
@@ -1176,7 +1189,7 @@ function startWeakReview() {
   };
   State.currentReviewUnit = null;
   State.currentMode = 'weak-review';
-  State.currentStep = 1;
+  State.currentStep = 0;
   State.currentQuizAnswered = false;
   State.retryCurrentLesson = false;
   State.lessonFinished = false;
@@ -1191,23 +1204,34 @@ function startWeakReview() {
 
 function getActiveQuestions(lesson = State.currentLesson) {
   if (!lesson) return [];
-  if (State.currentMode === 'lesson') return State.practiceQuestions || lesson.quiz.slice(0, 5);
+  if (State.currentMode === 'lesson') {
+    if (!State.practiceQuestions) State.practiceQuestions = pickQuestions(lesson.quiz, 5);
+    return State.practiceQuestions;
+  }
   return lesson.quiz;
+}
+
+function modeHasIntroStep() {
+  return State.currentMode === 'lesson' || State.currentMode === 'weak-review';
+}
+
+function getCurrentQuestion() {
+  const activeQuestions = getActiveQuestions();
+  if (State.currentStep < 1) return null;
+  return activeQuestions[State.currentStep - 1] || null;
 }
 
 function renderLessonStep() {
   const lesson = State.currentLesson;
   const activeQuestions = getActiveQuestions(lesson);
-  const totalSteps = isReviewLikeMode() ? activeQuestions.length : 1 + activeQuestions.length;
+  const hasIntro = modeHasIntroStep();
+  const totalSteps = activeQuestions.length + (hasIntro ? 1 : 0);
   const step = State.currentStep;
-  const isTheory = State.currentMode === 'lesson' && step === 0;
+  const isTheory = hasIntro && step === 0;
   const actionBtn = $('#lesson-action-btn');
   actionBtn.onclick = null;
 
-  // Progress bar
-  const pct = isReviewLikeMode()
-    ? Math.round(((step - 1) / totalSteps) * 100)
-    : Math.round((step / totalSteps) * 100);
+  const pct = Math.max(0, Math.min(100, Math.round((step / totalSteps) * 100)));
   $('#lesson-progress-fill').style.width = pct + '%';
   $('#lesson-step-count').textContent = `${step}/${totalSteps}`;
 
@@ -1215,34 +1239,65 @@ function renderLessonStep() {
   content.innerHTML = '';
 
   if (isTheory) {
-    const whyBlock = lesson.why ? `
-      <div class="why-card">
-        <div class="why-label">Why this matters</div>
-        <div class="why-text">${lesson.why}</div>
-      </div>` : '';
-    content.innerHTML = `
-      <div class="step-card active">
-        <div class="step-label">Phase ${lesson.unit}.${lesson.lesson}</div>
-        <div class="step-title">${lesson.title}</div>
-        ${whyBlock}
-        <div class="theory-body">${lesson.theory}</div>
-        ${Visuals.render(lesson.visual)}
-      </div>`;
-    $('#lesson-action-btn').textContent = 'Start Practice →';
+    content.innerHTML = State.currentMode === 'weak-review'
+      ? renderWeakReviewIntro(activeQuestions)
+      : renderTheoryStep(lesson);
+    $('#lesson-action-btn').textContent = State.currentMode === 'weak-review' ? 'Retake Weak Spots ->' : 'Start Practice ->';
     $('#lesson-action-btn').disabled = false;
     $('#lesson-action-btn').className = 'btn-primary';
-    State.currentQuizAnswered = true; // theory always "answered"
-  } else {
-    const qIdx = step - 1;
-    const q = activeQuestions[qIdx];
-    renderQuiz(content, q, qIdx);
-    $('#lesson-action-btn').textContent = 'Check Answer';
-    $('#lesson-action-btn').disabled = false;
-    $('#lesson-action-btn').className = 'btn-primary';
-    State.currentQuizAnswered = false;
+    State.currentQuizAnswered = true;
+    return;
   }
+
+  const qIdx = step - 1;
+  const q = activeQuestions[qIdx];
+  renderQuiz(content, q, qIdx);
+  $('#lesson-action-btn').textContent = 'Check Answer';
+  $('#lesson-action-btn').disabled = false;
+  $('#lesson-action-btn').className = 'btn-primary';
+  State.currentQuizAnswered = false;
 }
 
+function renderTheoryStep(lesson) {
+  const whyBlock = lesson.why ? `
+    <div class="why-card">
+      <div class="why-label">Why this matters</div>
+      <div class="why-text">${lesson.why}</div>
+    </div>` : '';
+  return `
+    <div class="step-card active">
+      <div class="step-label">Phase ${lesson.unit}.${lesson.lesson}</div>
+      <div class="step-title">${lesson.title}</div>
+      ${whyBlock}
+      <div class="theory-body">${lesson.theory}</div>
+      ${Visuals.render(lesson.visual)}
+    </div>`;
+}
+
+function renderWeakReviewIntro(questions) {
+  const sourceLessons = [];
+  questions.forEach(q => {
+    const lesson = getLessons().find(item => item.id === q.sourceLessonId);
+    if (lesson && !sourceLessons.some(item => item.id === lesson.id)) sourceLessons.push(lesson);
+  });
+  const lessonCards = sourceLessons.slice(0, 4).map(lesson => `
+    <div class="weak-relearn-card">
+      <div class="weak-relearn-card__label">Review ${lesson.unit}.${lesson.lesson}</div>
+      <div class="weak-relearn-card__title">${lesson.title}</div>
+      ${lesson.why ? `<p>${lesson.why}</p>` : ''}
+    </div>`).join('');
+  return `
+    <div class="step-card active weak-relearn">
+      <div class="step-label">Weak Spot Relearn</div>
+      <div class="step-title">Review the idea, then retake it.</div>
+      <div class="theory-body">
+        <p>These questions came from concepts you missed. Read the reminder first, then answer them again while the reason is fresh.</p>
+      </div>
+      <div class="weak-relearn-list">
+        ${lessonCards || '<div class="weak-relearn-card"><div class="weak-relearn-card__title">Quick refresher</div><p>Read the explanation carefully, then retry the missed question.</p></div>'}
+      </div>
+    </div>`;
+}
 function renderQuiz(container, q, idx) {
   const div = document.createElement('div');
   div.className = 'step-card active';
@@ -1392,10 +1447,10 @@ function isLastStep() {
 
 function advanceStep() {
   State.currentStep++;
-  const totalSteps = isReviewLikeMode() ? getActiveQuestions().length : 1 + getActiveQuestions().length;
+  const totalSteps = getActiveQuestions().length + (modeHasIntroStep() ? 1 : 0);
 
-  if ((isReviewLikeMode() && State.currentStep > totalSteps) ||
-      (State.currentMode === 'lesson' && State.currentStep >= totalSteps)) {
+  if ((modeHasIntroStep() && State.currentStep >= totalSteps) ||
+      (!modeHasIntroStep() && State.currentStep > totalSteps)) {
     finishLesson();
   } else {
     State.currentQuizAnswered = false;
@@ -1632,7 +1687,7 @@ function handleLessonAction() {
     if (State.currentMode === 'weak-review' && State.missedQuestions.length > 0) {
       State.currentLesson.quiz = State.missedQuestions;
       State.missedQuestions = [];
-      State.currentStep = 1;
+      State.currentStep = 0;
       State.currentQuizAnswered = false;
       State.lessonFinished = false;
       State.sessionCorrect = 0;
@@ -1667,7 +1722,7 @@ function handleLessonAction() {
     return;
   }
   if (State.currentStep > 0 && !State.currentQuizAnswered) {
-    const q = State.currentLesson.quiz[State.currentStep - 1];
+    const q = getCurrentQuestion();
     if (q?.type === 'fill-blank') {
       const inp = $('#fill-input');
       if (inp) checkFillBlank(q, inp);
