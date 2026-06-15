@@ -56,10 +56,10 @@ const LESSONS = [
       },
       {
         type: "fill-blank",
-        question: "Complete the block: N010 ___ X0 Z0.1 (rapid move to a position)",
+        question: "Model rapid move:\nG00 X2.000 Z0.100\n\nYour turn: complete the rapid block:\nN010 ___ X0 Z0.1",
         answer: "G00",
         hint: "G00 = rapid positioning",
-        explanation: "G00 is the rapid traverse code. It moves the tool as fast as the machine allows — never use it into material."
+        explanation: "G00 is the rapid traverse code. G0 is also accepted on many systems; both mean rapid positioning, but G00 is easier for beginners to scan."
       }
     ]
   },
@@ -1122,10 +1122,10 @@ const LESSON_QUESTION_EXPANSIONS = {
     },
     {
       type: "multiple-choice",
-      question: "What is missing from this rapid move?\n___ X2.000 Z0.100",
+      question: "Model rapid move:\nG00 X3.200 Z0.300\n\nWhat is missing from this rapid move?\n___ X2.000 Z0.100",
       options: ["G00", "M05", "F0.012", "T0101"],
       answer: 0,
-      explanation: "G00 is the rapid positioning command. X and Z give the destination."
+      explanation: "G00 is the rapid positioning command. G0 is also used on many controls; X and Z give the destination."
     },
     {
       type: "multiple-choice",
@@ -1275,7 +1275,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     },
     {
       type: "multiple-choice",
-      question: "What is missing from this rapid line?\nG00 X2.500 ___0.100",
+      question: "Model rapid line:\nG00 X3.200 Z0.300\n\nWhat is missing from this rapid line?\nG00 X2.500 ___0.100",
       options: ["Z", "F", "M", "S"],
       answer: 0,
       explanation: "Z0.100 gives the Z clearance position."
@@ -1326,7 +1326,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     },
     {
       type: "multiple-choice",
-      question: "What is missing from this feed move?\nG01 Z-1.000 ___0.012",
+      question: "Model feed move:\nG01 Z-0.500 F0.012\n\nWhat is missing from this feed move?\nG01 Z-1.000 ___0.012",
       options: ["F", "S", "M", "T"],
       answer: 0,
       explanation: "F sets the feedrate for a controlled G01 move."
