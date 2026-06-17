@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.34 | Build 2026.06.17.09';
+const APP_BUILD = 'MGP | Version v2.35 | Build 2026.06.17.10';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1543,7 +1543,6 @@ function renderTheoryStep(lesson) {
 }
 
 function renderWeakReviewIntro(questions) {
-  const hasFallback = questions.some(q => q.retakeNotice);
   const sourceLessons = [];
   questions.forEach(q => {
     const lesson = getLessons().find(item => item.id === q.sourceLessonId);
@@ -1551,70 +1550,34 @@ function renderWeakReviewIntro(questions) {
   });
   const lessonCards = sourceLessons.slice(0, 4).map(lesson => `
     <div class="weak-relearn-card">
-      <div class="weak-relearn-card__label">Review ${lesson.unit}.${lesson.lesson}</div>
+      <div class="weak-relearn-card__label">Focus area ${lesson.unit}.${lesson.lesson}</div>
       <div class="weak-relearn-card__title">${lesson.title}</div>
-      ${lesson.why ? `<p>${lesson.why}</p>` : ''}
+      <p>Recall the rule before opening the question. The explanation appears after you answer.</p>
     </div>`).join('');
   return `
     <div class="step-card active weak-relearn has-audio">
       ${renderReadAloudButton()}
-      <div class="step-label">Weak Spot Relearn</div>
-      <div class="step-title">Review the idea, then retake it.</div>
+      <div class="step-label">Weak Spot Memory Check</div>
+      <div class="step-title">Recall first, then answer.</div>
       <div class="theory-body">
-        <p>These questions came from concepts you missed. Read the reminder first, then answer them again while the reason is fresh.</p>
+        <p>These are topics you missed before. Use the focus area as a cue, then answer from memory.</p>
       </div>
-      ${hasFallback ? '<div class="pool-notice">Some topics only have one practice question so far. More variants are being added.</div>' : ''}
       <div class="weak-relearn-list">
-        ${lessonCards || '<div class="weak-relearn-card"><div class="weak-relearn-card__title">Quick refresher</div><p>Read the explanation carefully, then retry the missed question.</p></div>'}
-      </div>
-      <div class="weak-question-list">
-        ${questions.slice(0, 5).map((q, i) => renderWeakQuestionReminder(q, i)).join('')}
+        ${lessonCards || '<div class="weak-relearn-card"><div class="weak-relearn-card__title">Quick recall</div><p>Try the question first. The explanation appears after your answer.</p></div>'}
       </div>
     </div>`;
 }
-
-function renderWeakQuestionReminder(q, idx) {
-  return `
-    <div class="weak-question-card">
-      <div class="weak-question-card__label">Missed question ${idx + 1}</div>
-      <div class="weak-question-card__prompt">${q.question}</div>
-      <div class="weak-question-card__answer">Correct answer: <strong>${getCorrectAnswerText(q)}</strong></div>
-      <div class="weak-question-card__explain">${q.explanation || 'Read the answer, then retry it.'}</div>
-    </div>`;
-}
-
-function getCorrectAnswerText(q) {
-  if (q.type === 'multiple-choice' && Array.isArray(q.options)) {
-    return q.options[q.answer] || String(q.answer);
-  }
-  return String(q.answer || '').trim();
-}
-
 function renderQuestionContext(q) {
   const lesson = getLessons().find(item => item.id === q.sourceLessonId) || State.currentLesson;
   if (!lesson) return '';
-  const model = getLessonModelLine(lesson);
-  const why = lesson.why || '';
-  if (!model && !why) return '';
+  const label = isReviewLikeMode() ? 'Recall first' : 'Concept check';
+  const title = lesson.title || q.sourceTitle || 'Current topic';
   return `
-    <div class="question-context-card">
-      <div class="question-context-card__label">Before you answer</div>
-      ${why ? `<div class="question-context-card__why">${why}</div>` : ''}
-      ${model ? `<div class="question-context-card__model"><span>Model</span><code>${model}</code></div>` : ''}
+    <div class="question-context-card recall-cue">
+      <div class="question-context-card__label">${label}</div>
+      <div class="question-context-card__why">Focus on: <strong>${title}</strong>. Try from memory; explanations appear after you answer.</div>
     </div>`;
 }
-
-function getLessonModelLine(lesson) {
-  const html = lesson.theory || '';
-  const match = html.match(/<pre>([\s\S]*?)<\/pre>/i);
-  if (!match) return '';
-  return match[1]
-    .replace(/<[^>]+>/g, '')
-    .split(/\r?\n/)
-    .map(line => line.trim())
-    .find(line => line && !line.startsWith('%')) || '';
-}
-
 function renderQuiz(container, q, idx) {
   const div = document.createElement('div');
   div.className = 'step-card active has-audio';
@@ -1674,7 +1637,7 @@ function renderQuiz(container, q, idx) {
         <input type="text" class="fill-blank-input" id="fill-input" 
           placeholder="Type your answer…" autocomplete="off" autocorrect="off" spellcheck="false"
           inputmode="${getAnswerInputMode(q)}" pattern="${getAnswerPattern(q)}">
-        <div class="hint-text">Hint: ${q.hint}</div>
+        ${q.hint && !isReviewLikeMode() ? `<div class="hint-text">Hint: ${q.hint}</div>` : ''}
       </div>
       <div id="explanation-box"></div>`;
     container.appendChild(div);
