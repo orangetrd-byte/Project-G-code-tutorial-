@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.30 | Build 2026.06.17.05';
+const APP_BUILD = 'MGP | Version v2.31 | Build 2026.06.17.06';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -196,6 +196,11 @@ const State = {
       id: q.id || q.originalQuestionId || key,
       concept: getQuestionConcept(q),
       originalQuestionId: q.originalQuestionId || q.id || key,
+      attemptedIds: [...new Set([
+        ...(q.attemptedIds || []),
+        q.originalQuestionId,
+        q.id
+      ].filter(Boolean))],
       sourceLessonId: q.sourceLessonId || lesson?.id || null,
       sourceUnit: q.sourceUnit || lesson?.unit || null,
       sourceTitle: q.sourceTitle || lesson?.title || 'Practice'
@@ -628,17 +633,45 @@ function getQuestionConcept(q) {
   return 'general';
 }
 
+function normalizeQuestionText(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function inferQuestionId(question, pool) {
+  if (!question) return '';
+  if (question.originalQuestionId) return question.originalQuestionId;
+  if (question.id && pool.some(item => item.id === question.id)) return question.id;
+  const qText = normalizeQuestionText(question.question);
+  const qAnswer = normalizeQuestionText(question.answer);
+  const match = pool.find(item =>
+    normalizeQuestionText(item.question) === qText &&
+    normalizeQuestionText(item.answer) === qAnswer
+  );
+  return match?.id || question.id || '';
+}
+
 function getRetakeQuestion(originalQuestion) {
   ensureConceptPools();
   const concept = getQuestionConcept(originalQuestion);
-  const originalId = originalQuestion?.originalQuestionId || originalQuestion?.id;
   const pool = ConceptPools.byConcept[concept] || [];
-  const available = pool.filter(q => q.id !== originalId);
+  const originalId = inferQuestionId(originalQuestion, pool);
+  const currentId = originalQuestion?.id || '';
+  const attemptedIds = new Set([
+    ...(originalQuestion?.attemptedIds || []),
+    originalId,
+    currentId
+  ].filter(Boolean));
+  let available = pool.filter(q => !attemptedIds.has(q.id));
+  if (available.length === 0) {
+    available = pool.filter(q => q.id !== currentId && q.id !== originalId);
+  }
   const selected = (available.length ? shuffleCopy(available)[0] : ConceptPools.byId[originalId]) || originalQuestion;
+  attemptedIds.add(selected.id);
   return {
     ...selected,
     sourceConcept: concept,
-    originalQuestionId: originalId || selected.id,
+    originalQuestionId: originalId || currentId || selected.id,
+    attemptedIds: [...attemptedIds],
     weakKey: originalQuestion?.weakKey,
     retakeNotice: available.length ? '' : 'More practice variants are coming for this topic.'
   };
