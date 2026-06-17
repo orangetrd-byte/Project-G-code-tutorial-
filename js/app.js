@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.25 | Build 2026.06.14.04';
+const APP_BUILD = 'MGP | Version v2.31 | Build 2026.06.17.06';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -184,6 +184,7 @@ const State = {
   isUnitReviewDone(unitId) { return this.completedReviews.includes(this.reviewId(unitId)); },
 
   questionKey(q) {
+    if (q?.weakKey) return q.weakKey;
     return `${this.trackId}|${String(q.question || '').trim()}|${String(q.answer || '').trim()}`;
   },
 
@@ -192,9 +193,17 @@ const State = {
     const existing = this.weakQuestions.find(item => item.key === key);
     const snapshot = {
       ...q,
-      sourceLessonId: lesson?.id || null,
-      sourceUnit: lesson?.unit || null,
-      sourceTitle: lesson?.title || 'Practice'
+      id: q.id || q.originalQuestionId || key,
+      concept: getQuestionConcept(q),
+      originalQuestionId: q.originalQuestionId || q.id || key,
+      attemptedIds: [...new Set([
+        ...(q.attemptedIds || []),
+        q.originalQuestionId,
+        q.id
+      ].filter(Boolean))],
+      sourceLessonId: q.sourceLessonId || lesson?.id || null,
+      sourceUnit: q.sourceUnit || lesson?.unit || null,
+      sourceTitle: q.sourceTitle || lesson?.title || 'Practice'
     };
     if (existing) {
       existing.misses += 1;
@@ -215,9 +224,16 @@ const State = {
   },
 
   clearWeakQuestion(q) {
-    const key = this.questionKey(q);
+    const key = q?.weakKey || this.questionKey(q);
+    const originalId = q?.originalQuestionId || q?.id;
+    const concept = getQuestionConcept(q);
     const before = this.weakQuestions.length;
-    this.weakQuestions = this.weakQuestions.filter(item => item.key !== key);
+    this.weakQuestions = this.weakQuestions.filter(item => {
+      if (item.key === key) return false;
+      const stored = item.question || {};
+      if (originalId && (stored.id === originalId || stored.originalQuestionId === originalId)) return false;
+      return !(concept && getQuestionConcept(stored) === concept);
+    });
     if (this.weakQuestions.length !== before) this.save();
   },
 
@@ -572,64 +588,97 @@ function pickQuestions(questions, count) {
   return shuffleCopy(questions).slice(0, Math.min(count, questions.length));
 }
 
-// ── Concept retry system ──────────────────────────────────────
-const RETRY_CONCEPTS = {
-  'modal-codes': ['modal-q1','modal-q2','modal-q3'],
-  'g00-g01': ['linear-motion-q1','linear-motion-q2','linear-motion-q3','linear-motion-q4'],
-  'g02-g03': ['arc-direction-q1','arc-direction-q2','arc-direction-q3'],
-  'work-offsets': ['offset-q1','offset-q2','offset-q3'],
-  'spindle-modes': ['spindle-q1','spindle-q2','spindle-q3'],
-  'program-structure': ['structure-q1','structure-q2','structure-q3']
+const ConceptPools = {
+  byConcept: {},
+  byId: {},
+  ready: false
 };
 
-const QUESTION_CONCEPT_MAP = {
-  'modal-q1': 'modal-codes',
-  'u1-l1-q1': 'modal-codes',
-  'u1-l1-q2': 'g00-g01',
-  'linear-motion-q1': 'g00-g01',
-  'u2-l1-q1': 'g00-g01',
-  'u2-l1-q2': 'g00-g01',
-  'u2-l2-q1': 'g00-g01',
-  'u2-l2-q2': 'g00-g01',
-  'linear-motion-q3': 'g00-g01',
-  'linear-motion-q4': 'g00-g01',
-  'arc-direction-q1': 'g02-g03',
-  'u2-l3-q1': 'g02-g03',
-  'u2-l3-q2': 'g02-g03',
-  'u2-l3-q3': 'g02-g03',
-  'arc-direction-q2': 'g02-g03',
-  'arc-direction-q3': 'g02-g03',
-  'offset-q1': 'work-offsets',
-  'u1-l2-q1': 'work-offsets',
-  'u1-l2-q2': 'work-offsets',
-  'u1-l2-q3': 'work-offsets',
-  'spindle-q1': 'spindle-modes',
-  'u3-l1-q1': 'spindle-modes',
-  'u3-l1-q2': 'spindle-modes',
-  'u3-l1-q3': 'spindle-modes',
-  'structure-q1': 'program-structure',
-  'u1-l3-q1': 'program-structure',
-  'u1-l3-q2': 'program-structure',
-  'u1-l3-q3': 'program-structure'
-};
-
-function conceptForQuestion(q) {
-  return QUESTION_CONCEPT_MAP[q.id] || (typeof q.concept === 'string' ? q.concept : null);
+function initConceptPools() {
+  ConceptPools.byConcept = {};
+  ConceptPools.byId = {};
+  Object.values(TRACKS || {}).forEach(track => {
+    (track.lessons || []).forEach(lesson => {
+      (lesson.quiz || []).forEach((q, index) => {
+        const id = q.id || `${track.id}-${lesson.id}-q${index + 1}`;
+        const concept = q.concept || `${track.id}-${lesson.id}`;
+        q.id = id;
+        q.concept = concept;
+        q.pool = q.pool || lesson.id;
+        q.sourceLessonId = q.sourceLessonId || lesson.id;
+        q.sourceUnit = q.sourceUnit || lesson.unit;
+        q.sourceTitle = q.sourceTitle || lesson.title;
+        ConceptPools.byId[id] = q;
+        if (!ConceptPools.byConcept[concept]) ConceptPools.byConcept[concept] = [];
+        ConceptPools.byConcept[concept].push(q);
+      });
+    });
+  });
+  ConceptPools.ready = true;
 }
 
-function poolForQuestion(q) {
-  const concept = conceptForQuestion(q);
-  if (!concept) return [];
-  return RETRY_CONCEPTS[concept] || [];
+function ensureConceptPools() {
+  if (!ConceptPools.ready) initConceptPools();
 }
 
-function findLessonQuestionById(id) {
-  for (const lesson of getLessons()) {
-    for (const q of lesson.quiz) {
-      if (q.id === id) return q;
-    }
+function getQuestionConcept(q) {
+  if (q?.concept || q?.sourceConcept) return q.concept || q.sourceConcept;
+  if (q?.sourceLessonId) {
+    const direct = `${State.trackId}-${q.sourceLessonId}`;
+    if (ConceptPools.byConcept[direct]) return direct;
+    const match = Object.keys(ConceptPools.byConcept).find(key => key.endsWith(`-${q.sourceLessonId}`));
+    if (match) return match;
+    return direct;
   }
-  return null;
+  return 'general';
+}
+
+function normalizeQuestionText(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function inferQuestionId(question, pool) {
+  if (!question) return '';
+  if (question.originalQuestionId) return question.originalQuestionId;
+  if (question.id && pool.some(item => item.id === question.id)) return question.id;
+  const qText = normalizeQuestionText(question.question);
+  const qAnswer = normalizeQuestionText(question.answer);
+  const match = pool.find(item =>
+    normalizeQuestionText(item.question) === qText &&
+    normalizeQuestionText(item.answer) === qAnswer
+  );
+  return match?.id || question.id || '';
+}
+
+function getRetakeQuestion(originalQuestion) {
+  ensureConceptPools();
+  const concept = getQuestionConcept(originalQuestion);
+  const pool = ConceptPools.byConcept[concept] || [];
+  const originalId = inferQuestionId(originalQuestion, pool);
+  const currentId = originalQuestion?.id || '';
+  const attemptedIds = new Set([
+    ...(originalQuestion?.attemptedIds || []),
+    originalId,
+    currentId
+  ].filter(Boolean));
+  let available = pool.filter(q => !attemptedIds.has(q.id));
+  if (available.length === 0) {
+    available = pool.filter(q => q.id !== currentId && q.id !== originalId);
+  }
+  const selected = (available.length ? shuffleCopy(available)[0] : ConceptPools.byId[originalId]) || originalQuestion;
+  attemptedIds.add(selected.id);
+  return {
+    ...selected,
+    sourceConcept: concept,
+    originalQuestionId: originalId || currentId || selected.id,
+    attemptedIds: [...attemptedIds],
+    weakKey: originalQuestion?.weakKey,
+    retakeNotice: available.length ? '' : 'More practice variants are coming for this topic.'
+  };
+}
+
+function getRetakeQuestions(questions) {
+  return (questions || []).map(q => getRetakeQuestion(q));
 }
 
 const UI_TEXT = {
@@ -727,6 +776,7 @@ function initTrackSwitcher() {
 }
 
 function showScreen(id) {
+  stopSpeaking();
   if (!State.setupComplete && id !== 'screen-settings') id = 'screen-settings';
   $$('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -949,6 +999,53 @@ function playStartupTypingSound() {
     const freq = i % 5 === 0 ? 720 : 980 + ((i % 3) * 90);
     AudioFeedback.tone(freq, start + offset, 0.024, 0.018, 'square');
   });
+}
+
+let activeSpeechButton = null;
+
+function setSpeechButtonState(button, isSpeaking) {
+  if (!button) return;
+  button.classList.toggle('speaking', isSpeaking);
+  button.setAttribute('aria-label', isSpeaking ? 'Stop reading' : 'Read aloud');
+  button.setAttribute('title', isSpeaking ? 'Stop reading' : 'Read aloud');
+  const icon = button.querySelector('[aria-hidden="true"]');
+  if (icon) icon.textContent = isSpeaking ? '■' : '🔊';
+}
+
+function speak(text, button = null) {
+  if (!('speechSynthesis' in window) || !text) return;
+  stopSpeaking();
+  activeSpeechButton = button;
+  setSpeechButtonState(activeSpeechButton, true);
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 0.9;
+  utter.lang = State.language === 'es' ? 'es-US' : 'en-US';
+  utter.onend = () => {
+    setSpeechButtonState(activeSpeechButton, false);
+    activeSpeechButton = null;
+  };
+  utter.onerror = utter.onend;
+  window.speechSynthesis.speak(utter);
+}
+
+function stopSpeaking() {
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  setSpeechButtonState(activeSpeechButton, false);
+  activeSpeechButton = null;
+}
+
+function renderReadAloudButton() {
+  return `
+    <button class="btn-audio" type="button" aria-label="Read aloud" title="Read aloud">
+      <span aria-hidden="true">🔊</span>
+    </button>`;
+}
+
+function getReadableCardText(card) {
+  if (!card) return '';
+  const clone = card.cloneNode(true);
+  clone.querySelectorAll('.btn-audio, .option-letter').forEach(el => el.remove());
+  return clone.textContent.replace(/\s+/g, ' ').trim();
 }
 
 // ─── HOME SCREEN ──────────────────────────────────────────────
@@ -1230,24 +1327,11 @@ function startWeakReview() {
     showToast('No weak spots yet.', 'success');
     return;
   }
-
-  const prioritized = shuffleCopy(State.weakQuestions)
-    .sort((a,b) => (b.misses - a.misses) || (b.lastMissed - a.lastMissed))
-    .slice(0, 10);
-
-  const usedIds = new Set();
-  const retryQuiz = prioritized.flatMap(item => {
-    const concept = conceptForQuestion(item.question);
-    const pool = concept ? RETRY_CONCEPTS[concept] : [];
-    const variant = pool.find(id => id !== item.question.id && !usedIds.has(id));
-    usedIds.add(variant || item.question.id);
-
-    if (variant) {
-      const alt = findLessonQuestionById(variant);
-      if (alt) return { ...alt, weakKey: item.key, sourceLessonId: item.question.sourceLessonId };
-    }
-    return { ...item.question, weakKey: item.key };
-  });
+  const questions = shuffleCopy(State.weakQuestions)
+    .slice()
+    .sort((a, b) => (b.misses - a.misses) || (b.lastMissed - a.lastMissed))
+    .slice(0, 10)
+    .map(item => getRetakeQuestion({ ...item.question, weakKey: item.key }));
 
   State.currentLesson = {
     id: 'weak-review',
@@ -1258,7 +1342,7 @@ function startWeakReview() {
     xp: 15,
     theory: '',
     visual: '',
-    quiz: retryQuiz
+    quiz: questions
   };
   State.currentReviewUnit = null;
   State.currentMode = 'weak-review';
@@ -1269,7 +1353,7 @@ function startWeakReview() {
   State.missedQuestions = [];
   State.practiceQuestions = null;
   State.sessionCorrect = 0;
-  State.sessionTotal = retryQuiz.length;
+  State.sessionTotal = questions.length;
 
   renderLessonStep();
   showScreen('screen-lesson');
@@ -1338,7 +1422,8 @@ function renderTheoryStep(lesson) {
       <div class="why-text">${lesson.why}</div>
     </div>` : '';
   return `
-    <div class="step-card active">
+    <div class="step-card active has-audio">
+      ${renderReadAloudButton()}
       <div class="step-label">Phase ${lesson.unit}.${lesson.lesson}</div>
       <div class="step-title">${lesson.title}</div>
       ${whyBlock}
@@ -1360,7 +1445,8 @@ function renderWeakReviewIntro(questions) {
       ${lesson.why ? `<p>${lesson.why}</p>` : ''}
     </div>`).join('');
   return `
-    <div class="step-card active weak-relearn">
+    <div class="step-card active weak-relearn has-audio">
+      ${renderReadAloudButton()}
       <div class="step-label">Weak Spot Relearn</div>
       <div class="step-title">Review the idea, then retake it.</div>
       <div class="theory-body">
@@ -1419,13 +1505,15 @@ function getLessonModelLine(lesson) {
 
 function renderQuiz(container, q, idx) {
   const div = document.createElement('div');
-  div.className = 'step-card active';
+  div.className = 'step-card active has-audio';
 
   if (q.type === 'multiple-choice') {
     const letters = ['A','B','C','D'];
     div.innerHTML = `
+      ${renderReadAloudButton()}
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
       ${renderQuestionContext(q)}
+      ${q.retakeNotice ? `<div class="pool-notice">${q.retakeNotice}</div>` : ''}
       <div class="quiz-question">${q.question}</div>
       <div class="options-list">
         ${q.options.map((opt, i) => `
@@ -1465,8 +1553,10 @@ function renderQuiz(container, q, idx) {
 
   } else if (q.type === 'fill-blank') {
     div.innerHTML = `
+      ${renderReadAloudButton()}
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
       ${renderQuestionContext(q)}
+      ${q.retakeNotice ? `<div class="pool-notice">${q.retakeNotice}</div>` : ''}
       <div class="quiz-question">${q.question}</div>
       <div class="fill-blank-wrap">
         <input type="text" class="fill-blank-input" id="fill-input" 
@@ -1802,11 +1892,11 @@ function handleLessonAction() {
   if (!State.currentLesson) return;
   if (State.lessonFinished) {
     if (State.currentMode === 'track-review' && State.missedQuestions.length > 0) {
-      startTrackReview(State.missedQuestions);
+      startTrackReview(getRetakeQuestions(State.missedQuestions));
       return;
     }
     if (State.currentMode === 'weak-review' && State.missedQuestions.length > 0) {
-      State.currentLesson.quiz = State.missedQuestions;
+      State.currentLesson.quiz = getRetakeQuestions(State.missedQuestions);
       State.missedQuestions = [];
       State.currentStep = 0;
       State.currentQuizAnswered = false;
@@ -1817,11 +1907,11 @@ function handleLessonAction() {
       return;
     }
     if (State.currentMode === 'review' && State.missedQuestions.length > 0) {
-      startUnitReview(State.currentReviewUnit, State.missedQuestions);
+      startUnitReview(State.currentReviewUnit, getRetakeQuestions(State.missedQuestions));
       return;
     }
     if (State.currentMode === 'lesson' && State.missedQuestions.length > 0) {
-      State.practiceQuestions = State.missedQuestions;
+      State.practiceQuestions = getRetakeQuestions(State.missedQuestions);
       State.missedQuestions = [];
       State.currentStep = 1;
       State.currentQuizAnswered = false;
@@ -1944,10 +2034,21 @@ function initNav() {
   });
 
   $('#lesson-action-btn').addEventListener('click', handleLessonAction);
+  $('#lesson-content').addEventListener('click', event => {
+    const button = event.target.closest('.btn-audio');
+    if (!button) return;
+    if (button === activeSpeechButton) {
+      stopSpeaking();
+      return;
+    }
+    const card = button.closest('.step-card');
+    speak(getReadableCardText(card), button);
+  });
 }
 
 // ─── BOOT ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  initConceptPools();
   State.load();
   applyTheme();
   initNav();
