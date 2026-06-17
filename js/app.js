@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.32 | Build 2026.06.17.07';
+const APP_BUILD = 'MGP | Version v2.33 | Build 2026.06.17.08';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1895,11 +1895,6 @@ function finishUnitReview() {
   $('#lesson-action-btn').className = 'btn-primary accent-btn';
 }
 
-function resetLessonActionBtn() {
-  const btn = $('#lesson-action-btn');
-  btn.onclick = null;
-}
-
 function handleLessonAction() {
   if (!State.currentLesson) return;
   if (State.lessonFinished) {
@@ -2070,5 +2065,4 @@ document.addEventListener('DOMContentLoaded', () => {
   renderHome();
   showScreen(State.setupComplete ? 'screen-home' : 'screen-settings');
   finishLoading();
-  console.log('%c[Project G-Code Tutorial] Ready.', 'color:#7FDBCA;font-family:monospace');
 });
