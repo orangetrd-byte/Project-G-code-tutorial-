@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.33-ghost-code-cleanup';
+const CACHE_VERSION = 'pgct-v2.34-same-question-retries';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [

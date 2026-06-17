@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.33 | Build 2026.06.17.08';
+const APP_BUILD = 'MGP | Version v2.34 | Build 2026.06.17.09';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -650,30 +650,130 @@ function inferQuestionId(question, pool) {
   return match?.id || question.id || '';
 }
 
-function getRetakeQuestion(originalQuestion) {
+function resolveRetryAnchorId(question) {
   ensureConceptPools();
-  const concept = getQuestionConcept(originalQuestion);
+  const concept = getQuestionConcept(question);
   const pool = ConceptPools.byConcept[concept] || [];
-  const originalId = inferQuestionId(originalQuestion, pool);
-  const currentId = originalQuestion?.id || '';
+  return question?.originalQuestionId || inferQuestionId(question, pool) || question?.id || '';
+}
+
+function cloneQuestion(question) {
+  return {
+    ...question,
+    options: Array.isArray(question?.options) ? [...question.options] : question?.options
+  };
+}
+
+function isPlainNumericAnswer(value) {
+  return /^-?\d+(\.\d+)?$/.test(String(value || '').trim());
+}
+
+function countDecimals(value) {
+  const match = String(value).match(/\.(\d+)/);
+  return match ? match[1].length : 0;
+}
+
+function formatRetryNumber(value, decimals) {
+  return decimals > 0 ? value.toFixed(decimals) : String(Math.round(value));
+}
+
+function makeRetryNumber(original) {
+  const raw = String(original);
+  const decimals = countDecimals(raw);
+  const current = Number(raw);
+  if (!Number.isFinite(current)) return raw;
+
+  const unit = decimals > 0 ? Math.pow(10, -decimals) : 1;
+  const multiplier = decimals >= 3 ? 5 + Math.floor(Math.random() * 16) : decimals === 2 ? 2 + Math.floor(Math.random() * 7) : decimals === 1 ? 1 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 9);
+  const offset = unit * multiplier;
+  const direction = Math.random() < 0.5 ? -1 : 1;
+  let next = current + direction * offset;
+  if (current > 0 && next <= 0) next = current + offset;
+  if (current === 0 && next < 0) next = Math.abs(next);
+
+  const formatted = formatRetryNumber(next, decimals);
+  return formatted === raw ? formatRetryNumber(next + offset, decimals) : formatted;
+}
+
+function replaceRetryNumbers(text, replacements, originalAnswer = '', retryAnswer = '') {
+  if (typeof text !== 'string' || !text) return text;
+  return text.replace(/\b([XYZRFSEQUWP])(-?\d+\.\d+)\b/g, (full, prefix, number) => {
+    if (!replacements.has(full)) {
+      const nextNumber = retryAnswer && number === originalAnswer ? retryAnswer : makeRetryNumber(number);
+      replacements.set(full, `${prefix}${nextNumber}`);
+    }
+    return replacements.get(full);
+  });
+}
+
+function replaceStandaloneMappedNumbers(text, replacements) {
+  if (typeof text !== 'string' || !text) return text;
+  let result = text;
+  replacements.forEach((nextToken, originalToken) => {
+    const originalNumber = originalToken.slice(1);
+    const nextNumber = nextToken.slice(1);
+    const escaped = originalNumber.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    result = result.replace(new RegExp(`(?<![A-Z0-9.])${escaped}(?![A-Z0-9.])`, 'g'), nextNumber);
+  });
+  return result;
+}
+function replaceStandaloneAnswer(text, originalAnswer, retryAnswer) {
+  if (typeof text !== 'string' || !originalAnswer || !retryAnswer) return text;
+  const escaped = originalAnswer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(`(?<![A-Z0-9.])${escaped}(?![A-Z0-9.])`, 'g'), retryAnswer);
+}
+
+function createRetryNumberVariant(template, originalQuestion = {}) {
+  const variant = cloneQuestion(template);
+  const shouldVaryNumbers = variant.type === 'fill-blank' || String(variant.question || '').includes('___');
+  if (!shouldVaryNumbers) return variant;
+
+  const replacements = new Map();
+  const originalAnswer = String(variant.answer || '').trim();
+  const retryAnswer = isPlainNumericAnswer(originalAnswer) ? makeRetryNumber(originalAnswer) : '';
+
+  if (retryAnswer) variant.answer = retryAnswer;
+  variant.question = replaceRetryNumbers(variant.question, replacements, originalAnswer, retryAnswer);
+  variant.hint = replaceRetryNumbers(variant.hint, replacements, originalAnswer, retryAnswer);
+  variant.explanation = replaceRetryNumbers(variant.explanation, replacements, originalAnswer, retryAnswer);
+
+  variant.question = replaceStandaloneMappedNumbers(variant.question, replacements);
+  variant.hint = replaceStandaloneMappedNumbers(variant.hint, replacements);
+  variant.explanation = replaceStandaloneMappedNumbers(variant.explanation, replacements);
+
+  if (retryAnswer) {
+    variant.question = replaceStandaloneAnswer(variant.question, originalAnswer, retryAnswer);
+    variant.hint = replaceStandaloneAnswer(variant.hint, originalAnswer, retryAnswer);
+    variant.explanation = replaceStandaloneAnswer(variant.explanation, originalAnswer, retryAnswer);
+  }
+
+  variant.retryVariantOf = originalQuestion?.id || template?.id || '';
+  return variant;
+}
+
+function getRetakeQuestion(originalQuestion) {
+  const anchorId = resolveRetryAnchorId(originalQuestion);
+  const template = ConceptPools.byId[anchorId] || originalQuestion;
+  const variant = createRetryNumberVariant(template, originalQuestion);
   const attemptedIds = new Set([
     ...(originalQuestion?.attemptedIds || []),
-    originalId,
-    currentId
+    anchorId,
+    originalQuestion?.id
   ].filter(Boolean));
-  let available = pool.filter(q => !attemptedIds.has(q.id));
-  if (available.length === 0) {
-    available = pool.filter(q => q.id !== currentId && q.id !== originalId);
-  }
-  const selected = (available.length ? shuffleCopy(available)[0] : ConceptPools.byId[originalId]) || originalQuestion;
-  attemptedIds.add(selected.id);
+
   return {
-    ...selected,
-    sourceConcept: concept,
-    originalQuestionId: originalId || currentId || selected.id,
+    ...variant,
+    id: anchorId || variant?.id || originalQuestion?.id || '',
+    concept: template?.concept || originalQuestion?.concept,
+    pool: template?.pool || originalQuestion?.pool,
+    sourceConcept: template?.concept || originalQuestion?.sourceConcept,
+    originalQuestionId: anchorId || originalQuestion?.originalQuestionId || originalQuestion?.id || '',
     attemptedIds: [...attemptedIds],
     weakKey: originalQuestion?.weakKey,
-    retakeNotice: available.length ? '' : 'More practice variants are coming for this topic.'
+    sourceLessonId: originalQuestion?.sourceLessonId || template?.sourceLessonId,
+    sourceUnit: originalQuestion?.sourceUnit || template?.sourceUnit,
+    sourceTitle: originalQuestion?.sourceTitle || template?.sourceTitle,
+    retakeNotice: ''
   };
 }
 
