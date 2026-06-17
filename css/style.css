@@ -942,6 +942,11 @@ body.theme-light .lesson-row__xp {
   color: var(--c-accent);
   outline: none;
 }
+.btn-audio.speaking {
+  border-color: var(--c-error);
+  background: rgba(255, 107, 107, 0.14);
+  color: var(--c-error);
+}
 
 @keyframes fadeSlide {
   from { opacity: 0; transform: translateX(20px); }

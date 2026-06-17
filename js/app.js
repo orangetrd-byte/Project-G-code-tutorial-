@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.28 | Build 2026.06.17.03';
+const APP_BUILD = 'MGP | Version v2.29 | Build 2026.06.17.04';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -892,17 +892,37 @@ function playStartupTypingSound() {
   });
 }
 
-function speak(text) {
+let activeSpeechButton = null;
+
+function setSpeechButtonState(button, isSpeaking) {
+  if (!button) return;
+  button.classList.toggle('speaking', isSpeaking);
+  button.setAttribute('aria-label', isSpeaking ? 'Stop reading' : 'Read aloud');
+  button.setAttribute('title', isSpeaking ? 'Stop reading' : 'Read aloud');
+  const icon = button.querySelector('[aria-hidden="true"]');
+  if (icon) icon.textContent = isSpeaking ? '■' : '🔊';
+}
+
+function speak(text, button = null) {
   if (!('speechSynthesis' in window) || !text) return;
-  window.speechSynthesis.cancel();
+  stopSpeaking();
+  activeSpeechButton = button;
+  setSpeechButtonState(activeSpeechButton, true);
   const utter = new SpeechSynthesisUtterance(text);
   utter.rate = 0.9;
   utter.lang = State.language === 'es' ? 'es-US' : 'en-US';
+  utter.onend = () => {
+    setSpeechButtonState(activeSpeechButton, false);
+    activeSpeechButton = null;
+  };
+  utter.onerror = utter.onend;
   window.speechSynthesis.speak(utter);
 }
 
 function stopSpeaking() {
   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  setSpeechButtonState(activeSpeechButton, false);
+  activeSpeechButton = null;
 }
 
 function renderReadAloudButton() {
@@ -1906,8 +1926,12 @@ function initNav() {
   $('#lesson-content').addEventListener('click', event => {
     const button = event.target.closest('.btn-audio');
     if (!button) return;
+    if (button === activeSpeechButton) {
+      stopSpeaking();
+      return;
+    }
     const card = button.closest('.step-card');
-    speak(getReadableCardText(card));
+    speak(getReadableCardText(card), button);
   });
 }
 
