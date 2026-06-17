@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.27 | Build 2026.06.17.02';
+const APP_BUILD = 'MGP | Version v2.28 | Build 2026.06.17.03';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -667,6 +667,7 @@ function initTrackSwitcher() {
 }
 
 function showScreen(id) {
+  stopSpeaking();
   if (!State.setupComplete && id !== 'screen-settings') id = 'screen-settings';
   $$('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -889,6 +890,33 @@ function playStartupTypingSound() {
     const freq = i % 5 === 0 ? 720 : 980 + ((i % 3) * 90);
     AudioFeedback.tone(freq, start + offset, 0.024, 0.018, 'square');
   });
+}
+
+function speak(text) {
+  if (!('speechSynthesis' in window) || !text) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 0.9;
+  utter.lang = State.language === 'es' ? 'es-US' : 'en-US';
+  window.speechSynthesis.speak(utter);
+}
+
+function stopSpeaking() {
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+}
+
+function renderReadAloudButton() {
+  return `
+    <button class="btn-audio" type="button" aria-label="Read aloud" title="Read aloud">
+      <span aria-hidden="true">🔊</span>
+    </button>`;
+}
+
+function getReadableCardText(card) {
+  if (!card) return '';
+  const clone = card.cloneNode(true);
+  clone.querySelectorAll('.btn-audio, .option-letter').forEach(el => el.remove());
+  return clone.textContent.replace(/\s+/g, ' ').trim();
 }
 
 // ─── HOME SCREEN ──────────────────────────────────────────────
@@ -1265,7 +1293,8 @@ function renderTheoryStep(lesson) {
       <div class="why-text">${lesson.why}</div>
     </div>` : '';
   return `
-    <div class="step-card active">
+    <div class="step-card active has-audio">
+      ${renderReadAloudButton()}
       <div class="step-label">Phase ${lesson.unit}.${lesson.lesson}</div>
       <div class="step-title">${lesson.title}</div>
       ${whyBlock}
@@ -1287,7 +1316,8 @@ function renderWeakReviewIntro(questions) {
       ${lesson.why ? `<p>${lesson.why}</p>` : ''}
     </div>`).join('');
   return `
-    <div class="step-card active weak-relearn">
+    <div class="step-card active weak-relearn has-audio">
+      ${renderReadAloudButton()}
       <div class="step-label">Weak Spot Relearn</div>
       <div class="step-title">Review the idea, then retake it.</div>
       <div class="theory-body">
@@ -1346,11 +1376,12 @@ function getLessonModelLine(lesson) {
 
 function renderQuiz(container, q, idx) {
   const div = document.createElement('div');
-  div.className = 'step-card active';
+  div.className = 'step-card active has-audio';
 
   if (q.type === 'multiple-choice') {
     const letters = ['A','B','C','D'];
     div.innerHTML = `
+      ${renderReadAloudButton()}
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
       ${renderQuestionContext(q)}
       <div class="quiz-question">${q.question}</div>
@@ -1392,6 +1423,7 @@ function renderQuiz(container, q, idx) {
 
   } else if (q.type === 'fill-blank') {
     div.innerHTML = `
+      ${renderReadAloudButton()}
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
       ${renderQuestionContext(q)}
       <div class="quiz-question">${q.question}</div>
@@ -1871,6 +1903,12 @@ function initNav() {
   });
 
   $('#lesson-action-btn').addEventListener('click', handleLessonAction);
+  $('#lesson-content').addEventListener('click', event => {
+    const button = event.target.closest('.btn-audio');
+    if (!button) return;
+    const card = button.closest('.step-card');
+    speak(getReadableCardText(card));
+  });
 }
 
 // ─── BOOT ─────────────────────────────────────────────────────

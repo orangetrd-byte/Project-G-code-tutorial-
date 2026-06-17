@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.27-ten-units-each-track';
+const CACHE_VERSION = 'pgct-v2.28-read-aloud';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
