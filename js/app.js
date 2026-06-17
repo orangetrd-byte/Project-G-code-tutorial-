@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.31 | Build 2026.06.17.06';
+const APP_BUILD = 'MGP | Version v2.32 | Build 2026.06.17.07';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1327,11 +1327,21 @@ function startWeakReview() {
     showToast('No weak spots yet.', 'success');
     return;
   }
-  const questions = shuffleCopy(State.weakQuestions)
+  const prioritized = shuffleCopy(State.weakQuestions)
     .slice()
     .sort((a, b) => (b.misses - a.misses) || (b.lastMissed - a.lastMissed))
-    .slice(0, 10)
-    .map(item => getRetakeQuestion({ ...item.question, weakKey: item.key }));
+    .slice(0, 10);
+  const retryQuiz = prioritized.map(item => {
+    const q = item.question || {};
+    const retaken = getRetakeQuestion(q);
+    return {
+      ...retaken,
+      weakKey: item.key,
+      sourceLessonId: q.sourceLessonId || retaken.sourceLessonId,
+      sourceUnit: q.sourceUnit || retaken.sourceUnit,
+      sourceTitle: q.sourceTitle || retaken.sourceTitle
+    };
+  });
 
   State.currentLesson = {
     id: 'weak-review',
@@ -1342,7 +1352,7 @@ function startWeakReview() {
     xp: 15,
     theory: '',
     visual: '',
-    quiz: questions
+    quiz: retryQuiz
   };
   State.currentReviewUnit = null;
   State.currentMode = 'weak-review';
@@ -1353,7 +1363,7 @@ function startWeakReview() {
   State.missedQuestions = [];
   State.practiceQuestions = null;
   State.sessionCorrect = 0;
-  State.sessionTotal = questions.length;
+  State.sessionTotal = retryQuiz.length;
 
   renderLessonStep();
   showScreen('screen-lesson');
@@ -1433,6 +1443,7 @@ function renderTheoryStep(lesson) {
 }
 
 function renderWeakReviewIntro(questions) {
+  const hasFallback = questions.some(q => q.retakeNotice);
   const sourceLessons = [];
   questions.forEach(q => {
     const lesson = getLessons().find(item => item.id === q.sourceLessonId);
@@ -1452,6 +1463,7 @@ function renderWeakReviewIntro(questions) {
       <div class="theory-body">
         <p>These questions came from concepts you missed. Read the reminder first, then answer them again while the reason is fresh.</p>
       </div>
+      ${hasFallback ? '<div class="pool-notice">Some topics only have one practice question so far. More variants are being added.</div>' : ''}
       <div class="weak-relearn-list">
         ${lessonCards || '<div class="weak-relearn-card"><div class="weak-relearn-card__title">Quick refresher</div><p>Read the explanation carefully, then retry the missed question.</p></div>'}
       </div>
