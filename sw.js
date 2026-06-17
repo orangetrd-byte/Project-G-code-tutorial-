@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.25-question-context';
+const CACHE_VERSION = 'pgct-v2.26-expanded-curriculum';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [

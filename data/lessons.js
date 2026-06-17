@@ -758,6 +758,98 @@ Rapid override reduced</pre>
       { type: "multiple-choice", question: "Which move deserves extra attention?", options: ["First rapid after tool change", "A blank comment", "The app build number", "A finished review"], answer: 0, explanation: "The first rapid after a tool change is a common crash point." },
       { type: "multiple-choice", question: "A safe prove-out mindset is:", options: ["Assume nothing, verify each move", "Assume the program is always safe", "Ignore offsets", "Run at 100% rapid immediately"], answer: 0, explanation: "Good operators verify before trusting the program." }
     ]
+  },
+
+  // UNIT 6: MODES & CONTROLLER HABITS
+  {
+    id: "u6-l1",
+    unit: 6,
+    unitName: "Modes & Controller Habits",
+    lesson: 1,
+    title: "Units: G20 and G21",
+    icon: "UNIT",
+    xp: 20,
+    theory: `
+      <p><code>G20</code> selects inch units. <code>G21</code> selects metric units. Unit mode changes how the control reads X, Z, F, and many other numeric values.</p>
+      <pre>G20 ; inch mode
+G00 X2.000 Z0.100
+
+G21 ; metric mode
+G00 X50.8 Z2.5</pre>
+      <p>A program should clearly set units near the top. Never assume the control is already in the right mode.</p>
+    `,
+    visual: "block-anatomy",
+    quiz: [
+      { type: "multiple-choice", question: "What does G20 select?", options: ["Inch units", "Metric units", "Rapid motion", "Spindle stop"], answer: 0, explanation: "G20 puts the control in inch mode." },
+      { type: "multiple-choice", question: "What does G21 select?", options: ["Metric units", "Inch units", "Tool offset", "Program end"], answer: 0, explanation: "G21 puts the control in metric mode." },
+      { type: "multiple-choice", question: "Why set G20 or G21 near the top?", options: ["So every number is read in the intended units", "To turn coolant on", "To home the machine", "To select a tool"], answer: 0, explanation: "Unit mode affects coordinate and feed values, so it must be known before motion." },
+      { type: "fill-blank", question: "Complete inch mode:\n___ ; inch units", answer: "G20", hint: "Inch unit code", explanation: "G20 selects inch units." },
+      { type: "fill-blank", question: "Complete metric mode:\n___ ; metric units", answer: "G21", hint: "Metric unit code", explanation: "G21 selects metric units." },
+      { type: "multiple-choice", question: "A program written in inches but run in metric mode will likely:", options: ["Move the wrong distances", "Automatically convert perfectly", "Only change comments", "Disable M03"], answer: 0, explanation: "The control reads numbers in the active unit mode; wrong units can make moves wildly wrong." },
+      { type: "multiple-choice", question: "Which safety line clearly sets inch mode?", options: ["G20 G40 G54", "G21 G40 G54", "M05 M30", "T0101"], answer: 0, explanation: "G20 is the inch-mode word in that safety line." },
+      { type: "multiple-choice", question: "Which value changes meaning between G20 and G21?", options: ["X2.000", "M30", "Program comments", "Tool name text"], answer: 0, explanation: "Coordinate values are interpreted in the active unit mode." },
+      { type: "multiple-choice", question: "Before running an unfamiliar program, what should you check?", options: ["Unit mode", "Phone brightness", "App theme", "File color"], answer: 0, explanation: "Unit mode is a basic safety check before trusting coordinates." },
+      { type: "multiple-choice", question: "Which pair is correct?", options: ["G20 inch, G21 metric", "G20 metric, G21 inch", "G20 rapid, G21 feed", "G20 spindle, G21 coolant"], answer: 0, explanation: "G20 is inch mode; G21 is metric mode." }
+    ]
+  },
+
+  {
+    id: "u6-l2",
+    unit: 6,
+    unitName: "Modes & Controller Habits",
+    lesson: 2,
+    title: "Feed Modes: G94 and G95",
+    icon: "FMD",
+    xp: 20,
+    theory: `
+      <p>Feedrate mode controls what the <code>F</code> value means. On many Fanuc-style lathes, <code>G94</code> is feed per minute and <code>G95</code> is feed per revolution.</p>
+      <pre>G94 F5.0    ; feed per minute
+G95 F0.012  ; feed per spindle revolution</pre>
+      <p>Turning programs often use feed per revolution so chip load stays tied to spindle rotation. Always verify the active feed mode before cutting.</p>
+    `,
+    visual: "program-structure",
+    quiz: [
+      { type: "multiple-choice", question: "What does feed mode control?", options: ["What the F value means", "Tool number only", "Comment style", "Program name"], answer: 0, explanation: "Feed mode changes how the control interprets feedrate." },
+      { type: "multiple-choice", question: "On many Fanuc-style lathes, G95 means:", options: ["Feed per revolution", "Feed per minute", "Metric units", "Rapid motion"], answer: 0, explanation: "G95 is commonly feed per revolution on Fanuc-style lathes." },
+      { type: "multiple-choice", question: "On many Fanuc-style lathes, G94 means:", options: ["Feed per minute", "Feed per revolution", "Spindle stop", "Work offset"], answer: 0, explanation: "G94 is commonly feed per minute." },
+      { type: "fill-blank", question: "Complete feed per revolution:\n___ F0.012", answer: "G95", hint: "Per spindle rev", explanation: "G95 selects feed per revolution on many Fanuc-style lathes." },
+      { type: "fill-blank", question: "Complete feed per minute:\n___ F5.0", answer: "G94", hint: "Per minute", explanation: "G94 selects feed per minute on many controls." },
+      { type: "multiple-choice", question: "Why is feed per revolution common in turning?", options: ["Chip load follows spindle rotation", "It turns coolant on", "It homes X", "It cancels G54"], answer: 0, explanation: "Feed per rev keeps chip load related to spindle speed." },
+      { type: "multiple-choice", question: "If the wrong feed mode is active, the machine may:", options: ["Feed too fast or too slow", "Ignore all coordinates", "Delete the program", "Change tool numbers"], answer: 0, explanation: "The same F number can mean very different speeds in different feed modes." },
+      { type: "multiple-choice", question: "Which line clearly sets feed per rev?", options: ["G95 F0.010", "M30", "G54", "T0101"], answer: 0, explanation: "G95 sets the feed mode and F0.010 gives the feed amount." },
+      { type: "multiple-choice", question: "What should a good setup block do?", options: ["Declare important modes", "Hide units", "Skip offsets", "Avoid feed mode"], answer: 0, explanation: "Setup blocks should make modal assumptions explicit." },
+      { type: "multiple-choice", question: "Which word is affected by feed mode?", options: ["F", "M30", "O number", "Comment text"], answer: 0, explanation: "Feed mode changes how the F word is interpreted." }
+    ]
+  },
+
+  {
+    id: "u6-l3",
+    unit: 6,
+    unitName: "Modes & Controller Habits",
+    lesson: 3,
+    title: "Modal State Checklist",
+    icon: "MODE",
+    xp: 20,
+    theory: `
+      <p>Modal state is the machine's memory. Motion mode, units, feed mode, offsets, and spindle mode can stay active until changed.</p>
+      <pre>G20 G40 G54 G95
+G97 S800 M03
+G00 X2.000 Z0.100</pre>
+      <p>A safe program does not rely on mystery state. It declares the modes it needs before motion.</p>
+    `,
+    visual: "program-structure",
+    quiz: [
+      { type: "multiple-choice", question: "What is modal state?", options: ["Codes that stay active until changed", "Only comments", "Only the current tool name", "The app progress screen"], answer: 0, explanation: "Modal codes remain active until another code changes or cancels them." },
+      { type: "multiple-choice", question: "Which is a modal setting?", options: ["G20 or G21 units", "A comment only", "Program title text", "Operator name"], answer: 0, explanation: "Unit mode is modal." },
+      { type: "multiple-choice", question: "Why use a setup block?", options: ["To declare needed modes before motion", "To make the file longer", "To hide feedrate", "To skip offsets"], answer: 0, explanation: "Setup blocks reduce surprise by setting important modes." },
+      { type: "multiple-choice", question: "Which block is a better modal checklist?", options: ["G20 G40 G54 G95", "(START)", "M30", "X2.0 Z0.1"], answer: 0, explanation: "That block declares units, comp cancel, work offset, and feed mode." },
+      { type: "fill-blank", question: "Complete the idea: modal codes stay active until ____.", answer: "changed", hint: "Another code replaces them", explanation: "Modal codes stay active until changed or canceled." },
+      { type: "multiple-choice", question: "Before rapid motion, what should be known?", options: ["Units, offset, and motion state", "Only phone battery", "Only app theme", "Only the comment"], answer: 0, explanation: "Motion is only safe when the active modes and offsets are known." },
+      { type: "multiple-choice", question: "Which code often cancels cutter compensation?", options: ["G40", "G21", "M03", "M30"], answer: 0, explanation: "G40 cancels cutter compensation on many controls." },
+      { type: "multiple-choice", question: "What makes hidden modal state dangerous?", options: ["The machine may interpret the next block differently than expected", "It changes the screen color", "It removes all tools", "It deletes comments"], answer: 0, explanation: "Unknown modal state can make a correct-looking block behave wrong." },
+      { type: "multiple-choice", question: "Which habit improves safety?", options: ["Read the active modes before cycle start", "Ignore the position display", "Run first, check later", "Delete setup blocks"], answer: 0, explanation: "Checking active modes helps catch wrong setup before motion." },
+      { type: "multiple-choice", question: "A good setup line should be:", options: ["Clear and intentional", "Random", "Hidden in comments", "Only M30"], answer: 0, explanation: "Setup lines should make the program's assumptions clear." }
+    ]
   }
 ];
 
@@ -767,7 +859,8 @@ const UNITS = [
   { id: 2, name: "Motion Codes",   icon: "⚡", color: "#2D5986", lessons: 3 },
   { id: 3, name: "Turning Ops",    icon: "🔩", color: "#7B4F12", lessons: 3 },
   { id: 4, name: "Tooling & Offsets", icon: "🎯", color: "#5C2D6B", lessons: 2 },
-  { id: 5, name: "Inspection & Adjustment", icon: "CHK", color: "#286B4D", lessons: 3 }
+  { id: 5, name: "Inspection & Adjustment", icon: "CHK", color: "#286B4D", lessons: 3 },
+  { id: 6, name: "Modes & Controller Habits", icon: "MODE", color: "#355C7D", lessons: 3 }
 ];
 
 const PRINTING_LESSONS = [
@@ -1085,13 +1178,110 @@ G1 X30 Y40 E0.22 F1500
       { type: "multiple-choice", question: "What should you edit carefully?", options: ["Motion lines, not just comments", "Only blank lines", "Only app settings", "Only the title"], answer: 0, explanation: "Changing motion or temperature lines affects the print. Comments do not execute." },
       { type: "multiple-choice", question: "Which line will move and extrude?", options: ["G1 X30 Y40 E0.22 F1500", ";TYPE:WALL-OUTER", ";LAYER:12", "; generated by slicer"], answer: 0, explanation: "G1 with X/Y/E/F is an executable motion/extrusion line." }
     ]
+  },
+
+  {
+    id: "p-u4-l1",
+    unit: 4,
+    unitName: "Print Troubleshooting",
+    lesson: 1,
+    title: "First Layer Diagnostics",
+    icon: "Z",
+    xp: 20,
+    theory: `
+      <p>The first layer decides whether the print has a fair chance. Read the nozzle height,
+      line shape, and bed adhesion before changing random settings.</p>
+      <pre>G28
+G1 Z0.20 F600
+G1 X60 Y60 E0.8 F1200</pre>
+      <p>A good first layer is slightly squished, continuous, and stuck to the bed. If the nozzle
+      is too high, lines look round and may not stick. If it is too low, plastic can smear, click,
+      or stop flowing.</p>
+    `,
+    visual: "lathe-axes",
+    quiz: [
+      { type: "multiple-choice", question: "Model first-layer move:\nG1 Z0.20 F600\nG1 X60 Y60 E0.8 F1200\n\nWhat does Z0.20 set here?", options: ["Nozzle height above the bed", "Nozzle temperature", "Fan speed", "File name"], answer: 0, explanation: "Z controls height. A first layer often starts near 0.20 mm depending on setup." },
+      { type: "multiple-choice", question: "If first-layer lines are round and barely stick, the nozzle is likely:", options: ["Too high", "Too low", "At perfect height", "Printing too much fan only"], answer: 0, explanation: "A high nozzle lays plastic on top of the bed instead of pressing it down." },
+      { type: "multiple-choice", question: "If the nozzle scrapes and plastic barely comes out, the nozzle is likely:", options: ["Too low", "Too high", "Too cold only", "Using comments"], answer: 0, explanation: "A low nozzle can block flow by pressing too close to the bed." },
+      { type: "multiple-choice", question: "Which line homes the printer before first-layer checks?\nG28\nG1 Z0.20 F600", options: ["G28", "G1 Z0.20 F600", "F600", "Z0.20"], answer: 0, explanation: "G28 homes the printer so it starts from known positions." },
+      { type: "fill-blank", question: "Complete a safe first-layer height move:\nG1 ___0.20 F600", answer: "Z", hint: "Vertical axis", explanation: "Z controls vertical nozzle height." },
+      { type: "multiple-choice", question: "A good first-layer line should look:", options: ["Slightly flattened and continuous", "Round and loose", "Transparent and scraped away", "Like only a comment"], answer: 0, explanation: "A slightly flattened line usually means the nozzle is close enough to bond." },
+      { type: "multiple-choice", question: "What should you adjust first for a bad first layer height?", options: ["Z offset or bed leveling", "App theme", "Comment spelling", "End G-code only"], answer: 0, explanation: "Z offset and bed leveling directly affect first-layer height." },
+      { type: "multiple-choice", question: "Which value is extrusion amount in this line?\nG1 X60 Y60 E0.8 F1200", options: ["E0.8", "X60", "Y60", "F1200"], answer: 0, explanation: "E is the extruder amount in most printer G-code." },
+      { type: "fill-blank", question: "Type the common command that homes all axes before checking the first layer:", answer: "G28", hint: "Home command", explanation: "G28 homes the printer axes." },
+      { type: "multiple-choice", question: "Why fix first-layer problems before tuning speed?", options: ["Poor adhesion can ruin the whole print early", "Speed deletes comments", "Fan speed controls all homing", "M30 fixes bed level"], answer: 0, explanation: "If the first layer fails, later layers do not matter." }
+    ]
+  },
+
+  {
+    id: "p-u4-l2",
+    unit: 4,
+    unitName: "Print Troubleshooting",
+    lesson: 2,
+    title: "Retraction and Stringing",
+    icon: "RET",
+    xp: 20,
+    theory: `
+      <p>Stringing happens when melted plastic leaks during travel moves. Retraction pulls filament
+      back before travel, then primes it again before printing resumes.</p>
+      <pre>G1 E-0.8 F1800 ; retract
+G0 X90 Y90 F9000 ; travel
+G1 E0.8 F1800 ; prime</pre>
+      <p>Retraction values depend on printer type, hotend, material, temperature, and slicer settings.
+      The pattern is the important part: retract, travel, prime.</p>
+    `,
+    visual: "rapid-path",
+    quiz: [
+      { type: "multiple-choice", question: "Model retraction pattern:\nG1 E-0.8 F1800\nG0 X90 Y90 F9000\nG1 E0.8 F1800\n\nWhich line retracts filament?", options: ["G1 E-0.8 F1800", "G0 X90 Y90 F9000", "G1 E0.8 F1800", "; travel"], answer: 0, explanation: "A negative E move pulls filament back on many slicer setups." },
+      { type: "multiple-choice", question: "What problem does retraction mainly fight?", options: ["Stringing during travel", "Wrong app language", "Missing home icon", "Program ending"], answer: 0, explanation: "Retraction reduces oozing while the nozzle travels between printed areas." },
+      { type: "multiple-choice", question: "Which line is the travel move in this pattern?\nG1 E-0.8 F1800\nG0 X90 Y90 F9000\nG1 E0.8 F1800", options: ["G0 X90 Y90 F9000", "G1 E-0.8 F1800", "G1 E0.8 F1800", "F1800"], answer: 0, explanation: "G0 with X/Y moves the nozzle to a new position without extrusion in this example." },
+      { type: "multiple-choice", question: "Which line primes after travel?", options: ["G1 E0.8 F1800", "G1 E-0.8 F1800", "G0 X90 Y90", "G28"], answer: 0, explanation: "A positive E move pushes filament forward again." },
+      { type: "fill-blank", question: "Complete a retract move:\nG1 E___0.8 F1800", answer: "-", hint: "Pull back uses negative E in this example", explanation: "The minus sign makes E move backward in this common pattern." },
+      { type: "multiple-choice", question: "If retraction is too low, you may see:", options: ["Thin strings between parts", "Perfectly disabled motors", "Only better bed leveling", "No file comments"], answer: 0, explanation: "Not enough retraction can leave plastic oozing during travel." },
+      { type: "multiple-choice", question: "If retraction is too aggressive, it can cause:", options: ["Gaps or under-extrusion after travel", "Automatic perfect prints", "Comments to execute", "Bed temperature to vanish"], answer: 0, explanation: "Too much retraction can delay or reduce flow when printing resumes." },
+      { type: "multiple-choice", question: "What else can increase stringing besides low retraction?", options: ["Nozzle temperature too high", "App settings tab", "More comments", "M30 only"], answer: 0, explanation: "Hotter plastic flows more easily and can ooze during travel." },
+      { type: "fill-blank", question: "Type the axis letter used for extrusion and retraction amount:", answer: "E", hint: "Extruder axis", explanation: "E is the extruder axis in common printer G-code." },
+      { type: "multiple-choice", question: "What is the correct sequence?", options: ["Retract, travel, prime", "Prime, home, end", "Fan, comment, M30", "Bed off, print, heat"], answer: 0, explanation: "Retraction pulls back before travel and primes before printing resumes." }
+    ]
+  },
+
+  {
+    id: "p-u4-l3",
+    unit: 4,
+    unitName: "Print Troubleshooting",
+    lesson: 3,
+    title: "Flow and Extrusion Clues",
+    icon: "FLOW",
+    xp: 20,
+    theory: `
+      <p>Flow problems show up as gaps, thin walls, blobs, heavy seams, or rough top surfaces.
+      G-code movement helps you read what the slicer asked the printer to do.</p>
+      <pre>G1 X100 E5.0 F1200 ; extrude while moving
+M221 S95           ; set flow to 95 percent on many printers</pre>
+      <p>Before changing flow, check basics: nozzle size, filament diameter, temperature, and whether
+      the extruder is slipping. Flow changes should be small and intentional.</p>
+    `,
+    visual: "block-anatomy",
+    quiz: [
+      { type: "multiple-choice", question: "Model extrusion move:\nG1 X100 E5.0 F1200\n\nWhich value asks for extrusion?", options: ["E5.0", "X100", "F1200", "G1"], answer: 0, explanation: "E5.0 is the extrusion amount in this move." },
+      { type: "multiple-choice", question: "What can under-extrusion look like?", options: ["Gaps and thin lines", "Only darker theme", "Extra app tabs", "Comments turning into motion"], answer: 0, explanation: "Under-extrusion often leaves gaps, weak walls, or missing top-surface material." },
+      { type: "multiple-choice", question: "What can over-extrusion look like?", options: ["Blobs, heavy seams, rough top surfaces", "Perfectly missing filament", "Nozzle homing", "Only a lower streak"], answer: 0, explanation: "Too much plastic can build up as blobs or rough, crowded lines." },
+      { type: "multiple-choice", question: "On many printers, what does M221 S95 adjust?", options: ["Flow percentage to 95 percent", "Bed temperature to 95 C always", "Fan off", "Home all axes"], answer: 0, explanation: "M221 is commonly used as a flow multiplier command, but firmware can vary." },
+      { type: "fill-blank", question: "Complete a flow command used on many printers:\nM221 S___", answer: "95", hint: "95 percent flow", explanation: "M221 S95 sets flow to 95 percent on many printer firmwares." },
+      { type: "multiple-choice", question: "Before changing flow, what should you check?", options: ["Nozzle size and filament diameter", "Only app build number", "Only bottom nav icons", "Only comments"], answer: 0, explanation: "Wrong hardware or filament settings can look like a flow problem." },
+      { type: "multiple-choice", question: "Which line both moves and extrudes?", options: ["G1 X100 E5.0 F1200", "M221 S95", "; set flow", "G28"], answer: 0, explanation: "G1 with X and E moves while extruding." },
+      { type: "fill-blank", question: "Type the command word in this move:\n___ X100 E5.0 F1200", answer: "G1", hint: "Controlled move", explanation: "G1 is the controlled movement command used for many print paths." },
+      { type: "multiple-choice", question: "Why make flow changes small?", options: ["Large changes can create new print defects", "Large changes make comments execute", "They delete G28", "They turn off all axes"], answer: 0, explanation: "Flow affects every extrusion path, so big changes can create new problems." },
+      { type: "multiple-choice", question: "What should you do if the extruder clicks or slips?", options: ["Check mechanical feed and nozzle restrictions", "Only increase app XP", "Ignore it and change theme", "Delete comments"], answer: 0, explanation: "Skipping or slipping can come from a clog, pressure, temperature, or extruder tension issue." }
+    ]
   }
 ];
 
 const PRINTING_UNITS = [
   { id: 1, name: "Printer Foundations", icon: "3D", color: "#2D5986", lessons: 3 },
   { id: 2, name: "Extrusion & Motion", icon: "E", color: "#1A6B5C", lessons: 3 },
-  { id: 3, name: "Start & End G-Code", icon: "ST", color: "#7B4F12", lessons: 3 }
+  { id: 3, name: "Start & End G-Code", icon: "ST", color: "#7B4F12", lessons: 3 },
+  { id: 4, name: "Print Troubleshooting", icon: "FIX", color: "#5C2D6B", lessons: 3 }
 ];
 
 const TRACKS = {
