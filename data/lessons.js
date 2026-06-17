@@ -36,6 +36,7 @@ const LESSONS = [
     visual: "block-anatomy",
     quiz: [
       {
+        id: "u1-l1-q1",
         type: "multiple-choice",
         question: "What does 'modal' mean in G-code?",
         options: [
@@ -48,6 +49,7 @@ const LESSONS = [
         explanation: "Modal codes stay active after they are called. G01, for example, keeps the machine in linear feed mode until you call G00 or another motion code."
       },
       {
+        id: "u1-l1-q2",
         type: "multiple-choice",
         question: "Which part of this block tells the machine WHERE to move?\nN020 G00 X2.000 Z0.100 S800 M03",
         options: ["N020", "G00", "X2.000 Z0.100", "S800 M03"],
@@ -55,6 +57,7 @@ const LESSONS = [
         explanation: "X and Z are coordinate words. They define the destination position for the move."
       },
       {
+        id: "u1-l1-q3",
         type: "fill-blank",
         question: "Model rapid move:\nG00 X2.000 Z0.100\n\nYour turn: complete the rapid block:\nN010 ___ X0 Z0.1",
         answer: "G00",
@@ -96,6 +99,7 @@ const LESSONS = [
     visual: "lathe-axes",
     quiz: [
       {
+        id: "u1-l2-q1",
         type: "multiple-choice",
         question: "On a CNC lathe, moving Z in the negative direction means:",
         options: [
@@ -108,6 +112,7 @@ const LESSONS = [
         explanation: "Negative Z moves the tool toward the chuck (into the part). Positive Z retracts away."
       },
       {
+        id: "u1-l2-q2",
         type: "multiple-choice",
         question: "You program X1.500 on a lathe in diameter mode. What is the actual radius of cut?",
         options: ["1.500\"", "3.000\"", "0.750\"", "0.375\""],
@@ -115,6 +120,7 @@ const LESSONS = [
         explanation: "X values in diameter mode represent the full diameter. X1.500 = 1.500\" diameter = 0.750\" radius."
       },
       {
+        id: "u1-l2-q3",
         type: "multiple-choice",
         question: "Which code puts the machine in absolute positioning mode?",
         options: ["G91", "G90", "G92", "G28"],
@@ -164,6 +170,7 @@ N110 M30                   ; End program, rewind
     visual: "program-structure",
     quiz: [
       {
+        id: "u1-l3-q1",
         type: "multiple-choice",
         question: "What is the purpose of M30?",
         options: [
@@ -176,6 +183,7 @@ N110 M30                   ; End program, rewind
         explanation: "M30 ends the program and rewinds it so it's ready to run again. Always end programs with M30."
       },
       {
+        id: "u1-l3-q2",
         type: "multiple-choice",
         question: "Why is a 'safety block' (e.g., G20 G40 G49) placed at the start of a program?",
         options: [
@@ -188,6 +196,7 @@ N110 M30                   ; End program, rewind
         explanation: "Modal codes persist between programs on many controls. A safety block explicitly cancels cutter comp (G40), tool length offset (G49), and sets inch/metric mode — preventing crashes from leftover states."
       },
       {
+        id: "u1-l3-q3",
         type: "fill-blank",
         question: "Write the M-code that turns the spindle ON clockwise:",
         answer: "M03",

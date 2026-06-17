@@ -572,6 +572,66 @@ function pickQuestions(questions, count) {
   return shuffleCopy(questions).slice(0, Math.min(count, questions.length));
 }
 
+// ── Concept retry system ──────────────────────────────────────
+const RETRY_CONCEPTS = {
+  'modal-codes': ['modal-q1','modal-q2','modal-q3'],
+  'g00-g01': ['linear-motion-q1','linear-motion-q2','linear-motion-q3','linear-motion-q4'],
+  'g02-g03': ['arc-direction-q1','arc-direction-q2','arc-direction-q3'],
+  'work-offsets': ['offset-q1','offset-q2','offset-q3'],
+  'spindle-modes': ['spindle-q1','spindle-q2','spindle-q3'],
+  'program-structure': ['structure-q1','structure-q2','structure-q3']
+};
+
+const QUESTION_CONCEPT_MAP = {
+  'modal-q1': 'modal-codes',
+  'u1-l1-q1': 'modal-codes',
+  'u1-l1-q2': 'g00-g01',
+  'linear-motion-q1': 'g00-g01',
+  'u2-l1-q1': 'g00-g01',
+  'u2-l1-q2': 'g00-g01',
+  'u2-l2-q1': 'g00-g01',
+  'u2-l2-q2': 'g00-g01',
+  'linear-motion-q3': 'g00-g01',
+  'linear-motion-q4': 'g00-g01',
+  'arc-direction-q1': 'g02-g03',
+  'u2-l3-q1': 'g02-g03',
+  'u2-l3-q2': 'g02-g03',
+  'u2-l3-q3': 'g02-g03',
+  'arc-direction-q2': 'g02-g03',
+  'arc-direction-q3': 'g02-g03',
+  'offset-q1': 'work-offsets',
+  'u1-l2-q1': 'work-offsets',
+  'u1-l2-q2': 'work-offsets',
+  'u1-l2-q3': 'work-offsets',
+  'spindle-q1': 'spindle-modes',
+  'u3-l1-q1': 'spindle-modes',
+  'u3-l1-q2': 'spindle-modes',
+  'u3-l1-q3': 'spindle-modes',
+  'structure-q1': 'program-structure',
+  'u1-l3-q1': 'program-structure',
+  'u1-l3-q2': 'program-structure',
+  'u1-l3-q3': 'program-structure'
+};
+
+function conceptForQuestion(q) {
+  return QUESTION_CONCEPT_MAP[q.id] || (typeof q.concept === 'string' ? q.concept : null);
+}
+
+function poolForQuestion(q) {
+  const concept = conceptForQuestion(q);
+  if (!concept) return [];
+  return RETRY_CONCEPTS[concept] || [];
+}
+
+function findLessonQuestionById(id) {
+  for (const lesson of getLessons()) {
+    for (const q of lesson.quiz) {
+      if (q.id === id) return q;
+    }
+  }
+  return null;
+}
+
 const UI_TEXT = {
   en: {
     learn: 'Learn',
@@ -1170,11 +1230,24 @@ function startWeakReview() {
     showToast('No weak spots yet.', 'success');
     return;
   }
-  const questions = shuffleCopy(State.weakQuestions)
-    .slice()
-    .sort((a, b) => (b.misses - a.misses) || (b.lastMissed - a.lastMissed))
-    .slice(0, 10)
-    .map(item => ({ ...item.question, weakKey: item.key }));
+
+  const prioritized = shuffleCopy(State.weakQuestions)
+    .sort((a,b) => (b.misses - a.misses) || (b.lastMissed - a.lastMissed))
+    .slice(0, 10);
+
+  const usedIds = new Set();
+  const retryQuiz = prioritized.flatMap(item => {
+    const concept = conceptForQuestion(item.question);
+    const pool = concept ? RETRY_CONCEPTS[concept] : [];
+    const variant = pool.find(id => id !== item.question.id && !usedIds.has(id));
+    usedIds.add(variant || item.question.id);
+
+    if (variant) {
+      const alt = findLessonQuestionById(variant);
+      if (alt) return { ...alt, weakKey: item.key, sourceLessonId: item.question.sourceLessonId };
+    }
+    return { ...item.question, weakKey: item.key };
+  });
 
   State.currentLesson = {
     id: 'weak-review',
@@ -1185,7 +1258,7 @@ function startWeakReview() {
     xp: 15,
     theory: '',
     visual: '',
-    quiz: questions
+    quiz: retryQuiz
   };
   State.currentReviewUnit = null;
   State.currentMode = 'weak-review';
@@ -1196,7 +1269,7 @@ function startWeakReview() {
   State.missedQuestions = [];
   State.practiceQuestions = null;
   State.sessionCorrect = 0;
-  State.sessionTotal = questions.length;
+  State.sessionTotal = retryQuiz.length;
 
   renderLessonStep();
   showScreen('screen-lesson');
