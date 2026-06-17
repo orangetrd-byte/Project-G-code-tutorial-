@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.29 | Build 2026.06.17.04';
+const APP_BUILD = 'MGP | Version v2.30 | Build 2026.06.17.05';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -184,6 +184,7 @@ const State = {
   isUnitReviewDone(unitId) { return this.completedReviews.includes(this.reviewId(unitId)); },
 
   questionKey(q) {
+    if (q?.weakKey) return q.weakKey;
     return `${this.trackId}|${String(q.question || '').trim()}|${String(q.answer || '').trim()}`;
   },
 
@@ -192,9 +193,12 @@ const State = {
     const existing = this.weakQuestions.find(item => item.key === key);
     const snapshot = {
       ...q,
-      sourceLessonId: lesson?.id || null,
-      sourceUnit: lesson?.unit || null,
-      sourceTitle: lesson?.title || 'Practice'
+      id: q.id || q.originalQuestionId || key,
+      concept: getQuestionConcept(q),
+      originalQuestionId: q.originalQuestionId || q.id || key,
+      sourceLessonId: q.sourceLessonId || lesson?.id || null,
+      sourceUnit: q.sourceUnit || lesson?.unit || null,
+      sourceTitle: q.sourceTitle || lesson?.title || 'Practice'
     };
     if (existing) {
       existing.misses += 1;
@@ -215,9 +219,16 @@ const State = {
   },
 
   clearWeakQuestion(q) {
-    const key = this.questionKey(q);
+    const key = q?.weakKey || this.questionKey(q);
+    const originalId = q?.originalQuestionId || q?.id;
+    const concept = getQuestionConcept(q);
     const before = this.weakQuestions.length;
-    this.weakQuestions = this.weakQuestions.filter(item => item.key !== key);
+    this.weakQuestions = this.weakQuestions.filter(item => {
+      if (item.key === key) return false;
+      const stored = item.question || {};
+      if (originalId && (stored.id === originalId || stored.originalQuestionId === originalId)) return false;
+      return !(concept && getQuestionConcept(stored) === concept);
+    });
     if (this.weakQuestions.length !== before) this.save();
   },
 
@@ -570,6 +581,71 @@ function shuffleCopy(items) {
 
 function pickQuestions(questions, count) {
   return shuffleCopy(questions).slice(0, Math.min(count, questions.length));
+}
+
+const ConceptPools = {
+  byConcept: {},
+  byId: {},
+  ready: false
+};
+
+function initConceptPools() {
+  ConceptPools.byConcept = {};
+  ConceptPools.byId = {};
+  Object.values(TRACKS || {}).forEach(track => {
+    (track.lessons || []).forEach(lesson => {
+      (lesson.quiz || []).forEach((q, index) => {
+        const id = q.id || `${track.id}-${lesson.id}-q${index + 1}`;
+        const concept = q.concept || `${track.id}-${lesson.id}`;
+        q.id = id;
+        q.concept = concept;
+        q.pool = q.pool || lesson.id;
+        q.sourceLessonId = q.sourceLessonId || lesson.id;
+        q.sourceUnit = q.sourceUnit || lesson.unit;
+        q.sourceTitle = q.sourceTitle || lesson.title;
+        ConceptPools.byId[id] = q;
+        if (!ConceptPools.byConcept[concept]) ConceptPools.byConcept[concept] = [];
+        ConceptPools.byConcept[concept].push(q);
+      });
+    });
+  });
+  ConceptPools.ready = true;
+}
+
+function ensureConceptPools() {
+  if (!ConceptPools.ready) initConceptPools();
+}
+
+function getQuestionConcept(q) {
+  if (q?.concept || q?.sourceConcept) return q.concept || q.sourceConcept;
+  if (q?.sourceLessonId) {
+    const direct = `${State.trackId}-${q.sourceLessonId}`;
+    if (ConceptPools.byConcept[direct]) return direct;
+    const match = Object.keys(ConceptPools.byConcept).find(key => key.endsWith(`-${q.sourceLessonId}`));
+    if (match) return match;
+    return direct;
+  }
+  return 'general';
+}
+
+function getRetakeQuestion(originalQuestion) {
+  ensureConceptPools();
+  const concept = getQuestionConcept(originalQuestion);
+  const originalId = originalQuestion?.originalQuestionId || originalQuestion?.id;
+  const pool = ConceptPools.byConcept[concept] || [];
+  const available = pool.filter(q => q.id !== originalId);
+  const selected = (available.length ? shuffleCopy(available)[0] : ConceptPools.byId[originalId]) || originalQuestion;
+  return {
+    ...selected,
+    sourceConcept: concept,
+    originalQuestionId: originalId || selected.id,
+    weakKey: originalQuestion?.weakKey,
+    retakeNotice: available.length ? '' : 'More practice variants are coming for this topic.'
+  };
+}
+
+function getRetakeQuestions(questions) {
+  return (questions || []).map(q => getRetakeQuestion(q));
 }
 
 const UI_TEXT = {
@@ -1222,7 +1298,7 @@ function startWeakReview() {
     .slice()
     .sort((a, b) => (b.misses - a.misses) || (b.lastMissed - a.lastMissed))
     .slice(0, 10)
-    .map(item => ({ ...item.question, weakKey: item.key }));
+    .map(item => getRetakeQuestion({ ...item.question, weakKey: item.key }));
 
   State.currentLesson = {
     id: 'weak-review',
@@ -1404,6 +1480,7 @@ function renderQuiz(container, q, idx) {
       ${renderReadAloudButton()}
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
       ${renderQuestionContext(q)}
+      ${q.retakeNotice ? `<div class="pool-notice">${q.retakeNotice}</div>` : ''}
       <div class="quiz-question">${q.question}</div>
       <div class="options-list">
         ${q.options.map((opt, i) => `
@@ -1446,6 +1523,7 @@ function renderQuiz(container, q, idx) {
       ${renderReadAloudButton()}
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
       ${renderQuestionContext(q)}
+      ${q.retakeNotice ? `<div class="pool-notice">${q.retakeNotice}</div>` : ''}
       <div class="quiz-question">${q.question}</div>
       <div class="fill-blank-wrap">
         <input type="text" class="fill-blank-input" id="fill-input" 
@@ -1781,11 +1859,11 @@ function handleLessonAction() {
   if (!State.currentLesson) return;
   if (State.lessonFinished) {
     if (State.currentMode === 'track-review' && State.missedQuestions.length > 0) {
-      startTrackReview(State.missedQuestions);
+      startTrackReview(getRetakeQuestions(State.missedQuestions));
       return;
     }
     if (State.currentMode === 'weak-review' && State.missedQuestions.length > 0) {
-      State.currentLesson.quiz = State.missedQuestions;
+      State.currentLesson.quiz = getRetakeQuestions(State.missedQuestions);
       State.missedQuestions = [];
       State.currentStep = 0;
       State.currentQuizAnswered = false;
@@ -1796,11 +1874,11 @@ function handleLessonAction() {
       return;
     }
     if (State.currentMode === 'review' && State.missedQuestions.length > 0) {
-      startUnitReview(State.currentReviewUnit, State.missedQuestions);
+      startUnitReview(State.currentReviewUnit, getRetakeQuestions(State.missedQuestions));
       return;
     }
     if (State.currentMode === 'lesson' && State.missedQuestions.length > 0) {
-      State.practiceQuestions = State.missedQuestions;
+      State.practiceQuestions = getRetakeQuestions(State.missedQuestions);
       State.missedQuestions = [];
       State.currentStep = 1;
       State.currentQuizAnswered = false;
@@ -1937,6 +2015,7 @@ function initNav() {
 
 // ─── BOOT ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  initConceptPools();
   State.load();
   applyTheme();
   initNav();
