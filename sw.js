@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.31-concept-retry-no-repeat';
+const CACHE_VERSION = 'pgct-v2.33-ghost-code-cleanup';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
