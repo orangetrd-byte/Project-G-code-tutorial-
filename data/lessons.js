@@ -13,40 +13,27 @@ const LESSONS = [
     unitName: "Foundations",
     lesson: 1,
     title: "What Is G-Code?",
-    why: "G-code is the link between an idea and machine motion. Understanding that every block tells the machine what to do prevents guessing when a program moves wrong.",
+    why: "G-code gives the machine clear instructions, one line at a time.",
     icon: "📋",
     xp: 10,
     theory: `
-      <p>G-code is the language CNC machines speak. Every move your lathe or mill makes — 
-      rapid to position, feed to depth, spindle on/off — is triggered by a line of G-code.</p>
-      <p>Each line is called a <strong>block</strong>. Blocks run top to bottom, one at a time. 
-      A typical block looks like:</p>
-      <pre>N010 G01 X1.500 Z-0.750 F0.012</pre>
-      <p>Breaking that down:</p>
-      <ul>
-        <li><code>N010</code> — line number (optional but helpful)</li>
-        <li><code>G01</code> — G-word: <em>what to do</em> (linear feed move)</li>
-        <li><code>X1.500 Z-0.750</code> — coordinates: <em>where to go</em></li>
-        <li><code>F0.012</code> — feedrate: <em>how fast</em> (inches per rev)</li>
-      </ul>
-      <p>G-code is <strong>modal</strong> — most codes stay active until cancelled. 
-      You only have to write <code>G01</code> once; it stays in effect for every following 
-      block until you change it.</p>
+      <p>G-code is the instructions the machine reads. Each line does one thing: move, stop, or change a mode.</p>
+      <pre>G00 X2.000 Z0.100 ; move to a safe position</pre>
     `,
     visual: "block-anatomy",
     quiz: [
       {
         id: "u1-l1-q1",
         type: "multiple-choice",
-        question: "What does 'modal' mean in G-code?",
+        question: "What is G-code?",
         options: [
-          "The code controls a popup window",
-          "A code stays active until changed or cancelled",
-          "The code only runs once",
-          "The code controls spindle speed"
+          "Instructions the machine reads",
+          "A machine drawing",
+          "A measurement tool",
+          "A type of cutting insert"
         ],
-        answer: 1,
-        explanation: "Modal codes stay active after they are called. G01, for example, keeps the machine in linear feed mode until you call G00 or another motion code."
+        answer: 0,
+        explanation: "G-code is the set of instructions a CNC machine reads to move, stop, or change a mode."
       },
       {
         id: "u1-l1-q2",

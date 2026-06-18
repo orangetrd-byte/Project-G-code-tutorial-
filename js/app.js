@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.35 | Build 2026.06.17.10';
+const APP_BUILD = 'MGP | Version v2.36 | Build 2026.06.17.11';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -586,6 +586,12 @@ function shuffleCopy(items) {
 
 function pickQuestions(questions, count) {
   return shuffleCopy(questions).slice(0, Math.min(count, questions.length));
+}
+
+function pickLessonQuestions(lesson, count) {
+  if (lesson?.id !== 'u1-l1' || !lesson.quiz?.length) return pickQuestions(lesson?.quiz || [], count);
+  const [first, ...rest] = lesson.quiz;
+  return [first, ...shuffleCopy(rest)].slice(0, Math.min(count, lesson.quiz.length));
 }
 
 const ConceptPools = {
@@ -1303,7 +1309,7 @@ function startLesson(lessonId) {
   State.retryCurrentLesson = false;
   State.lessonFinished = false;
   State.missedQuestions = [];
-  State.practiceQuestions = pickQuestions(lesson.quiz, 5);
+  State.practiceQuestions = pickLessonQuestions(lesson, 5);
   State.sessionCorrect = 0;
   State.sessionTotal = getActiveQuestions(lesson).length;
 
@@ -1620,7 +1626,7 @@ function renderQuiz(container, q, idx) {
         }
         State.currentQuizAnswered = true;
         AudioFeedback.play(correct);
-        showExplanation(q.explanation);
+        showExplanation(q.explanation, q, correct);
         setAnsweredAction(correct);
         showToast(correct ? '✅ Correct!' : '❌ Not quite — see explanation', correct ? 'success' : 'error');
       });
@@ -1691,7 +1697,7 @@ function checkFillBlank(q, inp) {
   }
   State.currentQuizAnswered = true;
   AudioFeedback.play(correct);
-  showExplanation(q.explanation + (usedShortGCode ? ' G0 and G00 style codes are both used depending on the control or post. The leading zero form is common in teaching material because it is easier to scan.' : ''));
+  showExplanation(q.explanation + (usedShortGCode ? ' G0 and G00 style codes are both used depending on the control or post. The leading zero form is common in teaching material because it is easier to scan.' : ''), q, correct);
   setAnsweredAction(correct);
   showToast(correct ? '✅ Correct!' : `❌ Answer: ${q.answer}`, correct ? 'success' : 'error');
 }
@@ -1721,10 +1727,21 @@ function setAnsweredAction(correct) {
   btn.className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
 }
 
-function showExplanation(text) {
+function getCorrectAnswerText(q) {
+  if (q?.type === 'multiple-choice' && Array.isArray(q.options)) return q.options[q.answer] || String(q.answer);
+  return String(q?.answer || '').trim();
+}
+
+function showExplanation(text, question = null, correct = true) {
   const box = $('#explanation-box');
   if (!box) return;
-  box.innerHTML = `<div class="explanation-box"><div class="expl-label">Explanation</div>${text}</div>`;
+  const answer = question ? getCorrectAnswerText(question) : '';
+  box.innerHTML = `
+    <div class="explanation-box feedback-bar ${correct ? 'is-correct' : 'is-wrong'}">
+      ${answer ? `<div class="feedback-answer">Correct answer: <strong>${answer}</strong></div>` : ''}
+      <div class="expl-label">Explanation</div>
+      <div>${text}</div>
+    </div>`;
 }
 
 function isLastStep() {
@@ -1768,6 +1785,9 @@ function finishLesson() {
   const xpEarned = State.completeLesson(lesson.id, State.sessionCorrect, State.sessionTotal);
   const afterUnitProgress = State.getUnitProgress(lesson.unit);
   const completedUnitNow = !wasLessonDone && beforeUnitProgress.done < beforeUnitProgress.total && afterUnitProgress.done === afterUnitProgress.total;
+  const lessonIndex = getLessons().findIndex(item => item.id === lesson.id);
+  const nextLesson = lessonIndex >= 0 ? getLessons()[lessonIndex + 1] : null;
+  const unlockedNextLesson = !wasLessonDone && nextLesson && State.isLessonUnlocked(nextLesson) ? nextLesson : null;
   if (completedUnitNow) AudioFeedback.unitComplete();
   else AudioFeedback.lessonComplete();
 
@@ -1778,6 +1798,7 @@ function finishLesson() {
       <div class="complete-title">Lesson Complete!</div>
       <div class="complete-subtitle">${lesson.title}</div>
       <div class="xp-badge">+${xpEarned} XP earned</div>
+      ${unlockedNextLesson ? `<div class="unlock-banner"><span>Unlocked</span><strong>Next lesson: ${unlockedNextLesson.title}</strong></div>` : ''}
       <div class="stat-row">
         <div class="stat-chip">
           <div class="stat-chip__val">${State.sessionCorrect}/${State.sessionTotal}</div>
