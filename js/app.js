@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.38 | Build 2026.06.24.01';
+const APP_BUILD = 'MGP | Version v2.39 | Build 2026.06.26.01';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1579,14 +1579,14 @@ function renderWeakReviewIntro(questions) {
     </div>`;
 }
 function renderQuestionContext(q) {
+  if (!isReviewLikeMode()) return '';
   const lesson = getLessons().find(item => item.id === q.sourceLessonId) || State.currentLesson;
   if (!lesson) return '';
-  const label = isReviewLikeMode() ? 'Recall first' : 'Concept check';
   const title = lesson.title || q.sourceTitle || 'Current topic';
   return `
     <div class="question-context-card recall-cue">
-      <div class="question-context-card__label">${label}</div>
-      <div class="question-context-card__why">Focus on: <strong>${title}</strong>. Try from memory; explanations appear after you answer.</div>
+      <div class="question-context-card__label">Focus area</div>
+      <div class="question-context-card__why"><strong>${title}</strong>. Answer first; the explanation appears after.</div>
     </div>`;
 }
 function renderQuiz(container, q, idx) {
