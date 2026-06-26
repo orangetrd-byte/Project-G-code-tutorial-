@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.37 | Build 2026.06.17.12';
+const APP_BUILD = 'MGP | Version v2.38 | Build 2026.06.24.01';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -592,6 +592,11 @@ function pickLessonQuestions(lesson, count) {
   if (lesson?.id !== 'u1-l1' || !lesson.quiz?.length) return pickQuestions(lesson?.quiz || [], count);
   const [first, ...rest] = lesson.quiz;
   return [first, ...shuffleCopy(rest)].slice(0, Math.min(count, lesson.quiz.length));
+}
+
+function getMatchingChoices(q) {
+  const rights = (q.pairs || []).map(pair => pair.right);
+  return q.choices?.length ? q.choices : shuffleCopy(rights);
 }
 
 const ConceptPools = {
@@ -1652,6 +1657,26 @@ function renderQuiz(container, q, idx) {
     inp.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !State.currentQuizAnswered) checkFillBlank(q, inp);
     });
+  } else if (q.type === 'matching') {
+    const choices = getMatchingChoices(q);
+    div.innerHTML = `
+      ${renderReadAloudButton()}
+      <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
+      ${renderQuestionContext(q)}
+      ${q.retakeNotice ? `<div class="pool-notice">${q.retakeNotice}</div>` : ''}
+      <div class="quiz-question">${q.question}</div>
+      <div class="matching-list">
+        ${q.pairs.map((pair, i) => `
+          <label class="matching-row" data-match-idx="${i}">
+            <span class="matching-left">${pair.left}</span>
+            <select class="matching-select" data-match-select="${i}">
+              <option value="">Choose match</option>
+              ${choices.map(choice => `<option value="${choice}">${choice}</option>`).join('')}
+            </select>
+          </label>`).join('')}
+      </div>
+      <div id="explanation-box"></div>`;
+    container.appendChild(div);
   }
 }
 
@@ -1702,6 +1727,39 @@ function checkFillBlank(q, inp) {
   showToast(correct ? '✅ Correct!' : `❌ Answer: ${q.answer}`, correct ? 'success' : 'error');
 }
 
+function checkMatching(q) {
+  const selects = $$('[data-match-select]');
+  if (!selects.length || State.currentQuizAnswered) return;
+  const allAnswered = selects.every(select => select.value);
+  if (!allAnswered) {
+    showToast('Choose a match for each row.', 'error');
+    return;
+  }
+
+  let correctCount = 0;
+  selects.forEach(select => {
+    const idx = parseInt(select.dataset.matchSelect, 10);
+    const row = select.closest('.matching-row');
+    const correct = select.value === q.pairs[idx].right;
+    if (correct) correctCount++;
+    row?.classList.add(correct ? 'correct' : 'wrong');
+    select.disabled = true;
+  });
+
+  const correct = correctCount === q.pairs.length;
+  if (correct) {
+    State.sessionCorrect++;
+    if (State.currentMode === 'weak-review') State.clearWeakQuestion(q);
+  } else {
+    State.missedQuestions.push(q);
+    State.trackWeakQuestion(q);
+  }
+  State.currentQuizAnswered = true;
+  AudioFeedback.play(correct);
+  showExplanation(q.explanation, q, correct);
+  setAnsweredAction(correct);
+  showToast(correct ? '✅ Correct!' : '❌ Not quite — see explanation', correct ? 'success' : 'error');
+}
 function normalizeCodeAnswer(value) {
   return String(value)
     .trim()
@@ -1729,6 +1787,7 @@ function setAnsweredAction(correct) {
 
 function getCorrectAnswerText(q) {
   if (q?.type === 'multiple-choice' && Array.isArray(q.options)) return q.options[q.answer] || String(q.answer);
+  if (q?.type === 'matching' && Array.isArray(q.pairs)) return q.pairs.map(pair => `${pair.left} -> ${pair.right}`).join('; ');
   return String(q?.answer || '').trim();
 }
 
@@ -2028,6 +2087,8 @@ function handleLessonAction() {
     if (q?.type === 'fill-blank') {
       const inp = $('#fill-input');
       if (inp) checkFillBlank(q, inp);
+    } else if (q?.type === 'matching') {
+      checkMatching(q);
     }
     return;
   }

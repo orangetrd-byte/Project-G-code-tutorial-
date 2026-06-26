@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.37-ios-icon';
+const CACHE_VERSION = 'pgct-v2.38-matching-questions';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [

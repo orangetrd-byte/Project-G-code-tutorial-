@@ -50,6 +50,17 @@ const LESSONS = [
         answer: "G00",
         hint: "G00 = rapid positioning",
         explanation: "G00 is the rapid traverse code. G0 is also accepted on many systems; both mean rapid positioning, but G00 is easier for beginners to scan."
+      },
+      {
+        id: "u1-l1-q4",
+        type: "matching",
+        question: "Match each G-code part to what it tells the machine.",
+        pairs: [
+          { left: "G00", right: "Rapid positioning" },
+          { left: "X / Z", right: "Position coordinates" },
+          { left: ";", right: "Comment for the human" }
+        ],
+        explanation: "G00 tells the machine to rapid, X and Z tell it where to go, and a semicolon starts a comment on many controls."
       }
     ]
   },
@@ -113,6 +124,17 @@ const LESSONS = [
         options: ["G91", "G90", "G92", "G28"],
         answer: 1,
         explanation: "G90 = absolute mode. All X and Z values reference the program zero point."
+      },
+      {
+        id: "u1-l2-q4",
+        type: "matching",
+        question: "Match each coordinate idea to its meaning.",
+        pairs: [
+          { left: "X", right: "Diameter position" },
+          { left: "Z", right: "Position along the spindle" },
+          { left: "G90", right: "Absolute positioning" }
+        ],
+        explanation: "On a lathe, X usually controls diameter, Z runs along the spindle, and G90 uses positions from program zero."
       }
     ]
   },
@@ -1041,6 +1063,17 @@ const PRINTING_LESSONS = [
         answer: "G1",
         hint: "G1 is the normal printing move",
         explanation: "G1 is the controlled move used for most print paths. It may move with or without extrusion."
+      },
+      {
+        id: "p-u1-l1-q4",
+        type: "matching",
+        question: "Match each printer G-code word to what it controls.",
+        pairs: [
+          { left: "G1", right: "Controlled move" },
+          { left: "E", right: "Extrusion amount" },
+          { left: "F", right: "Feedrate" }
+        ],
+        explanation: "Printer moves commonly use G1 for controlled motion, E for extrusion amount, and F for feedrate."
       }
     ]
   },
@@ -1122,6 +1155,17 @@ M190 S60  ; set bed to 60 C and wait</pre>
         answer: "104",
         hint: "M104 sets hotend temperature and continues",
         explanation: "M104 sets the hotend target temperature but does not wait for it to finish heating."
+      },
+      {
+        id: "p-u1-l3-q4",
+        type: "matching",
+        question: "Match each temperature command to its behavior.",
+        pairs: [
+          { left: "M104", right: "Set nozzle, keep going" },
+          { left: "M109", right: "Set nozzle and wait" },
+          { left: "M190", right: "Set bed and wait" }
+        ],
+        explanation: "M104 sets the hotend without waiting, M109 waits for the hotend, and M190 waits for the heated bed."
       }
     ]
   },
