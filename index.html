@@ -20,20 +20,31 @@
 </head>
 <body>
 <div class="loading-splash" id="loading-splash" aria-label="Loading Project G-Code Tutorial">
-  <div class="loading-code loading-terminal" role="presentation">
-    <div class="loading-code__bar loading-terminal__top">
-      <div class="loading-terminal__lights"><span></span><span></span><span></span></div>
-      <div class="loading-terminal__title">PROJECT G-CODE</div>
-      <div class="loading-terminal__status">BOOT</div>
-    </div>
-    <div class="loading-terminal__screen">
-      <div class="loading-terminal__brand">[ G ] Project G-Code</div>
-      <div class="loading-terminal__subline">CNC / 3D PRINT TRAINER</div>
-      <pre><code><span class="type-line l1">O1000 (PROJECT G-CODE TUTORIAL)</span>
+  <div class="loading-monitor" role="presentation">
+    <div class="loading-monitor__bezel">
+      <div class="loading-monitor__header">
+        <div>
+          <div class="loading-monitor__eyebrow">BOOTING TRAINER</div>
+          <div class="loading-monitor__brand">Project G-Code</div>
+        </div>
+        <div class="loading-monitor__badge">CNC + 3DP</div>
+      </div>
+      <div class="loading-monitor__display">
+        <div class="loading-monitor__code">
+          <pre><code><span class="type-line l1">O1000 (PROJECT G-CODE TUTORIAL)</span>
 <span class="type-line l2">G90 G21 ; LEARN MODE</span>
 <span class="type-line l3">M03 ; WARM UP INTERFACE</span>
 <span class="type-line l4">G01 XREADY F100 ; DISPLAY READY</span></code></pre>
+        </div>
+        <div class="loading-monitor__panel">
+          <span>MODE</span><strong>LEARN</strong>
+          <span>TRACK</span><strong>CNC / PRINT</strong>
+          <span>STATUS</span><strong>READY</strong>
+        </div>
+      </div>
+      <div class="loading-monitor__bootbar"><span></span></div>
     </div>
+    <div class="loading-monitor__stand"></div>
   </div>
 </div>
 

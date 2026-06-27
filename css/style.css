@@ -79,9 +79,10 @@ body {
   align-items: center;
   justify-content: center;
   background:
-    radial-gradient(circle at 50% 30%, rgba(32, 201, 151, 0.16), transparent 30rem),
-    linear-gradient(180deg, var(--c-surface), var(--c-bg));
-  padding: 1.25rem;
+    radial-gradient(circle at 15% 15%, rgba(240, 160, 64, 0.14), transparent 18rem),
+    radial-gradient(circle at 80% 20%, rgba(32, 201, 151, 0.18), transparent 22rem),
+    linear-gradient(160deg, #07131D 0%, #0F2630 48%, #071018 100%);
+  padding: 1.15rem;
   transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 .loading-splash.done {
@@ -89,96 +90,158 @@ body {
   visibility: hidden;
   pointer-events: none;
 }
-.loading-code.loading-terminal,
-.loading-terminal {
-  width: min(92vw, 520px);
-  background: linear-gradient(180deg, #202A33, #111923);
-  border: 1px solid rgba(176, 197, 209, 0.32);
-  border-radius: 18px;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255,255,255,0.08);
-  overflow: hidden;
-  padding: 0.55rem;
+.loading-monitor {
+  width: min(94vw, 620px);
+  transform: perspective(900px) rotateX(2deg);
 }
-.loading-code__bar.loading-terminal__top,
-.loading-terminal__top {
-  display: grid;
-  grid-template-columns: 4.5rem 1fr 4rem;
-  align-items: center;
-  min-height: 2.35rem;
-  padding: 0 0.55rem;
-  color: rgba(238, 245, 247, 0.72);
-  font-family: var(--f-display);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-.loading-terminal__lights {
-  display: flex;
-  gap: 6px;
-}
-.loading-terminal__lights span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--c-border);
-}
-.loading-terminal__lights span:nth-child(1) { background: var(--c-wrong); }
-.loading-terminal__lights span:nth-child(2) { background: var(--c-warn); }
-.loading-terminal__lights span:nth-child(3) { background: var(--c-correct); }
-.loading-terminal__title { text-align: center; }
-.loading-terminal__status {
-  color: var(--c-accent);
-  text-align: right;
-}
-.loading-terminal__screen {
+.loading-monitor__bezel {
   position: relative;
-  min-height: clamp(245px, 36vh, 320px);
   overflow: hidden;
-  border: 1px solid rgba(130, 154, 169, 0.42);
-  border-radius: 12px;
-  background:
-    linear-gradient(rgba(32, 201, 151, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(32, 201, 151, 0.045) 1px, transparent 1px),
-    radial-gradient(circle at 50% 20%, rgba(32, 201, 151, 0.16), transparent 17rem),
-    #071217;
-  background-size: 22px 22px, 22px 22px, auto, auto;
-  padding: clamp(1.25rem, 4vw, 1.75rem);
+  background: linear-gradient(145deg, #D6DEE3, #758894 12%, #152230 13%, #0B151F 100%);
+  border: 1px solid rgba(236, 245, 247, 0.26);
+  border-radius: 24px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255,255,255,0.28);
+  padding: clamp(0.8rem, 3vw, 1.15rem);
 }
-.loading-terminal__screen::after {
+.loading-monitor__bezel::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.045) 50%, transparent 100%);
-  animation: terminalScan 3.8s linear infinite;
+  background: linear-gradient(115deg, rgba(255,255,255,0.12), transparent 35%, rgba(255,255,255,0.04) 62%, transparent 63%);
   pointer-events: none;
 }
-.loading-terminal__brand {
-  color: #DDECE9;
-  font-family: var(--f-display);
-  font-size: clamp(1.15rem, 4vw, 1.45rem);
-  font-weight: 900;
-  letter-spacing: 0;
+.loading-monitor__header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.2rem 0.25rem 0.85rem;
 }
-.loading-terminal__subline {
+.loading-monitor__eyebrow {
   color: var(--c-accent);
+  font-family: var(--f-display);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+.loading-monitor__brand {
+  color: #F3FBFA;
+  font-family: var(--f-display);
+  font-size: clamp(1.35rem, 5vw, 2rem);
+  font-weight: 900;
+  line-height: 1.05;
+}
+.loading-monitor__badge {
+  border: 1px solid rgba(240, 160, 64, 0.55);
+  border-radius: 999px;
+  color: #F6B24D;
   font-family: var(--f-display);
   font-size: 0.68rem;
   font-weight: 900;
-  letter-spacing: 0.14em;
-  margin: 0.15rem 0 1rem;
+  letter-spacing: 0.08em;
+  padding: 0.4rem 0.65rem;
+  white-space: nowrap;
 }
-.loading-terminal pre {
+.loading-monitor__display {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(7.5rem, 0.7fr);
+  gap: clamp(0.75rem, 3vw, 1rem);
+  min-height: clamp(270px, 42vh, 360px);
+  overflow: hidden;
+  border: 1px solid rgba(96, 139, 145, 0.55);
+  border-radius: 16px;
+  background:
+    linear-gradient(rgba(32, 201, 151, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 201, 151, 0.045) 1px, transparent 1px),
+    radial-gradient(circle at 25% 30%, rgba(32, 201, 151, 0.22), transparent 18rem),
+    #06161A;
+  background-size: 24px 24px, 24px 24px, auto, auto;
+  padding: clamp(1rem, 4vw, 1.35rem);
+}
+.loading-monitor__display::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.055), transparent);
+  animation: terminalScan 3.6s linear infinite;
+  pointer-events: none;
+}
+.loading-monitor__code {
+  align-self: center;
+}
+.loading-monitor__code pre {
   position: relative;
   z-index: 1;
   margin: 0;
-  min-height: 128px;
-  background: transparent;
+  min-height: 150px;
+  background: rgba(3, 16, 18, 0.52);
   border: 0;
-  border-left: 3px solid rgba(32, 201, 151, 0.75);
-  border-radius: 0;
+  border-left: 4px solid var(--c-accent);
+  border-radius: 0 12px 12px 0;
   color: #9CF0DB;
-  font-size: clamp(0.82rem, 3.35vw, 1rem);
-  padding: 0.15rem 0 0.15rem 0.85rem;
+  font-size: clamp(0.82rem, 3.2vw, 1.02rem);
+  padding: 0.75rem 0 0.75rem 0.95rem;
+}
+.loading-monitor__panel {
+  position: relative;
+  z-index: 1;
+  align-self: stretch;
+  display: grid;
+  align-content: center;
+  gap: 0.45rem;
+  border-left: 1px solid rgba(156, 240, 219, 0.22);
+  color: #DDECE9;
+  font-family: var(--f-display);
+  padding-left: clamp(0.75rem, 3vw, 1rem);
+}
+.loading-monitor__panel span {
+  color: rgba(221, 236, 233, 0.54);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+.loading-monitor__panel strong {
+  color: #F6B24D;
+  font-size: clamp(0.82rem, 2.6vw, 1rem);
+  line-height: 1.1;
+}
+.loading-monitor__bootbar {
+  position: relative;
+  z-index: 1;
+  height: 0.55rem;
+  overflow: hidden;
+  background: rgba(221, 236, 233, 0.14);
+  border-radius: 999px;
+  margin-top: 0.85rem;
+}
+.loading-monitor__bootbar span {
+  display: block;
+  width: 72%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--c-accent), #F6B24D);
+  border-radius: inherit;
+  animation: bootBar 4.3s ease-out forwards;
+}
+.loading-monitor__stand {
+  width: min(34vw, 170px);
+  height: 1.1rem;
+  background: linear-gradient(180deg, rgba(118, 136, 148, 0.55), rgba(18, 31, 42, 0.15));
+  border-radius: 0 0 18px 18px;
+  margin: 0 auto;
+}
+@media (max-width: 520px) {
+  .loading-monitor__display { grid-template-columns: 1fr; }
+  .loading-monitor__panel {
+    grid-template-columns: repeat(3, 1fr);
+    border-left: 0;
+    border-top: 1px solid rgba(156, 240, 219, 0.22);
+    padding: 0.8rem 0 0;
+  }
+  .loading-monitor__panel span, .loading-monitor__panel strong { text-align: center; }
 }
 .type-line {
   --type-duration: 1.15s;
@@ -224,6 +287,10 @@ body {
   50% { background: transparent; }
 }
 
+@keyframes bootBar {
+  from { width: 10%; }
+  to { width: 100%; }
+}
 @keyframes terminalScan {
   from { transform: translateY(-100%); }
   to { transform: translateY(100%); }
