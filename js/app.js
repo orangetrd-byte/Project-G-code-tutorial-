@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.39 | Build 2026.06.26.01';
+const APP_BUILD = 'MGP | Version v2.40 | Build 2026.06.26.02';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1637,6 +1637,45 @@ function renderQuiz(container, q, idx) {
       });
     });
 
+  } else if (q.type === 'true-false') {
+    div.innerHTML = `
+      ${renderReadAloudButton()}
+      <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
+      ${renderQuestionContext(q)}
+      ${q.retakeNotice ? `<div class="pool-notice">${q.retakeNotice}</div>` : ''}
+      <div class="quiz-question true-false-question">${q.question}</div>
+      <div class="true-false-actions">
+        <button class="tf-btn" data-value="true" aria-label="True">✓</button>
+        <button class="tf-btn" data-value="false" aria-label="False">×</button>
+      </div>
+      <div id="explanation-box"></div>`;
+    container.appendChild(div);
+
+    $$('.tf-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (State.currentQuizAnswered) return;
+        const chosen = btn.dataset.value === 'true';
+        const correct = chosen === q.answer;
+        $$('.tf-btn').forEach(b => {
+          const value = b.dataset.value === 'true';
+          if (value === q.answer) b.classList.add('correct');
+          else if (value === chosen && !correct) b.classList.add('wrong');
+          b.disabled = true;
+        });
+        if (correct) {
+          State.sessionCorrect++;
+          if (State.currentMode === 'weak-review') State.clearWeakQuestion(q);
+        } else {
+          State.missedQuestions.push(q);
+          State.trackWeakQuestion(q);
+        }
+        State.currentQuizAnswered = true;
+        AudioFeedback.play(correct);
+        showExplanation(q.explanation, q, correct);
+        setAnsweredAction(correct);
+        showToast(correct ? '✅ Correct!' : '❌ Not quite — see explanation', correct ? 'success' : 'error');
+      });
+    });
   } else if (q.type === 'fill-blank') {
     div.innerHTML = `
       ${renderReadAloudButton()}

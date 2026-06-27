@@ -1116,6 +1116,46 @@ body.theme-light .question-context-card {
 .option-btn.correct .option-letter { background: var(--c-correct); color: #fff; }
 .option-btn.wrong .option-letter { background: var(--c-wrong); color: #fff; }
 
+/* True / false */
+.true-false-question {
+  font-size: 1.15rem;
+  text-align: center;
+}
+.true-false-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.tf-btn {
+  min-height: 5.5rem;
+  background: var(--c-surface2);
+  border: 2px solid var(--c-border);
+  border-radius: var(--r-lg);
+  color: var(--c-primary-l);
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+}
+.tf-btn:hover:not(:disabled) {
+  border-color: var(--c-primary-l);
+  background: rgba(26,107,92,0.12);
+}
+.tf-btn:active:not(:disabled) { transform: scale(0.98); }
+.tf-btn.correct {
+  border-color: var(--c-correct);
+  background: rgba(40,167,69,0.14);
+  color: #7DE89A;
+}
+.tf-btn.wrong {
+  border-color: var(--c-wrong);
+  background: rgba(220,53,69,0.12);
+  color: #F0A0A8;
+}
+.tf-btn:disabled { cursor: default; }
+
 /* Matching */
 .matching-list {
   display: grid;

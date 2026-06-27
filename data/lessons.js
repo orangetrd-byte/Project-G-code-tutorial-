@@ -61,6 +61,13 @@ const LESSONS = [
           { left: ";", right: "Comment for the human" }
         ],
         explanation: "G00 tells the machine to rapid, X and Z tell it where to go, and a semicolon starts a comment on many controls."
+      },
+      {
+        id: "u1-l1-q5",
+        type: "true-false",
+        question: "A semicolon starts a comment on many controls.",
+        answer: true,
+        explanation: "True. Text after a semicolon is usually a human-readable comment, not a machine move."
       }
     ]
   },
@@ -135,6 +142,13 @@ const LESSONS = [
           { left: "G90", right: "Absolute positioning" }
         ],
         explanation: "On a lathe, X usually controls diameter, Z runs along the spindle, and G90 uses positions from program zero."
+      },
+      {
+        id: "u1-l2-q5",
+        type: "true-false",
+        question: "On a typical CNC lathe, negative Z moves toward the chuck.",
+        answer: true,
+        explanation: "True. In the basic lathe setup taught here, negative Z moves into the part toward the chuck."
       }
     ]
   },
@@ -1074,6 +1088,13 @@ const PRINTING_LESSONS = [
           { left: "F", right: "Feedrate" }
         ],
         explanation: "Printer moves commonly use G1 for controlled motion, E for extrusion amount, and F for feedrate."
+      },
+      {
+        id: "p-u1-l1-q5",
+        type: "true-false",
+        question: "In most 3D printer G-code, E controls extrusion amount.",
+        answer: true,
+        explanation: "True. E values control extruder movement, so they affect how much filament is pushed through the nozzle."
       }
     ]
   },
@@ -1166,6 +1187,13 @@ M190 S60  ; set bed to 60 C and wait</pre>
           { left: "M190", right: "Set bed and wait" }
         ],
         explanation: "M104 sets the hotend without waiting, M109 waits for the hotend, and M190 waits for the heated bed."
+      },
+      {
+        id: "p-u1-l3-q5",
+        type: "true-false",
+        question: "M109 sets nozzle temperature and waits before continuing.",
+        answer: true,
+        explanation: "True. M109 waits for the hotend to reach the target before the program continues."
       }
     ]
   },
