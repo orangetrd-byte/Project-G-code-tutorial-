@@ -20,14 +20,20 @@
 </head>
 <body>
 <div class="loading-splash" id="loading-splash" aria-label="Loading Project G-Code Tutorial">
-  <div class="loading-code">
-    <div class="loading-code__bar">
-      <span></span><span></span><span></span>
+  <div class="loading-terminal" role="presentation">
+    <div class="loading-terminal__top">
+      <div class="loading-terminal__lights"><span></span><span></span><span></span></div>
+      <div class="loading-terminal__title">PROJECT G-CODE</div>
+      <div class="loading-terminal__status">BOOT</div>
     </div>
-    <pre><code><span class="type-line l1">O1000 (PROJECT G-CODE TUTORIAL)</span>
+    <div class="loading-terminal__screen">
+      <div class="loading-terminal__brand">[ G ] Project G-Code</div>
+      <div class="loading-terminal__subline">CNC / 3D PRINT TRAINER</div>
+      <pre><code><span class="type-line l1">O1000 (PROJECT G-CODE TUTORIAL)</span>
 <span class="type-line l2">G90 G21 ; LEARN MODE</span>
 <span class="type-line l3">M03 ; WARM UP INTERFACE</span>
 <span class="type-line l4">G01 XREADY F100 ; DISPLAY READY</span></code></pre>
+    </div>
   </div>
 </div>
 
