@@ -490,6 +490,24 @@ These are not implemented but architecturally straightforward to add:
 ---
 
 *Project G-Code Tutorial is part of the `orangetrd-byte` CNC tool ecosystem, alongside Green Hat (beginner lathe companion) and CNC Cell Planner (production scheduling).*
+## Current Project Status
+
+**Status as of June 27, 2026:** Active learning-app repo.
+
+Project G-Code Tutorial is the structured learning app for CNC G-code. It is educational and simulated only. It must not become a production G-code generator or machine-control tool.
+
+Where it stands:
+
+- Current focus is reducing guessing and improving concept retention.
+- Lessons should teach why a concept matters before asking the learner to answer syntax questions.
+- Streaks should remain accountability-focused, without noisy reward systems.
+- Visual logic blocks and weak-spot relearn flows are valuable because they help learners understand motion, coordinates, offsets, cycles, and troubleshooting.
+- MGP build/version information must remain visible and cannot be removed.
+
+Next practical focus:
+
+- Improve first-minute onboarding, question clarity, weak-spot relearn, visual explanations, and curriculum rules before adding larger sandbox features.
+
 ## Assistant Change Guidelines
 
 Before making code or file changes in this repo:
@@ -506,3 +524,4 @@ Before making code or file changes in this repo:
 10. Optimize only for a named goal such as learning clarity, reliability, readability, speed, offline use, or safe educational scope.
 
 Permanent rule: MGP must remain visible in build/version information and cannot be removed, hidden, renamed, or replaced.
+
