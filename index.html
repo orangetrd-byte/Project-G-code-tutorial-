@@ -17,34 +17,137 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <style id="startup-critical">
+    .boot-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: grid;
+      place-items: center;
+      min-height: 100dvh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(246,178,77,0.18), transparent 17rem),
+        radial-gradient(circle at 82% 24%, rgba(32,201,151,0.22), transparent 20rem),
+        linear-gradient(150deg, #071018 0%, #10242E 54%, #050B12 100%);
+      padding: 1rem;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    .boot-splash.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .boot-rig {
+      width: min(94vw, 640px);
+      color: #ECF7F5;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .boot-rig__header {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin: 0 0 0.85rem;
+      text-transform: uppercase;
+    }
+    .boot-rig__label { color: #F6B24D; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em; }
+    .boot-rig__title { font-size: clamp(1.65rem, 6vw, 2.5rem); font-weight: 800; line-height: 1.05; }
+    .boot-rig__chip {
+      align-self: start;
+      border: 1px solid rgba(32,201,151,0.55);
+      border-radius: 999px;
+      color: #9CF0DB;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 0.45rem 0.7rem;
+      white-space: nowrap;
+    }
+    .boot-rig__screen {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: clamp(0.75rem, 3vw, 1.1rem);
+      overflow: hidden;
+      min-height: clamp(330px, 48vh, 430px);
+      border: 2px solid rgba(221,236,233,0.2);
+      border-radius: 28px;
+      background:
+        linear-gradient(rgba(156,240,219,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(156,240,219,0.055) 1px, transparent 1px),
+        linear-gradient(145deg, rgba(214,222,227,0.22), rgba(7,18,23,0.98) 18%, rgba(6,22,26,0.98));
+      background-size: 28px 28px, 28px 28px, auto;
+      box-shadow: 0 34px 90px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.2);
+      padding: clamp(1rem, 4vw, 1.35rem);
+    }
+    .boot-rig__screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, rgba(255,255,255,0.16), transparent 34%, rgba(255,255,255,0.05) 58%, transparent 59%);
+      pointer-events: none;
+    }
+    .boot-rig__code, .boot-rig__status { position: relative; z-index: 1; }
+    .boot-rig__code { align-self: center; }
+    .boot-rig__code pre {
+      margin: 0;
+      min-height: 165px;
+      border: 0;
+      border-left: 4px solid #20C997;
+      border-radius: 0 16px 16px 0;
+      background: rgba(3,16,18,0.55);
+      color: #9CF0DB;
+      font-size: clamp(0.82rem, 3.2vw, 1rem);
+      line-height: 1.8;
+      padding: 0.8rem 0 0.8rem 0.9rem;
+      overflow: hidden;
+    }
+    .boot-rig__status {
+      display: grid;
+      align-content: center;
+      gap: 0.75rem;
+      border-left: 1px solid rgba(156,240,219,0.22);
+      padding-left: clamp(0.75rem, 3vw, 1.1rem);
+    }
+    .boot-meter span { display: block; color: rgba(236,247,245,0.54); font-size: 0.65rem; font-weight: 800; letter-spacing: 0.12em; }
+    .boot-meter strong { display: block; color: #F6B24D; font-size: clamp(0.9rem, 3vw, 1.12rem); line-height: 1.15; margin-top: 0.18rem; }
+    .boot-rig__bar { height: 0.65rem; margin-top: 0.9rem; overflow: hidden; border-radius: 999px; background: rgba(236,247,245,0.16); }
+    .boot-rig__bar span { display: block; height: 100%; width: 100%; border-radius: inherit; background: linear-gradient(90deg, #20C997, #F6B24D); animation: bootBar 4.3s ease-out both; transform-origin: left; }
+    .boot-rig__foot { width: min(36vw, 190px); height: 1rem; margin: 0 auto; border-radius: 0 0 18px 18px; background: linear-gradient(180deg, rgba(221,236,233,0.32), rgba(221,236,233,0.04)); }
+    .type-line { --type-duration: 1.15s; --type-delay: 0s; display: block; width: 0; max-width: max-content; overflow: hidden; white-space: nowrap; position: relative; animation: typeLine var(--type-duration) steps(34, end) forwards; animation-delay: var(--type-delay); }
+    .type-line::after { content: ""; display: inline-block; width: 2px; height: 1.15em; margin-left: 2px; background: transparent; vertical-align: -0.16em; animation: caretActive var(--type-duration) step-end both; animation-delay: var(--type-delay); }
+    .type-line.l2 { --type-delay: 1.05s; }
+    .type-line.l3 { --type-delay: 2.1s; }
+    .type-line.l4 { --type-delay: 3.15s; }
+    .type-line.l4::after { animation: caretActive var(--type-duration) step-end both, caretBlink 0.7s step-end infinite; animation-delay: var(--type-delay), calc(var(--type-delay) + var(--type-duration)); }
+    @keyframes bootBar { from { transform: scaleX(0.08); } to { transform: scaleX(1); } }
+    @keyframes typeLine { to { width: 100%; } }
+    @keyframes caretActive { 0%, 99% { background: #F6B24D; } 100% { background: transparent; } }
+    @keyframes caretBlink { 0%, 100% { background: #F6B24D; } 50% { background: transparent; } }
+    @media (max-width: 520px) {
+      .boot-rig__screen { grid-template-columns: 1fr; }
+      .boot-rig__status { grid-template-columns: repeat(3, 1fr); border-left: 0; border-top: 1px solid rgba(156,240,219,0.22); padding: 0.85rem 0 0; }
+      .boot-meter { text-align: center; }
+    }
+  </style>
 </head>
 <body>
-<div class="loading-splash" id="loading-splash" aria-label="Loading Project G-Code Tutorial">
-  <div class="loading-monitor" role="presentation">
-    <div class="loading-monitor__bezel">
-      <div class="loading-monitor__header">
-        <div>
-          <div class="loading-monitor__eyebrow">BOOTING TRAINER</div>
-          <div class="loading-monitor__brand">Project G-Code</div>
-        </div>
-        <div class="loading-monitor__badge">CNC + 3DP</div>
-      </div>
-      <div class="loading-monitor__display">
-        <div class="loading-monitor__code">
-          <pre><code><span class="type-line l1">O1000 (PROJECT G-CODE TUTORIAL)</span>
+<div class="loading-splash boot-splash" id="loading-splash" aria-label="Loading Project G-Code Tutorial">
+  <div class="boot-rig" role="presentation">
+    <div class="boot-rig__header">
+      <div><div class="boot-rig__label">Booting trainer</div><div class="boot-rig__title">Project G-Code</div></div>
+      <div class="boot-rig__chip">CNC + 3DP</div>
+    </div>
+    <div class="boot-rig__screen">
+      <div class="boot-rig__code">
+        <pre><code><span class="type-line l1">O1000 (PROJECT G-CODE TUTORIAL)</span>
 <span class="type-line l2">G90 G21 ; LEARN MODE</span>
 <span class="type-line l3">M03 ; WARM UP INTERFACE</span>
 <span class="type-line l4">G01 XREADY F100 ; DISPLAY READY</span></code></pre>
-        </div>
-        <div class="loading-monitor__panel">
-          <span>MODE</span><strong>LEARN</strong>
-          <span>TRACK</span><strong>CNC / PRINT</strong>
-          <span>STATUS</span><strong>READY</strong>
-        </div>
       </div>
-      <div class="loading-monitor__bootbar"><span></span></div>
+      <div class="boot-rig__status">
+        <div class="boot-meter"><span>MODE</span><strong>LEARN</strong></div>
+        <div class="boot-meter"><span>TRACK</span><strong>CNC / PRINT</strong></div>
+        <div class="boot-meter"><span>STATUS</span><strong>READY</strong></div>
+      </div>
     </div>
-    <div class="loading-monitor__stand"></div>
+    <div class="boot-rig__bar"><span></span></div>
+    <div class="boot-rig__foot"></div>
   </div>
 </div>
 
