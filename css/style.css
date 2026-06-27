@@ -1157,46 +1157,63 @@ body.theme-light .question-context-card {
 .tf-btn:disabled { cursor: default; }
 
 /* Matching */
-.matching-list {
+.matching-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.matching-column {
   display: grid;
   gap: 0.75rem;
 }
-.matching-row {
-  display: grid;
-  grid-template-columns: minmax(6rem, 0.8fr) minmax(0, 1.2fr);
-  gap: 0.75rem;
-  align-items: center;
+.matching-card {
+  min-height: 4.25rem;
+  width: 100%;
   background: var(--c-surface2);
   border: 2px solid var(--c-border);
   border-radius: var(--r-md);
-  padding: 0.75rem;
-}
-.matching-left {
+  color: var(--c-text);
+  cursor: pointer;
   font-family: var(--f-display);
+  font-size: clamp(0.9rem, 3.5vw, 1.05rem);
   font-weight: 800;
-  color: var(--c-text);
+  line-height: 1.25;
+  padding: 0.8rem 0.65rem;
+  text-align: center;
+  transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
 }
-.matching-select {
-  width: 100%;
-  min-height: 2.7rem;
-  background: var(--c-bg);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r-sm);
-  color: var(--c-text);
-  font-family: var(--f-body);
-  font-size: 0.9rem;
-  padding: 0.55rem 0.65rem;
+.matching-card:active:not(:disabled) {
+  transform: scale(0.98);
 }
-.matching-row.correct {
+.matching-card.selected {
+  background: rgba(32, 201, 151, 0.14);
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 3px rgba(32, 201, 151, 0.14);
+}
+.matching-card.matched {
+  background: rgba(40,167,69,0.16);
   border-color: var(--c-correct);
-  background: rgba(40,167,69,0.1);
+  color: var(--c-text);
 }
-.matching-row.wrong {
+.matching-card.wrong {
+  background: rgba(220,53,69,0.14);
   border-color: var(--c-wrong);
-  background: rgba(220,53,69,0.08);
+  color: var(--c-text);
 }
-@media (max-width: 420px) {
-  .matching-row { grid-template-columns: 1fr; }
+.matching-card:disabled {
+  cursor: default;
+  opacity: 1;
+}
+.matching-help {
+  color: var(--c-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 0.65rem;
+}
+@media (max-width: 360px) {
+  .matching-card-grid { gap: 0.55rem; }
+  .matching-column { gap: 0.55rem; }
+  .matching-card { min-height: 3.8rem; padding: 0.65rem 0.45rem; }
 }
 
 /* Fill-in-the-blank */

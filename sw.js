@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.40-true-false';
+const CACHE_VERSION = 'pgct-v2.41-tap-matching';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [

@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.40 | Build 2026.06.26.02';
+const APP_BUILD = 'MGP | Version v2.41 | Build 2026.06.26.03';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -594,10 +594,6 @@ function pickLessonQuestions(lesson, count) {
   return [first, ...shuffleCopy(rest)].slice(0, Math.min(count, lesson.quiz.length));
 }
 
-function getMatchingChoices(q) {
-  const rights = (q.pairs || []).map(pair => pair.right);
-  return q.choices?.length ? q.choices : shuffleCopy(rights);
-}
 
 const ConceptPools = {
   byConcept: {},
@@ -1697,25 +1693,26 @@ function renderQuiz(container, q, idx) {
       if (e.key === 'Enter' && !State.currentQuizAnswered) checkFillBlank(q, inp);
     });
   } else if (q.type === 'matching') {
-    const choices = getMatchingChoices(q);
+    const leftItems = q.pairs.map((pair, i) => ({ text: pair.left, idx: i }));
+    const rightItems = shuffleCopy(q.pairs.map((pair, i) => ({ text: pair.right, idx: i })));
     div.innerHTML = `
       ${renderReadAloudButton()}
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
       ${renderQuestionContext(q)}
       ${q.retakeNotice ? `<div class="pool-notice">${q.retakeNotice}</div>` : ''}
       <div class="quiz-question">${q.question}</div>
-      <div class="matching-list">
-        ${q.pairs.map((pair, i) => `
-          <label class="matching-row" data-match-idx="${i}">
-            <span class="matching-left">${pair.left}</span>
-            <select class="matching-select" data-match-select="${i}">
-              <option value="">Choose match</option>
-              ${choices.map(choice => `<option value="${choice}">${choice}</option>`).join('')}
-            </select>
-          </label>`).join('')}
+      <div class="matching-card-grid" data-matching-board data-had-mismatch="false">
+        <div class="matching-column">
+          ${leftItems.map(item => `<button class="matching-card matching-card-left" data-match-side="left" data-match-idx="${item.idx}" type="button">${item.text}</button>`).join('')}
+        </div>
+        <div class="matching-column">
+          ${rightItems.map(item => `<button class="matching-card matching-card-right" data-match-side="right" data-match-idx="${item.idx}" type="button">${item.text}</button>`).join('')}
+        </div>
       </div>
+      <div class="matching-help">Tap one item, then tap its match.</div>
       <div id="explanation-box"></div>`;
     container.appendChild(div);
+    initMatchingCards();
   }
 }
 
@@ -1766,26 +1763,72 @@ function checkFillBlank(q, inp) {
   showToast(correct ? '✅ Correct!' : `❌ Answer: ${q.answer}`, correct ? 'success' : 'error');
 }
 
+function initMatchingCards() {
+  const board = $('[data-matching-board]');
+  if (!board) return;
+  let selected = null;
+
+  $$('.matching-card').forEach(card => {
+    card.addEventListener('click', () => {
+      if (State.currentQuizAnswered || card.disabled) return;
+      if (!selected) {
+        selected = card;
+        card.classList.add('selected');
+        return;
+      }
+      if (selected === card) {
+        selected.classList.remove('selected');
+        selected = null;
+        return;
+      }
+      if (selected.dataset.matchSide === card.dataset.matchSide) {
+        selected.classList.remove('selected');
+        selected = card;
+        card.classList.add('selected');
+        return;
+      }
+
+      const first = selected;
+      const second = card;
+      const isMatch = first.dataset.matchIdx === second.dataset.matchIdx;
+      first.classList.remove('selected');
+      selected = null;
+
+      if (isMatch) {
+        first.classList.add('matched');
+        second.classList.add('matched');
+        first.disabled = true;
+        second.disabled = true;
+        AudioFeedback.play(true);
+        return;
+      }
+
+      board.dataset.hadMismatch = 'true';
+      first.classList.add('wrong');
+      second.classList.add('wrong');
+      AudioFeedback.play(false);
+      window.setTimeout(() => {
+        first.classList.remove('wrong');
+        second.classList.remove('wrong');
+      }, 450);
+    });
+  });
+}
+
 function checkMatching(q) {
-  const selects = $$('[data-match-select]');
-  if (!selects.length || State.currentQuizAnswered) return;
-  const allAnswered = selects.every(select => select.value);
-  if (!allAnswered) {
-    showToast('Choose a match for each row.', 'error');
+  const cards = $$('.matching-card');
+  const board = $('[data-matching-board]');
+  if (!cards.length || State.currentQuizAnswered) return;
+
+  const matchedCount = cards.filter(card => card.classList.contains('matched')).length / 2;
+  if (matchedCount < q.pairs.length) {
+    showToast('Match every pair first.', 'error');
     return;
   }
 
-  let correctCount = 0;
-  selects.forEach(select => {
-    const idx = parseInt(select.dataset.matchSelect, 10);
-    const row = select.closest('.matching-row');
-    const correct = select.value === q.pairs[idx].right;
-    if (correct) correctCount++;
-    row?.classList.add(correct ? 'correct' : 'wrong');
-    select.disabled = true;
-  });
+  const correct = board?.dataset.hadMismatch !== 'true';
+  cards.forEach(card => { card.disabled = true; });
 
-  const correct = correctCount === q.pairs.length;
   if (correct) {
     State.sessionCorrect++;
     if (State.currentMode === 'weak-review') State.clearWeakQuestion(q);
