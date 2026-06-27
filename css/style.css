@@ -89,8 +89,9 @@ body {
   visibility: hidden;
   pointer-events: none;
 }
+.loading-code.loading-terminal,
 .loading-terminal {
-  width: min(100%, 440px);
+  width: min(92vw, 520px);
   background: linear-gradient(180deg, #202A33, #111923);
   border: 1px solid rgba(176, 197, 209, 0.32);
   border-radius: 18px;
@@ -98,6 +99,7 @@ body {
   overflow: hidden;
   padding: 0.55rem;
 }
+.loading-code__bar.loading-terminal__top,
 .loading-terminal__top {
   display: grid;
   grid-template-columns: 4.5rem 1fr 4rem;
@@ -130,7 +132,7 @@ body {
 }
 .loading-terminal__screen {
   position: relative;
-  min-height: 235px;
+  min-height: clamp(245px, 36vh, 320px);
   overflow: hidden;
   border: 1px solid rgba(130, 154, 169, 0.42);
   border-radius: 12px;
@@ -140,7 +142,7 @@ body {
     radial-gradient(circle at 50% 20%, rgba(32, 201, 151, 0.16), transparent 17rem),
     #071217;
   background-size: 22px 22px, 22px 22px, auto, auto;
-  padding: 1.35rem 1.25rem 1.2rem;
+  padding: clamp(1.25rem, 4vw, 1.75rem);
 }
 .loading-terminal__screen::after {
   content: "";
@@ -153,7 +155,7 @@ body {
 .loading-terminal__brand {
   color: #DDECE9;
   font-family: var(--f-display);
-  font-size: 1.1rem;
+  font-size: clamp(1.15rem, 4vw, 1.45rem);
   font-weight: 900;
   letter-spacing: 0;
 }
@@ -175,7 +177,7 @@ body {
   border-left: 3px solid rgba(32, 201, 151, 0.75);
   border-radius: 0;
   color: #9CF0DB;
-  font-size: clamp(0.78rem, 3.2vw, 0.92rem);
+  font-size: clamp(0.82rem, 3.35vw, 1rem);
   padding: 0.15rem 0 0.15rem 0.85rem;
 }
 .type-line {
@@ -235,7 +237,7 @@ h1, h2, h3, h4 {
 }
 h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); }
 h2 { font-size: clamp(1.2rem, 3vw, 1.6rem); }
-h3 { font-size: 1.1rem; }
+h3 { font-size: clamp(1.15rem, 4vw, 1.45rem); }
 h4 { font-size: 0.95rem; color: var(--c-accent); text-transform: uppercase; letter-spacing: 0.06em; }
 
 p { margin-bottom: 0.75rem; color: var(--c-text-2); }
@@ -991,7 +993,7 @@ body.theme-light .lesson-row__xp {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: clamp(1.15rem, 4vw, 1.45rem);
   cursor: pointer;
   box-shadow: var(--shadow-sm);
 }
