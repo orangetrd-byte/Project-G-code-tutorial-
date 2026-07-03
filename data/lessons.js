@@ -54,13 +54,13 @@ const LESSONS = [
       {
         id: "u1-l1-q4",
         type: "matching",
-        question: "Match each G-code part to what it tells the machine.",
+        question: "Match each G-code part to what it means in this beginner block.",
         pairs: [
           { left: "G00", right: "Rapid positioning" },
           { left: "X / Z", right: "Position coordinates" },
-          { left: ";", right: "Comment for the human" }
+          { left: ";", right: "Starts a comment" }
         ],
-        explanation: "G00 tells the machine to rapid, X and Z tell it where to go, and a semicolon starts a comment on many controls."
+        explanation: "G00 tells the machine to rapid, X and Z tell it where to go, and a semicolon starts a note/comment on many controls."
       },
       {
         id: "u1-l1-q5",
@@ -68,6 +68,22 @@ const LESSONS = [
         question: "A semicolon starts a comment on many controls.",
         answer: true,
         explanation: "True. Text after a semicolon is usually a human-readable comment, not a machine move."
+      },
+      {
+        id: "u1-l1-q6",
+        type: "multiple-choice",
+        question: "What is missing from this rapid move?\n___ X2.000 Z0.100",
+        options: ["G00", "M30", "S800", "T0101"],
+        answer: 0,
+        explanation: "G00 is the rapid positioning command. X and Z give the destination."
+      },
+      {
+        id: "u1-l1-q7",
+        type: "multiple-choice",
+        question: "Which block is a complete rapid positioning move?",
+        options: ["X2.000 Z0.100", "G00 X2.000 Z0.100", "M03 S800", "N010"],
+        answer: 1,
+        explanation: "G00 gives the motion type, and X/Z give the position to rapid toward."
       }
     ]
   },
@@ -149,6 +165,22 @@ const LESSONS = [
         question: "On a typical CNC lathe, negative Z moves toward the chuck.",
         answer: true,
         explanation: "True. In the basic lathe setup taught here, negative Z moves into the part toward the chuck."
+      },
+      {
+        id: "u1-l2-q6",
+        type: "multiple-choice",
+        question: "What is missing from this absolute positioning setup?\n___ G20 G40",
+        options: ["G90", "G91", "M05", "T0101"],
+        answer: 0,
+        explanation: "G90 sets absolute positioning, so coordinates are measured from program zero."
+      },
+      {
+        id: "u1-l2-q7",
+        type: "multiple-choice",
+        question: "Pick the safer positioning mode for a beginner lathe program.",
+        options: ["G91 incremental for every move", "G90 absolute for normal cutting positions", "No positioning mode", "Switch modes every block"],
+        answer: 1,
+        explanation: "G90 absolute mode is the normal beginner-safe default because positions reference the program zero."
       }
     ]
   },
@@ -1784,10 +1816,10 @@ const LESSON_QUESTION_EXPANSIONS = {
       explanation: "Lathe X values commonly represent diameter, not radius."
     },
     {
-      type: "fill-blank",
-      question: "Type the code for incremental positioning:",
-      answer: "G91",
-      hint: "Incremental mode measures from the current position",
+      type: "multiple-choice",
+      question: "Which code sets incremental positioning, where moves measure from the current position?",
+      options: ["G90", "G91", "G20", "G28"],
+      answer: 1,
       explanation: "G91 is incremental positioning. Each move is measured from the current location."
     },
     {

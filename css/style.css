@@ -566,6 +566,21 @@ body.theme-light .settings-help {
   padding: 0.85rem;
   min-width: 0;
 }
+.daily-mission-card {
+  display: block;
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.daily-mission-card:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+.daily-mission-card:not(:disabled):active {
+  transform: translateY(1px);
+}
 body.theme-light .motivation-card {
   background: #FFFFFF;
   border-color: #B5C2CE;
@@ -1447,14 +1462,95 @@ body.theme-light .question-context-card {
   text-align: center;
   gap: 1rem;
 }
+.lesson-complete-screen {
+  justify-content: flex-start;
+  padding-top: 1.4rem;
+  gap: 0.85rem;
+}
 .complete-icon { font-size: 4rem; margin-bottom: 0.5rem; }
+.lesson-complete-screen .complete-icon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 0;
+  border: 2px solid var(--c-correct);
+  border-radius: 50%;
+  background: rgba(47,191,113,0.15);
+  color: #7DE89A;
+  font-family: var(--f-display);
+  font-size: 2.2rem;
+}
 .complete-title {
   font-family: var(--f-display);
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--c-accent);
 }
+.lesson-complete-screen .complete-title {
+  max-width: 30rem;
+  font-size: 1.35rem;
+  line-height: 1.22;
+}
 .complete-subtitle { color: var(--c-text-2); font-size: 0.95rem; }
+.lesson-complete-screen .complete-subtitle {
+  max-width: 30rem;
+  line-height: 1.4;
+}
+.completion-score-card,
+.next-mission-card {
+  width: min(100%, 30rem);
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-border);
+}
+.completion-score-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  background: var(--c-surface);
+}
+.completion-score-card div {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.85rem;
+}
+.completion-score-card div + div {
+  border-left: 1px solid var(--c-border);
+}
+.completion-score-card span,
+.next-mission-card span {
+  color: var(--c-text-3);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.completion-score-card strong {
+  color: var(--c-accent);
+  font-family: var(--f-display);
+  font-size: 1.15rem;
+}
+.next-mission-card {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.95rem 1rem;
+  border-color: rgba(47,191,113,0.75);
+  background: linear-gradient(135deg, rgba(47,191,113,0.18), rgba(127,219,202,0.08));
+  text-align: left;
+}
+.next-mission-card strong {
+  color: var(--c-text);
+  font-family: var(--f-display);
+  font-size: 1rem;
+}
+.next-mission-card em {
+  color: var(--c-text-2);
+  font-size: 0.8rem;
+  font-style: normal;
+}
+.compact-stat-row {
+  margin-top: 0;
+}
 .unlock-banner {
   width: min(100%, 28rem);
   display: grid;
@@ -1507,6 +1603,81 @@ body.theme-light .question-context-card {
   color: var(--c-text-3);
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+.lesson-recap,
+.confidence-panel {
+  width: min(100%, 30rem);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: 0.85rem;
+}
+.lesson-recap__label,
+.confidence-panel__label {
+  margin-bottom: 0.5rem;
+  color: var(--c-accent);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.lesson-recap__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  justify-content: center;
+}
+.lesson-recap__items span {
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  color: var(--c-text-2);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.confidence-panel__actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45rem;
+}
+.confidence-btn {
+  min-height: 42px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  background: var(--c-surface2);
+  color: var(--c-text);
+  font-weight: 800;
+  cursor: pointer;
+}
+.confidence-btn.selected {
+  border-color: var(--c-accent);
+  background: rgba(245,166,35,0.18);
+  color: var(--c-accent);
+}
+body.theme-light .lesson-recap,
+body.theme-light .confidence-panel {
+  background: #FFFFFF;
+  border-color: #B5C2CE;
+}
+body.theme-light .completion-score-card,
+body.theme-light .next-mission-card {
+  background: #FFFFFF;
+  border-color: #B5C2CE;
+}
+body.theme-light .next-mission-card {
+  background: linear-gradient(135deg, #DDF5E6, #FFFFFF);
+  border-color: #65B982;
+}
+body.theme-light .lesson-recap__items span,
+body.theme-light .confidence-btn {
+  background: #F7FAFC;
+  border-color: #B5C2CE;
+  color: #25384A;
+}
+body.theme-light .confidence-btn.selected {
+  background: #FFF1D5;
+  border-color: #B96E00;
+  color: #7A4700;
 }
 
 /* ─── REFERENCE SCREEN ────────────────────────────────────── */
@@ -1622,6 +1793,83 @@ body.theme-light #screen-progress {
   border-radius: var(--r-md);
   padding: 1rem;
   margin-bottom: 0.75rem;
+}
+.mistake-bank-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.mistake-bank-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.mistake-bank-card__kicker {
+  color: var(--c-accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.mistake-bank-card__title {
+  margin-top: 0.2rem;
+  color: var(--c-text);
+  font-family: var(--f-display);
+  font-weight: 700;
+}
+.mistake-bank-card__btn {
+  min-height: 38px;
+  padding: 0 0.85rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: var(--c-primary);
+  color: #FFFFFF;
+  font-weight: 800;
+  cursor: pointer;
+}
+.mistake-bank-card__btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.mistake-bank-list {
+  display: grid;
+  gap: 0.5rem;
+}
+.mistake-bank-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  background: var(--c-surface2);
+}
+.mistake-bank-item strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mistake-bank-item span,
+.mistake-bank-empty {
+  color: var(--c-text-3);
+  font-size: 0.78rem;
+}
+.mistake-bank-empty {
+  padding: 0.6rem 0;
+}
+body.theme-light .mistake-bank-card {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F7FAFC 100%);
+  border-color: #A9B9C7;
+}
+body.theme-light .mistake-bank-item {
+  background: #FFFFFF;
+  border-color: #C8D5DF;
 }
 .prog-unit-header {
   display: flex;

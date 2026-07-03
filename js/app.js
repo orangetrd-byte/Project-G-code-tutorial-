@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.45 | Build 2026.06.26.07';
+const APP_BUILD = 'MGP | Version v2.49 | Build 2026.06.29.01';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -22,6 +22,8 @@ const State = {
   completedReviews: [], // array of unit review ids
   lessonScores: {},     // { lessonId: { correct, total } }
   weakQuestions: [],     // questions missed and due for focused review
+  dailyCompletions: [],
+  confidenceRatings: {},
 
   // Runtime only
   currentLesson: null,
@@ -33,6 +35,7 @@ const State = {
   lessonFinished: false,
   missedQuestions: [],
   practiceQuestions: null,
+  nextActionLessonId: null,
   sessionCorrect: 0,
   sessionTotal: 0,
 
@@ -45,6 +48,8 @@ const State = {
       completedReviews: [],
       lessonScores: {},
       weakQuestions: [],
+      dailyCompletions: [],
+      confidenceRatings: {},
     };
   },
 
@@ -61,6 +66,8 @@ const State = {
     this.completedReviews = profile.completedReviews || [];
     this.lessonScores = profile.lessonScores || {};
     this.weakQuestions = profile.weakQuestions || [];
+    this.dailyCompletions = profile.dailyCompletions || [];
+    this.confidenceRatings = profile.confidenceRatings || {};
   },
 
   syncProfile() {
@@ -72,6 +79,8 @@ const State = {
       completedReviews: this.completedReviews,
       lessonScores: this.lessonScores,
       weakQuestions: this.weakQuestions,
+      dailyCompletions: this.dailyCompletions,
+      confidenceRatings: this.confidenceRatings,
     };
   },
 
@@ -119,6 +128,8 @@ const State = {
         completedLessons: d.completedLessons || [],
         lessonScores: d.lessonScores || {},
         weakQuestions: [],
+        dailyCompletions: [],
+        confidenceRatings: {},
       };
       this.trackId = 'cnc';
       this.setupComplete = false;
@@ -173,6 +184,7 @@ const State = {
     this.lessonFinished = false;
     this.missedQuestions = [];
     this.practiceQuestions = null;
+    this.nextActionLessonId = null;
     this.sessionCorrect = 0;
     this.sessionTotal = 0;
   },
@@ -251,6 +263,26 @@ const State = {
     this.updateStreak();
     this.save();
     return bonus;
+  },
+
+  completeDailyReview(correct, total) {
+    const today = getTodayKey();
+    if (!this.dailyCompletions.includes(today)) this.dailyCompletions.push(today);
+    this.dailyCompletions = this.dailyCompletions.slice(-30);
+    const bonus = Math.max(6, Math.round((correct / Math.max(total, 1)) * 12));
+    this.xp += bonus;
+    this.updateStreak();
+    this.save();
+    return bonus;
+  },
+
+  setConfidence(lessonId, rating) {
+    if (!lessonId || !['easy', 'ok', 'hard'].includes(rating)) return;
+    this.confidenceRatings[lessonId] = {
+      rating,
+      updatedAt: Date.now()
+    };
+    this.save();
   },
 
   updateStreak() {
@@ -573,6 +605,10 @@ function getLessons() {
 
 function getUnits() {
   return getTrack().units;
+}
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10);
 }
 
 function shuffleCopy(items) {
@@ -1242,8 +1278,8 @@ function renderMotivation() {
   const nextLesson = getNextLesson();
   const trackComplete = total > 0 && done === total;
   const weakCount = State.weakQuestions.length;
-  const today = new Date().toDateString();
-  const dailyDone = State.lastStudyDate === today;
+  const dailyDone = State.dailyCompletions.includes(getTodayKey());
+  const hasDailyPractice = buildDailyMissionQuestions().length > 0;
   const phaseNow = total > 0 ? Math.min(done + 1, total) : 0;
   const nextTitle = nextLesson ? nextLesson.title : 'Path mastered';
   const nextMeta = nextLesson
@@ -1257,11 +1293,11 @@ function renderMotivation() {
 
   panel.innerHTML = `
     <div class="motivation-row">
-      <div class="motivation-card ${dailyDone ? 'complete' : ''}">
+      <button class="motivation-card daily-mission-card ${dailyDone ? 'complete' : ''}" type="button" id="daily-mission-btn" ${hasDailyPractice ? '' : 'disabled'}>
         <div class="motivation-kicker">Daily Goal</div>
-        <div class="motivation-title">${dailyDone ? 'Done for today' : 'Finish 1 lesson'}</div>
-        <div class="motivation-sub">${dailyDone ? 'Come back tomorrow to keep the streak alive.' : 'One short lesson keeps your streak moving.'}</div>
-      </div>
+        <div class="motivation-title">${dailyDone ? 'Daily practice done' : '5-question practice'}</div>
+        <div class="motivation-sub">${hasDailyPractice ? (dailyDone ? 'Run it again anytime to stay sharp.' : 'Mistakes and older lessons come back first.') : 'Complete one lesson to unlock this.'}</div>
+      </button>
       <div class="motivation-card next-card">
         <div class="motivation-kicker">Phase ${phaseNow}/${total}</div>
         <div class="motivation-title">${nextTitle}</div>
@@ -1295,6 +1331,7 @@ function renderMotivation() {
     </div>`;
   $('#weak-review-btn')?.addEventListener('click', startWeakReview);
   $('#track-review-btn')?.addEventListener('click', startTrackReview);
+  $('#daily-mission-btn')?.addEventListener('click', startDailyMission);
 }
 
 function startLesson(lessonId) {
@@ -1311,6 +1348,7 @@ function startLesson(lessonId) {
   State.lessonFinished = false;
   State.missedQuestions = [];
   State.practiceQuestions = pickLessonQuestions(lesson, 5);
+  State.nextActionLessonId = null;
   State.sessionCorrect = 0;
   State.sessionTotal = getActiveQuestions(lesson).length;
 
@@ -1344,6 +1382,7 @@ function startUnitReview(unitId, questions = null) {
   State.lessonFinished = false;
   State.missedQuestions = [];
   State.practiceQuestions = null;
+  State.nextActionLessonId = null;
   State.sessionCorrect = 0;
   State.sessionTotal = State.currentLesson.quiz.length;
 
@@ -1391,6 +1430,86 @@ function buildTrackReviewQuestions() {
   return shuffleCopy(mixed);
 }
 
+function buildDailyMissionQuestions() {
+  const weakQuestions = State.weakQuestions
+    .slice()
+    .sort((a, b) => (b.misses - a.misses) || (b.lastMissed - a.lastMissed))
+    .map(item => {
+      const q = item.question || {};
+      return {
+        ...getRetakeQuestion(q),
+        weakKey: item.key,
+        sourceLessonId: q.sourceLessonId,
+        sourceUnit: q.sourceUnit,
+        sourceTitle: q.sourceTitle
+      };
+    });
+  const completedLessonQuestions = shuffleCopy(getLessons()
+    .filter(lesson => State.isLessonDone(lesson.id))
+    .flatMap(lesson => (lesson.quiz || []).map(q => ({
+      ...q,
+      sourceLessonId: lesson.id,
+      sourceTitle: lesson.title,
+      sourceUnit: lesson.unit
+    }))));
+  const confidenceReviewQuestions = getLessons()
+    .filter(lesson => State.isLessonDone(lesson.id))
+    .filter(lesson => ['hard', 'ok'].includes(State.confidenceRatings[lesson.id]?.rating))
+    .sort((a, b) => {
+      const weight = { hard: 0, ok: 1 };
+      return weight[State.confidenceRatings[a.id]?.rating] - weight[State.confidenceRatings[b.id]?.rating];
+    })
+    .flatMap(lesson => pickQuestions(lesson.quiz || [], 2).map(q => ({
+      ...q,
+      sourceLessonId: lesson.id,
+      sourceTitle: lesson.title,
+      sourceUnit: lesson.unit
+    })));
+  const seen = new Set();
+  return [...weakQuestions, ...confidenceReviewQuestions, ...completedLessonQuestions]
+    .filter(q => {
+      const key = q.weakKey || q.id || State.questionKey(q);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 5);
+}
+
+function startDailyMission() {
+  const questions = buildDailyMissionQuestions();
+  if (questions.length === 0) {
+    showToast('Complete one lesson to unlock daily practice.', 'error');
+    return;
+  }
+
+  State.currentLesson = {
+    id: 'daily-mission',
+    unit: 'Daily',
+    lesson: 'Practice',
+    title: 'Daily Practice',
+    icon: '◆',
+    xp: 12,
+    theory: '',
+    visual: '',
+    quiz: questions
+  };
+  State.currentReviewUnit = null;
+  State.currentMode = 'daily-review';
+  State.currentStep = 1;
+  State.currentQuizAnswered = false;
+  State.retryCurrentLesson = false;
+  State.lessonFinished = false;
+  State.missedQuestions = [];
+  State.practiceQuestions = null;
+  State.nextActionLessonId = null;
+  State.sessionCorrect = 0;
+  State.sessionTotal = questions.length;
+
+  renderLessonStep();
+  showScreen('screen-lesson');
+}
+
 function startTrackReview(questions = null) {
   const { done, total } = State.getTotalProgress();
   if (total === 0 || done < total) {
@@ -1422,6 +1541,7 @@ function startTrackReview(questions = null) {
   State.lessonFinished = false;
   State.missedQuestions = [];
   State.practiceQuestions = null;
+  State.nextActionLessonId = null;
   State.sessionCorrect = 0;
   State.sessionTotal = reviewQuestions.length;
 
@@ -1469,6 +1589,7 @@ function startWeakReview() {
   State.lessonFinished = false;
   State.missedQuestions = [];
   State.practiceQuestions = null;
+  State.nextActionLessonId = null;
   State.sessionCorrect = 0;
   State.sessionTotal = retryQuiz.length;
 
@@ -1620,7 +1741,7 @@ function renderQuiz(container, q, idx) {
         });
         if (correct) {
           State.sessionCorrect++;
-          if (State.currentMode === 'weak-review') State.clearWeakQuestion(q);
+          if (shouldClearWeakOnCorrect()) State.clearWeakQuestion(q);
         } else {
           State.missedQuestions.push(q);
           State.trackWeakQuestion(q);
@@ -1660,7 +1781,7 @@ function renderQuiz(container, q, idx) {
         });
         if (correct) {
           State.sessionCorrect++;
-          if (State.currentMode === 'weak-review') State.clearWeakQuestion(q);
+          if (shouldClearWeakOnCorrect()) State.clearWeakQuestion(q);
         } else {
           State.missedQuestions.push(q);
           State.trackWeakQuestion(q);
@@ -1717,11 +1838,16 @@ function renderQuiz(container, q, idx) {
 }
 
 function isReviewLikeMode() {
-  return State.currentMode === 'review' || State.currentMode === 'weak-review' || State.currentMode === 'track-review';
+  return State.currentMode === 'review' || State.currentMode === 'weak-review' || State.currentMode === 'track-review' || State.currentMode === 'daily-review';
+}
+
+function shouldClearWeakOnCorrect() {
+  return State.currentMode === 'weak-review' || State.currentMode === 'daily-review';
 }
 
 function getQuizModeLabel() {
   if (State.currentMode === 'lesson') return 'Practice Check';
+  if (State.currentMode === 'daily-review') return 'Daily Practice';
   if (State.currentMode === 'weak-review') return 'Weak Spot Review';
   if (State.currentMode === 'track-review') return 'Mixed Review';
   return 'Unit Review';
@@ -1751,7 +1877,7 @@ function checkFillBlank(q, inp) {
   inp.disabled = true;
   if (correct) {
     State.sessionCorrect++;
-    if (State.currentMode === 'weak-review') State.clearWeakQuestion(q);
+    if (shouldClearWeakOnCorrect()) State.clearWeakQuestion(q);
   } else {
     State.missedQuestions.push(q);
     State.trackWeakQuestion(q);
@@ -1831,7 +1957,7 @@ function checkMatching(q) {
 
   if (correct) {
     State.sessionCorrect++;
-    if (State.currentMode === 'weak-review') State.clearWeakQuestion(q);
+    if (shouldClearWeakOnCorrect()) State.clearWeakQuestion(q);
   } else {
     State.missedQuestions.push(q);
     State.trackWeakQuestion(q);
@@ -1917,6 +2043,10 @@ function finishLesson() {
     finishTrackReview();
     return;
   }
+  if (State.currentMode === 'daily-review') {
+    finishDailyReview();
+    return;
+  }
   if (State.missedQuestions.length > 0) {
     showLessonPracticeRetry();
     return;
@@ -1929,18 +2059,36 @@ function finishLesson() {
   const lessonIndex = getLessons().findIndex(item => item.id === lesson.id);
   const nextLesson = lessonIndex >= 0 ? getLessons()[lessonIndex + 1] : null;
   const unlockedNextLesson = !wasLessonDone && nextLesson && State.isLessonUnlocked(nextLesson) ? nextLesson : null;
+  const nextActionLesson = nextLesson && State.isLessonUnlocked(nextLesson) ? nextLesson : null;
+  State.nextActionLessonId = nextActionLesson?.id || null;
   if (completedUnitNow) AudioFeedback.unitComplete();
   else AudioFeedback.lessonComplete();
 
   const content = $('#lesson-content');
   content.innerHTML = `
-    <div class="complete-screen">
-      <div class="complete-icon">🎉</div>
-      <div class="complete-title">Lesson Complete!</div>
-      <div class="complete-subtitle">${lesson.title}</div>
-      <div class="xp-badge">+${xpEarned} XP earned</div>
-      ${unlockedNextLesson ? `<div class="unlock-banner"><span>Unlocked</span><strong>Next lesson: ${unlockedNextLesson.title}</strong></div>` : ''}
-      <div class="stat-row">
+    <div class="complete-screen lesson-complete-screen">
+      <div class="complete-icon">✓</div>
+      <div class="complete-title">Nice run. Keep the setup moving.</div>
+      <div class="complete-subtitle">${lesson.title} is locked in with a clean ${State.sessionCorrect}/${State.sessionTotal}.</div>
+      <div class="completion-score-card">
+        <div>
+          <span>Earned</span>
+          <strong>+${xpEarned} XP</strong>
+        </div>
+        <div>
+          <span>Streak</span>
+          <strong>${State.streak} day</strong>
+        </div>
+      </div>
+      ${unlockedNextLesson ? `
+        <div class="next-mission-card">
+          <span>Next 2-minute drill</span>
+          <strong>${unlockedNextLesson.title}</strong>
+          <em>New skill unlocked. Start while this one is fresh.</em>
+        </div>` : ''}
+      ${renderLessonRecap(lesson)}
+      ${renderConfidencePrompt(lesson)}
+      <div class="stat-row compact-stat-row">
         <div class="stat-chip">
           <div class="stat-chip__val">${State.sessionCorrect}/${State.sessionTotal}</div>
           <div class="stat-chip__lbl">Correct</div>
@@ -1958,8 +2106,48 @@ function finishLesson() {
 
   $('#lesson-progress-fill').style.width = '100%';
   $('#lesson-step-count').textContent = 'Done!';
-  $('#lesson-action-btn').textContent = 'Back to Lessons';
+  $('#lesson-action-btn').textContent = nextActionLesson ? 'Start Next Lesson' : 'Back to Lessons';
   $('#lesson-action-btn').className = 'btn-primary accent-btn';
+}
+
+function getLessonRecapItems(lesson) {
+  const answers = (lesson.quiz || [])
+    .filter(q => q.type === 'multiple-choice' && Array.isArray(q.options))
+    .map(q => q.options[q.answer])
+    .filter(Boolean);
+  const codeAnswers = (lesson.quiz || [])
+    .map(q => typeof q.answer === 'string' ? q.answer : '')
+    .filter(answer => /^[GMTFSXYZ]/i.test(answer));
+  return [...new Set([
+    lesson.title,
+    ...codeAnswers.slice(0, 2),
+    ...answers.slice(0, 2)
+  ])].slice(0, 3);
+}
+
+function renderLessonRecap(lesson) {
+  const items = getLessonRecapItems(lesson);
+  if (!items.length) return '';
+  return `
+    <div class="lesson-recap">
+      <div class="lesson-recap__label">You practiced</div>
+      <div class="lesson-recap__items">
+        ${items.map(item => `<span>${item}</span>`).join('')}
+      </div>
+    </div>`;
+}
+
+function renderConfidencePrompt(lesson) {
+  const saved = State.confidenceRatings[lesson.id]?.rating || '';
+  return `
+    <div class="confidence-panel" data-confidence-lesson="${lesson.id}">
+      <div class="confidence-panel__label">How solid does this feel?</div>
+      <div class="confidence-panel__actions">
+        <button class="confidence-btn ${saved === 'easy' ? 'selected' : ''}" type="button" data-confidence="easy">Easy</button>
+        <button class="confidence-btn ${saved === 'ok' ? 'selected' : ''}" type="button" data-confidence="ok">Okay</button>
+        <button class="confidence-btn ${saved === 'hard' ? 'selected' : ''}" type="button" data-confidence="hard">Hard</button>
+      </div>
+    </div>`;
 }
 
 function showLessonPracticeRetry() {
@@ -1975,6 +2163,53 @@ function showLessonPracticeRetry() {
   $('#lesson-progress-fill').style.width = '100%';
   $('#lesson-step-count').textContent = 'Retry';
   $('#lesson-action-btn').textContent = 'Retry Missed Questions';
+  $('#lesson-action-btn').className = 'btn-primary accent-btn';
+  State.lessonFinished = true;
+}
+
+function finishDailyReview() {
+  const missed = State.missedQuestions.length;
+  const content = $('#lesson-content');
+
+  if (missed > 0) {
+    content.innerHTML = `
+      <div class="complete-screen review-retry-screen">
+        <div class="complete-icon">↻</div>
+        <div class="complete-title">Repair Today's Misses</div>
+        <div class="complete-subtitle">${missed} question${missed === 1 ? '' : 's'} saved for another pass.</div>
+        <div class="xp-badge">${State.sessionCorrect}/${State.sessionTotal} correct so far</div>
+      </div>`;
+    $('#lesson-progress-fill').style.width = '100%';
+    $('#lesson-step-count').textContent = 'Daily';
+    $('#lesson-action-btn').textContent = 'Retry Missed Questions';
+    $('#lesson-action-btn').className = 'btn-primary accent-btn';
+    State.lessonFinished = true;
+    return;
+  }
+
+  const xpEarned = State.completeDailyReview(State.sessionCorrect, State.sessionTotal);
+  AudioFeedback.lessonComplete();
+  content.innerHTML = `
+    <div class="complete-screen">
+      <div class="complete-icon">✓</div>
+      <div class="complete-title">Daily Practice Complete</div>
+      <div class="complete-subtitle">Mistakes cleared today. Older material will keep rotating back.</div>
+      <div class="xp-badge">+${xpEarned} XP earned</div>
+      <div class="stat-row">
+        <div class="stat-chip">
+          <div class="stat-chip__val">${State.sessionCorrect}/${State.sessionTotal}</div>
+          <div class="stat-chip__lbl">Correct</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-chip__val">${State.weakQuestions.length}</div>
+          <div class="stat-chip__lbl">Mistakes</div>
+        </div>
+      </div>
+    </div>`;
+
+  $('#lesson-progress-fill').style.width = '100%';
+  $('#lesson-step-count').textContent = 'Done!';
+  $('#lesson-action-btn').textContent = 'Back to Lessons';
   $('#lesson-action-btn').className = 'btn-primary accent-btn';
   State.lessonFinished = true;
 }
@@ -2123,6 +2358,17 @@ function finishUnitReview() {
 function handleLessonAction() {
   if (!State.currentLesson) return;
   if (State.lessonFinished) {
+    if (State.currentMode === 'daily-review' && State.missedQuestions.length > 0) {
+      State.currentLesson.quiz = getRetakeQuestions(State.missedQuestions);
+      State.missedQuestions = [];
+      State.currentStep = 1;
+      State.currentQuizAnswered = false;
+      State.lessonFinished = false;
+      State.sessionCorrect = 0;
+      State.sessionTotal = State.currentLesson.quiz.length;
+      renderLessonStep();
+      return;
+    }
     if (State.currentMode === 'track-review' && State.missedQuestions.length > 0) {
       startTrackReview(getRetakeQuestions(State.missedQuestions));
       return;
@@ -2148,14 +2394,23 @@ function handleLessonAction() {
       State.currentStep = 1;
       State.currentQuizAnswered = false;
       State.lessonFinished = false;
+      State.nextActionLessonId = null;
       State.sessionCorrect = 0;
       State.sessionTotal = State.practiceQuestions.length;
       renderLessonStep();
       return;
     }
+    if (State.currentMode === 'lesson' && State.nextActionLessonId) {
+      const nextLessonId = State.nextActionLessonId;
+      State.nextActionLessonId = null;
+      State.lessonFinished = false;
+      startLesson(nextLessonId);
+      return;
+    }
     renderHome();
     showScreen('screen-home');
     State.lessonFinished = false;
+    State.nextActionLessonId = null;
     return;
   }
   if (State.retryCurrentLesson) {
@@ -2229,6 +2484,7 @@ function renderProgress() {
   updateStaticText();
   $('#prog-total-xp').textContent = State.xp;
   $('#prog-streak').textContent = State.streak;
+  renderMistakeBank();
 
   const container = $('#prog-unit-list');
   container.innerHTML = '';
@@ -2247,6 +2503,30 @@ function renderProgress() {
       <div class="prog-lessons-done">${done} of ${total} lessons complete</div>`;
     container.appendChild(el);
   });
+}
+
+function renderMistakeBank() {
+  const bank = $('#mistake-bank');
+  if (!bank) return;
+  const items = State.weakQuestions.slice(0, 5);
+  bank.innerHTML = `
+    <div class="mistake-bank-card">
+      <div class="mistake-bank-card__header">
+        <div>
+          <div class="mistake-bank-card__kicker">Review Queue</div>
+          <div class="mistake-bank-card__title">${State.weakQuestions.length} mistake${State.weakQuestions.length === 1 ? '' : 's'} saved</div>
+        </div>
+        <button class="mistake-bank-card__btn" type="button" id="mistake-bank-review-btn" ${State.weakQuestions.length ? '' : 'disabled'}>Review</button>
+      </div>
+      <div class="mistake-bank-list">
+        ${items.length ? items.map(item => `
+          <div class="mistake-bank-item">
+            <strong>${item.question?.sourceTitle || 'Practice'}</strong>
+            <span>Missed ${item.misses} time${item.misses === 1 ? '' : 's'}</span>
+          </div>`).join('') : '<div class="mistake-bank-empty">Missed questions will collect here for repair practice.</div>'}
+      </div>
+    </div>`;
+  $('#mistake-bank-review-btn')?.addEventListener('click', startWeakReview);
 }
 
 // ─── NAV WIRING ───────────────────────────────────────────────
@@ -2269,6 +2549,14 @@ function initNav() {
 
   $('#lesson-action-btn').addEventListener('click', handleLessonAction);
   $('#lesson-content').addEventListener('click', event => {
+    const confidenceButton = event.target.closest('.confidence-btn');
+    if (confidenceButton) {
+      const panel = confidenceButton.closest('[data-confidence-lesson]');
+      State.setConfidence(panel?.dataset.confidenceLesson, confidenceButton.dataset.confidence);
+      panel.querySelectorAll('.confidence-btn').forEach(btn => btn.classList.toggle('selected', btn === confidenceButton));
+      showToast('Confidence saved', 'success');
+      return;
+    }
     const button = event.target.closest('.btn-audio');
     if (!button) return;
     if (button === activeSpeechButton) {
