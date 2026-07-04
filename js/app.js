@@ -1822,7 +1822,7 @@ function renderQuiz(container, q, idx) {
       ${renderQuestionContext(q)}
       ${q.retakeNotice ? `<div class="pool-notice">${q.retakeNotice}</div>` : ''}
       <div class="quiz-question">${q.question}</div>
-      <div class="matching-card-grid" data-matching-board data-had-mismatch="false">
+      <div class="matching-card-grid" data-matching-board>
         <div class="matching-column">
           ${leftItems.map(item => `<button class="matching-card matching-card-left" data-match-side="left" data-match-idx="${item.idx}" type="button">${item.text}</button>`).join('')}
         </div>
@@ -1928,8 +1928,6 @@ function initMatchingCards() {
         AudioFeedback.play(true);
         return;
       }
-
-      board.dataset.hadMismatch = 'true';
       first.classList.add('wrong');
       second.classList.add('wrong');
       AudioFeedback.play(false);
@@ -1952,7 +1950,7 @@ function checkMatching(q) {
     return;
   }
 
-  const correct = board?.dataset.hadMismatch !== 'true';
+  const correct = cards.every(card => card.classList.contains('matched'));
   cards.forEach(card => { card.disabled = true; });
 
   if (correct) {
@@ -1972,18 +1970,13 @@ function normalizeCodeAnswer(value) {
   return String(value)
     .trim()
     .toUpperCase()
-    .replace(/^G([0-9])$/, 'G0$1');
+    .replace(/\s+/g, '')
+    .replace(/^([GM])0?([0-9])$/, '$10$2');
 }
 
 function setAnsweredAction(correct) {
   const btn = $('#lesson-action-btn');
   if (!btn) return;
-  State.retryCurrentLesson = false;
-  if (State.retryCurrentLesson) {
-    btn.textContent = 'Close, Try Again';
-    btn.className = 'btn-primary';
-    return;
-  }
   if (isReviewLikeMode()) {
     btn.textContent = isLastStep() ? 'Finish Review' : 'Next →';
     btn.className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
