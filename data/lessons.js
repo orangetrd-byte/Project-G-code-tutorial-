@@ -17,8 +17,14 @@ const LESSONS = [
     icon: "📋",
     xp: 10,
     theory: `
-      <p>G-code is the instructions the machine reads. Each line does one thing: move, stop, or change a mode.</p>
+      <p>G-code is the instructions the machine reads. Each block does one thing: move, stop, or change a mode.</p>
       <pre>G00 X2.000 Z0.100 ; move to a safe position</pre>
+      <p>A semicolon depends on the system. In many 3D-printer files it starts a comment. In some CNC/program formats it marks the end of a block, like pressing Enter for the next line.</p>
+      <pre>G00 X30.500 Z1.0;
+X30.478 Z0;
+G01 X-3.00;
+G0 X3.0;
+M0;</pre>
     `,
     visual: "block-anatomy",
     quiz: [
@@ -58,16 +64,16 @@ const LESSONS = [
         pairs: [
           { left: "G00", right: "Rapid positioning" },
           { left: "X / Z", right: "Position coordinates" },
-          { left: ";", right: "Starts a comment" }
+          { left: ";", right: "Comment or block end" }
         ],
-        explanation: "G00 tells the machine to rapid, X and Z tell it where to go, and a semicolon starts a note/comment on many controls."
+        explanation: "G00 tells the machine to rapid and X/Z tell it where to go. A semicolon may start a note/comment in many files, or mark the end of a block on some controls."
       },
       {
         id: "u1-l1-q5",
         type: "true-false",
-        question: "A semicolon starts a comment on many controls.",
+        question: "A semicolon can mean different things depending on the control or file type.",
         answer: true,
-        explanation: "True. Text after a semicolon is usually a human-readable comment, not a machine move."
+        explanation: "True. In many printer files it starts a comment; in some CNC/program formats it marks the end of a block. Always follow the control or post format."
       },
       {
         id: "u1-l1-q6",
@@ -1745,10 +1751,10 @@ const LESSON_QUESTION_EXPANSIONS = {
   "u1-l1": [
     {
       type: "multiple-choice",
-      question: "In this block, what does the semicolon start?\nG00 X1.000 Z0.100 ; move clear",
-      options: ["A tool change", "A comment", "A feedrate", "A coordinate"],
-      answer: 1,
-      explanation: "A semicolon starts a comment on many controls. The machine ignores the text after it."
+      question: "In many files, what can the semicolon do here?\nG00 X1.000 Z0.100 ; move clear",
+      options: ["Mark a note/comment or block ending", "Call a tool change", "Set feedrate only", "Set a coordinate by itself"],
+      answer: 0,
+      explanation: "Semicolon meaning depends on the system. It often starts a note/comment, and on some controls or posted files it can mark the end of the block."
     },
     {
       type: "multiple-choice",
