@@ -6,6 +6,8 @@ Phase 1: Curriculum Reliability
 
 ## Current Focus
 
+- Mission guardrails now live in MISSION.md; prioritized learning ideas live in BACKLOG.md.
+
 - Keep lessons, quizzes, progress, and mixed review behavior dependable.
 - Keep tutorial scope separate from CNC Work Helper and Green Hat.
 - Maintain safe educational language and clear track separation.

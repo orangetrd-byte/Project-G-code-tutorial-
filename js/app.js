@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.49 | Build 2026.06.29.01';
+const APP_BUILD = 'MGP | Version v2.51 | Build 2026.07.04.02';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -828,6 +828,7 @@ const UI_TEXT = {
   en: {
     learn: 'Learn',
     reference: 'Reference',
+    practice: 'Practice',
     progress: 'Progress',
     settings: 'Settings',
     settingsSubtitle: 'App preferences',
@@ -859,6 +860,7 @@ const UI_TEXT = {
   es: {
     learn: 'Aprender',
     reference: 'Referencia',
+    practice: 'Practica',
     progress: 'Progreso',
     settings: 'Ajustes',
     settingsSubtitle: 'Preferencias de la app',
@@ -950,8 +952,9 @@ function updateStaticText() {
   const nav = $$('.nav-btn');
   if (nav[0]) nav[0].innerHTML = `<span class="icon">🏠</span>${t('learn')}`;
   if (nav[1]) nav[1].innerHTML = `<span class="icon">📚</span>${t('reference')}`;
-  if (nav[2]) nav[2].innerHTML = `<span class="icon">📊</span>${t('progress')}`;
-  if (nav[3]) nav[3].innerHTML = `<span class="icon">⚙</span>${t('settings')}`;
+  if (nav[2]) nav[2].innerHTML = `<span class="icon">⚡</span>${t('practice')}`;
+  if (nav[3]) nav[3].innerHTML = `<span class="icon">📊</span>${t('progress')}`;
+  if (nav[4]) nav[4].innerHTML = `<span class="icon">⚙</span>${t('settings')}`;
 
   const settingsTitle = $('#screen-settings .settings-title');
   const settingsSubtitle = $('#screen-settings .settings-subtitle');
@@ -1648,7 +1651,7 @@ function renderLessonStep() {
   const q = activeQuestions[qIdx];
   renderQuiz(content, q, qIdx);
   $('#lesson-action-btn').textContent = 'Check Answer';
-  $('#lesson-action-btn').disabled = false;
+  $('#lesson-action-btn').disabled = q?.type === 'matching';
   $('#lesson-action-btn').className = 'btn-primary';
   State.currentQuizAnswered = false;
 }
@@ -1821,8 +1824,12 @@ function renderQuiz(container, q, idx) {
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
       ${renderQuestionContext(q)}
       ${q.retakeNotice ? `<div class="pool-notice">${q.retakeNotice}</div>` : ''}
-      <div class="quiz-question">${q.question}</div>
-      <div class="matching-card-grid" data-matching-board>
+      <div class="matching-game-head">
+        <div class="matching-game-title">Tap the matching pairs</div>
+        <div class="matching-game-count" data-matching-count>0/${q.pairs.length}</div>
+      </div>
+      <div class="matching-game-subtitle">${q.question}</div>
+      <div class="matching-card-grid" data-matching-board data-had-mismatch="false" data-total-pairs="${q.pairs.length}">
         <div class="matching-column">
           ${leftItems.map(item => `<button class="matching-card matching-card-left" data-match-side="left" data-match-idx="${item.idx}" type="button">${item.text}</button>`).join('')}
         </div>
@@ -1830,7 +1837,7 @@ function renderQuiz(container, q, idx) {
           ${rightItems.map(item => `<button class="matching-card matching-card-right" data-match-side="right" data-match-idx="${item.idx}" type="button">${item.text}</button>`).join('')}
         </div>
       </div>
-      <div class="matching-help">Tap one item, then tap its match.</div>
+      <div class="matching-help" data-matching-help>Pick a card from each side.</div>
       <div id="explanation-box"></div>`;
     container.appendChild(div);
     initMatchingCards();
@@ -1893,6 +1900,18 @@ function initMatchingCards() {
   const board = $('[data-matching-board]');
   if (!board) return;
   let selected = null;
+  const actionBtn = $('#lesson-action-btn');
+  if (actionBtn) actionBtn.disabled = true;
+
+  const updateMatchingProgress = () => {
+    const total = parseInt(board.dataset.totalPairs || '0', 10);
+    const matched = $$('.matching-card-left.matched').length;
+    const count = $('[data-matching-count]');
+    const help = $('[data-matching-help]');
+    if (count) count.textContent = `${matched}/${total}`;
+    if (help) help.textContent = matched === total ? 'All pairs matched. Check your run.' : 'Pick a card from each side.';
+    if (actionBtn) actionBtn.disabled = matched < total;
+  };
 
   $$('.matching-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -1926,8 +1945,10 @@ function initMatchingCards() {
         first.disabled = true;
         second.disabled = true;
         AudioFeedback.play(true);
+        updateMatchingProgress();
         return;
       }
+      board.dataset.hadMismatch = 'true';
       first.classList.add('wrong');
       second.classList.add('wrong');
       AudioFeedback.play(false);
@@ -1937,6 +1958,7 @@ function initMatchingCards() {
       }, 450);
     });
   });
+  updateMatchingProgress();
 }
 
 function checkMatching(q) {
@@ -1950,7 +1972,7 @@ function checkMatching(q) {
     return;
   }
 
-  const correct = cards.every(card => card.classList.contains('matched'));
+  const correct = board?.dataset.hadMismatch !== 'true';
   cards.forEach(card => { card.disabled = true; });
 
   if (correct) {
@@ -2471,6 +2493,78 @@ function renderReference() {
   };
 }
 
+function renderPractice() {
+  updateStaticText();
+  const list = $('#practice-list');
+  if (!list) return;
+  const dailyQuestions = buildDailyMissionQuestions().length;
+  const weakCount = State.weakQuestions.length;
+  const { done, total } = State.getTotalProgress();
+  const trackComplete = total > 0 && done === total;
+  const codeCount = getRefData().reduce((sum, category) => sum + category.codes.length, 0);
+
+  const cards = [
+    {
+      id: 'daily',
+      title: 'Daily Drill',
+      subtitle: dailyQuestions ? `${Math.min(dailyQuestions, 5)} recall questions ready` : 'Complete one lesson to unlock',
+      icon: '⚡',
+      badge: '+12 XP',
+      disabled: dailyQuestions === 0
+    },
+    {
+      id: 'mistakes',
+      title: 'Mistake Repair',
+      subtitle: weakCount ? `${weakCount} saved miss${weakCount === 1 ? '' : 'es'} to clear` : 'Missed questions collect here',
+      icon: '↻',
+      badge: weakCount ? `${weakCount}` : '',
+      disabled: weakCount === 0
+    },
+    {
+      id: 'codes',
+      title: 'Code Bank',
+      subtitle: `${codeCount} reference cards for ${getTrack().name}`,
+      icon: 'Aa',
+      badge: 'Study',
+      disabled: false
+    },
+    {
+      id: 'mixed',
+      title: 'Mixed Review',
+      subtitle: trackComplete ? 'Full-track review unlocked' : `${done}/${total} lessons complete`,
+      icon: '∞',
+      badge: '+20 XP',
+      disabled: !trackComplete
+    }
+  ];
+
+  list.innerHTML = `
+    <div class="practice-section-label">Skills</div>
+    ${cards.map(card => `
+      <button class="practice-card" type="button" data-practice-action="${card.id}" ${card.disabled ? 'disabled' : ''}>
+        <span>
+          <strong>${card.title}</strong>
+          <em>${card.subtitle}</em>
+        </span>
+        <span class="practice-card__icon">${card.icon}</span>
+        ${card.badge ? `<span class="practice-card__badge">${card.badge}</span>` : ''}
+      </button>
+    `).join('')}`;
+
+  $$('[data-practice-action]').forEach(button => {
+    button.addEventListener('click', () => {
+      const action = button.dataset.practiceAction;
+      if (action === 'daily') startDailyMission();
+      if (action === 'mistakes') startWeakReview();
+      if (action === 'mixed') startTrackReview();
+      if (action === 'codes') {
+        renderReference();
+        showScreen('screen-reference');
+      }
+    });
+  });
+}
+
 // ─── PROGRESS SCREEN ─────────────────────────────────────────
 function renderProgress() {
   const units = getUnits();
@@ -2528,6 +2622,7 @@ function initNav() {
     btn.addEventListener('click', () => {
       const target = btn.dataset.screen;
       if (target === 'screen-reference') renderReference();
+      if (target === 'screen-practice') renderPractice();
       if (target === 'screen-progress') renderProgress();
       if (target === 'screen-settings') renderSettings();
       if (target === 'screen-home') renderHome();
@@ -2571,6 +2666,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSettings();
   renderSettings();
   renderHome();
+  renderPractice();
   showScreen(State.setupComplete ? 'screen-home' : 'screen-settings');
   finishLoading();
 });

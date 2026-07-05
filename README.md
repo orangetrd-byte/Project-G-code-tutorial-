@@ -8,19 +8,20 @@
 
 1. [What It Does](#what-it-does)
 2. [Feature Overview](#feature-overview)
-3. [File Structure](#file-structure)
-4. [Architecture Overview](#architecture-overview)
-5. [Data Model](#data-model)
-6. [State Management](#state-management)
-7. [Lesson Engine](#lesson-engine)
-8. [Visual System](#visual-system)
-9. [Design Tokens](#design-tokens)
-10. [PWA / Offline Support](#pwa--offline-support)
-11. [Deployment (GitHub Pages)](#deployment-github-pages)
-12. [Extending the Curriculum](#extending-the-curriculum)
-13. [Adding New Visual Aids](#adding-new-visual-aids)
-14. [Roadmap / Future Features](#roadmap--future-features)
-15. [Tech Stack](#tech-stack)
+3. [Product Guardrails](#product-guardrails)
+4. [File Structure](#file-structure)
+5. [Architecture Overview](#architecture-overview)
+6. [Data Model](#data-model)
+7. [State Management](#state-management)
+8. [Lesson Engine](#lesson-engine)
+9. [Visual System](#visual-system)
+10. [Design Tokens](#design-tokens)
+11. [PWA / Offline Support](#pwa--offline-support)
+12. [Deployment (GitHub Pages)](#deployment-github-pages)
+13. [Extending the Curriculum](#extending-the-curriculum)
+14. [Adding New Visual Aids](#adding-new-visual-aids)
+15. [Roadmap / Future Features](#roadmap--future-features)
+16. [Tech Stack](#tech-stack)
 
 ---
 
@@ -53,6 +54,13 @@ Everything runs in the browser with zero dependencies, zero build step, and zero
 
 ---
 
+## Product Guardrails
+
+Project direction is documented in `MISSION.md`, with prioritized teaching ideas in `BACKLOG.md`, phase direction in `ROADMAP.md`, and current work in `CURRENT_PHASE.md`.
+
+The short version: Project G-Code is a learning app, not CAM, machine control, or shop management. Features should teach what G-code means, what the machine would do, and how to recover from mistakes.
+
+---
 ## File Structure
 
 ```
