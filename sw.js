@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.52-semicolon-eob';
+const CACHE_VERSION = 'pgct-v2.53-startup-copy';
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
