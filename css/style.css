@@ -40,7 +40,7 @@
   --f-code:    'JetBrains Mono', 'Fira Code', monospace;
 
   --nav-h: 64px;
-  --bottom-nav-h: 72px;
+  --bottom-nav-h: 88px;
 }
 
 body.theme-light {
@@ -63,6 +63,7 @@ body.theme-light {
   --shadow-card: 0 2px 12px rgba(24,42,56,0.12);
   --shadow-float: 0 8px 32px rgba(24,42,56,0.18);
   --shadow-sm: 0 1px 4px rgba(24,42,56,0.16);
+  --bottom-nav-h: 88px;
 }
 
 html { font-size: 16px; scroll-behavior: smooth; }
@@ -1545,14 +1546,14 @@ body.theme-light #lesson-action-btn:disabled {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1.5rem;
+  padding: 1.75rem 1.25rem;
   text-align: center;
-  gap: 1rem;
+  gap: 1.1rem;
 }
 .lesson-complete-screen {
   justify-content: flex-start;
-  padding-top: 1.4rem;
-  gap: 0.85rem;
+  padding-top: 1.2rem;
+  gap: 1rem;
 }
 .complete-icon { font-size: 4rem; margin-bottom: 0.5rem; }
 .lesson-complete-screen .complete-icon {
@@ -2391,7 +2392,7 @@ body.setup-required .setup-complete-btn { display: block; }
 @media (max-height: 620px) {
   :root {
     --nav-h: 54px;
-    --bottom-nav-h: 64px;
+    --bottom-nav-h: 76px;
   }
   .hero-block { padding: 1.15rem 1rem 0.95rem; }
   .hero-title { font-size: 1.12rem; margin-bottom: 0.75rem; }
