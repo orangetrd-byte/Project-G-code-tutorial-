@@ -8,7 +8,7 @@ Phase 5: Polish And PWA Hardening
 
 - Last updated: 2026-07-06.
 - Codi is done for the day; Hermes should continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest pushed commit: pending push.
+- Latest pushed commit: dd3e8fc docs: update phase README/PWA notes for v2.56 hardening.
 - Current app build: MGP | Version v2.56 | Build 2026.07.06.03.
 - Current service-worker cache: dynamic daily timestamp.
 - Local main was clean and aligned with origin/main after the push.

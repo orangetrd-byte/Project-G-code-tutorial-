@@ -1790,6 +1790,8 @@ function renderQuiz(container, q, idx) {
 
   if (q.type === 'multiple-choice') {
     const letters = ['A','B','C','D'];
+    const options = shuffleCopy(q.options);
+    const correctIdx = options.indexOf(q.options[q.answer]);
     div.innerHTML = `
       ${renderReadAloudButton()}
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
@@ -1797,7 +1799,7 @@ function renderQuiz(container, q, idx) {
       ${q.retakeNotice ? `<div class="pool-notice">${q.retakeNotice}</div>` : ''}
       <div class="quiz-question">${q.question}</div>
       <div class="options-list">
-        ${q.options.map((opt, i) => `
+        ${options.map((opt, i) => `
           <button class="option-btn" data-idx="${i}">
             <span class="option-letter">${letters[i]}</span>
             ${opt}
@@ -1810,10 +1812,10 @@ function renderQuiz(container, q, idx) {
       btn.addEventListener('click', () => {
         if (State.currentQuizAnswered) return;
         const chosen = parseInt(btn.dataset.idx);
-        const correct = chosen === q.answer;
+        const correct = chosen === correctIdx;
         $$('.option-btn').forEach(b => {
           const i = parseInt(b.dataset.idx);
-          if (i === q.answer) b.classList.add('correct');
+          if (i === correctIdx) b.classList.add('correct');
           else if (i === chosen && !correct) b.classList.add('wrong');
           b.disabled = true;
         });
