@@ -1,6 +1,6 @@
 # Project G-Code Tutorial — Backlog
 
-Last updated: 2026-07-04
+Last updated: 2026-07-06
 
 ---
 
@@ -61,6 +61,7 @@ Reliability and mobile usability once P1/P2 are stable.
 
 1. Mobile safe-area handling for bottom nav, lesson footer, and practice cards.
 2. Light theme contrast fixes for theory blocks, disabled text, and code panels.
-3. Reference search exact-match behavior plus lesson link-back.
-4. Practice hub polish: daily drill, mistake repair, code bank, mixed review.
-5. Startup/loading screen cleanup: keep the accepted boot-rig style and remove unused legacy loading CSS when safe.
+3. Code Bank / Reference collection: learned-code filters, important codes, exact-match search, and lesson link-back.
+4. Practice hub polish: daily drill, mistake repair, code bank, mixed review, and clear locked/ready states.
+5. Lightweight rewards/ranks: milestone moments that reinforce recall without becoming noisy gamification.
+6. Startup/loading screen cleanup: keep the accepted boot-rig style and remove unused legacy loading CSS when safe.

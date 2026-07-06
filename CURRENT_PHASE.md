@@ -2,29 +2,32 @@
 
 ## Active Phase
 
-Phase 1: Curriculum Reliability
+Phase 4: Retention And Practice Polish
 
 ## Current Focus
 
-- Mission guardrails now live in MISSION.md; prioritized learning ideas live in BACKLOG.md.
-
-- Keep lessons, quizzes, progress, and mixed review behavior dependable.
+- Mission guardrails live in MISSION.md; prioritized learning ideas live in BACKLOG.md.
+- Core lesson reliability is stable enough to treat retention and practice as the active workstream.
+- Keep the Practice hub useful without turning it into clutter.
+- Keep lessons, quizzes, progress, daily practice, weak review, mixed review, and matching behavior dependable.
 - Keep tutorial scope separate from CNC Work Helper and Green Hat.
-- Maintain safe educational language and clear track separation.
+- Maintain safe educational language and clear CNC / 3D printing track separation.
 
 ## Next Actions
 
-- Verify lesson completion and mixed review behavior after content changes.
+- Verify lesson completion, daily practice, weak review, matching, and mixed review after behavior changes.
 - Keep examples educational, not production-ready machine instructions.
-- Add curriculum depth only after baseline review flows stay stable.
-- Keep future learning architecture ideas planned, but do not implement the practice workspace until the core lesson and review loop is stable.
+- Improve the Practice hub around recall, mistakes, code-bank study, and rank/reward motivation.
+- Tune reward/rank ideas carefully so they support retention instead of becoming noisy.
+- Add curriculum depth in small batches only when review flows remain stable.
 
 ## Planned Ideas
 
-- Strengthen why-before-how curriculum rules by adding a visible lesson reason before syntax/details.
-- Keep streaks as accountability only; avoid adding noisy reward systems.
+- Strengthen why-before-how curriculum rules by keeping visible lesson reasons before syntax/details.
+- Add Code Bank / learned-code filtering so Reference feels like a collection as well as a lookup.
+- Add lightweight reward/rank moments for meaningful progress milestones.
+- Keep matching as a game-like review mode, especially on mobile and light theme.
 - Add more visual logic blocks for coordinates, motion, offsets, cycles, and troubleshooting patterns.
-- Plan an optional practice workspace later, after lesson reliability and review behavior are stable.
 - Keep any sandbox educational and simulated only, not production-ready G-code generation or machine control.
 
 ## Permanent Version Rule

@@ -34,12 +34,14 @@ Default constraints:
 
 ## Phase 4: Retention And Practice
 
-- Add review mode and weak-topic practice.
-- Track missed questions as weak spots until the learner clears them in focused review.
+- Maintain review mode, daily practice, weak-topic practice, and mixed review.
+- Track missed questions as weak spots until the learner clears them in focused review or daily practice.
 - Keep unit reviews balanced across the whole unit instead of over-sampling the first lesson.
-- Surface retention prompts on the Home screen without adding clutter to the bottom nav.
-- Polish streaks, XP, and progress summaries.
-- Add optional printable completion summary only after core learning flow is solid.
+- Keep the Practice hub focused on recall, mistakes, code-bank study, and mixed review.
+- Polish matching as a game-like review mode with clear states in dark and light themes.
+- Polish streaks, XP, progress summaries, and next-action momentum.
+- Explore reward/rank moments only when they reinforce practice and do not add clutter.
+- Add optional printable completion summary only after core learning and review flow remains solid.
 
 ## Acceptance Rules
 

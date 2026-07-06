@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.54 | Build 2026.07.06.01';
+const APP_BUILD = 'MGP | Version v2.55 | Build 2026.07.06.02';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -267,11 +267,12 @@ const State = {
 
   completeDailyReview(correct, total) {
     const today = getTodayKey();
-    if (!this.dailyCompletions.includes(today)) this.dailyCompletions.push(today);
+    const firstCompletionToday = !this.dailyCompletions.includes(today);
+    if (firstCompletionToday) this.dailyCompletions.push(today);
     this.dailyCompletions = this.dailyCompletions.slice(-30);
-    const bonus = Math.max(6, Math.round((correct / Math.max(total, 1)) * 12));
-    this.xp += bonus;
-    this.updateStreak();
+    const bonus = firstCompletionToday ? Math.max(6, Math.round((correct / Math.max(total, 1)) * 12)) : 0;
+    if (bonus > 0) this.xp += bonus;
+    if (firstCompletionToday) this.updateStreak();
     this.save();
     return bonus;
   },
@@ -608,7 +609,11 @@ function getUnits() {
 }
 
 function getTodayKey() {
-  return new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 function shuffleCopy(items) {
@@ -2208,8 +2213,8 @@ function finishDailyReview() {
     <div class="complete-screen">
       <div class="complete-icon">✓</div>
       <div class="complete-title">Daily Practice Complete</div>
-      <div class="complete-subtitle">Mistakes cleared today. Older material will keep rotating back.</div>
-      <div class="xp-badge">+${xpEarned} XP earned</div>
+      <div class="complete-subtitle">${xpEarned > 0 ? 'Mistakes cleared today. Older material will keep rotating back.' : 'Extra run complete. Daily XP was already claimed today.'}</div>
+      <div class="xp-badge">${xpEarned > 0 ? `+${xpEarned} XP earned` : 'Daily XP claimed'}</div>
       <div class="stat-row">
         <div class="stat-chip">
           <div class="stat-chip__val">${State.sessionCorrect}/${State.sessionTotal}</div>
