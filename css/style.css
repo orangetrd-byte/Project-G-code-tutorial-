@@ -1897,13 +1897,13 @@ body.theme-light .confidence-btn.selected {
 .practice-card {
   position: relative;
   width: 100%;
-  min-height: 86px;
+  min-height: 102px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.75rem;
-  padding: 0.95rem 1rem;
+  margin-bottom: 0.85rem;
+  padding: 1.05rem 1rem;
   border: 3px solid rgba(120,144,164,0.28);
   border-radius: 14px;
   background: rgba(19,32,43,0.92);
@@ -1925,35 +1925,35 @@ body.theme-light .confidence-btn.selected {
 }
 .practice-card strong {
   font-family: var(--f-display);
-  font-size: 1.05rem;
-  line-height: 1.2;
+  font-size: 1.1rem;
+  line-height: 1.25;
 }
 .practice-card em {
-  margin-top: 0.25rem;
+  margin-top: 0.3rem;
   color: var(--c-text-3);
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   font-style: normal;
   font-weight: 700;
 }
 .practice-card__icon {
   flex: 0 0 auto;
-  min-width: 58px;
+  min-width: 64px;
   color: #38C7EA;
   font-family: var(--f-display);
-  font-size: 1.65rem;
+  font-size: 1.8rem;
   font-weight: 900;
   text-align: center;
 }
 .practice-card__badge {
   position: absolute;
-  right: 0.7rem;
-  top: -0.55rem;
-  min-width: 34px;
-  padding: 0.18rem 0.45rem;
+  right: 0.8rem;
+  top: -0.6rem;
+  min-width: 36px;
+  padding: 0.2rem 0.48rem;
   border-radius: 999px;
   background: #EF5570;
   color: #FFFFFF;
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 900;
   text-align: center;
 }
