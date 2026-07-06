@@ -19,6 +19,7 @@
   --c-accent-l:  #FFB94A;
   --c-correct:   #28A745;
   --c-wrong:     #DC3545;
+  --c-error:     #DC3545;
   --c-text:      #E8EDF2;
   --c-text-2:    #9BAFC4;
   --c-text-3:    #5F7A92;
@@ -32,6 +33,7 @@
 
   --shadow-card: 0 2px 12px rgba(0,0,0,0.4);
   --shadow-float: 0 8px 32px rgba(0,0,0,0.5);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.25);
 
   --f-display: 'JetBrains Mono', 'Courier New', monospace;
   --f-body:    'Inter', 'Segoe UI', system-ui, sans-serif;
@@ -50,6 +52,9 @@ body.theme-light {
   --c-primary-l: #218873;
   --c-accent:    #9A5A00;
   --c-accent-l:  #B96E00;
+  --c-correct:   #28A745;
+  --c-wrong:     #DC3545;
+  --c-error:     #B30000;
   --c-text:      #101820;
   --c-text-2:    #2F4050;
   --c-text-3:    #4F6375;
@@ -57,6 +62,7 @@ body.theme-light {
   --c-code-text: #0D6658;
   --shadow-card: 0 2px 12px rgba(24,42,56,0.12);
   --shadow-float: 0 8px 32px rgba(24,42,56,0.18);
+  --shadow-sm: 0 1px 4px rgba(24,42,56,0.16);
 }
 
 html { font-size: 16px; scroll-behavior: smooth; }
@@ -1274,6 +1280,7 @@ body.theme-light .question-context-card {
 }
 .true-false-actions {
   display: grid;
+  min-height: 5.5rem;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin-top: 1.25rem;
@@ -1721,7 +1728,7 @@ body.theme-light #lesson-action-btn:disabled {
   gap: 0.45rem;
 }
 .confidence-btn {
-  min-height: 42px;
+  min-height: 44px;
   border: 1px solid var(--c-border);
   border-radius: var(--r-sm);
   background: var(--c-surface2);
@@ -2253,6 +2260,7 @@ body.theme-light .setup-note {
   margin-top: 0.15rem;
 }
 .settings-segment {
+  min-height: 44px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;

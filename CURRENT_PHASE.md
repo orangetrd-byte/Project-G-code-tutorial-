@@ -2,7 +2,16 @@
 
 ## Active Phase
 
-Phase 4: Retention And Practice Polish
+Phase 5: Polish And PWA Hardening
+
+## Handoff Status
+
+- Last updated: 2026-07-06.
+- Codi is done for the day; Hermes should continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
+- Latest pushed commit: pending push.
+- Current app build: MGP | Version v2.56 | Build 2026.07.06.03.
+- Current service-worker cache: dynamic daily timestamp.
+- Local main was clean and aligned with origin/main after the push.
 
 ## Current Focus
 
@@ -13,11 +22,24 @@ Phase 4: Retention And Practice Polish
 - Keep tutorial scope separate from CNC Work Helper and Green Hat.
 - Maintain safe educational language and clear CNC / 3D printing track separation.
 
+## Completed In This Pass
+
+- PWA: removed cross-origin Google Fonts from service-worker precache to prevent offline install failures.
+- PWA: cache version now rotates automatically with a daily+timestamp stamp.
+- PWA: cross-origin fetch fallback returns an explicit offline response instead of breaking the network-first path.
+- Styles: added missing `--c-error` and `--shadow-sm` design tokens for dark and light themes.
+- Lesson visuals: added missing SVG visual strings for `program-structure`, `linear-feed`, and `spindle-speed`.
+- Accessibility: added `aria-live="polite"` to `#lesson-content` for screen-reader question transitions.
+- Keyboard: matching cards now support Enter/Space selection.
+- Lesson engine: retry-number generation no longer returns the original value as its fallback.
+- Lesson engine: retry-number replacement works inside parenthesized/delimited text.
+- Weak-spot tracker: clearing a missed question now removes only by exact weak-set key/id.
+
 ## Next Actions
 
-- Verify lesson completion, daily practice, weak review, matching, and mixed review after behavior changes.
+- Start with a clean status check, then verify lesson completion, daily practice, weak review, matching, and mixed review after behavior changes.
 - Keep examples educational, not production-ready machine instructions.
-- Improve the Practice hub around recall, mistakes, code-bank study, and rank/reward motivation.
+- Implement the next small retention slice: either Code Bank learned filters, Mistake Bank link-back, or Practice hub ready/locked polish.
 - Tune reward/rank ideas carefully so they support retention instead of becoming noisy.
 - Add curriculum depth in small batches only when review flows remain stable.
 

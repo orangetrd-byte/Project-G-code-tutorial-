@@ -237,15 +237,8 @@ const State = {
 
   clearWeakQuestion(q) {
     const key = q?.weakKey || this.questionKey(q);
-    const originalId = q?.originalQuestionId || q?.id;
-    const concept = getQuestionConcept(q);
     const before = this.weakQuestions.length;
-    this.weakQuestions = this.weakQuestions.filter(item => {
-      if (item.key === key) return false;
-      const stored = item.question || {};
-      if (originalId && (stored.id === originalId || stored.originalQuestionId === originalId)) return false;
-      return !(concept && getQuestionConcept(stored) === concept);
-    });
+    this.weakQuestions = this.weakQuestions.filter(item => item.key !== key);
     if (this.weakQuestions.length !== before) this.save();
   },
 
@@ -500,6 +493,76 @@ const Visuals = {
             <text x="200" y="20" class="lbl" fill="#7FDBCA">60° UN thread form</text>
           </svg>
         </div>`,
+      'program-structure': `
+        <div class="visual-aid">
+          <svg viewBox="0 0 360 110" xmlns="http://www.w3.org/2000/svg">
+            <style>.lbl{font-family:'JetBrains Mono',monospace;font-size:10px;}</style>
+            <!-- Comment / header block -->
+            <rect x="10" y="8" width="340" height="22" rx="4" fill="#1E2D3D" stroke="#2A3D52" stroke-width="1.5"/>
+            <text x="20" y="23" class="lbl" fill="#F5A623">%</text>
+            <text x="140" y="23" class="lbl" fill="#9BAFC4">Program header block</text>
+            <!-- Comment / description block -->
+            <rect x="10" y="34" width="340" height="22" rx="4" fill="#1E2D3D" stroke="#2A3D52" stroke-width="1.2"/>
+            <text x="20" y="49" class="lbl" fill="#F5A623">;(</text>
+            <text x="40" y="49" class="lbl" fill="#9BAFC4">Part: clamp, face, turn, chamfer</text>
+            <!-- Cutting blocks -->
+            <rect x="10" y="63" width="150" height="22" rx="4" fill="#172130" stroke="#1A6B5C" stroke-width="1.5"/>
+            <text x="20" y="78" class="lbl" fill="#7FDBCA">T0101</text>
+            <text x="65" y="78" class="lbl" fill="#9BAFC4">Facing</text>
+            <rect x="169" y="63" width="181" height="22" rx="4" fill="#172130" stroke="#1A6B5C" stroke-width="1.5"/>
+            <text x="182" y="78" class="lbl" fill="#7FDBCA">T0202</text>
+            <text x="230" y="78" class="lbl" fill="#9BAFC4">Turning</text>
+            <!-- Safety block -->
+            <rect x="10" y="92" width="340" height="14" rx="4" fill="#101820" stroke="#2A3D52" stroke-width="1.2"/>
+            <text x="20" y="103" class="lbl" fill="#7FDBCA">G99 G97 S1200 M41</text>
+          </svg>
+        </div>`,
+      'linear-feed': `
+        <div class="visual-aid">
+          <svg viewBox="0 0 360 110" xmlns="http://www.w3.org/2000/svg">
+            <style>.lbl{font-family:'JetBrains Mono',monospace;font-size:10px;}</style>
+            <!-- Part outline -->
+            <rect x="20" y="20" width="180" height="70" rx="3" fill="#1E2D3D" stroke="#2A3D52"/>
+            <text x="85" y="60" class="lbl" fill="#5F7A92">PART</text>
+            <!-- Safe clearance line -->
+            <line x1="200" y1="20" x2="200" y2="90" stroke="#F5A623" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="203" y="15" class="lbl" fill="#F5A623">Z0.100</text>
+            <!-- Rapid path -->
+            <line x1="320" y1="30" x2="210" y2="30" stroke="#28A745" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#ag)"/>
+            <text x="240" y="25" class="lbl" fill="#28A745">G00 RAPID</text>
+            <!-- Feed path -->
+            <line x1="210" y1="30" x2="30" y2="30" stroke="#1A6B5C" stroke-width="2.5" marker-end="url(#at)"/>
+            <text x="80" y="44" class="lbl" fill="#7FDBCA">G01 FEED</text>
+            <!-- danger zone label -->
+            <rect x="20" y="20" width="180" height="12" rx="2" fill="rgba(220,53,69,0.15)"/>
+            <text x="50" y="30" class="lbl" fill="#F0A0A8" font-size="9">← DO NOT RAPID HERE</text>
+            <defs>
+              <marker id="ag" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#28A745"/></marker>
+              <marker id="at" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#1A6B5C"/></marker>
+            </defs>
+          </svg>
+        </div>`,
+      'spindle-speed': `
+        <div class="visual-aid">
+          <svg viewBox="0 0 360 110" xmlns="http://www.w3.org/2000/svg">
+            <style>.lbl{font-family:'JetBrains Mono',monospace;font-size:10px;}</style>
+            <!-- Spindle icon -->
+            <rect x="60" y="20" width="100" height="70" rx="12" fill="#172130" stroke="#2A3D52" stroke-width="1.5"/>
+            <rect x="85" y="36" width="50" height="50" rx="8" fill="#1E2D3D" stroke="#1A6B5C" stroke-width="1.5"/>
+            <text x="93" y="67" class="lbl" fill="#7FDBCA">T</text>
+            <!-- Center cone -->
+            <polygon points="140,44 168,54 140,64" fill="#F5A623" opacity="0.9"/>
+            <!-- Labels -->
+            <text x="25" y="58" class="lbl" fill="#9BAFC4">S</text>
+            <text x="175" y="42" class="lbl" fill="#F5A623">M03</text>
+            <line x1="57" y1="55" x2="78" y2="55" stroke="#9BAFC4" stroke-width="1.2" marker-end="url(#a)"/>
+            <text x="185" y="73" class="lbl" fill="#9BAFC4">Rotation = normal</text>
+            <text x="185" y="88" class="lbl" fill="#5F7A92">G97 units: rev/min</text>
+            <defs>
+              <marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#9BAFC4"/></marker>
+            </defs>
+          </svg>
+        </div>`,
     };
     return defs[type] || '';
   }
@@ -691,6 +754,7 @@ function inferQuestionId(question, pool) {
   if (question.id && pool.some(item => item.id === question.id)) return question.id;
   const qText = normalizeQuestionText(question.question);
   const qAnswer = normalizeQuestionText(question.answer);
+  if (!qAnswer || isPlainNumericAnswer(qAnswer)) return question.id || '';
   const match = pool.find(item =>
     normalizeQuestionText(item.question) === qText &&
     normalizeQuestionText(item.answer) === qAnswer
@@ -740,12 +804,18 @@ function makeRetryNumber(original) {
   if (current === 0 && next < 0) next = Math.abs(next);
 
   const formatted = formatRetryNumber(next, decimals);
-  return formatted === raw ? formatRetryNumber(next + offset, decimals) : formatted;
+  if (formatted === raw) {
+    const nextOffset = unit * multiplier * 2;
+    const nextDir = Math.random() < 0.5 ? -1 : 1;
+    const next2 = current + nextDir * nextOffset;
+    return formatRetryNumber(next2, decimals);
+  }
+  return formatted;
 }
 
 function replaceRetryNumbers(text, replacements, originalAnswer = '', retryAnswer = '') {
   if (typeof text !== 'string' || !text) return text;
-  return text.replace(/\b([XYZRFSEQUWP])(-?\d+\.\d+)\b/g, (full, prefix, number) => {
+  return text.replace(/(?<![A-Z0-9.])([XYZRFSEQUWP])(-?\d+(?:\.\d+)?)(?![A-Z0-9.])/g, (full, prefix, number) => {
     if (!replacements.has(full)) {
       const nextNumber = retryAnswer && number === originalAnswer ? retryAnswer : makeRetryNumber(number);
       replacements.set(full, `${prefix}${nextNumber}`);
@@ -1962,6 +2032,12 @@ function initMatchingCards() {
         second.classList.remove('wrong');
       }, 450);
     });
+    card.addEventListener('keydown', e => {
+      if (['Enter', ' '].includes(e.key)) {
+        e.preventDefault();
+        card.click();
+      }
+    });
   });
   updateMatchingProgress();
 }
@@ -1977,6 +2053,7 @@ function checkMatching(q) {
     return;
   }
 
+  board.dataset.hadMismatch = 'false';
   const correct = board?.dataset.hadMismatch !== 'true';
   cards.forEach(card => { card.disabled = true; });
 

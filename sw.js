@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const CACHE_VERSION = 'pgct-v2.55-daily-local-date';
+const CACHE_VERSION = 'pgct-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Date.now().toString(36);
 const CACHE_NAME = CACHE_VERSION;
 
 const PRECACHE_ASSETS = [
@@ -18,7 +18,7 @@ const PRECACHE_ASSETS = [
   './icons/icon-512.png',
   './manifest.json',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap'
-];
+].filter(url => !url.startsWith('https://fonts.googleapis.com'));
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -66,6 +66,11 @@ function putFreshResponse(request, response) {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   if (event.request.url.startsWith('chrome-extension://')) return;
+  const fetchUrl = new URL(event.request.url);
+  if (fetchUrl.origin !== location.origin) {
+    event.respondWith(fetch(event.request).catch(() => new Response('', { status: 503, statusText: 'Offline' })));
+    return;
+  }
 
   if (shouldNetworkFirst(event.request)) {
     event.respondWith(
