@@ -448,19 +448,19 @@ body.theme-light .top-bar__logo { color: #8A5200; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 7px;
   cursor: pointer;
   border: none;
   background: none;
   color: var(--c-text-3);
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   font-weight: 600;
   font-family: var(--f-body);
-  line-height: 1.05;
+  line-height: 1.1;
   transition: color 0.15s;
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
-.nav-btn .icon { font-size: 1.5rem; }
+.nav-btn .icon { font-size: 1.75rem; }
 .nav-btn.active { color: var(--c-accent); }
 .nav-btn:hover { color: var(--c-text-2); }
 body.theme-light .bottom-nav .nav-btn { color: #566A7B !important; }
@@ -2385,8 +2385,8 @@ body.setup-required .setup-complete-btn { display: block; }
   .lesson-dot { width: 36px; height: 36px; box-shadow: 0 0 0 4px var(--c-surface); }
   .lesson-row__title { font-size: 0.84rem; }
   .lesson-content, .ref-scroll, .progress-scroll, .settings-scroll { padding: 0.85rem; }
-  .nav-btn .icon { font-size: 1.4rem; }
-  .nav-btn { font-size: 0.62rem; }
+  .nav-btn .icon { font-size: 1.65rem; }
+  .nav-btn { font-size: 0.76rem; }
 }
 
 @media (max-height: 620px) {
@@ -2405,8 +2405,7 @@ body.setup-required .setup-complete-btn { display: block; }
   .lesson-header { padding: 0.85rem 1rem 0.75rem; }
   .lesson-content { padding: 0.9rem; }
   .lesson-footer { padding: 0.75rem 1rem; }
-  .btn-primary { padding: 0.8rem; }
-  .nav-btn .icon { font-size: 1.4rem; }
+  .btn-primary { padding: 0.85rem; }
 }
 
 @supports not (height: 100dvh) {
