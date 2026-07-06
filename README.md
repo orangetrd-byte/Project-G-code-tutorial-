@@ -50,7 +50,7 @@ Everything runs in the browser with zero dependencies, zero build step, and zero
 | **Lesson unlock tree** | Linear progression — complete lesson N to unlock N+1 |
 | **G-code Reference** | Searchable accordion reference for all major codes |
 | **Progress screen** | Per-unit progress bars + total XP |
-| **PWA / offline** | Service worker caches all assets; works without Wi-Fi |
+| **PWA / offline** | Service worker caches local assets; robust offline fallback |
 
 ---
 
@@ -68,7 +68,7 @@ project-gcode-tutorial/
 │
 ├── index.html              ← Single-page app shell; all screens live here
 ├── manifest.json           ← PWA manifest (name, icons, display mode)
-├── sw.js                   ← Service worker (cache-first offline strategy)
+├── sw.js                   ← Service worker (network-first with cache fallback)
 │
 ├── css/
 │   └── style.css           ← Full design system + all component styles
@@ -331,16 +331,16 @@ All design decisions live in `:root` in `style.css`. Change here to retheme the 
 
 ### Service Worker Strategy
 
-`sw.js` implements **cache-first with network fallback**:
+`sw.js` implements **network-first with cache fallback**:
 
-1. On install: pre-cache `index.html`, CSS, JS, lesson data, manifest
-2. On fetch: serve from cache → fall back to network → cache the response
-3. On activate: delete caches from old `CACHE_VERSION`
+1. On install: pre-cache local app files; Google Fonts are no longer precached to avoid cross-origin failures.
+2. On fetch: serve from cache → fall back to network → cache the response.
+3. On activate: delete caches from old `CACHE_VERSION`.
 
-**To deploy an update:** bump `CACHE_VERSION` in `sw.js`. Old clients will update on next visit.
+`CACHE_VERSION` rotates automatically by date/timestamp, so repeated deploys don’t stick with stale cache entries.
 
 ```javascript
-const CACHE_VERSION = 'pgct-v1.0';  // ← change this on each deploy
+const CACHE_VERSION = 'pgct-v1.0';  // ← legacy static form; actual version is generated dynamically in sw.js
 ```
 
 ### Manifest
@@ -376,7 +376,7 @@ All files are plain text. The GitHub web editor can edit any of them:
 - **Add a lesson:** edit `data/lessons.js`, append to `LESSONS[]`
 - **Fix a typo:** edit `data/lessons.js` or `index.html`
 - **Tweak colors:** edit `css/style.css` `:root` variables
-- **Update cache version:** edit `sw.js` line 1
+- **Update cache version:** automatic via `sw.js` dynamic versioning
 
 No terminal, no build step required.
 
@@ -526,7 +526,7 @@ Before making code or file changes in this repo:
 4. Use brainstorming for lesson ideas, practice questions, review prompts, and learning-track concepts.
 5. Give technical explanations when changing G-code concepts, 3D printing concepts, quiz logic, progress logic, or assistant fallback paths.
 6. Draft concise documentation or handoff notes for user-facing curriculum and workflow changes.
-7. Use a troubleshooting checklist before fixing bugs in lessons, quizzes, mixed review, progress, storage, or PWA behavior.
+7. Use a troubleshooting checklist before fixing bugs in lessons, quizzes, mixed review, progress, storage, matching interaction, or PWA behavior.
 8. Use learning paths as a core design tool for curriculum and skill progression.
 9. Assess risks before adding generated content, AI fallback, scoring changes, curriculum changes, or track-mixing behavior.
 10. Optimize only for a named goal such as learning clarity, reliability, readability, speed, offline use, or safe educational scope.
