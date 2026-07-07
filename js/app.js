@@ -50,6 +50,7 @@ const State = {
       weakQuestions: [],
       dailyCompletions: [],
       confidenceRatings: {},
+      learnedCodeCodes: [],
     };
   },
 
@@ -68,6 +69,9 @@ const State = {
     this.weakQuestions = profile.weakQuestions || [];
     this.dailyCompletions = profile.dailyCompletions || [];
     this.confidenceRatings = profile.confidenceRatings || {};
+    this.learnedCodeCodes = Array.isArray(profile.learnedCodeCodes)
+      ? profile.learnedCodeCodes
+      : [];
   },
 
   syncProfile() {
@@ -81,6 +85,7 @@ const State = {
       weakQuestions: this.weakQuestions,
       dailyCompletions: this.dailyCompletions,
       confidenceRatings: this.confidenceRatings,
+      learnedCodeCodes: this.learnedCodeCodes,
     };
   },
 
@@ -659,6 +664,52 @@ const PRINTING_REF_DATA = [
 function $(sel) { return document.querySelector(sel); }
 function $$(sel) { return [...document.querySelectorAll(sel)]; }
 
+function escapeHtmlAttr(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function escapeLearnedCodeKey(code, trackId) {
+  return `${trackId || State.trackId}::${String(code || '').trim().toUpperCase()}`;
+}
+
+function toggleLearnedCode(code, trackId = State.trackId) {
+  const key = escapeLearnedCodeKey(code, trackId);
+  const idx = State.learnedCodeCodes.indexOf(key);
+  if (idx === -1) State.learnedCodeCodes.push(key);
+  else State.learnedCodeCodes.splice(idx, 1);
+  State.save();
+}
+
+function queueCodesFromQuestion(question = {}) {
+  const meta = question?.meta || {};
+  if (Array.isArray(meta.codes) && meta.codes.length) return meta.codes;
+  const text = [question.question, question.explanation, question.hint]
+    .filter(Boolean)
+    .join(' ');
+  return (text.match(/\b(G[0-9]+|M[0-9]+)\b/gi) || []).map(code => code.trim().toUpperCase());
+}
+
+function applyLearnedCodeProgress(question = {}, correct) {
+  if (!correct) return;
+  const codes = queueCodesFromQuestion(question);
+  codes.forEach(code => {
+    const key = escapeLearnedCodeKey(code, State.trackId);
+    if (!State.learnedCodeCodes.includes(key)) State.learnedCodeCodes.push(key);
+  });
+}
+
+function applyLearnedCodeMiss(question = {}) {
+  const codes = queueCodesFromQuestion(question).slice(0, 2);
+  codes.forEach(code => {
+    const key = escapeLearnedCodeKey(code, State.trackId);
+    if (!State.learnedCodeCodes.includes(key)) State.learnedCodeCodes.push(key);
+  });
+}
+
 function getTrack(trackId = State.trackId) {
   return (typeof TRACKS !== 'undefined' && TRACKS[trackId]) ? TRACKS[trackId] : TRACKS.cnc;
 }
@@ -972,6 +1023,10 @@ function t(key) {
 
 function getRefData() {
   return State.trackId === 'printing' ? PRINTING_REF_DATA : REF_DATA;
+}
+
+function getCodeLibrarySize() {
+  return (getRefData() || []).reduce((sum, cat) => sum + (cat.codes || []).length, 0);
 }
 
 function updateTrackSwitcher() {
@@ -1822,9 +1877,11 @@ function renderQuiz(container, q, idx) {
         if (correct) {
           State.sessionCorrect++;
           if (shouldClearWeakOnCorrect()) State.clearWeakQuestion(q);
+          applyLearnedCodeProgress(q, true);
         } else {
           State.missedQuestions.push(q);
           State.trackWeakQuestion(q);
+          if (State.currentMode === 'weak-review') applyLearnedCodeMiss(q);
         }
         State.currentQuizAnswered = true;
         AudioFeedback.play(correct);
@@ -1862,9 +1919,11 @@ function renderQuiz(container, q, idx) {
         if (correct) {
           State.sessionCorrect++;
           if (shouldClearWeakOnCorrect()) State.clearWeakQuestion(q);
+          applyLearnedCodeProgress(q, true);
         } else {
           State.missedQuestions.push(q);
           State.trackWeakQuestion(q);
+          if (State.currentMode === 'weak-review') applyLearnedCodeMiss(q);
         }
         State.currentQuizAnswered = true;
         AudioFeedback.play(correct);
@@ -1962,9 +2021,11 @@ function checkFillBlank(q, inp) {
   if (correct) {
     State.sessionCorrect++;
     if (shouldClearWeakOnCorrect()) State.clearWeakQuestion(q);
+    applyLearnedCodeProgress(q, true);
   } else {
     State.missedQuestions.push(q);
     State.trackWeakQuestion(q);
+    if (State.currentMode === 'weak-review') applyLearnedCodeMiss(q);
   }
   State.currentQuizAnswered = true;
   AudioFeedback.play(correct);
@@ -2063,9 +2124,11 @@ function checkMatching(q) {
   if (correct) {
     State.sessionCorrect++;
     if (shouldClearWeakOnCorrect()) State.clearWeakQuestion(q);
+    applyLearnedCodeProgress(q, true);
   } else {
     State.missedQuestions.push(q);
     State.trackWeakQuestion(q);
+    if (State.currentMode === 'weak-review') applyLearnedCodeMiss(q);
   }
   State.currentQuizAnswered = true;
   AudioFeedback.play(correct);
@@ -2188,6 +2251,11 @@ function finishLesson() {
   const unlockedNextLesson = !wasLessonDone && nextLesson && State.isLessonUnlocked(nextLesson) ? nextLesson : null;
   const nextActionLesson = nextLesson && State.isLessonUnlocked(nextLesson) ? nextLesson : null;
   State.nextActionLessonId = nextActionLesson?.id || null;
+
+  if (xpEarned > 0 && State.missedQuestions.length === 0) {
+    (lesson.quiz || []).forEach(q => applyLearnedCodeProgress(q, true));
+  }
+
   if (completedUnitNow) AudioFeedback.unitComplete();
   else AudioFeedback.lessonComplete();
 
@@ -2363,6 +2431,9 @@ function finishWeakReview() {
 
   const xpEarned = State.completeWeakReview(State.sessionCorrect, State.sessionTotal);
   AudioFeedback.lessonComplete();
+  if (xpEarned > 0 && State.missedQuestions.length === 0) {
+    (State.currentLesson?.quiz || []).forEach(q => applyLearnedCodeProgress(q, true));
+  }
   content.innerHTML = `
     <div class="complete-screen">
       <div class="complete-icon">✓</div>
@@ -2566,41 +2637,66 @@ function renderReference() {
   const container = $('#ref-list');
   container.innerHTML = '';
 
+  const showLearnedOnly = Boolean($('#ref-learned-toggle')?.checked);
+  const isCodeLearned = code => State.learnedCodeCodes.includes(escapeLearnedCodeKey(code, State.trackId));
+
   getRefData().forEach(cat => {
+    const visibleCodes = showLearnedOnly
+      ? cat.codes.filter(item => isCodeLearned(item.code))
+      : cat.codes;
+    if (!visibleCodes.length && showLearnedOnly) return;
+
     const section = document.createElement('div');
     section.className = 'ref-category';
-    section.innerHTML = `<div class="ref-category-title">${cat.category}</div>`;
+    section.innerHTML = `<div class="ref-category-title">${showLearnedOnly ? 'Learned ' + cat.category : cat.category}</div>`;
 
-    cat.codes.forEach(item => {
+    visibleCodes.forEach(item => {
+      const learned = isCodeLearned(item.code);
       const card = document.createElement('div');
-      card.className = 'ref-card';
+      card.className = 'ref-card' + (learned ? ' ref-card--learned' : '');
       card.innerHTML = `
-        <button class="ref-card__toggle">
+        <button class="ref-card__toggle" type="button" data-ref-code="${escapeHtmlAttr(item.code)}">
           <span class="ref-code">${item.code}</span>
           <span class="ref-name">${item.name}</span>
+          ${learned ? '<span class="ref-badge ref-badge--learned">learned</span>' : ''}
           <span class="ref-chevron">▶</span>
         </button>
-        <div class="ref-card__body">${item.body}</div>`;
+        <div class="ref-card__body">
+          ${item.body}
+          <div class="ref-card__actions">
+            <button class="ref-action ref-action--learned" type="button" data-ref-code="${escapeHtmlAttr(item.code)}" aria-pressed="${learned}">
+              ${learned ? 'Marked learned' : 'Mark learned'}
+            </button>
+          </div>
+        </div>`;
       card.querySelector('.ref-card__toggle').addEventListener('click', () => {
         card.classList.toggle('open');
+      });
+      card.querySelector('.ref-action--learned').addEventListener('click', e => {
+        e.stopPropagation();
+        toggleLearnedCode(item.code);
+        renderReference();
       });
       section.appendChild(card);
     });
     container.appendChild(section);
   });
 
-  // Search
+  if (!container.children.length && showLearnedOnly) {
+    container.innerHTML = '<div class="mistake-bank-empty">No learned codes yet. Complete lessons to mark codes learned.</div>';
+  }
+
   $('#ref-search').value = '';
   $('#ref-search').oninput = e => {
     const q = e.target.value.toLowerCase();
-    $$('.ref-card').forEach(card => {
-      const text = card.textContent.toLowerCase();
-      card.style.display = text.includes(q) ? '' : 'none';
-    });
-    $$('.ref-category-title').forEach(title => {
-      const parent = title.parentElement;
-      const visible = [...parent.querySelectorAll('.ref-card')].some(c => c.style.display !== 'none');
-      parent.style.display = visible ? '' : 'none';
+    $$('.ref-category').forEach(section => {
+      const visible = [...section.querySelectorAll('.ref-card')].some(card => {
+        const text = card.textContent.toLowerCase();
+        const match = !q || text.includes(q);
+        card.style.display = match ? '' : 'none';
+        return match;
+      });
+      section.style.display = visible ? '' : 'none';
     });
   };
 }
@@ -2635,9 +2731,9 @@ function renderPractice() {
     {
       id: 'codes',
       title: 'Code Bank',
-      subtitle: `${codeCount} reference cards for ${getTrack().name}`,
+      subtitle: `${Math.max(State.learnedCodeCodes.length, codeCount)} reference cards for ${getTrack().name}`,
       icon: 'Aa',
-      badge: 'Study',
+      badge: State.learnedCodeCodes.length ? `${State.learnedCodeCodes.length} learned` : 'Study',
       disabled: false
     },
     {
@@ -2685,8 +2781,19 @@ function renderProgress() {
   $('#prog-streak').textContent = State.streak;
   renderMistakeBank();
 
+  const learnedTotal = getCodeLibrarySize();
+  const learned = learnedTotal ? State.learnedCodeCodes.length : 0;
+
   const container = $('#prog-unit-list');
-  container.innerHTML = '';
+  container.innerHTML = learnedTotal ? `
+    <div class="prog-unit-card">
+      <div class="prog-unit-header">
+        <span class="prog-unit-name">🧰 Learned codes</span>
+        <span class="prog-pct">${learnedTotal ? Math.round((learned / learnedTotal) * 100) : 0}%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-bar-fill" style="width:${learnedTotal ? Math.round((learned / learnedTotal) * 100) : 0}%"></div></div>
+      <div class="prog-lessons-done">${learned} of ${learnedTotal} codes marked learned</div>
+    </div>` : '';
 
   units.forEach(unit => {
     const { done, total } = State.getUnitProgress(unit.id);

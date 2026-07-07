@@ -207,10 +207,16 @@
     </div>
   </section>
 
-  <!-- ── REFERENCE SCREEN ──────────────────────────────────── -->
+  <!-- ── REFERENCE SCREEN ────────────────────────────────────── -->
   <section class="screen" id="screen-reference">
     <div class="ref-scroll">
       <input type="search" class="ref-search" id="ref-search" placeholder="Search G-code, M-code…" autocomplete="off">
+      <div class="ref-toolbar">
+        <label class="ref-learned-toggle">
+          <input type="checkbox" id="ref-learned-toggle">
+          <span>Learned only</span>
+        </label>
+      </div>
       <div id="ref-list">
         <!-- Rendered by JS -->
       </div>
