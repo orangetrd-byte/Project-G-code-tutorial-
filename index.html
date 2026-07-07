@@ -347,24 +347,29 @@
 <!-- PWA Service Worker Registration -->
 <script>
   if ('serviceWorker' in navigator) {
-    let refreshing = false;
     let pendingUpdateReload = false;
+    let controllerReady = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (refreshing) return;
-      refreshing = true;
+      if (controllerReady) return;
+      controllerReady = true;
+      if (!document.body || !document.body.isConnected) return;
+      showUpdateBanner();
       pendingUpdateReload = true;
     });
 
+    function showUpdateBanner() {
+      const settingsPanel = document.querySelector('#screen-settings .settings-scroll');
+      if (!settingsPanel || settingsPanel.querySelector('.sw-update-banner')) return;
+      const banner = document.createElement('div');
+      banner.className = 'sw-update-banner';
+      banner.style.cssText = 'margin:0.75rem 1rem;padding:0.75rem 1rem;border-radius:12px;background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.35);color:var(--c-text);font-size:0.9rem;';
+      banner.innerHTML = 'App updated. <button type="button" id="sw-reload-btn" style="margin-left:0.5rem;">Reload now</button>';
+      settingsPanel.insertBefore(banner, settingsPanel.firstChild);
+      document.getElementById('sw-reload-btn')?.addEventListener('click', () => window.location.reload());
+    }
+
     window.addEventListener('load', () => {
-      const banner = document.querySelector('.settings-group')?.parentElement;
-      if (pendingUpdateReload && banner && !banner.querySelector('.sw-update-banner')) {
-        const bannerEl = document.createElement('div');
-        bannerEl.className = 'sw-update-banner';
-        bannerEl.style.cssText = 'margin:0.75rem 1rem;padding:0.75rem 1rem;border-radius:12px;background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.35);color:var(--c-text);font-size:0.9rem;';
-        bannerEl.innerHTML = 'App updated. <button type="button" id="sw-reload-btn" style="margin-left:0.5rem;">Reload now</button>';
-        banner.parentElement.insertBefore(bannerEl, banner);
-        document.getElementById('sw-reload-btn')?.addEventListener('click', () => window.location.reload());
-      }
+      if (pendingUpdateReload) showUpdateBanner();
       navigator.serviceWorker.register('sw.js')
         .then(reg => {
           reg.update();
