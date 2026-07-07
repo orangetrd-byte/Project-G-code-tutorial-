@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.56.5 | Build 2026.07.07.05';
+const APP_BUILD = 'MGP | Version v2.56.6 | Build 2026.07.07.06';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1190,14 +1190,25 @@ function initSettings() {
   });
 }
 
-function finishLoading() {
+function showBootFallback(error) {
+  const splash = $('#loading-splash');
+  if (!splash) return;
+  const message = document.createElement('div');
+  message.setAttribute('role', 'alert');
+  message.style.cssText = 'position:absolute;left:1rem;right:1rem;bottom:1rem;z-index:5;padding:0.85rem 1rem;border:1px solid rgba(255,122,122,0.55);border-radius:14px;background:rgba(80,18,26,0.92);color:#FFE8E8;font:700 0.82rem JetBrains Mono,monospace;box-shadow:0 16px 40px rgba(0,0,0,0.35);';
+  message.textContent = 'Startup recovered. If the app looks wrong, refresh once.';
+  splash.appendChild(message);
+  console.error('Project G-Code startup recovered after init error:', error);
+}
+
+function finishLoading(options = {}) {
   const splash = $('#loading-splash');
   playStartupTypingSound();
   window.setTimeout(() => {
     splash?.classList.add('done');
     window.setTimeout(() => splash?.remove(), 300);
     if (!State.setupComplete) showScreen('screen-settings');
-  }, 1800);
+  }, options.hasError ? 4200 : 1800);
 }
 
 // ─── AUDIO FEEDBACK ───────────────────────────────────────────
@@ -3073,15 +3084,23 @@ function initNav() {
 
 // ─── BOOT ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  initConceptPools();
-  State.load();
-  applyTheme();
-  initNav();
-  initTrackSwitcher();
-  initSettings();
-  renderSettings();
-  renderHome();
-  renderPractice();
-  showScreen(State.setupComplete ? 'screen-home' : 'screen-settings');
-  finishLoading();
+  let initError = null;
+  try {
+    initConceptPools();
+    State.load();
+    applyTheme();
+    initNav();
+    initTrackSwitcher();
+    initSettings();
+    renderSettings();
+    renderHome();
+    renderPractice();
+    showScreen(State.setupComplete ? 'screen-home' : 'screen-settings');
+  } catch (error) {
+    initError = error;
+    showBootFallback(error);
+    try { showScreen('screen-settings'); } catch(e) {}
+  } finally {
+    finishLoading({ hasError: Boolean(initError) });
+  }
 });
