@@ -2103,12 +2103,39 @@ function showExplanation(text, question = null, correct = true) {
   const box = $('#explanation-box');
   if (!box) return;
   const answer = question ? getCorrectAnswerText(question) : '';
+  const reviewLink = renderMistakeBankLink(question, !correct);
   box.innerHTML = `
     <div class="explanation-box feedback-bar ${correct ? 'is-correct' : 'is-wrong'}">
       ${answer ? `<div class="feedback-answer">Correct answer: <strong>${answer}</strong></div>` : ''}
       <div class="expl-label">Explanation</div>
       <div>${text}</div>
+      ${reviewLink}
     </div>`;
+  if (!correct) bindMistakeBankLinks();
+}
+
+function renderMistakeBankLink(question = null, show = false) {
+  if (!show || !question) return '';
+  const sourceLessonId = question.sourceLessonId || question.originalQuestionId || question.id;
+  const lesson = getLessons().find(item => item.id === sourceLessonId);
+  const label = lesson ? `Review this topic: ${lesson.title}` : 'Review this topic';
+  const titleAttr = lesson ? ` title="${lesson.title}"` : '';
+  return `<button type="button" class="mistake-bank-link" data-lesson-id="${sourceLessonId}"${titleAttr}>${label} →</button>`;
+}
+
+function bindMistakeBankLinks() {
+  $$('.mistake-bank-link').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lessonId = btn.dataset.lessonId;
+      if (!lessonId) return;
+      const lesson = getLessons().find(item => item.id === lessonId);
+      if (lesson) {
+        startLesson(lesson.id);
+      } else {
+        showToast('Lesson not available from this review.', 'error');
+      }
+    });
+  });
 }
 
 function isLastStep() {
