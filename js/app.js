@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.56.1 | Build 2026.07.07.01';
+const APP_BUILD = 'MGP | Version v2.56.2 | Build 2026.07.07.02';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -686,28 +686,32 @@ function toggleLearnedCode(code, trackId = State.trackId) {
 
 function queueCodesFromQuestion(question = {}) {
   const meta = question?.meta || {};
-  if (Array.isArray(meta.codes) && meta.codes.length) return meta.codes;
-  const text = [question.question, question.explanation, question.hint]
-    .filter(Boolean)
-    .join(' ');
-  return (text.match(/\b(G[0-9]+|M[0-9]+)\b/gi) || []).map(code => code.trim().toUpperCase());
+  const explicitCodes = Array.isArray(meta.codes) ? meta.codes : [];
+  const answerCode = typeof question.answer === 'string' && /^(G|M)\d+$/i.test(question.answer.trim())
+    ? [question.answer.trim()]
+    : [];
+  return [...new Set([...explicitCodes, ...answerCode].map(code => String(code).trim().toUpperCase()).filter(Boolean))];
 }
 
 function applyLearnedCodeProgress(question = {}, correct) {
   if (!correct) return;
   const codes = queueCodesFromQuestion(question);
+  let changed = false;
   codes.forEach(code => {
     const key = escapeLearnedCodeKey(code, State.trackId);
-    if (!State.learnedCodeCodes.includes(key)) State.learnedCodeCodes.push(key);
+    if (!State.learnedCodeCodes.includes(key)) {
+      State.learnedCodeCodes.push(key);
+      changed = true;
+    }
   });
+  if (changed) State.save();
 }
 
-function applyLearnedCodeMiss(question = {}) {
-  const codes = queueCodesFromQuestion(question).slice(0, 2);
-  codes.forEach(code => {
-    const key = escapeLearnedCodeKey(code, State.trackId);
-    if (!State.learnedCodeCodes.includes(key)) State.learnedCodeCodes.push(key);
-  });
+function applyLearnedCodeMiss() {}
+
+function getLearnedCodeCount(trackId = State.trackId) {
+  const prefix = `${trackId}::`;
+  return State.learnedCodeCodes.filter(key => key.startsWith(prefix)).length;
 }
 
 function getTrack(trackId = State.trackId) {
@@ -1905,7 +1909,8 @@ function renderQuiz(container, q, idx) {
   if (q.type === 'multiple-choice') {
     const letters = ['A','B','C','D'];
     const options = shuffleCopy(q.options);
-    const correctIdx = options.indexOf(q.options[q.answer]);
+    const correctAnswer = typeof q.answer === 'string' ? q.answer : q.options[q.answer];
+    const correctIdx = options.indexOf(correctAnswer);
     div.innerHTML = `
       ${renderReadAloudButton()}
       <div class="step-label">${getQuizModeLabel()} · Question ${idx + 1}</div>
@@ -1927,8 +1932,8 @@ function renderQuiz(container, q, idx) {
       btn.addEventListener('click', () => {
         if (State.currentQuizAnswered) return;
         const chosen = btn.dataset.idx;
-        const correctIdx = typeof q.answer === 'string' ? options.indexOf(q.answer) : q.answer;
-        const correct = parseInt(chosen) === correctIdx;
+        q.chosenAnswer = btn.dataset.selectedAnswer || '';
+        const correct = parseInt(chosen, 10) === correctIdx;
         $$('.option-btn').forEach(b => {
           const i = parseInt(b.dataset.idx);
           if (i === correctIdx) b.classList.add('correct');
@@ -1970,6 +1975,7 @@ function renderQuiz(container, q, idx) {
       btn.addEventListener('click', () => {
         if (State.currentQuizAnswered) return;
         const chosen = btn.dataset.value === 'true';
+        q.chosenAnswer = String(chosen);
         const correct = chosen === q.answer;
         $$('.tf-btn').forEach(b => {
           const value = b.dataset.value === 'true';
@@ -2072,6 +2078,7 @@ function getAnswerPattern(q) {
 
 function checkFillBlank(q, inp) {
   const userVal = inp.value.trim().replace(/^G|^g/, match => match.toUpperCase());
+  q.chosenAnswer = userVal;
   const expected = q.answer.trim();
   const normalizedUser = normalizeCodeAnswer(userVal);
   const normalizedExpected = normalizeCodeAnswer(expected);
@@ -2234,7 +2241,7 @@ function getQuestionOriginPreview(q) {
 function getWrongPathPreview(q, chosenAnswer) {
   if (!q || chosenAnswer === undefined) return '';
   const correctText = getCorrectAnswerText(q);
-  const expectedCode = typeof q.answer === 'string' ? q.answer.trim() : '';
+  const expectedCode = correctText.trim();
   const chosenText = typeof chosenAnswer === 'string' ? chosenAnswer.trim() : '';
   if (!expectedCode || !chosenText || expectedCode.toLowerCase() === chosenText.toLowerCase()) return '';
   const comparison = buildCodeComparison(expectedCode, chosenText);
@@ -2919,9 +2926,9 @@ function renderPractice() {
     {
       id: 'codes',
       title: 'Code Bank',
-      subtitle: `${Math.max(State.learnedCodeCodes.length, codeCount)} reference cards for ${getTrack().name}`,
+      subtitle: `${codeCount} reference cards for ${getTrack().name}`,
       icon: 'Aa',
-      badge: State.learnedCodeCodes.length ? `${State.learnedCodeCodes.length} learned` : 'Study',
+      badge: getLearnedCodeCount() ? `${getLearnedCodeCount()} learned` : 'Study',
       disabled: false
     },
     {
@@ -2970,7 +2977,7 @@ function renderProgress() {
   renderMistakeBank();
 
   const learnedTotal = getCodeLibrarySize();
-  const learned = learnedTotal ? State.learnedCodeCodes.length : 0;
+  const learned = learnedTotal ? getLearnedCodeCount() : 0;
 
   const container = $('#prog-unit-list');
   container.innerHTML = learnedTotal ? `
