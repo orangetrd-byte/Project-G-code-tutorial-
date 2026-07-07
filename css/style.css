@@ -2610,6 +2610,14 @@ body.setup-required .setup-complete-btn { display: block; }
   }
 }
 
+.home-scroll,
+.ref-scroll,
+.practice-scroll,
+.progress-scroll,
+.settings-scroll {
+  padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + 1rem);
+  scroll-padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + 1rem);
+}
 body.theme-light .bottom-nav .nav-btn.active { color: #8A5200 !important; }
 
 @media (prefers-reduced-motion: reduce) {

@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.56.3 | Build 2026.07.07.03';
+const APP_BUILD = 'MGP | Version v2.56.4 | Build 2026.07.07.04';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1167,11 +1167,16 @@ function initSettings() {
     });
   });
 
-  $('#setup-complete-btn')?.addEventListener('click', () => {
+  $('#setup-complete-btn')?.addEventListener('click', event => {
+    event.preventDefault();
     State.completeSetup();
+    document.body.classList.remove('setup-required');
     renderSettings();
     renderHome();
+    renderPractice();
+    renderProgress();
     showScreen('screen-home');
+    showToast(t('startLearning'), 'success');
   });
 
   $('#reset-data-btn')?.addEventListener('click', () => {
