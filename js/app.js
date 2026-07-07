@@ -1182,11 +1182,18 @@ function initSettings() {
 }
 
 function finishLoading() {
+  console.info('[boot] finishLoading start');
   const splash = $('#loading-splash');
   playStartupTypingSound();
   window.setTimeout(() => {
+    console.info('[boot] hiding splash');
     splash?.classList.add('done');
+    if (!State.setupComplete) {
+      console.warn('[boot] setup still incomplete after boot');
+      showScreen('screen-settings');
+    }
   }, 4800);
+  console.info('[boot] finishLoading scheduled');
 }
 
 // ─── AUDIO FEEDBACK ───────────────────────────────────────────

@@ -347,7 +347,7 @@
 <!-- PWA Service Worker Registration -->
 <script>
   if ('serviceWorker' in navigator) {
-    const hadController = !!navigator.serviceWorker.controller;
+    let refreshing = false;
     let pendingUpdateReload = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (refreshing) return;
