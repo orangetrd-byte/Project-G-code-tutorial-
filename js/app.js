@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.56.4 | Build 2026.07.07.04';
+const APP_BUILD = 'MGP | Version v2.56.5 | Build 2026.07.07.05';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1356,13 +1356,14 @@ function renderHome() {
   $('#xp-bar-next').textContent = done + '/' + total + ' lessons';
   $('#streak-val').textContent = '🔥 ' + State.streak;
   $('#daily-pill')?.classList.toggle('is-done', dailyDone);
-  if (!dailyDone && dailyQuestions > 0) {
+  const dailyPillDetail = $('#daily-pill-detail');
+  if (dailyPillDetail && !dailyDone && dailyQuestions > 0) {
     const dq = Math.min(dailyQuestions, 5);
-    $('#daily-pill-detail').textContent = `${dq} question${dq === 1 ? '' : 's'} waiting`;
-  } else if (dailyDone) {
-    $('#daily-pill-detail').textContent = 'Wrap it again anytime.';
-  } else if (!dailyDone && dailyQuestions === 0) {
-    $('#daily-pill-detail').textContent = 'Finish one lesson to unlock.';
+    dailyPillDetail.textContent = `${dq} question${dq === 1 ? '' : 's'} waiting`;
+  } else if (dailyPillDetail && dailyDone) {
+    dailyPillDetail.textContent = 'Wrap it again anytime.';
+  } else if (dailyPillDetail && !dailyDone && dailyQuestions === 0) {
+    dailyPillDetail.textContent = 'Finish one lesson to unlock.';
   }
   updateTrackSwitcher();
   renderMotivation();
