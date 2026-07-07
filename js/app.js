@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.56.2 | Build 2026.07.07.02';
+const APP_BUILD = 'MGP | Version v2.56.3 | Build 2026.07.07.03';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1186,18 +1186,13 @@ function initSettings() {
 }
 
 function finishLoading() {
-  console.info('[boot] finishLoading start');
   const splash = $('#loading-splash');
   playStartupTypingSound();
   window.setTimeout(() => {
-    console.info('[boot] hiding splash');
     splash?.classList.add('done');
-    if (!State.setupComplete) {
-      console.warn('[boot] setup still incomplete after boot');
-      showScreen('screen-settings');
-    }
-  }, 4800);
-  console.info('[boot] finishLoading scheduled');
+    window.setTimeout(() => splash?.remove(), 300);
+    if (!State.setupComplete) showScreen('screen-settings');
+  }, 1800);
 }
 
 // ─── AUDIO FEEDBACK ───────────────────────────────────────────

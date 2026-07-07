@@ -150,6 +150,14 @@
     <div class="boot-rig__foot"></div>
   </div>
 </div>
+<script>
+  // boot splash failsafe
+  window.setTimeout(() => {
+    const splash = document.getElementById('loading-splash');
+    splash?.classList.add('done');
+    window.setTimeout(() => splash?.remove(), 350);
+  }, 6200);
+</script>
 
 <div class="app-wrapper">
 
