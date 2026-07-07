@@ -2055,8 +2055,9 @@ function checkMatching(q) {
     return;
   }
 
+  const hadMismatch = board?.dataset.hadMismatch === 'true';
   board.dataset.hadMismatch = 'false';
-  const correct = board?.dataset.hadMismatch !== 'true';
+  const correct = !hadMismatch;
   cards.forEach(card => { card.disabled = true; });
 
   if (correct) {
