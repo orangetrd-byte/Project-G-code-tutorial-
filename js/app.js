@@ -1347,10 +1347,12 @@ function renderHome() {
 
   units.forEach(unit => {
     const unitLessons = lessons.filter(l => l.unit === unit.id);
+    const nextLesson = unitLessons.find(l => !State.isLessonDone(l.id) && State.isLessonUnlocked(l));
     const { done: uDone } = State.getUnitProgress(unit.id);
     const locked = !State.isLessonUnlocked(unitLessons[0]);
     const canReview = unitLessons.length > 0 && uDone === unitLessons.length;
     const reviewDone = State.isUnitReviewDone(unit.id);
+    const previewWhy = nextLesson?.why?.trim() || '';
 
     const card = document.createElement('div');
     card.className = `unit-card track-${State.trackId} unit-${unit.id}`;
@@ -1360,6 +1362,7 @@ function renderHome() {
         <div class="unit-card__meta">
           <div class="unit-card__name">Unit ${unit.id}: ${unit.name}</div>
           <div class="unit-card__progress">${uDone}/${unit.lessons} lessons complete</div>
+          ${previewWhy ? `<div class="unit-card__why">${previewWhy}</div>` : ''}
         </div>
         <div class="unit-card__badge ${locked ? 'locked' : ''}">${locked ? '🔒' : uDone === unit.lessons ? '✅' : 'Open'}</div>
       </div>
@@ -1368,23 +1371,22 @@ function renderHome() {
           const done = State.isLessonDone(l.id);
           const unlocked = State.isLessonUnlocked(l);
           const dotClass = done ? 'done' : unlocked ? 'active' : '';
+          const rowWhy = (!done && unlocked && l.why?.trim()) ? `<div class="lesson-row__why">${l.why.trim()}</div>` : '';
           return `
             <div class="lesson-row ${!unlocked ? 'locked' : ''}" data-lesson-id="${l.id}">
               <div class="lesson-dot ${dotClass}">${done ? '✓' : l.lesson}</div>
               <div class="lesson-row__title">${l.icon} ${l.title}</div>
-              <div class="lesson-row__xp">${l.xp} XP</div>
+              ${rowWhy}
             </div>`;
         }).join('')}
         <div class="lesson-row review-row ${!canReview ? 'locked' : ''}" data-unit-review="${unit.id}">
           <div class="lesson-dot ${reviewDone ? 'done' : canReview ? 'active' : ''}">${reviewDone ? '✓' : '?'}</div>
           <div class="lesson-row__title">Unit Review</div>
-          <div class="lesson-row__xp">${reviewDone ? 'Done' : '25 XP'}</div>
         </div>
       </div>`;
     container.appendChild(card);
   });
 
-  // Lesson row click
   $$('.lesson-row').forEach(row => {
     row.addEventListener('click', () => {
       const id = row.dataset.lessonId;
@@ -1397,6 +1399,8 @@ function renderHome() {
       if (unitId) startUnitReview(unitId);
     });
   });
+
+  renderMilestoneReward();
 }
 
 // ─── LESSON ENGINE ────────────────────────────────────────────
@@ -1451,20 +1455,57 @@ function renderMotivation() {
         <span class="weak-review-card__mark">∞</span>
         <span>
           <strong>Mixed review unlocked</strong>
-          <em>Keep practicing across the full ${getTrack().name} path while new units are added.</em>
+          <em>Keep practicing across the full ${getTrack().name} path while more units are added.</em>
         </span>
       </button>
     ` : ''}
     <div class="badge-strip">
       ${badges.map(badge => `
         <div class="badge-chip ${badge.unlocked ? 'unlocked' : 'locked'}">
-          <span>${badge.icon}</span>${badge.name}
-        </div>
+          <span>${badge.icon}</span>${badge.name}</div>
       `).join('')}
     </div>`;
   $('#weak-review-btn')?.addEventListener('click', startWeakReview);
   $('#track-review-btn')?.addEventListener('click', startTrackReview);
   $('#daily-mission-btn')?.addEventListener('click', startDailyMission);
+}
+
+function renderMilestoneReward() {
+  const reward = $('#milestone-reward');
+  if (!reward) return;
+
+  const { done, total } = State.getTotalProgress();
+  const milestones = [
+    { id: 'first-lesson', xp: 1, badge: 'First Lesson', message: 'You started the path.' },
+    { id: 'unit-1', xp: 5, badge: 'Unit 1 Complete', message: 'Foundations are in.' },
+    { id: 'three-day-streak', xp: 5, badge: '3 Day Streak', message: 'Retention is momentum.' },
+    { id: 'halfway', xp: 10, badge: 'Halfway There', message: 'More than half done.' },
+    { id: 'track-complete', xp: 15, badge: 'Path Complete', message: 'Full track unlocked for mixed review.' }
+  ];
+
+  const earned = milestones.filter(m => {
+    if (m.id === 'first-lesson') return done >= 1;
+    if (m.id === 'unit-1') return done >= getLessons().filter(l => l.unit === 1).length;
+    if (m.id === 'three-day-streak') return State.streak >= 3;
+    if (m.id === 'halfway') return total > 0 && done >= Math.ceil(total / 2);
+    if (m.id === 'track-complete') return total > 0 && done === total;
+    return false;
+  });
+
+  if (!earned.length) { reward.innerHTML = ''; return; }
+
+  reward.innerHTML = `
+    <div class="milestone-strip">
+      ${earned.map(m => `
+        <div class="milestone-chip">
+          <div class="milestone-chip__mark">★</div>
+          <div>
+            <div class="milestone-chip__title">${m.badge}</div>
+            <div class="milestone-chip__sub">${m.message}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
 }
 
 function startLesson(lessonId) {

@@ -1016,6 +1016,54 @@ body.theme-light .lesson-row__xp {
   background: #FFF1D5;
 }
 
+.unit-card__why {
+  margin-top: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--c-text-2);
+  line-height: 1.4;
+}
+
+.lesson-row__why {
+  margin-top: 0.3rem;
+  padding-top: 0.35rem;
+  border-top: 1px dashed var(--c-border);
+  font-size: 0.8rem;
+  color: var(--c-text-2);
+  line-height: 1.35;
+}
+
+/* ─── MILESTONE REWARD ───────────────────────────────────── */
+.milestone-strip {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 1rem 0.6rem;
+}
+.milestone-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 42px;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(245,166,35,0.55);
+  background: linear-gradient(90deg, rgba(245,166,35,0.18), rgba(26,107,92,0.12));
+  box-shadow: var(--shadow-sm);
+}
+.milestone-chip__mark {
+  font-size: 1rem;
+  color: var(--c-accent);
+}
+.milestone-chip__title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--c-text);
+}
+.milestone-chip__sub {
+  font-size: 0.72rem;
+  color: var(--c-text-2);
+}
+
 /* ─── LESSON SCREEN ───────────────────────────────────────── */
 .lesson-header {
   flex: 0 0 auto;
