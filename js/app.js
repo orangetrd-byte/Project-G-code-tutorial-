@@ -1333,6 +1333,8 @@ function renderHome() {
   container.innerHTML = '';
   const { done, total } = State.getTotalProgress();
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const dailyDone = State.dailyCompletions.includes(getTodayKey());
+  const dailyQuestions = buildDailyMissionQuestions().length;
 
   const title = track.title.replace('G-Code', '<span>G-Code</span>');
   $('.hero-title').innerHTML = `${title},<br>one block at a time.`;
@@ -1342,6 +1344,15 @@ function renderHome() {
   $('#xp-bar-current-2').textContent = State.xp + ' XP';
   $('#xp-bar-next').textContent = done + '/' + total + ' lessons';
   $('#streak-val').textContent = '🔥 ' + State.streak;
+  $('#daily-pill')?.classList.toggle('is-done', dailyDone);
+  if (!dailyDone && dailyQuestions > 0) {
+    const dq = Math.min(dailyQuestions, 5);
+    $('#daily-pill-detail').textContent = `${dq} question${dq === 1 ? '' : 's'} waiting`;
+  } else if (dailyDone) {
+    $('#daily-pill-detail').textContent = 'Wrap it again anytime.';
+  } else if (!dailyDone && dailyQuestions === 0) {
+    $('#daily-pill-detail').textContent = 'Finish one lesson to unlock.';
+  }
   updateTrackSwitcher();
   renderMotivation();
 
@@ -1896,10 +1907,11 @@ function renderQuiz(container, q, idx) {
       <div class="quiz-question">${q.question}</div>
       <div class="options-list">
         ${options.map((opt, i) => `
-          <button class="option-btn" data-idx="${i}">
+          <button class="option-btn" data-idx="${i}" data-selected-answer="${escapeHtmlAttr(opt)}">
             <span class="option-letter">${letters[i]}</span>
             ${opt}
-          </button>`).join('')}
+          </button>
+        `).join('')}
       </div>
       <div id="explanation-box"></div>`;
     container.appendChild(div);
@@ -1907,12 +1919,13 @@ function renderQuiz(container, q, idx) {
     $$('.option-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         if (State.currentQuizAnswered) return;
-        const chosen = parseInt(btn.dataset.idx);
-        const correct = chosen === correctIdx;
+        const chosen = btn.dataset.idx;
+        const correctIdx = typeof q.answer === 'string' ? options.indexOf(q.answer) : q.answer;
+        const correct = parseInt(chosen) === correctIdx;
         $$('.option-btn').forEach(b => {
           const i = parseInt(b.dataset.idx);
           if (i === correctIdx) b.classList.add('correct');
-          else if (i === chosen && !correct) b.classList.add('wrong');
+          else if (b.dataset.idx === chosen && !correct) b.classList.add('wrong');
           b.disabled = true;
         });
         if (correct) {
@@ -2203,16 +2216,137 @@ function getCorrectAnswerText(q) {
   return String(q?.answer || '').trim();
 }
 
+function getQuestionOriginPreview(q) {
+  const answer = String(q?.answer || '').trim();
+  const unit = q?.sourceUnit || q?.unit || '';
+  const title = q?.sourceTitle || q?.originalQuestionId || '';
+  const parts = [unit ? `Unit ${unit}` : '', title].filter(Boolean);
+  return parts.join(' · ');
+}
+
+function getWrongPathPreview(q, chosenAnswer) {
+  if (!q || chosenAnswer === undefined) return '';
+  const correctText = getCorrectAnswerText(q);
+  const expectedCode = typeof q.answer === 'string' ? q.answer.trim() : '';
+  const chosenText = typeof chosenAnswer === 'string' ? chosenAnswer.trim() : '';
+  if (!expectedCode || !chosenText || expectedCode.toLowerCase() === chosenText.toLowerCase()) return '';
+  const comparison = buildCodeComparison(expectedCode, chosenText);
+  if (!comparison) return '';
+  return `
+    <div class="wrong-path-preview">
+      <div class="wrong-path-preview__label">What changed</div>
+      <div class="wrong-path-preview__codes">
+        <div class="wrong-path-preview__expected">
+          <div class="wrong-path-preview__code">${escapeHtmlAttr(comparison.expected)}</div>
+          <div class="wrong-path-preview__hint">${escapeHtmlAttr(comparison.expectedHint)}</div>
+        </div>
+        <div class="wrong-path-preview__vs" aria-hidden="true">→</div>
+        <div class="wrong-path-preview__chosen">
+          <div class="wrong-path-preview__code">${escapeHtmlAttr(comparison.chosen)}</div>
+          <div class="wrong-path-preview__hint">${escapeHtmlAttr(comparison.chosenHint)}</div>
+        </div>
+      </div>
+      <div class="wrong-path-preview__note">${escapeHtmlAttr(comparison.note)}</div>
+    </div>`;
+}
+
+function buildCodeComparison(expectedCode, chosenText) {
+  const up = expectedCode.toUpperCase();
+  const ch = chosenText.toUpperCase();
+  if (up.startsWith('G') && ch.startsWith('G')) {
+    return {
+      expected: up,
+      chosen: ch,
+      expectedHint: getMotionHint(up),
+      chosenHint: getMotionHint(ch),
+      note: getMotionDifferenceNote(up, ch)
+    };
+  }
+  if (up.startsWith('M') && ch.startsWith('M')) {
+    return {
+      expected: up,
+      chosen: ch,
+      expectedHint: getMCodeHint(up),
+      chosenHint: getMCodeHint(ch),
+      note: getMCodeDifferenceNote(up, ch)
+    };
+  }
+  return null;
+}
+
+function getMotionHint(code) {
+  const motionHints = {
+    'G00': 'Rapid positioning only.',
+    'G0': 'Rapid positioning only.',
+    'G01': 'Straight-line cutting move.',
+    'G1': 'Straight-line cutting move.',
+    'G02': 'Clockwise arc.',
+    'G2': 'Clockwise arc.',
+    'G03': 'Counter-clockwise arc.',
+    'G3': 'Counter-clockwise arc.',
+    'G04': 'Dwell / pause.',
+    'G28': 'Home axes.',
+    'G29': 'Bed leveling move.'
+  };
+  return motionHints[code] || 'Review the code meaning.';
+}
+
+function getMCodeHint(code) {
+  const mCodeHints = {
+    'M03': 'Spindle on CW.',
+    'M04': 'Spindle on CCW.',
+    'M05': 'Spindle stop.',
+    'M08': 'Coolant on.',
+    'M09': 'Coolant off.',
+    'M30': 'End program.'
+  };
+  return mCodeHints[code] || 'Review the code meaning.';
+}
+
+function getMotionDifferenceNote(expected, chosen) {
+  if ((expected === 'G00' || expected === 'G0') && (chosen === 'G01' || chosen === 'G1')) {
+    return 'G00 is fast positioning without cutting. G01 is a controlled feed move.';
+  }
+  if ((expected === 'G01' || expected === 'G1') && (chosen === 'G00' || chosen === 'G0')) {
+    return 'G01 requires feedrate and is for cutting. G00 skips feedrate and is for positioning.';
+  }
+  if ((expected === 'G02' || expected === 'G2') && (chosen === 'G03' || chosen === 'G3')) {
+    return 'G02 is clockwise arc; G03 is counter-clockwise.';
+  }
+  if ((expected === 'G03' || expected === 'G3') && (chosen === 'G02' || chosen === 'G2')) {
+    return 'G03 is counter-clockwise arc; G02 is clockwise.';
+  }
+  return 'Different motion modes change how the tool moves.';
+}
+
+function getMCodeDifferenceNote(expected, chosen) {
+  if ((expected === 'M03' && chosen === 'M04') || (expected === 'M04' && chosen === 'M03')) {
+    return 'M03 is clockwise spindle; M04 is counter-clockwise.';
+  }
+  if (expected === 'M05' && chosen !== 'M05') {
+    return 'M05 stops the spindle before tool changes or program end.';
+  }
+  if (expected === 'M08' && chosen === 'M09') {
+    return 'M08 turns coolant on; M09 turns it off.';
+  }
+  if (expected === 'M09' && chosen === 'M08') {
+    return 'M09 turns coolant off; M08 turns it on.';
+  }
+  return 'Different M-codes control different machine actions.';
+}
+
 function showExplanation(text, question = null, correct = true) {
   const box = $('#explanation-box');
   if (!box) return;
   const answer = question ? getCorrectAnswerText(question) : '';
   const reviewLink = renderMistakeBankLink(question, !correct);
+  const wrongPath = !correct && question ? getWrongPathPreview(question, question.chosenAnswer || question.answer) : '';
   box.innerHTML = `
     <div class="explanation-box feedback-bar ${correct ? 'is-correct' : 'is-wrong'}">
       ${answer ? `<div class="feedback-answer">Correct answer: <strong>${answer}</strong></div>` : ''}
       <div class="expl-label">Explanation</div>
       <div>${text}</div>
+      ${wrongPath}
       ${reviewLink}
     </div>`;
   if (!correct) bindMistakeBankLinks();
@@ -2695,6 +2829,11 @@ function renderReference() {
       const learned = isCodeLearned(item.code);
       const card = document.createElement('div');
       card.className = 'ref-card' + (learned ? ' ref-card--learned' : '');
+      const summary = (item.body || '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      const previewText = summary.length > 90 ? summary.slice(0, 87) + '…' : summary;
       card.innerHTML = `
         <button class="ref-card__toggle" type="button" data-ref-code="${escapeHtmlAttr(item.code)}">
           <span class="ref-code">${item.code}</span>
@@ -2702,6 +2841,7 @@ function renderReference() {
           ${learned ? '<span class="ref-badge ref-badge--learned">learned</span>' : ''}
           <span class="ref-chevron">▶</span>
         </button>
+        <div class="ref-card__preview">${previewText ? escapeHtmlAttr(previewText) : 'No quick preview available.'}</div>
         <div class="ref-card__body">
           ${item.body}
           <div class="ref-card__actions">
