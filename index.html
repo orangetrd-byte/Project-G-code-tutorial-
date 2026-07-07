@@ -348,18 +348,29 @@
 <script>
   if ('serviceWorker' in navigator) {
     const hadController = !!navigator.serviceWorker.controller;
-    let refreshing = false;
+    let pendingUpdateReload = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!hadController || refreshing) return;
+      if (refreshing) return;
       refreshing = true;
-      window.location.reload();
+      pendingUpdateReload = true;
     });
 
     window.addEventListener('load', () => {
+      const banner = document.querySelector('.settings-group')?.parentElement;
+      if (pendingUpdateReload && banner && !banner.querySelector('.sw-update-banner')) {
+        const bannerEl = document.createElement('div');
+        bannerEl.className = 'sw-update-banner';
+        bannerEl.style.cssText = 'margin:0.75rem 1rem;padding:0.75rem 1rem;border-radius:12px;background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.35);color:var(--c-text);font-size:0.9rem;';
+        bannerEl.innerHTML = 'App updated. <button type="button" id="sw-reload-btn" style="margin-left:0.5rem;">Reload now</button>';
+        banner.parentElement.insertBefore(bannerEl, banner);
+        document.getElementById('sw-reload-btn')?.addEventListener('click', () => window.location.reload());
+      }
       navigator.serviceWorker.register('sw.js')
         .then(reg => {
           reg.update();
-          if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          if (reg.waiting && !navigator.serviceWorker.controller) {
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
           reg.addEventListener('updatefound', () => {
             const worker = reg.installing;
             if (!worker) return;
