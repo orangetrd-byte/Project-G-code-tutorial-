@@ -2,16 +2,25 @@
 
 ## Active Phase
 
-Phase 5: Polish And PWA Hardening
+Phase 6: Retention Polish
 
 ## Handoff Status
 
 - Last updated: 2026-07-06.
 - Codi is done for the day; Hermes should continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest pushed commit: dd3e8fc docs: update phase README/PWA notes for v2.56 hardening.
+- Latest pushed commit: 501b665 feat: polish mistake-bank link-back styling and behavior.
 - Current app build: MGP | Version v2.56 | Build 2026.07.06.03.
 - Current service-worker cache: dynamic daily timestamp.
-- Local main was clean and aligned with origin/main after the push.
+- Local main is clean and aligned with origin/main.
+
+## Phase 5 Completion Summary
+
+- Matching scoring bug — fixed/pushed.
+- Mobile sizing for S23 Ultra — pushed.
+- Mistake-bank link-back — implemented, styled, and pushed.
+- PWA hardening — cache version/dynamic fallback/polish complete.
+- Accessibility — aria-live, keyboard handlers, retry guard, weak tracker exact-key fix.
+- APP_BUILD kept in sync with phase notes.
 
 ## Current Focus
 
@@ -34,12 +43,18 @@ Phase 5: Polish And PWA Hardening
 - Lesson engine: retry-number generation no longer returns the original value as its fallback.
 - Lesson engine: retry-number replacement works inside parenthesized/delimited text.
 - Weak-spot tracker: clearing a missed question now removes only by exact weak-set key/id.
+- UX: tightened mobile chrome/complete-screen fit for smaller viewports.
+- UX: matching scoring now correctly respects mismatches.
+- Retention: added mistake-bank link-back so wrong answers can jump straight to the source lesson.
 
 ## Next Actions
 
-- Start with a clean status check, then verify lesson completion, daily practice, weak review, matching, and mixed review after behavior changes.
+- Choose the next polish lane from BACKLOG.md / PHASE_PLAN.md:
+  - Code Bank + learned-code filtering
+  - Why-before-how curriculum rules
+  - Lightweight reward/rank polish
+- Verify lesson completion, daily practice, weak review, matching, and mixed review after any behavior changes.
 - Keep examples educational, not production-ready machine instructions.
-- Implement the next small retention slice: either Code Bank learned filters, Mistake Bank link-back, or Practice hub ready/locked polish.
 - Tune reward/rank ideas carefully so they support retention instead of becoming noisy.
 - Add curriculum depth in small batches only when review flows remain stable.
 
