@@ -1511,6 +1511,23 @@ body.theme-light #lesson-action-btn:disabled {
   font-weight: 700;
 }
 .feedback-answer strong { color: var(--c-accent-l); }
+.explanation-box .mistake-bank-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+  font-size: 0.92rem;
+}
+body.theme-light .explanation-box .mistake-bank-link {
+  background: rgba(0,0,0,0.04);
+  color: #111;
+  border-color: rgba(0,0,0,0.08);
+}
 
 /* ─── LESSON FOOTER BUTTONS ───────────────────────────────── */
 .lesson-footer {
