@@ -374,8 +374,7 @@
       if (!settingsPanel || settingsPanel.querySelector('.sw-update-banner')) return;
       const banner = document.createElement('div');
       banner.className = 'sw-update-banner';
-      banner.style.cssText = 'margin:0.75rem 1rem;padding:0.75rem 1rem;border-radius:12px;background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.35);color:var(--c-text);font-size:0.9rem;';
-      banner.innerHTML = 'App updated. <button type="button" id="sw-reload-btn" style="margin-left:0.5rem;">Reload now</button>';
+      banner.innerHTML = '<span>App updated.</span><button class="sw-update-btn" type="button" id="sw-reload-btn">Reload now</button>';
       settingsPanel.insertBefore(banner, settingsPanel.firstChild);
       document.getElementById('sw-reload-btn')?.addEventListener('click', () => window.location.reload());
     }
