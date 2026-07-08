@@ -17,6 +17,7 @@ Default constraints:
 - Keep lesson flow reliable: theory, quiz, feedback, XP, unlock next lesson.
 - Keep state persistence stable in localStorage.
 - Ensure reference search and progress screens remain fast and mobile-friendly.
+- Start a source-backed reference audit table for learner-facing definitions that need manual/firmware verification.
 
 ## Phase 2: Curriculum Expansion
 
@@ -30,6 +31,7 @@ Default constraints:
 - Build on the CNC and 3D printing track switcher.
 - Keep separate progress by track.
 - Keep reference search and progress summaries clear per track.
+- Keep Reference definitions track-specific and source-backed, especially where CNC controls and printer firmware use similar codes differently.
 - Avoid mixing unrelated concepts inside the same lesson unit.
 
 ## Phase 4: Retention And Practice
@@ -47,6 +49,7 @@ Default constraints:
 
 - Every lesson must have a clear learning objective, feedback, and explanation.
 - Track content must not blur CNC machining and 3D printing concepts.
+- Reference definitions that vary by control or firmware must name the context or be marked as needing source verification.
 - Every PWA-facing change that affects cached files must bump the visible version and `sw.js` cache name.
 - `.codex-remote-attachments/` must remain ignored.
 - Before editing, confirm local `main` is clean and aligned with `origin/main`.

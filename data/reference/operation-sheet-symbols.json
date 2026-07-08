@@ -1,0 +1,21 @@
+{
+  "category": "symbols",
+  "type": "operation_sheet_symbols",
+  "items": [
+    {
+      "symbol": "OP",
+      "meaning": "Operation",
+      "usage": "OP10: first machining operation or setup step"
+    },
+    {
+      "symbol": "SU",
+      "meaning": "Setup",
+      "usage": "SU1: fixture, jaws, or setup instructions for an operation"
+    },
+    {
+      "symbol": "QC",
+      "meaning": "Quality check",
+      "usage": "Inspection requirement such as visual check, gage check, or CMM check"
+    }
+  ]
+}

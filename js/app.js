@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.56.7 | Build 2026.07.07.07';
+const APP_BUILD = 'MGP | Version v2.56.9 | Build 2026.07.08.02';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1025,10 +1025,100 @@ function t(key) {
   return (UI_TEXT[State.language] && UI_TEXT[State.language][key]) || UI_TEXT.en[key] || key;
 }
 
+let PACKAGED_REF_DATA = null;
+
 function getRefData() {
+  if (PACKAGED_REF_DATA) {
+    return State.trackId === 'printing' ? PACKAGED_REF_DATA.printing : PACKAGED_REF_DATA.cnc;
+  }
   return State.trackId === 'printing' ? PRINTING_REF_DATA : REF_DATA;
 }
 
+function escapeRefText(value) {
+  return escapeHtmlAttr(String(value ?? ''));
+}
+
+function referenceCategoryTitle(entry) {
+  const labels = {
+    cnc_milling: 'CNC Milling',
+    cnc_turning: 'CNC Turning',
+    '3d_printing_marlin': 'Marlin 3D Printing',
+    symbols: 'Symbols'
+  };
+  const typeLabels = {
+    g_codes: 'G-Codes',
+    m_codes: 'M-Codes',
+    programming_symbols: 'Programming Symbols',
+    blueprint_symbols: 'Blueprint / GD&T Symbols',
+    operation_sheet_symbols: 'Operation Sheet Symbols'
+  };
+  return [labels[entry.category] || entry.category, typeLabels[entry.type] || entry.type]
+    .filter(Boolean)
+    .join(' - ');
+}
+
+function referenceItemBody(item) {
+  const lines = [];
+  const description = item.description || item.meaning || item.name || '';
+  if (description) lines.push(`<p>${escapeRefText(description)}</p>`);
+  const meta = [];
+  if (item.group) meta.push(`Group: ${escapeRefText(item.group)}`);
+  if (item.params) meta.push(`Parameters: ${escapeRefText(item.params)}`);
+  if (item.usage) meta.push(`Usage: ${escapeRefText(item.usage)}`);
+  if (meta.length) lines.push(`<p>${meta.join(' | ')}</p>`);
+  if (item.notes) lines.push(`<p>${escapeRefText(item.notes)}</p>`);
+  return lines.join('') || '<p>Reference definition pending.</p>';
+}
+
+function adaptReferenceFile(entry, data) {
+  const title = referenceCategoryTitle(entry);
+  return {
+    category: title,
+    codes: (data.items || []).map(item => {
+      const code = item.code || item.symbol || item.abbrev || '';
+      return {
+        code,
+        name: item.description || item.meaning || item.name || entry.type || 'Reference',
+        body: referenceItemBody(item)
+      };
+    }).filter(item => item.code)
+  };
+}
+
+async function loadReferencePackage() {
+  try {
+    const base = './data/reference/';
+    const index = await fetch(base + 'index.json', { cache: 'no-cache' }).then(response => {
+      if (!response.ok) throw new Error(`Reference index ${response.status}`);
+      return response.json();
+    });
+    const files = await Promise.all(index.files
+      .filter(entry => entry.file && entry.file.endsWith('.json') && entry.file !== 'metadata.json')
+      .map(async entry => ({
+        entry,
+        data: await fetch(base + entry.file, { cache: 'no-cache' }).then(response => {
+          if (!response.ok) throw new Error(`${entry.file} ${response.status}`);
+          return response.json();
+        })
+      })));
+    const packaged = { cnc: [], printing: [] };
+    files.forEach(({ entry, data }) => {
+      const category = adaptReferenceFile(entry, data);
+      if (!category.codes.length) return;
+      if (entry.category === '3d_printing_marlin') packaged.printing.push(category);
+      else if (entry.category === 'symbols') {
+        packaged.cnc.push(category);
+        packaged.printing.push(category);
+      } else {
+        packaged.cnc.push(category);
+      }
+    });
+    if (packaged.cnc.length || packaged.printing.length) PACKAGED_REF_DATA = packaged;
+  } catch (error) {
+    PACKAGED_REF_DATA = null;
+    console.warn('Using built-in reference fallback:', error);
+  }
+}
 function getCodeLibrarySize() {
   return (getRefData() || []).reduce((sum, cat) => sum + (cat.codes || []).length, 0);
 }
@@ -1879,17 +1969,17 @@ function renderTheoryStep(lesson) {
 }
 
 function renderWeakReviewIntro(questions) {
-  const sourceLessons = [];
-  questions.forEach(q => {
+  const lessonCards = questions.map((q, idx) => {
     const lesson = getLessons().find(item => item.id === q.sourceLessonId);
-    if (lesson && !sourceLessons.some(item => item.id === lesson.id)) sourceLessons.push(lesson);
-  });
-  const lessonCards = sourceLessons.slice(0, 4).map(lesson => `
+    const title = lesson?.title || q.sourceTitle || 'Quick recall';
+    const label = lesson ? `Focus area ${lesson.unit}.${lesson.lesson}` : `Review item ${idx + 1}`;
+    return `
     <div class="weak-relearn-card">
-      <div class="weak-relearn-card__label">Focus area ${lesson.unit}.${lesson.lesson}</div>
-      <div class="weak-relearn-card__title">${lesson.title}</div>
+      <div class="weak-relearn-card__label">${label}</div>
+      <div class="weak-relearn-card__title">${title}</div>
       <p>Recall the rule before opening the question. The explanation appears after you answer.</p>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   return `
     <div class="step-card active weak-relearn has-audio">
       ${renderReadAloudButton()}
@@ -2893,8 +2983,12 @@ function renderReference() {
     container.innerHTML = '<div class="mistake-bank-empty">No learned codes yet. Complete lessons to mark codes learned.</div>';
   }
 
-  $('#ref-search').value = '';
-  $('#ref-search').oninput = e => {
+  const learnedToggle = $('#ref-learned-toggle');
+  if (learnedToggle) learnedToggle.onchange = renderReference;
+
+  const searchInput = $('#ref-search');
+  searchInput.value = '';
+  searchInput.oninput = e => {
     const q = e.target.value.toLowerCase();
     $$('.ref-category').forEach(section => {
       const visible = [...section.querySelectorAll('.ref-card')].some(card => {
@@ -3083,11 +3177,12 @@ function initNav() {
 }
 
 // ─── BOOT ─────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   let initError = null;
   try {
     initConceptPools();
     State.load();
+    await loadReferencePackage();
     applyTheme();
     initNav();
     initTrackSwitcher();

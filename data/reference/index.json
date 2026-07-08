@@ -30,7 +30,7 @@
       "file": "lathe-m-codes.json",
       "category": "cnc_turning",
       "type": "m_codes",
-      "count": 3
+      "count": 5
     },
     {
       "file": "programming-symbols.json",

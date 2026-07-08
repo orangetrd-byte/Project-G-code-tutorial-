@@ -8,10 +8,10 @@ Phase 6: Retention Polish
 
 - Last updated: 2026-07-06.
 - Codi is done for the day; Hermes should continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest pushed commit: 501b665 feat: polish mistake-bank link-back styling and behavior.
-- Current app build: MGP | Version v2.56 | Build 2026.07.06.03.
-- Current service-worker cache: dynamic daily timestamp.
-- Local main is clean and aligned with origin/main.
+- Latest pushed commit: 747e49f fix: style app update reload button.
+- Current app build: MGP | Version v2.56.7 | Build 2026.07.07.07.
+- Current service-worker cache: pgct-2026.07.07.07.
+- Local main is aligned with origin/main; only backup files are untracked and intentionally separate.
 
 ## Phase 5 Completion Summary
 
@@ -57,11 +57,14 @@ Phase 6: Retention Polish
 - Keep examples educational, not production-ready machine instructions.
 - Tune reward/rank ideas carefully so they support retention instead of becoming noisy.
 - Add curriculum depth in small batches only when review flows remain stable.
+- Add a source-backed reference audit table before changing disputed definitions: `code`, `track`, `current definition`, `source/manual`, `confidence`, and `notes`.
+- Cross-check semicolon/comment/block-end wording, `G04` dwell timing, printer firmware codes, CNC M-codes, units, feed, and spindle assumptions against official control/firmware docs before editing learner-facing definitions.
 
 ## Planned Ideas
 
 - Strengthen why-before-how curriculum rules by keeping visible lesson reasons before syntax/details.
 - Add Code Bank / learned-code filtering so Reference feels like a collection as well as a lookup.
+- Build a source-backed Reference QA pass so code definitions are traceable to Fanuc-style CNC manuals or Marlin/Klipper firmware docs instead of unsourced general knowledge.
 - Add lightweight reward/rank moments for meaningful progress milestones.
 - Keep matching as a game-like review mode, especially on mobile and light theme.
 - Add more visual logic blocks for coordinates, motion, offsets, cycles, and troubleshooting patterns.

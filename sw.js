@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const BUILD_VERSION = '2026.07.07.07';
+const BUILD_VERSION = '2026.07.08.02';
 const CACHE_VERSION = 'pgct-' + BUILD_VERSION;
 const CACHE_NAME = CACHE_VERSION;
 
@@ -14,6 +14,17 @@ const PRECACHE_ASSETS = [
   './css/style.css',
   './js/app.js',
   './data/lessons.js',
+  './data/reference/index.json',
+  './data/reference/metadata.json',
+  './data/reference/mill-g-codes.json',
+  './data/reference/mill-m-codes.json',
+  './data/reference/lathe-g-codes.json',
+  './data/reference/lathe-m-codes.json',
+  './data/reference/programming-symbols.json',
+  './data/reference/blueprint-gdt-symbols.json',
+  './data/reference/operation-sheet-symbols.json',
+  './data/reference/marlin-3d-printer-g-codes.json',
+  './data/reference/marlin-3d-printer-m-codes.json',
   './icons/icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -54,7 +65,8 @@ function shouldNetworkFirst(request) {
   return request.destination === 'script' ||
     request.destination === 'style' ||
     url.pathname.endsWith('/index.html') ||
-    url.pathname.endsWith('/data/lessons.js');
+    url.pathname.endsWith('/data/lessons.js') ||
+    url.pathname.includes('/data/reference/');
 }
 
 function putFreshResponse(request, response) {

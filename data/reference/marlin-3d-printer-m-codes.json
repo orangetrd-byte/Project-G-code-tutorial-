@@ -1,0 +1,36 @@
+{
+  "category": "3d_printing_marlin",
+  "type": "m_codes",
+  "items": [
+    {
+      "code": "M104",
+      "description": "Set hotend temperature",
+      "params": "S",
+      "notes": "Sets nozzle target temperature and continues without waiting."
+    },
+    {
+      "code": "M109",
+      "description": "Set hotend temperature and wait",
+      "params": "S",
+      "notes": "Sets nozzle target temperature and waits until reached."
+    },
+    {
+      "code": "M140",
+      "description": "Set bed temperature",
+      "params": "S",
+      "notes": "Sets bed target temperature and continues without waiting."
+    },
+    {
+      "code": "M190",
+      "description": "Set bed temperature and wait",
+      "params": "S",
+      "notes": "Sets bed target temperature and waits until reached."
+    },
+    {
+      "code": "M106",
+      "description": "Set fan speed",
+      "params": "S",
+      "notes": "Controls fan speed, commonly S0-S255 in Marlin."
+    }
+  ]
+}

@@ -1860,7 +1860,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     },
     {
       type: "multiple-choice",
-      question: "What is missing from the end of this simple program?\n...\nM05\n___",
+      question: "What code belongs after the spindle stop to end and rewind this simple program?\n%\nO1001\nM03 S800\nG00 X0 Y0\nM05\n___",
       options: ["M30", "G91", "F0.012", "X0"],
       answer: 0,
       explanation: "M30 ends the program and rewinds it to the beginning."
