@@ -1,0 +1,10 @@
+{
+  "title": "CNC & 3D Printing Reference Package",
+  "version": "1.0",
+  "brands": [
+    "Fanuc",
+    "Haas"
+  ],
+  "notes": "This is a summarized reference. Consult official manuals for full details and machine-specific variations. Suitable for Fanuc, Haas, and Marlin-based 3D printers.",
+  "source_file": "cnc_3d_reference.json"
+}
