@@ -1,0 +1,26 @@
+{
+  "category": "symbols",
+  "type": "blueprint_symbols",
+  "items": [
+    {
+      "symbol": "⌀",
+      "meaning": "Diameter"
+    },
+    {
+      "symbol": "R",
+      "meaning": "Radius"
+    },
+    {
+      "symbol": "⌖",
+      "meaning": "Position tolerance (GD&T)"
+    },
+    {
+      "symbol": "⏤",
+      "meaning": "Flatness (GD&T)"
+    },
+    {
+      "symbol": "∥",
+      "meaning": "Parallelism (GD&T)"
+    }
+  ]
+}
