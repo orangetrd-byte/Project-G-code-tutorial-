@@ -208,9 +208,9 @@ O1001                      ; Program number
 (PART: SHAFT 001)          ; Comment / description
 (TOOL: T0101 - OD ROUGH)   ; Tool description comment
 
-N10 G20 G40 G49            ; Safety block — inch mode, cancel comp
+N10 G18 G20 G40 G80 G99    ; Lathe safety block - XZ plane, inch mode, cancel modes
 N20 G28 U0. W0.            ; Machine home
-N30 T0101 M06              ; Tool call + tool change
+N30 T0101                  ; Tool call + offset call
 N40 G96 S400 M03 F0.012    ; CSS on, spindle on CW, feedrate
 N50 G00 X2.200 Z0.100      ; Rapid to start position
 
@@ -246,7 +246,7 @@ N110 M30                   ; End program, rewind
       {
         id: "u1-l3-q2",
         type: "multiple-choice",
-        question: "Why is a 'safety block' (e.g., G20 G40 G49) placed at the start of a program?",
+        question: "Why is a lathe safety block (e.g., G18 G20 G40 G80 G99) placed at the start of a program?",
         options: [
           "It sets the spindle speed",
           "It cancels leftover modal codes from a previous program",
@@ -254,7 +254,7 @@ N110 M30                   ; End program, rewind
           "It defines the work offset"
         ],
         answer: 1,
-        explanation: "Modal codes persist between programs on many controls. A safety block explicitly cancels cutter comp (G40), tool length offset (G49), and sets inch/metric mode — preventing crashes from leftover states."
+        explanation: "Modal codes persist between programs on many controls. A lathe safety block makes the plane, units, feed mode, canned-cycle state, and compensation state explicit before motion starts."
       },
       {
         id: "u1-l3-q3",
@@ -645,8 +645,8 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
         <li>Tool wear (small adjustments to hit size)</li>
         <li>Nose radius compensation geometry</li>
       </ul>
-      <p>On most Fanuc-style controls, tool change also requires <code>M06</code> 
-      (or the turret indexes automatically on T-call, depending on the machine).</p>
+      <p>On many Fanuc-style lathes, the turret indexes from the <code>T0101</code> call itself.
+      <code>M06</code> is common on mills, but is not the normal beginner pattern for this lathe track.</p>
       <p class="callout tip">💡 Keeping tool number = offset number (T0101, T0202...) 
       prevents confusion when troubleshooting offsets.</p>
     `,
