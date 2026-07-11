@@ -1,6 +1,6 @@
 {
   "title": "Project G-Code Reference Index",
-  "version": "1.0",
+  "version": "1.1",
   "files": [
     {
       "file": "metadata.json",
@@ -24,7 +24,7 @@
       "file": "lathe-g-codes.json",
       "category": "cnc_turning",
       "type": "g_codes",
-      "count": 8
+      "count": 20
     },
     {
       "file": "lathe-m-codes.json",
