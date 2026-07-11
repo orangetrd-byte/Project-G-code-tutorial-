@@ -1,0 +1,212 @@
+{
+  "project": "Project G-Code",
+  "version": "1.0",
+  "purpose": "Improve lesson clarity, reduce guessing, strengthen weak-skill practice, and validate the learning experience with beginners.",
+  "status_values": [
+    "planned",
+    "in_progress",
+    "blocked",
+    "completed"
+  ],
+  "priority_values": [
+    "critical",
+    "high",
+    "medium",
+    "low"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "title": "Improve lesson quality",
+      "description": "Rewrite lessons so each concept includes a plain-language explanation, correct CNC context, a worked example, and a clear takeaway.",
+      "priority": "critical",
+      "status": "planned"
+    },
+    {
+      "id": "OBJ-002",
+      "title": "Remove guessing-based questions",
+      "description": "Replace ambiguous prompts with explicit instructions, sufficient context, and answerable CNC scenarios.",
+      "priority": "critical",
+      "status": "planned"
+    },
+    {
+      "id": "OBJ-003",
+      "title": "Strengthen weak-spot practice",
+      "description": "Track missed concepts and generate focused review exercises until the learner demonstrates mastery.",
+      "priority": "high",
+      "status": "planned"
+    },
+    {
+      "id": "OBJ-004",
+      "title": "Validate with beginner users",
+      "description": "Test lesson clarity, navigation, feedback, and retention with users who have little or no G-code experience.",
+      "priority": "high",
+      "status": "planned"
+    }
+  ],
+  "phases": [
+    {
+      "id": "PHASE-1",
+      "title": "Lesson audit and rewrite",
+      "target_window": "Week 1",
+      "priority": "critical",
+      "status": "planned",
+      "tasks": [
+        {
+          "id": "TASK-001",
+          "title": "Audit all existing lessons",
+          "description": "Identify inaccurate explanations, missing context, unclear wording, duplicate content, and questions that require guessing.",
+          "acceptance_criteria": [
+            "Every lesson has been reviewed.",
+            "Each issue is categorized by accuracy, clarity, difficulty, or interaction design.",
+            "Critical machining inaccuracies are corrected before new content is added."
+          ]
+        },
+        {
+          "id": "TASK-002",
+          "title": "Apply a standard lesson structure",
+          "description": "Use a consistent sequence: objective, explanation, syntax, worked example, common mistake, guided practice, and recap.",
+          "acceptance_criteria": [
+            "Every lesson states what the learner will be able to do.",
+            "Every code lesson includes valid syntax and at least one realistic example.",
+            "Machine-specific differences are labeled instead of presented as universal behavior."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHASE-2",
+      "title": "Question and instruction redesign",
+      "target_window": "Week 2",
+      "priority": "critical",
+      "status": "planned",
+      "tasks": [
+        {
+          "id": "TASK-003",
+          "title": "Replace guessing questions",
+          "description": "Rewrite prompts so the learner has enough information to reason to one defensible answer.",
+          "acceptance_criteria": [
+            "No question depends on hidden assumptions.",
+            "Distractors are plausible but clearly incorrect for a known reason.",
+            "Feedback explains why the selected answer is correct or incorrect."
+          ]
+        },
+        {
+          "id": "TASK-004",
+          "title": "Add guided practice before assessment",
+          "description": "Introduce new concepts with hints and scaffolding before presenting independent quiz questions.",
+          "acceptance_criteria": [
+            "New concepts are not assessed before being explained.",
+            "Hints are available without immediately revealing the answer.",
+            "The final exercise can be completed without hints."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHASE-3",
+      "title": "Weak-skill review system",
+      "target_window": "Week 3",
+      "priority": "high",
+      "status": "planned",
+      "tasks": [
+        {
+          "id": "TASK-005",
+          "title": "Tag lessons and questions by skill",
+          "description": "Assign stable skill identifiers such as rapid positioning, linear feed, arcs, offsets, spindle control, canned cycles, and safety basics.",
+          "acceptance_criteria": [
+            "Every graded question maps to at least one skill ID.",
+            "Missed answers update the learner's weak-skill record.",
+            "Skill IDs remain stable across app updates."
+          ]
+        },
+        {
+          "id": "TASK-006",
+          "title": "Generate targeted review sessions",
+          "description": "Build short practice sets from recently missed or low-mastery skills.",
+          "acceptance_criteria": [
+            "Review sessions prioritize weak skills over mastered skills.",
+            "Repeated questions vary examples rather than repeating identical wording.",
+            "A skill leaves weak status only after repeated correct application."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHASE-4",
+      "title": "Beginner usability testing",
+      "target_window": "Week 4",
+      "priority": "high",
+      "status": "planned",
+      "tasks": [
+        {
+          "id": "TASK-007",
+          "title": "Run beginner test sessions",
+          "description": "Observe users completing onboarding, one lesson, one quiz, and one review session without coaching.",
+          "acceptance_criteria": [
+            "At least five beginner users complete a test session.",
+            "Confusing wording and navigation failures are recorded.",
+            "Users can explain the main lesson concept after completion."
+          ]
+        },
+        {
+          "id": "TASK-008",
+          "title": "Prioritize findings and revise",
+          "description": "Rank findings by severity and fix blockers before cosmetic issues.",
+          "acceptance_criteria": [
+            "All blocking issues have owners and statuses.",
+            "Critical clarity issues are fixed and retested.",
+            "A short test report records outcomes and remaining risks."
+          ]
+        }
+      ]
+    }
+  ],
+  "evaluation_criteria": [
+    {
+      "id": "METRIC-001",
+      "name": "Lesson clarity",
+      "measurement": "Percentage of beginner testers who complete a lesson without external explanation.",
+      "target": ">= 80%"
+    },
+    {
+      "id": "METRIC-002",
+      "name": "Question quality",
+      "measurement": "Percentage of incorrect answers where users report misunderstanding the concept rather than misunderstanding the wording.",
+      "target": ">= 90%"
+    },
+    {
+      "id": "METRIC-003",
+      "name": "Immediate learning",
+      "measurement": "Average score on the first independent practice set after instruction.",
+      "target": ">= 80%"
+    },
+    {
+      "id": "METRIC-004",
+      "name": "Retention",
+      "measurement": "Average score when the same skill is reassessed after at least seven days.",
+      "target": ">= 70%"
+    },
+    {
+      "id": "METRIC-005",
+      "name": "User confidence",
+      "measurement": "Beginner self-rating before and after completing the tested lesson path.",
+      "target": "Positive improvement for at least 80% of testers"
+    }
+  ],
+  "content_rules": [
+    "Do not present controller-specific behavior as universal.",
+    "Do not encourage running unverified code on a real machine.",
+    "Use simulated or clearly labeled examples for training.",
+    "Explain abbreviations and parameters when first introduced.",
+    "Prefer realistic machining context over trivia or memorization-only questions.",
+    "Every incorrect answer must receive useful corrective feedback."
+  ],
+  "definition_of_done": [
+    "All current lessons pass the lesson-quality checklist.",
+    "Ambiguous guessing questions have been removed or rewritten.",
+    "Weak-skill practice is driven by actual learner errors.",
+    "Beginner testing is completed and critical findings are resolved.",
+    "Evaluation metrics are recorded in a repeatable test report."
+  ]
+}
