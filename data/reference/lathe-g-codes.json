@@ -2,13 +2,139 @@
   "category": "cnc_turning",
   "type": "g_codes",
   "items": [
-    { "code": "G00", "description": "Rapid" },
-    { "code": "G01", "description": "Linear feed" },
-    { "code": "G02", "description": "CW arc" },
-    { "code": "G03", "description": "CCW arc" },
-    { "code": "G71", "description": "Stock removal turning" },
-    { "code": "G76", "description": "Threading cycle" },
-    { "code": "G96", "description": "Constant surface speed" },
-    { "code": "G97", "description": "Constant RPM" }
+    {
+      "code": "G00",
+      "description": "Rapid positioning",
+      "params": "X Z",
+      "usage": "Move to a clearance or approach position without cutting feed.",
+      "notes": "Rapid paths are machine-dependent. Verify clearance before cycle start or single-block operation."
+    },
+    {
+      "code": "G01",
+      "description": "Linear feed move",
+      "params": "X Z F",
+      "usage": "Cut a straight line at the programmed feedrate.",
+      "notes": "On many lathes, feed interpretation depends on G98/G99 or the control's equivalent mode."
+    },
+    {
+      "code": "G02",
+      "description": "Clockwise circular interpolation",
+      "params": "X Z I K or R",
+      "usage": "Cut a clockwise arc in the active turning plane.",
+      "notes": "Arc direction is viewed in the active plane. Confirm the control's I/K or R rules."
+    },
+    {
+      "code": "G03",
+      "description": "Counterclockwise circular interpolation",
+      "params": "X Z I K or R",
+      "usage": "Cut a counterclockwise arc in the active turning plane.",
+      "notes": "Arc direction and center-word format vary by control and postprocessor."
+    },
+    {
+      "code": "G18",
+      "description": "Select the XZ plane",
+      "usage": "Sets the normal turning plane for lathe arcs and canned cycles.",
+      "notes": "Usually the default plane on a standard two-axis lathe."
+    },
+    {
+      "code": "G20",
+      "description": "Inch programming mode",
+      "usage": "Interprets programmed dimensions in inches.",
+      "notes": "Confirm the control and machine setup before changing unit mode."
+    },
+    {
+      "code": "G21",
+      "description": "Metric programming mode",
+      "usage": "Interprets programmed dimensions in millimeters.",
+      "notes": "Do not assume the unit mode from displayed decimals alone."
+    },
+    {
+      "code": "G28",
+      "description": "Reference return through an intermediate point",
+      "params": "U W or X Z, control-dependent",
+      "usage": "Returns one or more axes toward machine reference using the control's defined format.",
+      "notes": "Syntax varies. An unsafe intermediate point can cause a collision."
+    },
+    {
+      "code": "G40",
+      "description": "Cancel tool nose radius compensation",
+      "usage": "Cancels active tool nose compensation before a safe exit or tool change.",
+      "notes": "Compensation entry and exit moves must follow control rules."
+    },
+    {
+      "code": "G50",
+      "description": "Spindle speed clamp or coordinate function, control-dependent",
+      "params": "S or axis words",
+      "usage": "Commonly limits maximum RPM when using constant surface speed on Fanuc-style lathes.",
+      "notes": "G50 has different meanings on some controls. Verify the machine manual."
+    },
+    {
+      "code": "G54",
+      "description": "Work coordinate system 1",
+      "usage": "Selects the first work offset when supported by the control.",
+      "notes": "Lathe work-offset conventions vary between Fanuc, Haas, and other controls."
+    },
+    {
+      "code": "G70",
+      "description": "Finishing cycle",
+      "params": "P Q",
+      "usage": "Finishes a profile previously defined by sequence blocks.",
+      "notes": "Often used after G71 or G72. Exact behavior depends on the control."
+    },
+    {
+      "code": "G71",
+      "description": "Rough turning stock-removal cycle",
+      "params": "U R P Q W F, format varies",
+      "usage": "Removes material in repeated roughing passes along a defined profile.",
+      "notes": "One-line and two-line formats differ. Never copy a format without matching the machine control."
+    },
+    {
+      "code": "G72",
+      "description": "Rough facing stock-removal cycle",
+      "params": "W R P Q U F, format varies",
+      "usage": "Removes material in repeated facing passes across a defined profile.",
+      "notes": "Parameter letters and cycle format vary by control."
+    },
+    {
+      "code": "G74",
+      "description": "Peck drilling or face-grooving cycle, control-dependent",
+      "params": "R Z Q F or control-specific format",
+      "usage": "Used for repeated pecking or grooving motion depending on the machine.",
+      "notes": "This code is especially control-specific. Verify the manual before use."
+    },
+    {
+      "code": "G75",
+      "description": "Grooving or pecking cycle, control-dependent",
+      "params": "R X Z P Q F or control-specific format",
+      "usage": "Commonly used for OD or ID grooving with repeated pecks on Fanuc-style controls.",
+      "notes": "Cycle meaning and parameter format vary."
+    },
+    {
+      "code": "G76",
+      "description": "Multiple-pass threading cycle",
+      "params": "P Q R X Z F, format varies",
+      "usage": "Cuts a thread over multiple controlled passes.",
+      "notes": "One-line and two-line formats differ significantly by control generation."
+    },
+    {
+      "code": "G96",
+      "description": "Constant surface speed",
+      "params": "S",
+      "usage": "Automatically changes spindle RPM as cutting diameter changes.",
+      "notes": "Use a safe maximum-RPM clamp such as G50 S... where appropriate."
+    },
+    {
+      "code": "G97",
+      "description": "Constant spindle RPM",
+      "params": "S",
+      "usage": "Runs the spindle at a fixed commanded RPM.",
+      "notes": "Commonly used for drilling, threading setup, or before tool changes depending on the process."
+    },
+    {
+      "code": "G98 / G99",
+      "description": "Feed mode selection, control-dependent",
+      "usage": "Selects feed per minute or feed per revolution on many turning controls.",
+      "notes": "The assignment of G98 and G99 can differ between control families. Verify the machine manual."
+    }
   ]
 }
