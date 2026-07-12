@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.2 | Build 2026.07.11.04';
+const APP_BUILD = 'MGP | Version v2.57.4 | Build 2026.07.11.06';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -109,7 +109,7 @@ const State = {
         return;
       }
       const d = JSON.parse(raw);
-      this.trackId = getTrack(d.trackId) ? d.trackId : 'cnc';
+      this.trackId = typeof d.trackId === 'string' && TRACKS[d.trackId] ? d.trackId : 'cnc';
       this.language = d.language === 'es' ? 'es' : 'en';
       this.theme = d.theme === 'light' ? 'light' : 'dark';
       this.setupComplete = d.setupComplete === true;
@@ -146,7 +146,7 @@ const State = {
   },
 
   switchTrack(trackId) {
-    if (!getTrack(trackId) || trackId === this.trackId) return;
+    if (typeof trackId !== 'string' || !TRACKS[trackId] || trackId === this.trackId) return;
     this.save();
     this.trackId = trackId;
     this.currentLesson = null;
@@ -342,7 +342,9 @@ const State = {
   },
 
   getTotalProgress() {
-    return { done: this.completedLessons.length, total: getLessons().length };
+    const lessonIds = new Set(getLessons().map(lesson => lesson.id));
+    const done = this.completedLessons.filter(id => lessonIds.has(id)).length;
+    return { done, total: lessonIds.size };
   }
 };
 
@@ -903,6 +905,13 @@ function createRetryNumberVariant(template, originalQuestion = {}) {
 
   const replacements = new Map();
   const originalAnswer = String(variant.answer || '').trim();
+  if (isPlainNumericAnswer(originalAnswer)) {
+    const escapedAnswer = originalAnswer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const answerAppearsInPrompt = new RegExp(`(?<![0-9.])${escapedAnswer}(?![0-9.])`)
+      .test(variant.question || '');
+    if (!answerAppearsInPrompt) return variant;
+  }
+
   const retryAnswer = isPlainNumericAnswer(originalAnswer) ? makeRetryNumber(originalAnswer) : '';
 
   if (retryAnswer) variant.answer = retryAnswer;
