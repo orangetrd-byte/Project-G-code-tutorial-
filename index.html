@@ -354,6 +354,106 @@
 
 <!-- Data & App -->
 <script src="data/lessons.js"></script>
+<script>
+  (() => {
+    if (!Array.isArray(LESSONS)) return;
+
+    const updateQuestion = (lessonId, questionId, patch) => {
+      const lesson = LESSONS.find(item => item.id === lessonId);
+      const question = lesson?.quiz?.find(item => item.id === questionId);
+      if (question) Object.assign(question, patch);
+    };
+
+    const addQuestion = (lessonId, question) => {
+      const lesson = LESSONS.find(item => item.id === lessonId);
+      if (!lesson || lesson.quiz?.some(item => item.id === question.id)) return;
+      lesson.quiz.push(question);
+    };
+
+    updateQuestion('u1-l1', 'u1-l1-q1', {
+      question: 'An operator loads this block into a control:\nG00 X2.000 Z0.100\n\nWhat is G-code doing here?',
+      options: [
+        'Giving the machine a motion instruction it can read',
+        'Showing a finished part drawing',
+        'Measuring the tool with a micrometer',
+        'Naming the cutting insert grade'
+      ],
+      answer: 0,
+      explanation: 'G-code is machine-readable instruction text. In this block, G00 tells the machine what kind of move to make and X/Z tell it where to go.'
+    });
+
+    updateQuestion('u1-l1', 'u1-l1-q2', {
+      question: 'Read this block like an operator:\nN020 G00 X2.000 Z0.100 S800 M03\n\nWhich part gives the destination position?',
+      options: ['N020 line number', 'G00 motion mode', 'X2.000 Z0.100 coordinates', 'S800 M03 spindle command'],
+      answer: 2,
+      explanation: 'X and Z are coordinate words. They tell the machine the destination for the move.'
+    });
+
+    updateQuestion('u1-l1', 'u1-l1-q3', {
+      question: 'Example rapid positioning block:\nG00 X2.000 Z0.100\n\nNow complete this similar rapid block:\nN010 ___ X0 Z0.100',
+      hint: 'Use the same motion code as the example. G0 is also accepted on many controls.',
+      explanation: 'G00 is rapid positioning. G0 is also accepted on many controls; both mean rapid positioning, but G00 is clearer when first learning.'
+    });
+
+    updateQuestion('u1-l1', 'u1-l1-q6', {
+      question: 'Example rapid move:\nG00 X2.000 Z0.100\n\nWhat is missing from this similar rapid move?\n___ X2.500 Z0.100',
+      options: ['G00', 'G01', 'M30', 'T0101'],
+      answer: 0,
+      explanation: 'The missing word is G00 because this is a rapid positioning move. G01 would be a controlled feed move, M30 ends a program, and T0101 calls a tool/offset.'
+    });
+
+    updateQuestion('u1-l1', 'u1-l1-q7', {
+      question: 'A complete beginner rapid block needs a motion word and coordinates. Which block has both?',
+      options: ['X2.000 Z0.100', 'G00 X2.000 Z0.100', 'M03 S800', 'N010'],
+      answer: 1,
+      explanation: 'G00 gives the motion type, and X/Z give the destination. Coordinates alone do not clearly teach the move type to a beginner.'
+    });
+
+    addQuestion('u1-l1', {
+      id: 'u1-l1-q8',
+      type: 'multiple-choice',
+      question: 'Correction check:\nX2.000 Z0.100\n\nWhy is this weak beginner code by itself?',
+      options: [
+        'It has coordinates but no clear motion word in the block',
+        'It has too many semicolons',
+        'It starts the spindle backwards',
+        'It changes the tool offset'
+      ],
+      answer: 0,
+      explanation: 'The line only shows coordinates. A beginner should learn to include or recognize the active motion word, such as G00 for rapid or G01 for feed.'
+    });
+
+    updateQuestion('u1-l2', 'u1-l2-q3', {
+      question: 'Setup block:\nG90 G20 G40\n\nWhich code makes later X/Z positions measure from program zero?',
+      options: ['G91 incremental', 'G90 absolute', 'G92 position register', 'G28 machine home'],
+      answer: 1,
+      explanation: 'G90 is absolute mode. Positions are measured from program zero instead of from the current tool position.'
+    });
+
+    updateQuestion('u1-l2', 'u1-l2-q6', {
+      question: 'Example absolute setup:\nG90 G20 G40\n\nWhat is missing from this setup line?\n___ G20 G40',
+      options: ['G90', 'G91', 'M05', 'T0101'],
+      answer: 0,
+      explanation: 'G90 is missing. It tells the control to treat X and Z positions as absolute positions from program zero.'
+    });
+
+    updateQuestion('u1-l2', 'u1-l2-q7', {
+      question: 'You are writing a beginner lathe program from a known part zero. Which positioning mode is the safer normal choice?',
+      options: ['G91 incremental for every move', 'G90 absolute for normal cutting positions', 'No positioning mode', 'Switch modes every block'],
+      answer: 1,
+      explanation: 'G90 absolute mode is easier to audit because each programmed position points back to part zero.'
+    });
+
+    addQuestion('u1-l2', {
+      id: 'u1-l2-q8',
+      type: 'multiple-choice',
+      question: 'Correction check:\nA print says the finished diameter should be 1.500 on a typical diameter-mode lathe. Which X value should the program use?',
+      options: ['X1.500', 'X0.750', 'Z1.500', 'F1.500'],
+      answer: 0,
+      explanation: 'Most CNC lathes use diameter mode for X. X1.500 means a 1.500 diameter, even though the physical radius is 0.750.'
+    });
+  })();
+</script>
 <script src="js/app.js"></script>
 
 <!-- PWA Service Worker Registration -->
