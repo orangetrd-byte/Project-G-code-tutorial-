@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.0 | Build 2026.07.11.02';
+const APP_BUILD = 'MGP | Version v2.57.2 | Build 2026.07.11.04';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -2470,7 +2470,8 @@ function showExplanation(text, question = null, correct = true) {
 
 function renderMistakeBankLink(question = null, show = false) {
   if (!show || !question) return '';
-  const sourceLessonId = question.sourceLessonId || question.originalQuestionId || question.id;
+  const sourceLessonId = question.sourceLessonId || State.currentLesson?.id;
+  if (!sourceLessonId) return '';
   const lesson = getLessons().find(item => item.id === sourceLessonId);
   const label = lesson ? `Review this topic: ${lesson.title}` : 'Review this topic';
   const titleAttr = lesson ? ` title="${lesson.title}"` : '';
@@ -2542,10 +2543,6 @@ function finishLesson() {
   const unlockedNextLesson = !wasLessonDone && nextLesson && State.isLessonUnlocked(nextLesson) ? nextLesson : null;
   const nextActionLesson = nextLesson && State.isLessonUnlocked(nextLesson) ? nextLesson : null;
   State.nextActionLessonId = nextActionLesson?.id || null;
-
-  if (xpEarned > 0 && State.missedQuestions.length === 0) {
-    (lesson.quiz || []).forEach(q => applyLearnedCodeProgress(q, true));
-  }
 
   if (completedUnitNow) AudioFeedback.unitComplete();
   else AudioFeedback.lessonComplete();
