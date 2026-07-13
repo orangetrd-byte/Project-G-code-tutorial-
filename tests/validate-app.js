@@ -74,6 +74,10 @@ function validateReferences() {
 
 function validateCurriculum(api) {
   api.initConceptPools();
+  const firstCncLesson = api.TRACKS.cnc.lessons.find(lesson => lesson.id === 'u1-l1');
+  assert.ok(firstCncLesson.quiz.some(question => question.id === 'u1-l1-q8'), 'Beginner context questions must load from curriculum data');
+  assert.doesNotMatch(read('index.html'), /const updateQuestion\s*=/, 'Curriculum patches do not belong in index.html');
+
   const lessonIds = new Set();
   const questionIds = new Set();
   const validTypes = new Set(['multiple-choice', 'true-false', 'fill-blank', 'matching']);
