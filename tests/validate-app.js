@@ -54,6 +54,18 @@ function validateActiveCorrection() {
   assert.match(app, /function resetMatchingForCorrection/, 'Matching misses must require a clean rematch');
 }
 
+function validateFactCheckContent() {
+  const curriculum = read('data/lessons.js');
+  const app = read('js/app.js');
+  assert.doesNotMatch(curriculum, /G90 = absolute mode/, 'Lathe G90 must not be taught as a universal absolute mode');
+  assert.doesNotMatch(curriculum, /G00 ignores feedrate override/, 'Rapid override behavior must remain controller-specific');
+  assert.doesNotMatch(curriculum, /Always leave 0\.050/, 'Fixed rapid clearances must not be labeled universally safe');
+  assert.doesNotMatch(curriculum, /G02 cuts a concave/, 'Arc direction must not be equated with concavity');
+  assert.match(curriculum, /M83 ; relative extrusion mode/, 'Retraction examples must declare relative extrusion mode');
+  assert.match(curriculum, /M109 S waits while heating/, 'Marlin temperature waits must distinguish S from R');
+  assert.match(app, /function renderLessonFactCheck/, 'Learners must be able to inspect curriculum sources');
+}
+
 function validateReferences() {
   const directory = path.join(ROOT, 'data', 'reference');
   fs.readdirSync(directory)
@@ -97,6 +109,12 @@ function validateCurriculum(api) {
       assert.ok(lesson.id && !lessonIds.has(lessonKey), `Duplicate lesson ${lessonKey}`);
       lessonIds.add(lessonKey);
       assert.ok(Array.isArray(lesson.quiz) && lesson.quiz.length, `${lesson.id} needs quiz questions`);
+      assert.equal(lesson.factCheck?.reviewed, '2026-07-13', `${lesson.id} needs a current fact-check date`);
+      assert.ok(String(lesson.factCheck?.dialect || '').trim(), `${lesson.id} needs a controller or firmware scope`);
+      assert.ok(Array.isArray(lesson.factCheck?.sources) && lesson.factCheck.sources.length >= 3, `${lesson.id} needs primary source coverage`);
+      lesson.factCheck.sources.forEach(source => {
+        assert.match(source.url || '', /^https:\/\//, `${lesson.id} has an invalid audit source`);
+      });
 
       lesson.quiz.forEach(question => {
         assert.ok(question.id && !questionIds.has(question.id), `Duplicate or missing question id ${question.id}`);
@@ -144,15 +162,18 @@ function validateStateAndRetries(api, storage) {
 
   const coordinate = api.TRACKS.cnc.lessons.find(lesson => lesson.id === 'u2-l1').quiz
     .find(question => question.answer === '2.500');
-  const retry = api.createRetryNumberVariant(coordinate, coordinate);
-  assert.notEqual(retry.answer, coordinate.answer, 'Visible coordinate retry should vary');
-  assert.ok(retry.question.includes(retry.answer), 'Varied coordinate answer must appear in its prompt');
+  const retries = Array.from({ length: 25 }, () => api.createRetryNumberVariant(coordinate, coordinate));
+  assert.ok(retries.some(retry => retry.answer !== coordinate.answer), 'Visible coordinate retries should eventually vary');
+  retries.forEach(retry => {
+    assert.ok(retry.question.includes(retry.answer), 'Varied coordinate answer must appear in its prompt');
+  });
 }
 
 const runtime = loadAppRuntime();
 validateVersions();
 validateReferences();
 validateActiveCorrection();
+validateFactCheckContent();
 validateCurriculum(runtime.api);
 validateStateAndRetries(runtime.api, runtime.storage);
 console.log('Project G-Code validation passed.');

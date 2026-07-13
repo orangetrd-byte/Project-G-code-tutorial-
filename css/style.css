@@ -1371,6 +1371,47 @@ body.theme-light .ref-action--learned[aria-pressed=true] {
 body.theme-light .weak-relearn-card {
   background: #F7FAFC;
 }
+.fact-check-card {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  border-radius: var(--r-md);
+  background: rgba(45, 212, 191, 0.08);
+  color: var(--c-text);
+}
+.fact-check-card summary {
+  cursor: pointer;
+  font-family: var(--f-display);
+  font-weight: 800;
+  color: var(--c-teal-l);
+}
+.fact-check-card p {
+  margin: 0.65rem 0;
+  color: var(--c-text-2);
+  line-height: 1.45;
+}
+.fact-check-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.fact-check-links a {
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  background: var(--c-surface2);
+  color: var(--c-teal-l);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+body.theme-light .fact-check-card {
+  background: #E8F7F3;
+  color: #183B35;
+}
+body.theme-light .fact-check-card summary,
+body.theme-light .fact-check-links a {
+  color: #0B5D50;
+}
 .theory-body p { margin-bottom: 0.85rem; }
 .theory-body ul, .theory-body ol { margin-bottom: 0.85rem; }
 

@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.8 | Build 2026.07.13.04';
+const APP_BUILD = 'MGP | Version v2.57.9 | Build 2026.07.13.05';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1971,6 +1971,22 @@ function renderLessonStep() {
   State.currentQuizAnswered = false;
 }
 
+function renderLessonFactCheck(lesson) {
+  const audit = lesson.factCheck;
+  if (!audit || !Array.isArray(audit.sources)) return '';
+  const links = audit.sources
+    .map(source => {
+      const url = safeReferenceUrl(source.url);
+      if (!url) return '';
+      return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + escapeRefText(source.title) + '</a>';
+    })
+    .filter(Boolean)
+    .join('');
+  return '<details class="fact-check-card"><summary>Fact-checked · ' + escapeRefText(audit.dialect) + '</summary>' +
+    '<p>Reviewed ' + escapeRefText(audit.reviewed) + '. Educational examples only: verify the exact machine, controller or firmware manual before use.</p>' +
+    '<div class="fact-check-links">' + links + '</div></details>';
+}
+
 function renderTheoryStep(lesson) {
   const whyBlock = lesson.why ? `
     <div class="why-card">
@@ -1985,6 +2001,7 @@ function renderTheoryStep(lesson) {
       ${whyBlock}
       <div class="theory-body">${lesson.theory}</div>
       ${Visuals.render(lesson.visual)}
+      ${renderLessonFactCheck(lesson)}
     </div>`;
 }
 

@@ -17,8 +17,8 @@ const LESSONS = [
     icon: "📋",
     xp: 10,
     theory: `
-      <p>G-code is the instructions the machine reads. Each block does one thing: move, stop, or change a mode.</p>
-      <pre>G00 X2.000 Z0.100 ; move to a safe position</pre>
+      <p>G-code is instruction text the machine reads. One block can combine compatible motion, coordinates, feed, speed, and auxiliary words; the control decides their execution order.</p>
+      <pre>G00 X2.000 Z0.100 ; example position — clearance is setup-specific</pre>
       <p>A semicolon depends on the system. In many 3D-printer files it starts a comment. In some CNC/program formats it marks the end of a block, like pressing Enter for the next line.</p>
       <pre>G00 X30.500 Z1.0;
 X30.478 Z0;
@@ -107,21 +107,16 @@ M0;</pre>
       <p>On a CNC lathe, position is described with two axes:</p>
       <ul>
         <li><strong>Z-axis</strong> — runs along the spindle centerline. 
-        Negative Z moves the tool toward the chuck. Positive Z moves it away.</li>
-        <li><strong>X-axis</strong> — controls diameter. 
-        X values are <em>diameter values</em> on most lathes (diameter mode = G07 off / default).</li>
+        In the conventional front-working setup illustrated here, negative Z moves toward the chuck and positive Z moves away. Verify the actual machine orientation.</li>
+        <li><strong>X-axis</strong> — controls radial position. Many production lathes program X in diameter units, but diameter/radius behavior is controller- and setting-specific.</li>
       </ul>
-      <p>Work zero (the program origin) is almost always set at:</p>
+      <p>A common turning convention sets X0 at the spindle centerline and Z0 at the finished face, but Z0 may use another documented datum.</p>
+      <p><strong>Absolute vs. Incremental on the lathe style taught here:</strong></p>
       <ul>
-        <li>Z0 = the <strong>face of the finished part</strong></li>
-        <li>X0 = the <strong>spindle centerline</strong></li>
+        <li><code>X</code> and <code>Z</code> command absolute positions from the active work zero.</li>
+        <li><code>U</code> and <code>W</code> command incremental X and Z distances from the current position.</li>
       </ul>
-      <p><strong>Absolute vs. Incremental:</strong></p>
-      <ul>
-        <li><code>G90</code> — Absolute mode. All positions measured from program zero.</li>
-        <li><code>G91</code> — Incremental mode. Each move measured from <em>current position</em>.</li>
-      </ul>
-      <p>Almost all lathe programs run in G90. You'll rarely use G91 except for specific sub-routines.</p>
+      <p class="callout warning">Do not assume G90/G91 select positioning mode on a lathe. On Haas lathes, G90 is an OD/ID turning cycle. Verify the exact controller dialect before running code.</p>
     `,
     visual: "lathe-axes",
     quiz: [
@@ -136,7 +131,7 @@ M0;</pre>
           "Lowering the tool height"
         ],
         answer: 2,
-        explanation: "Negative Z moves the tool toward the chuck (into the part). Positive Z retracts away."
+        explanation: "In the conventional setup illustrated here, negative Z moves toward the chuck. Confirm the actual machine coordinate direction before motion."
       },
       {
         id: "u1-l2-q2",
@@ -149,44 +144,45 @@ M0;</pre>
       {
         id: "u1-l2-q3",
         type: "multiple-choice",
-        question: "Which code puts the machine in absolute positioning mode?",
-        options: ["G91", "G90", "G92", "G28"],
+        question: "On the Haas/Fanuc-style lathe convention taught here, which word commands an incremental Z move?",
+        options: ["Z", "W", "G90", "G91"],
         answer: 1,
-        explanation: "G90 = absolute mode. All X and Z values reference the program zero point."
+        explanation: "W commands an incremental Z distance on this lathe convention. Z commands an absolute position from the active work zero."
       },
       {
         id: "u1-l2-q4",
         type: "matching",
-        question: "Match each coordinate idea to its meaning.",
+        question: "Match each lathe coordinate word to its meaning.",
         pairs: [
-          { left: "X", right: "Diameter position" },
-          { left: "Z", right: "Position along the spindle" },
-          { left: "G90", right: "Absolute positioning" }
+          { left: "X", right: "Absolute X position" },
+          { left: "Z", right: "Absolute Z position" },
+          { left: "U", right: "Incremental X distance" },
+          { left: "W", right: "Incremental Z distance" }
         ],
-        explanation: "On a lathe, X usually controls diameter, Z runs along the spindle, and G90 uses positions from program zero."
+        explanation: "On common Haas/Fanuc-style lathes, X/Z are absolute coordinates and U/W are incremental distances. Verify the machine manual."
       },
       {
         id: "u1-l2-q5",
         type: "true-false",
-        question: "On a typical CNC lathe, negative Z moves toward the chuck.",
+        question: "In the conventional front-working lathe setup illustrated here, negative Z moves toward the chuck.",
         answer: true,
-        explanation: "True. In the basic lathe setup taught here, negative Z moves into the part toward the chuck."
+        explanation: "True for the illustrated setup. Confirm axis direction on the actual machine coordinate display and manual."
       },
       {
         id: "u1-l2-q6",
         type: "multiple-choice",
-        question: "What is missing from this absolute positioning setup?\n___ G20 G40",
-        options: ["G90", "G91", "M05", "T0101"],
+        question: "Which word commands an absolute Z position from the active work zero on the lathe convention taught here?",
+        options: ["Z", "W", "G90", "G91"],
         answer: 0,
-        explanation: "G90 sets absolute positioning, so coordinates are measured from program zero."
+        explanation: "Z is the absolute axial coordinate. W is an incremental Z distance; G90 may be a turning cycle on a lathe."
       },
       {
         id: "u1-l2-q7",
         type: "multiple-choice",
-        question: "Pick the safer positioning mode for a beginner lathe program.",
-        options: ["G91 incremental for every move", "G90 absolute for normal cutting positions", "No positioning mode", "Switch modes every block"],
-        answer: 1,
-        explanation: "G90 absolute mode is the normal beginner-safe default because positions reference the program zero."
+        question: "Which beginner lathe style is easiest to audit from a known work zero?",
+        options: ["Use X/Z absolute positions and reserve U/W for intentional incrementals", "Use U/W for every destination", "Issue G90 without checking the control", "Switch conventions every block"],
+        answer: 0,
+        explanation: "X/Z positions point back to the active work zero on this convention. U/W should be used only when an incremental move is intentional."
       }
     ]
   },
@@ -201,14 +197,13 @@ M0;</pre>
     icon: "🗂️",
     xp: 15,
     theory: `
-      <p>Every G-code program follows a predictable skeleton. Learn this structure 
-      and you can read — and write — any program.</p>
+      <p>Many part programs use a recognizable preparation, cutting, and completion structure. The exact blocks and codes depend on the controller, machine options, and approved postprocessor.</p>
       <pre>%                          ; Tape start / rewind stop
 O1001                      ; Program number
 (PART: SHAFT 001)          ; Comment / description
 (TOOL: T0101 - OD ROUGH)   ; Tool description comment
 
-N10 G18 G20 G40 G80 G99    ; Lathe safety block - XZ plane, inch mode, cancel modes
+N10 G18 G20 G40 G80 G99    ; Haas-style example: verify every mode on your control
 N20 G28 U0. W0.            ; Machine home
 N30 T0101                  ; Tool call + offset call
 N40 G96 S400 M03 F0.012    ; CSS on, spindle on CW, feedrate
@@ -223,8 +218,8 @@ N90 M05                    ; Spindle off
 N100 G28 U0. W0.           ; Home
 N110 M30                   ; End program, rewind
 %</pre>
-      <p>The <strong>safety block</strong> (N10) is critical — it cancels leftover modal codes 
-      from a previous program. Always include it.</p>
+      <p>A setup block makes required modal state explicit before motion. Use the exact block approved for the named machine and controller; no single “safety block” is universal.</p>
+      <p class="callout warning"><code>G28 U0. W0.</code> is controller-specific and performs a reference return. Confirm the intermediate-path behavior and clear the full route before use.</p>
       <p><strong>M-codes</strong> are machine functions: M03 = spindle CW, M05 = spindle off, 
       M30 = end program.</p>
     `,
@@ -241,7 +236,7 @@ N110 M30                   ; End program, rewind
           "Set the feedrate"
         ],
         answer: 2,
-        explanation: "M30 ends the program and rewinds it so it's ready to run again. Always end programs with M30."
+        explanation: "M30 commonly ends and resets a Haas/Fanuc-style part program. Other controls and workflows may use different end behavior, so verify the machine manual."
       },
       {
         id: "u1-l3-q2",
@@ -278,48 +273,40 @@ N110 M30                   ; End program, rewind
     icon: "⚡",
     xp: 15,
     theory: `
-      <p><code>G00</code> moves the tool at the machine's maximum traverse speed — 
-      no cutting, just positioning.</p>
+      <p><code>G00</code> commands rapid positioning. The actual rate is limited by the machine and may be reduced with a dedicated rapid override; the programmed <code>F</code> word does not set G00 speed.</p>
       <pre>G00 X2.200 Z0.100</pre>
       <p><strong>Rules of G00:</strong></p>
       <ul>
-        <li>Never rapid into material — always leave a small clearance (0.050"–0.100")</li>
-        <li>Feed override does NOT apply — the machine goes full speed</li>
-        <li>On most lathes, X and Z move simultaneously (diagonal path)</li>
-        <li>It's modal — stays active until another G-motion code is called</li>
+        <li>Do not rapid into stock, workholding, tooling, or an unverified clearance envelope.</li>
+        <li>Feed override and rapid override are different controls; verify the machine behavior.</li>
+        <li>A multi-axis rapid may follow a dogleg or another controller-defined path, not a straight diagonal.</li>
+        <li>G00 is modal until another motion code replaces it.</li>
       </ul>
-      <p><strong>Typical uses:</strong> approaching the part, pulling clear after a cut, 
-      moving between features.</p>
-      <p class="callout warning">⚠️ Crashing a rapid move into the part is the #1 cause 
-      of broken tools and damaged workholding. Always visualize your clearances.</p>
+      <p><strong>Typical uses:</strong> approaching the part, pulling clear after a cut, and moving between features.</p>
+      <p class="callout warning">No fixed clearance is universally safe. Establish clearance from the actual stock, jaws, tool geometry, offsets, and full rapid path; then prove it with the approved simulation and machine procedure.</p>
     `,
     visual: "rapid-path",
     quiz: [
       {
         type: "multiple-choice",
-        question: "Which clearance is safe before starting a G00 rapid toward the part face?",
-        options: ["0.001\"", "Touching the face", "0.050\" to 0.100\"", "It doesn't matter for G00"],
+        question: "Which clearance is safe before a G00 approach?",
+        options: ["A fixed 0.001 inch", "Any positive Z value", "The setup-approved clearance verified for the full path", "A fixed 0.100 inch"],
         answer: 2,
-        explanation: "Always leave 0.050\"–0.100\" clearance before the part face on a rapid. This prevents crashes if your Z offset is slightly off."
+        explanation: "No fixed number is universally safe. Clearance must account for stock, jaws, tool geometry, offsets, and the controller's complete rapid path."
       },
       {
         type: "multiple-choice",
-        question: "Does the feed override knob slow down a G00 rapid move?",
-        options: [
-          "Yes, always",
-          "No, G00 runs at machine max speed regardless",
-          "Only if you program it",
-          "Yes, but only under 50%"
-        ],
+        question: "What can reduce G00 speed on a control that provides it?",
+        options: ["The F word", "Dedicated rapid override", "Spindle override", "The comment text"],
         answer: 1,
-        explanation: "G00 ignores feedrate override on most controls. It always runs at maximum traverse speed. Use G01 if you need a controlled approach."
+        explanation: "The F word does not set G00 speed. Many controls provide a separate rapid override, but its behavior must be verified in the machine manual."
       },
       {
         type: "fill-blank",
-        question: "Complete: Move rapidly to X2.500, Z clearance of 0.100\"\nG00 X___ Z0.100",
+        question: "Worked example target: X2.500 at example Z0.100 (not a universal safe position). Complete the block:\nG00 X___ Z0.100",
         answer: "2.500",
-        hint: "Diameter value = 2.500",
-        explanation: "X2.500 puts the tool at a 2.500\" diameter position. Paired with Z0.100 this is a safe rapid approach position."
+        hint: "Example diameter value = 2.500",
+        explanation: "X2.500 completes the example. Z0.100 is only an example coordinate; the actual setup must establish and prove a safe clearance."
       }
     ]
   },
@@ -338,8 +325,8 @@ N110 M30                   ; End program, rewind
       <pre>G01 X1.500 Z-1.000 F0.010</pre>
       <p>The <code>F</code> word sets the feedrate:</p>
       <ul>
-        <li><strong>IPR</strong> (inches per revolution) — most common for turning. 
-        Typical range: F0.005 to F0.020</li>
+        <li><strong>IPR</strong> (inches per revolution) — common for turning. Example values are not cutting recommendations;
+        use tooling-manufacturer data and the approved process for the actual feed.</li>
         <li><strong>IPM</strong> (inches per minute) — used in milling, some controls</li>
       </ul>
       <p>G01 can move in X only, Z only, or both simultaneously (taper cuts).</p>
@@ -357,7 +344,7 @@ G01 X1.750 Z-1.500 F0.010</pre>
     quiz: [
       {
         type: "multiple-choice",
-        question: "You need to face the part to length. Which block is correct?",
+        question: "For this diameter-mode, front-working example that intentionally passes center, which facing block uses controlled feed?",
         options: [
           "G00 X-0.100 F0.010",
           "G01 X-0.062 F0.008",
@@ -365,20 +352,20 @@ G01 X1.750 Z-1.500 F0.010</pre>
           "G00 Z-0.100"
         ],
         answer: 1,
-        explanation: "Facing moves in X (reducing diameter to zero or past centerline). G01 with a negative X value and a feedrate is correct. G00 should never be used to cut."
+        explanation: "Under the stated example assumptions, G01 feeds across center. The required endpoint and sign depend on tool orientation, diameter/radius convention, and the verified setup."
       },
       {
         type: "multiple-choice",
-        question: "F0.012 in IPR mode at 800 RPM gives an actual feedrate of:",
+        question: "At constant 800 RPM in feed-per-revolution mode, F0.012 gives an actual feedrate of:",
         options: ["0.012 IPM", "9.6 IPM", "12 IPM", "800 IPM"],
         answer: 1,
-        explanation: "IPM = IPR × RPM. 0.012 × 800 = 9.6 inches per minute."
+        explanation: "At constant 800 RPM, IPM = IPR × RPM: 0.012 × 800 = 9.6 inches per minute. Under CSS, RPM and instantaneous IPM can change with diameter."
       },
       {
         type: "fill-blank",
         question: "Write a turning cut to Z-2.250 at F0.010:\nG01 Z___ F0.010",
         answer: "-2.250",
-        hint: "Negative Z = toward the chuck",
+        hint: "In the illustrated conventional setup, negative Z is toward the chuck",
         explanation: "Z-2.250 means 2.250\" from part zero toward the chuck. The negative sign is required."
       }
     ]
@@ -402,13 +389,12 @@ G01 X1.750 Z-1.500 F0.010</pre>
       <h4>Method 2: Center Offsets (I and K)</h4>
       <pre>G02 X1.500 Z-0.500 I0.0 K-0.250 F0.008</pre>
       <ul>
-        <li><code>I</code> = distance from start point to arc center in <strong>X</strong></li>
-        <li><code>K</code> = distance from start point to arc center in <strong>Z</strong></li>
+        <li><code>I</code> = X-direction center offset under the selected controller's lathe convention</li>
+        <li><code>K</code> = Z-direction center offset under the selected controller's lathe convention</li>
       </ul>
       <p>The R method is simpler for most cases. Use I/K when you need a full circle 
       or when R gives an ambiguous result (two possible arcs).</p>
-      <p class="callout tip">💡 Tip: On a lathe, G02 cuts a concave radius (like a fillet 
-      at a shoulder) and G03 cuts a convex radius (like the nose of a ball).</p>
+      <p class="callout tip">G02/G03 specify direction in the active plane and documented viewing convention. Concave versus convex depends on the contour, quadrant, and tool side—not the G-code number alone.</p>
     `,
     visual: "arc-moves",
     quiz: [
@@ -417,7 +403,7 @@ G01 X1.750 Z-1.500 F0.010</pre>
         question: "Which code cuts a clockwise arc?",
         options: ["G01", "G02", "G03", "G04"],
         answer: 1,
-        explanation: "G02 = clockwise arc. G03 = counterclockwise. Think: G02 = 'clockwise' (both start with C in their meaning)."
+        explanation: "G02 is clockwise and G03 is counterclockwise when viewed using the active plane's documented convention. Confirm G18 and the controller view before judging a lathe arc."
       },
       {
         type: "multiple-choice",
@@ -451,21 +437,20 @@ G01 X1.750 Z-1.500 F0.010</pre>
       <pre>G96 S400 M03</pre>
       <p>The control automatically adjusts RPM so the cutting speed stays at 400 SFM 
       regardless of diameter. As the tool moves to a smaller diameter, RPM increases.</p>
-      <p><strong>Use CSS for:</strong> turning, facing, and profiling — any op where diameter changes.</p>
-      <p>Set a max RPM clamp with <code>G50 S____</code> to prevent runaway speed at small diameters:</p>
+      <p>CSS is often useful when cutting diameter changes, but the choice must follow tooling data, workholding limits, machine capability, and the approved process.</p>
+      <p>On the Haas/Fanuc-style lathe dialect used in this example, set a maximum RPM clamp with <code>G50 S____</code>. G50 has different meanings on other controls:</p>
       <pre>G50 S3000    ; Clamp max at 3000 RPM
 G96 S400 M03 ; CSS at 400 SFM</pre>
       <h4>G97 — Constant RPM</h4>
       <pre>G97 S1200 M03</pre>
       <p>Spindle runs at a fixed 1200 RPM regardless of diameter.</p>
-      <p><strong>Use constant RPM for:</strong> threading (G32/G76), drilling, boring bars, 
-      and grooving on small diameters.</p>
+      <p>Constant RPM is commonly used where the controller or process requires stable spindle speed, including many threading procedures. Do not choose spindle mode from operation name alone.</p>
     `,
     visual: "spindle-speed",
     quiz: [
       {
         type: "multiple-choice",
-        question: "Why is G50 S3000 paired with G96?",
+        question: "On this Haas/Fanuc-style lathe example, why is G50 S3000 paired with G96?",
         options: [
           "To set a minimum spindle speed",
           "To clamp the maximum RPM so it doesn't spin dangerously fast at small diameters",
@@ -477,10 +462,10 @@ G96 S400 M03 ; CSS at 400 SFM</pre>
       },
       {
         type: "multiple-choice",
-        question: "You're programming a threading cycle. Which spindle mode should you use?",
+        question: "For the threading procedure taught in this controller-specific example, which spindle mode should you use?",
         options: ["G96 (CSS)", "G97 (Constant RPM)"],
         answer: 1,
-        explanation: "Threading requires constant RPM. The control tracks spindle encoder pulses to synchronize the feed. CSS would change RPM mid-thread and ruin the pitch."
+        explanation: "This procedure uses G97 constant RPM for stable, synchronized threading. Follow the exact controller and tooling procedure rather than assuming spindle mode is portable."
       },
       {
         type: "fill-blank",
@@ -501,8 +486,7 @@ G96 S400 M03 ; CSS at 400 SFM</pre>
     icon: "🔧",
     xp: 25,
     theory: `
-      <p>G71 is a canned rough turning cycle — it automatically takes multiple passes to 
-      rough out a profile, leaving stock for finishing.</p>
+      <p>This lesson shows a <strong>Fanuc-style two-block G71 example</strong>. G71 formats, allowances, retracts, and profile restrictions vary by controller; verify the exact manual revision before use.</p>
       <pre>G71 U0.100 R0.050
 G71 P100 Q200 U0.020 W0.005 F0.015</pre>
       <p><strong>First line — depth and retract:</strong></p>
@@ -566,7 +550,7 @@ G71 P100 Q200 U0.020 W0.005 F0.015</pre>
     icon: "🔩",
     xp: 30,
     theory: `
-      <p>G76 is the canned threading cycle — it handles all infeed passes automatically.</p>
+      <p>This lesson shows a <strong>Fanuc-style two-block G76 example</strong>. G76 formats and packed P/Q meanings vary substantially by controller; verify the exact manual revision before use.</p>
       <pre>G97 S700 M03         ; Constant RPM for threading
 G00 X1.100 Z0.200    ; Approach
 
@@ -592,15 +576,15 @@ G76 X0.8647 Z-1.500 P0677 Q0200 F0.0625</pre>
     quiz: [
       {
         type: "multiple-choice",
-        question: "Why must G97 (constant RPM) be active during a threading cycle?",
+        question: "Why does this Fanuc-style G76 example specify G97 constant RPM?",
         options: [
           "CSS uses too much power",
-          "Threading requires synchronized RPM and feed — CSS changes RPM and destroys the thread pitch",
+          "This procedure calls for stable spindle speed with synchronized feed",
           "G96 doesn't work with G76",
           "Constant RPM gives better surface finish"
         ],
         answer: 1,
-        explanation: "The control uses spindle encoder feedback to time the feed. If RPM changes (as it would with CSS), the lead (pitch) becomes inconsistent and the thread is ruined."
+        explanation: "The example follows a constant-RPM threading procedure. Threading synchronizes feed to spindle feedback; use the spindle mode required by the exact controller manual."
       },
       {
         type: "multiple-choice",
@@ -634,11 +618,11 @@ G76 X0.8647 Z-1.500 P0677 Q0200 F0.0625</pre>
     icon: "🎯",
     xp: 20,
     theory: `
-      <p>Tool calls on a lathe turret use the T-word:</p>
+      <p>This lesson uses a common Haas/Fanuc-style four-digit T-word convention:</p>
       <pre>T0101   ; Tool 1, Offset 1
 T0202   ; Tool 2, Offset 2
 T0100   ; Cancel offset (tool 1, no offset)</pre>
-      <p>The T-word has four digits: <code>T</code> + <em>tool number</em> (2 digits) + <em>offset number</em> (2 digits).</p>
+      <p>In this convention, the T-word is <code>T</code> + two-digit tool number + two-digit offset number. Other machines format tool and offset calls differently.</p>
       <p>The <strong>tool offset</strong> (stored in the control's wear offset page) compensates for:</p>
       <ul>
         <li>Exact tool tip position after touch-off</li>
@@ -654,7 +638,7 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
     quiz: [
       {
         type: "multiple-choice",
-        question: "What does T0304 mean?",
+        question: "In the four-digit T-word convention taught here, what does T0304 mean?",
         options: [
           "Tool 3, Offset 4",
           "Tool 4, Offset 3",
@@ -669,19 +653,19 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
         question: "How do you cancel the active tool offset without changing tools?",
         options: [
           "T0000",
-          "T0100 (tool 1, offset 00)",
+          "T0100 in this controller-specific example",
           "G49",
           "M06"
         ],
         answer: 1,
-        explanation: "Using offset 00 cancels the offset. T0100 keeps tool 1 in position but cancels its offset. T0000 would address tool 0 which doesn't exist."
+        explanation: "In this example convention, offset 00 cancels the active offset while retaining the tool selection. Verify tool-call and cancellation behavior on the actual control."
       },
       {
         type: "fill-blank",
         question: "Write the T-word for Tool 2 using Offset 2:\nT____",
         answer: "0202",
         hint: "4 digits: tool number then offset number",
-        explanation: "T0202 = Tool station 2, Offset register 2. This is the standard convention — offset number matches tool number."
+        explanation: "In this four-digit example, T0202 selects tool station 2 with offset register 2. Matching tool and offset numbers is a shop convention, not a universal requirement."
       }
     ]
   },
@@ -872,9 +856,11 @@ G00 X50.8 Z2.5</pre>
     icon: "FMD",
     xp: 20,
     theory: `
-      <p>Feedrate mode controls what the <code>F</code> value means. On many Fanuc-style lathes, <code>G94</code> is feed per minute and <code>G95</code> is feed per revolution.</p>
-      <pre>G94 F5.0    ; feed per minute
-G95 F0.012  ; feed per spindle revolution</pre>
+      <p>Feedrate mode controls what the <code>F</code> value means, but lathe dialects differ. This lesson's Fanuc-style examples use <code>G94</code> for feed per minute and <code>G95</code> for feed per revolution. Haas lathes use <code>G98</code> and <code>G99</code> for those modes.</p>
+      <pre>G94 F5.0    ; Fanuc-style feed per minute
+G95 F0.012  ; Fanuc-style feed per revolution
+G98 F5.0    ; Haas feed per minute
+G99 F0.012  ; Haas feed per revolution</pre>
       <p>Turning programs often use feed per revolution so chip load stays tied to spindle rotation. Always verify the active feed mode before cutting.</p>
     `,
     visual: "program-structure",
@@ -902,7 +888,7 @@ G95 F0.012  ; feed per spindle revolution</pre>
     xp: 20,
     theory: `
       <p>Modal state is the machine's memory. Motion mode, units, feed mode, offsets, and spindle mode can stay active until changed.</p>
-      <pre>G20 G40 G54 G95
+      <pre>G20 G40 G54 G95 ; Fanuc-style feed-per-revolution example
 G97 S800 M03
 G00 X2.000 Z0.100</pre>
       <p>A safe program does not rely on mystery state. It declares the modes it needs before motion.</p>
@@ -912,7 +898,7 @@ G00 X2.000 Z0.100</pre>
       { type: "multiple-choice", question: "What is modal state?", options: ["Codes that stay active until changed", "Only comments", "Only the current tool name", "The app progress screen"], answer: 0, explanation: "Modal codes remain active until another code changes or cancels them." },
       { type: "multiple-choice", question: "Which is a modal setting?", options: ["G20 or G21 units", "A comment only", "Program title text", "Operator name"], answer: 0, explanation: "Unit mode is modal." },
       { type: "multiple-choice", question: "Why use a setup block?", options: ["To declare needed modes before motion", "To make the file longer", "To hide feedrate", "To skip offsets"], answer: 0, explanation: "Setup blocks reduce surprise by setting important modes." },
-      { type: "multiple-choice", question: "Which block is a better modal checklist?", options: ["G20 G40 G54 G95", "(START)", "M30", "X2.0 Z0.1"], answer: 0, explanation: "That block declares units, comp cancel, work offset, and feed mode." },
+      { type: "multiple-choice", question: "For the Fanuc-style example in this lesson, which block is a better modal checklist?", options: ["G20 G40 G54 G95", "(START)", "M30", "X2.0 Z0.1"], answer: 0, explanation: "That Fanuc-style block declares units, compensation cancel, work offset, and feed-per-revolution mode. A Haas lathe would use G99 for feed per revolution." },
       { type: "fill-blank", question: "Complete the idea: modal codes stay active until ____.", answer: "changed", hint: "Another code replaces them", explanation: "Modal codes stay active until changed or canceled." },
       { type: "multiple-choice", question: "Before rapid motion, what should be known?", options: ["Units, offset, and motion state", "Only phone battery", "Only app theme", "Only the comment"], answer: 0, explanation: "Motion is only safe when the active modes and offsets are known." },
       { type: "multiple-choice", question: "Which code often cancels cutter compensation?", options: ["G40", "G21", "M03", "M30"], answer: 0, explanation: "G40 cancels cutter compensation on many controls." },
@@ -1000,8 +986,7 @@ M99 ; return</pre>
     icon: "DRL",
     xp: 25,
     theory: `
-      <p>Drilling canned cycles package several motions into one block. They are common on mills
-      and live-tool lathes.</p>
+      <p>This is a <strong>3-axis mill drilling example</strong>. Live-tool lathe syntax, active planes, axes, and supported cycle words differ by machine and controller; do not transfer this block directly to a lathe.</p>
       <pre>G81 X1.000 Y0.500 Z-0.750 R0.100 F5.0 ; drill
 G83 X2.000 Y0.500 Z-1.500 R0.100 Q0.200 F4.0 ; peck drill
 G80 ; cancel cycle</pre>
@@ -1043,7 +1028,7 @@ Restart from a proven block</pre>
     `,
     visual: "rapid-path",
     quiz: [
-      { type: "multiple-choice", question: "What should you do first if motion looks wrong?", options: ["Stop or feed hold safely", "Increase rapid override", "Ignore it", "Edit random offsets"], answer: 0, explanation: "Stop motion first, then diagnose." },
+      { type: "multiple-choice", question: "What should you do first if motion looks wrong?", options: ["Use the machine/shop stop procedure", "Increase rapid override", "Ignore it", "Edit random offsets"], answer: 0, explanation: "Use feed hold for a controlled concern or emergency stop for imminent danger, as defined by the machine manual and shop procedure; then diagnose." },
       { type: "multiple-choice", question: "Why is mid-program restart risky?", options: ["Modal states may not be active as expected", "Comments become active", "The screen turns off", "G-code cannot restart"], answer: 0, explanation: "Restarting can miss setup lines that selected modes, offsets, tools, spindle, or coolant." },
       { type: "multiple-choice", question: "Before restart, the tool should be:", options: ["Clear of the part", "Buried in the cut", "Unknown", "At any random X"], answer: 0, explanation: "Restart should begin with safe clearance." },
       { type: "multiple-choice", question: "What should be checked before cycle start after an alarm?", options: ["Tool, offset, mode, spindle, and position", "Only the app icon", "Only the comment spelling", "Only screen brightness"], answer: 0, explanation: "Recovery requires checking all state that affects motion." },
@@ -1149,9 +1134,9 @@ const PRINTING_LESSONS = [
       to its endstop or sensor so the printer can establish machine zero.</p>
       <pre>G28 ; home all axes</pre>
       <p>Many printers also probe the bed before printing:</p>
-      <pre>G29 ; run bed leveling probe</pre>
-      <p>Not every printer uses <code>G29</code> the same way. Bed leveling behavior depends on firmware
-      such as Marlin, Klipper, or RepRapFirmware.</p>
+      <pre>G29 ; Marlin configured leveling<br>BED_MESH_CALIBRATE ; native Klipper bed mesh</pre>
+      <p>On Marlin, G29 runs the configured leveling system. Klipper natively uses <code>BED_MESH_CALIBRATE</code>; G29 works there only when a user macro defines it. Always check the active firmware
+      and printer configuration.</p>
     `,
     visual: "",
     quiz: [
@@ -1187,26 +1172,26 @@ const PRINTING_LESSONS = [
     theory: `
       <p>Temperature commands use M-codes. Some set a target and continue immediately; others wait.</p>
       <pre>M104 S210 ; set nozzle to 210 C and continue
-M109 S210 ; set nozzle to 210 C and wait
+M109 S210 ; wait while heating to at least 210 C
 M140 S60  ; set bed to 60 C and continue
-M190 S60  ; set bed to 60 C and wait</pre>
-      <p>Slicers usually heat the bed first, then the nozzle, then start motion after both are ready.</p>
+M190 S60  ; wait while heating bed to at least 60 C</pre>
+      <p>In Marlin, the S form waits while heating but does not wait for cooling if already above target; use R when the command must wait for heating or cooling.</p>
     `,
     visual: "",
     quiz: [
       {
         type: "multiple-choice",
-        question: "Which command sets nozzle temperature and waits until it is reached?",
+        question: "In Marlin, which command sets nozzle temperature and waits while heating?",
         options: ["M104", "M109", "M140", "M190"],
         answer: 1,
-        explanation: "M109 sets the hotend target temperature and waits before continuing."
+        explanation: "M109 S waits while heating to the target. M109 R waits for either heating or cooling to the target."
       },
       {
         type: "multiple-choice",
-        question: "Which command controls the heated bed and waits?",
+        question: "In Marlin, which command controls the heated bed and waits while heating?",
         options: ["M104", "M109", "M140", "M190"],
         answer: 3,
-        explanation: "M190 sets the bed target temperature and waits until the bed reaches that target."
+        explanation: "M190 S waits while heating the bed. M190 R waits for either heating or cooling to the target."
       },
       {
         type: "fill-blank",
@@ -1224,14 +1209,14 @@ M190 S60  ; set bed to 60 C and wait</pre>
           { left: "M109", right: "Set nozzle and wait" },
           { left: "M190", right: "Set bed and wait" }
         ],
-        explanation: "M104 sets the hotend without waiting, M109 waits for the hotend, and M190 waits for the heated bed."
+        explanation: "M104 sets the hotend without waiting. In Marlin, M109 S and M190 S wait while heating; their R forms also wait while cooling."
       },
       {
         id: "p-u1-l3-q5",
         type: "true-false",
-        question: "M109 sets nozzle temperature and waits before continuing.",
+        question: "In Marlin, M109 S sets nozzle temperature and waits while heating.",
         answer: true,
-        explanation: "True. M109 waits for the hotend to reach the target before the program continues."
+        explanation: "True. The S form waits while heating; use M109 R if cooling to the target must also block progress."
       }
     ]
   },
@@ -1308,7 +1293,7 @@ G1 X40 Y40 E0.4 F1800 ; slower print move</pre>
     xp: 15,
     theory: `
       <p>Part cooling fans are usually controlled with <code>M106</code> and <code>M107</code>.</p>
-      <pre>M106 S255 ; fan full speed
+      <pre>M106 S255 ; full selected/default fan under common 0-255 scaling
 M106 S128 ; fan about half speed
 M107      ; fan off</pre>
       <p>Cooling helps bridges, overhangs, and small layers. Too much cooling can hurt layer bonding on
@@ -1318,7 +1303,7 @@ M107      ; fan off</pre>
     quiz: [
       { type: "multiple-choice", question: "Which command turns the part cooling fan on?", options: ["M106", "M107", "G28", "M190"], answer: 0, explanation: "M106 controls the fan and can set its speed." },
       { type: "multiple-choice", question: "What does M107 usually do?", options: ["Fan off", "Fan full speed", "Home axes", "Heat bed"], answer: 0, explanation: "M107 turns the part cooling fan off." },
-      { type: "multiple-choice", question: "In M106 S255, what does S255 mean?", options: ["Fan full speed", "Nozzle 255 C", "X position", "Layer number"], answer: 0, explanation: "For M106, S usually sets fan speed from 0 to 255." },
+      { type: "multiple-choice", question: "In this Marlin-style M106 S255 example, what does S255 mean?", options: ["Full selected/default fan speed", "Nozzle 255 C", "X position", "Layer number"], answer: 0, explanation: "M106 commonly scales S from 0 to 255 for the selected/default compatible fan. Named or generic fans may use firmware-specific commands." },
       { type: "fill-blank", question: "Type the command that turns the fan off:", answer: "M107", hint: "Fan off command", explanation: "M107 turns off the fan." },
       { type: "multiple-choice", question: "Which command is about half fan speed?", options: ["M106 S128", "M106 S255", "M107", "G28"], answer: 0, explanation: "S128 is roughly half of 255." },
       { type: "multiple-choice", question: "Cooling is especially useful for:", options: ["Bridges and overhangs", "Changing Wi-Fi", "Homing X", "Ending the print"], answer: 0, explanation: "Cooling helps plastic solidify for bridges, overhangs, and small details." },
@@ -1354,8 +1339,8 @@ G92 E0    ; reset extruder position</pre>
       { type: "multiple-choice", question: "Why wait for temperatures before printing?", options: ["Plastic needs correct melt and bed conditions", "Comments require heat", "G1 only works hot", "Fans need bed heat"], answer: 0, explanation: "The nozzle and bed should reach target temperatures before first-layer motion." },
       { type: "fill-blank", question: "Type the command that homes all axes:", answer: "G28", hint: "Home command", explanation: "G28 homes the axes." },
       { type: "multiple-choice", question: "What does G92 E0 often do in start G-code?", options: ["Reset extruder position", "Home Z", "Heat bed", "Turn fan off"], answer: 0, explanation: "G92 E0 sets the current extruder position to zero." },
-      { type: "multiple-choice", question: "Which command waits for nozzle temperature?", options: ["M109", "M104", "M140", "M107"], answer: 0, explanation: "M109 waits for the hotend target temperature." },
-      { type: "multiple-choice", question: "Which command waits for bed temperature?", options: ["M190", "M140", "M104", "G1"], answer: 0, explanation: "M190 waits for the bed temperature target." },
+      { type: "multiple-choice", question: "Which Marlin command waits while the nozzle heats?", options: ["M109", "M104", "M140", "M107"], answer: 0, explanation: "M109 S waits while heating; M109 R also waits while cooling." },
+      { type: "multiple-choice", question: "Which Marlin command waits while the bed heats?", options: ["M190", "M140", "M104", "G1"], answer: 0, explanation: "M190 S waits while heating; M190 R also waits while cooling." },
       { type: "fill-blank", question: "Reset extruder position:\nG92 ___0", answer: "E", hint: "Extruder axis", explanation: "G92 E0 resets the extruder position to zero." },
       { type: "multiple-choice", question: "A start sequence should avoid:", options: ["Moving into the bed before homing", "Waiting for heat", "Homing axes", "Setting temperatures"], answer: 0, explanation: "Motion before known positions can crash into the bed or frame." },
       { type: "multiple-choice", question: "What can vary between printers?", options: ["Start G-code order and probing commands", "The meaning of X and Y always", "Whether G-code has lines", "Whether comments exist"], answer: 0, explanation: "Printer firmware, probes, and slicer profiles affect the exact start sequence." }
@@ -1377,7 +1362,7 @@ M140 S0 ; bed off
 M107    ; fan off
 G1 X0 Y220 F3000 ; park
 M84     ; disable motors</pre>
-      <p>Good end G-code keeps the hot nozzle away from the finished part and leaves the printer safe.</p>
+      <p>Good end G-code keeps the hot nozzle away from the finished part. After M84 disables steppers, axes may move manually and lose known position; re-home before later coordinate motion if position may have changed.</p>
     `,
     visual: "program-structure",
     quiz: [
@@ -1386,7 +1371,7 @@ M84     ; disable motors</pre>
       { type: "multiple-choice", question: "Which command turns the bed target to zero?", options: ["M140 S0", "M190 S60", "G92 E0", "M107"], answer: 0, explanation: "M140 S0 turns off the heated bed target." },
       { type: "fill-blank", question: "Type the fan off command:", answer: "M107", hint: "Part cooling fan off", explanation: "M107 turns the fan off." },
       { type: "multiple-choice", question: "Why park the nozzle away from the part?", options: ["To avoid heat damage or oozing on the print", "To home the printer", "To turn fan on", "To reset E"], answer: 0, explanation: "A hot nozzle sitting on the part can mark or melt it." },
-      { type: "multiple-choice", question: "What does M84 usually do?", options: ["Disable motors", "Heat nozzle", "Probe bed", "Set fan speed"], answer: 0, explanation: "M84 disables stepper motors on many printers." },
+      { type: "multiple-choice", question: "What does M84 usually do?", options: ["Disable motors", "Heat nozzle", "Probe bed", "Set fan speed"], answer: 0, explanation: "M84 disables steppers on Marlin-style printers. The machine can lose trusted position if an axis moves afterward, so re-home before later coordinate motion." },
       { type: "multiple-choice", question: "Which line is a parking move?", options: ["G1 X0 Y220 F3000", "M104 S0", "M107", "M84"], answer: 0, explanation: "G1 with X/Y coordinates moves the nozzle to a park position." },
       { type: "fill-blank", question: "Turn the bed off:\nM140 S___", answer: "0", hint: "Zero target temperature", explanation: "S0 sets the bed target to zero/off." },
       { type: "multiple-choice", question: "A safe end sequence should turn off:", options: ["Heaters", "The app theme", "Comments", "The slicer name"], answer: 0, explanation: "Heaters should be turned off at the end of a print." },
@@ -1468,19 +1453,19 @@ G1 X60 Y60 E0.8 F1200</pre>
     theory: `
       <p>Stringing happens when melted plastic leaks during travel moves. Retraction pulls filament
       back before travel, then primes it again before printing resumes.</p>
-      <pre>G1 E-0.8 F1800 ; retract
+      <pre>M83 ; relative extrusion mode<br>G1 E-0.8 F1800 ; retract
 G0 X90 Y90 F9000 ; travel
 G1 E0.8 F1800 ; prime</pre>
-      <p>Retraction values depend on printer type, hotend, material, temperature, and slicer settings.
+      <p>This example explicitly uses M83 relative extrusion. Without known extrusion mode, E-0.8 and E0.8 are destinations rather than guaranteed retract/prime amounts. Retraction values depend on printer type, hotend, material, temperature, and slicer settings.
       The pattern is the important part: retract, travel, prime.</p>
     `,
     visual: "rapid-path",
     quiz: [
-      { type: "multiple-choice", question: "Model retraction pattern:\nG1 E-0.8 F1800\nG0 X90 Y90 F9000\nG1 E0.8 F1800\n\nWhich line retracts filament?", options: ["G1 E-0.8 F1800", "G0 X90 Y90 F9000", "G1 E0.8 F1800", "; travel"], answer: 0, explanation: "A negative E move pulls filament back on many slicer setups." },
+      { type: "multiple-choice", question: "Relative-extrusion pattern:\nM83\nG1 E-0.8 F1800\nG0 X90 Y90 F9000\nG1 E0.8 F1800\n\nWhich line retracts filament?", options: ["G1 E-0.8 F1800", "G0 X90 Y90 F9000", "G1 E0.8 F1800", "M83"], answer: 0, explanation: "With M83 relative extrusion active, a negative E delta retracts filament." },
       { type: "multiple-choice", question: "What problem does retraction mainly fight?", options: ["Stringing during travel", "Wrong app language", "Missing home icon", "Program ending"], answer: 0, explanation: "Retraction reduces oozing while the nozzle travels between printed areas." },
-      { type: "multiple-choice", question: "Which line is the travel move in this pattern?\nG1 E-0.8 F1800\nG0 X90 Y90 F9000\nG1 E0.8 F1800", options: ["G0 X90 Y90 F9000", "G1 E-0.8 F1800", "G1 E0.8 F1800", "F1800"], answer: 0, explanation: "G0 with X/Y moves the nozzle to a new position without extrusion in this example." },
-      { type: "multiple-choice", question: "Which line primes after travel?", options: ["G1 E0.8 F1800", "G1 E-0.8 F1800", "G0 X90 Y90", "G28"], answer: 0, explanation: "A positive E move pushes filament forward again." },
-      { type: "fill-blank", question: "Complete a retract move:\nG1 E___0.8 F1800", answer: "-", hint: "Pull back uses negative E in this example", explanation: "The minus sign makes E move backward in this common pattern." },
+      { type: "multiple-choice", question: "Which line is the travel move in this relative-extrusion pattern?\nM83\nG1 E-0.8 F1800\nG0 X90 Y90 F9000\nG1 E0.8 F1800", options: ["G0 X90 Y90 F9000", "G1 E-0.8 F1800", "G1 E0.8 F1800", "M83"], answer: 0, explanation: "G0 with X/Y moves the nozzle without E movement in this example." },
+      { type: "multiple-choice", question: "With M83 relative extrusion active, which line primes after travel?", options: ["G1 E0.8 F1800", "G1 E-0.8 F1800", "G0 X90 Y90", "G28"], answer: 0, explanation: "In relative extrusion mode, a positive E delta pushes filament forward." },
+      { type: "fill-blank", question: "With M83 active, complete a retract move:\nG1 E___0.8 F1800", answer: "-", hint: "Relative pullback uses a negative E delta", explanation: "With M83 relative extrusion active, the minus sign commands E backward by 0.8." },
       { type: "multiple-choice", question: "If retraction is too low, you may see:", options: ["Thin strings between parts", "Perfectly disabled motors", "Only better bed leveling", "No file comments"], answer: 0, explanation: "Not enough retraction can leave plastic oozing during travel." },
       { type: "multiple-choice", question: "If retraction is too aggressive, it can cause:", options: ["Gaps or under-extrusion after travel", "Automatic perfect prints", "Comments to execute", "Bed temperature to vanish"], answer: 0, explanation: "Too much retraction can delay or reduce flow when printing resumes." },
       { type: "multiple-choice", question: "What else can increase stringing besides low retraction?", options: ["Nozzle temperature too high", "App settings tab", "More comments", "M30 only"], answer: 0, explanation: "Hotter plastic flows more easily and can ooze during travel." },
@@ -1501,17 +1486,17 @@ G1 E0.8 F1800 ; prime</pre>
       <p>Flow problems show up as gaps, thin walls, blobs, heavy seams, or rough top surfaces.
       G-code movement helps you read what the slicer asked the printer to do.</p>
       <pre>G1 X100 E5.0 F1200 ; extrude while moving
-M221 S95           ; set flow to 95 percent on many printers</pre>
+M221 S95           ; Marlin flow percentage example</pre>
       <p>Before changing flow, check basics: nozzle size, filament diameter, temperature, and whether
-      the extruder is slipping. Flow changes should be small and intentional.</p>
+      the extruder is slipping. Flow changes should be small and intentional. Marlin documents M221; Klipper natively uses SET_EXTRUDE_FACTOR.</p>
     `,
     visual: "block-anatomy",
     quiz: [
       { type: "multiple-choice", question: "Model extrusion move:\nG1 X100 E5.0 F1200\n\nWhich value asks for extrusion?", options: ["E5.0", "X100", "F1200", "G1"], answer: 0, explanation: "E5.0 is the extrusion amount in this move." },
       { type: "multiple-choice", question: "What can under-extrusion look like?", options: ["Gaps and thin lines", "Only darker theme", "Extra app tabs", "Comments turning into motion"], answer: 0, explanation: "Under-extrusion often leaves gaps, weak walls, or missing top-surface material." },
       { type: "multiple-choice", question: "What can over-extrusion look like?", options: ["Blobs, heavy seams, rough top surfaces", "Perfectly missing filament", "Nozzle homing", "Only a lower streak"], answer: 0, explanation: "Too much plastic can build up as blobs or rough, crowded lines." },
-      { type: "multiple-choice", question: "On many printers, what does M221 S95 adjust?", options: ["Flow percentage to 95 percent", "Bed temperature to 95 C always", "Fan off", "Home all axes"], answer: 0, explanation: "M221 is commonly used as a flow multiplier command, but firmware can vary." },
-      { type: "fill-blank", question: "Complete a flow command used on many printers:\nM221 S___", answer: "95", hint: "95 percent flow", explanation: "M221 S95 sets flow to 95 percent on many printer firmwares." },
+      { type: "multiple-choice", question: "In Marlin, what does M221 S95 adjust?", options: ["Flow percentage to 95 percent", "Bed temperature to 95 C always", "Fan off", "Home all axes"], answer: 0, explanation: "Marlin M221 sets flow percentage. Klipper's native equivalent is SET_EXTRUDE_FACTOR." },
+      { type: "fill-blank", question: "Complete this Marlin flow command:\nM221 S___", answer: "95", hint: "95 percent flow", explanation: "M221 S95 sets Marlin flow to 95 percent. Other firmware may use a different command." },
       { type: "multiple-choice", question: "Before changing flow, what should you check?", options: ["Nozzle size and filament diameter", "Only app build number", "Only bottom nav icons", "Only comments"], answer: 0, explanation: "Wrong hardware or filament settings can look like a flow problem." },
       { type: "multiple-choice", question: "Which line both moves and extrudes?", options: ["G1 X100 E5.0 F1200", "M221 S95", "; set flow", "G28"], answer: 0, explanation: "G1 with X and E moves while extruding." },
       { type: "fill-blank", question: "Type the command word in this move:\n___ X100 E5.0 F1200", answer: "G1", hint: "Controlled move", explanation: "G1 is the controlled movement command used for many print paths." },
@@ -1576,7 +1561,7 @@ G1 X70 Y80 E0.18 F900</pre>
       { type: "multiple-choice", question: "What does ;TYPE:SUPPORT label?", options: ["Support toolpath", "Nozzle heat command", "Bed probing", "Home command"], answer: 0, explanation: "Slicers often label support paths with comments." },
       { type: "multiple-choice", question: "What does a bridge do?", options: ["Spans a gap between supported areas", "Changes app settings", "Homes all axes", "Turns motors off"], answer: 0, explanation: "A bridge prints across open space between supports or walls." },
       { type: "multiple-choice", question: "Why slow bridge speed?", options: ["To help strands stay controlled across a gap", "To erase comments", "To heat the bed faster", "To disable extrusion"], answer: 0, explanation: "Bridge speed affects sag and strand placement." },
-      { type: "multiple-choice", question: "Which command sets fan full speed in the example?", options: ["M106 S255", "G1 X70", "G28", "M140 S60"], answer: 0, explanation: "M106 S255 is commonly full fan speed." },
+      { type: "multiple-choice", question: "Which command sets the selected/default fan to full speed in this 0-255 example?", options: ["M106 S255", "G1 X70", "G28", "M140 S60"], answer: 0, explanation: "M106 S255 is commonly full speed for the selected/default compatible fan. Named fans may use firmware-specific commands." },
       { type: "fill-blank", question: "Complete a support comment:\n;TYPE:____", answer: "SUPPORT", hint: "Support label", explanation: "Slicers may use ;TYPE:SUPPORT to label support paths." },
       { type: "multiple-choice", question: "Supports are mainly used for:", options: ["Steep overhangs that cannot print in air", "Changing filament brand", "Ending the print", "Setting the clock"], answer: 0, explanation: "Supports provide temporary material under overhangs." },
       { type: "multiple-choice", question: "Too much support can cause:", options: ["Hard removal and rough surfaces", "Automatic calibration", "No need for bed heat", "Comments to execute"], answer: 0, explanation: "Support settings affect cleanup and surface quality." },
@@ -1802,10 +1787,10 @@ const LESSON_QUESTION_EXPANSIONS = {
   "u1-l2": [
     {
       type: "multiple-choice",
-      question: "What is missing from this absolute-positioning setup line?\n___ G20 G40",
-      options: ["G90", "G91", "M30", "T0101"],
+      question: "Which word commands an incremental Z distance on the lathe convention taught here?",
+      options: ["W", "Z", "G90", "G91"],
       answer: 0,
-      explanation: "G90 selects absolute positioning, where positions are measured from program zero."
+      explanation: "W is incremental Z on common Haas/Fanuc-style lathes; Z is an absolute coordinate."
     },
     {
       type: "multiple-choice",
@@ -1823,10 +1808,10 @@ const LESSON_QUESTION_EXPANSIONS = {
     },
     {
       type: "multiple-choice",
-      question: "Which code sets incremental positioning, where moves measure from the current position?",
-      options: ["G90", "G91", "G20", "G28"],
-      answer: 1,
-      explanation: "G91 is incremental positioning. Each move is measured from the current location."
+      question: "Which word commands an incremental X distance on the lathe convention taught here?",
+      options: ["U", "X", "G90", "G91"],
+      answer: 0,
+      explanation: "U is incremental X on common Haas/Fanuc-style lathes; X is an absolute coordinate."
     },
     {
       type: "multiple-choice",
@@ -1844,10 +1829,10 @@ const LESSON_QUESTION_EXPANSIONS = {
     },
     {
       type: "multiple-choice",
-      question: "In absolute mode, X and Z positions are measured from:",
-      options: ["The previous line", "The program zero point", "The tool number", "The feed override knob"],
+      question: "On the lathe convention taught here, X and Z positions are measured from:",
+      options: ["The previous line", "The active work zero", "The tool number", "The feed override knob"],
       answer: 1,
-      explanation: "G90 absolute mode measures positions from program zero."
+      explanation: "X and Z are absolute coordinates from the active work zero; U and W are incremental distances."
     }
   ],
   "u1-l3": [
@@ -2380,7 +2365,7 @@ const LESSON_QUESTION_EXPANSIONS = {
       question: "What does G29 often do?",
       options: ["Runs bed leveling or probing", "Sets nozzle temperature", "Starts the fan", "Ends the print"],
       answer: 0,
-      explanation: "G29 is commonly used for bed probing/leveling, depending on firmware."
+      explanation: "G29 runs configured bed leveling in Marlin. Klipper natively uses BED_MESH_CALIBRATE unless a G29 macro is defined."
     },
     {
       type: "multiple-choice",
@@ -2415,14 +2400,14 @@ const LESSON_QUESTION_EXPANSIONS = {
       question: "Which line is a bed leveling command on many printers?",
       options: ["G29", "M30", "G1 E5", "M05"],
       answer: 0,
-      explanation: "G29 is commonly used for bed leveling/probing."
+      explanation: "This is the Marlin command for its configured bed-leveling system; Klipper natively uses BED_MESH_CALIBRATE."
     },
     {
       type: "multiple-choice",
       question: "Why can G29 behavior vary?",
       options: ["Firmware handles probing differently", "Comments change it", "The app theme changes it", "F always cancels it"],
       answer: 0,
-      explanation: "Marlin, Klipper, and other firmware may implement probing differently."
+      explanation: "Marlin G29 behavior depends on its enabled leveling system. Klipper uses BED_MESH_CALIBRATE unless the configuration defines a G29 macro."
     }
   ],
   "p-u1-l3": [
@@ -2438,7 +2423,7 @@ const LESSON_QUESTION_EXPANSIONS = {
       question: "What does M109 do?",
       options: ["Set nozzle temperature and wait", "Turn fan off", "Home Z only", "End the print"],
       answer: 0,
-      explanation: "M109 waits until the hotend reaches the target temperature."
+      explanation: "In Marlin, M109 S waits while heating; M109 R waits while heating or cooling."
     },
     {
       type: "multiple-choice",
@@ -2459,14 +2444,14 @@ const LESSON_QUESTION_EXPANSIONS = {
       question: "Type the bed temperature command that waits:",
       answer: "M190",
       hint: "Bed heat and wait",
-      explanation: "M190 sets bed temperature and waits."
+      explanation: "In Marlin, M190 S waits while heating; M190 R waits while heating or cooling."
     },
     {
       type: "multiple-choice",
       question: "Which command waits for the bed to heat?",
       options: ["M190", "M104", "G28", "G1"],
       answer: 0,
-      explanation: "M190 waits for the bed temperature target."
+      explanation: "In Marlin, M190 S waits while heating; use M190 R when cooling must also wait."
     },
     {
       type: "multiple-choice",
@@ -2553,24 +2538,24 @@ Object.entries(LESSON_QUESTION_EXPANSIONS).forEach(([lessonId, additions]) => {
     });
 
     updateQuestion('u1-l2', 'u1-l2-q3', {
-      question: 'Setup block:\nG90 G20 G40\n\nWhich code makes later X/Z positions measure from program zero?',
-      options: ['G91 incremental', 'G90 absolute', 'G92 position register', 'G28 machine home'],
+      question: 'On the Haas/Fanuc-style lathe convention taught here, which word commands an incremental Z move?',
+      options: ['Z', 'W', 'G90', 'G91'],
       answer: 1,
-      explanation: 'G90 is absolute mode. Positions are measured from program zero instead of from the current tool position.'
+      explanation: 'W commands an incremental Z distance. G90 may be a turning cycle on a lathe, so never use it as a positioning-mode assumption.'
     });
 
     updateQuestion('u1-l2', 'u1-l2-q6', {
-      question: 'Example absolute setup:\nG90 G20 G40\n\nWhat is missing from this setup line?\n___ G20 G40',
-      options: ['G90', 'G91', 'M05', 'T0101'],
+      question: 'Which word commands an absolute Z position from the active work zero on the lathe convention taught here?',
+      options: ['Z', 'W', 'G90', 'G91'],
       answer: 0,
-      explanation: 'G90 is missing. It tells the control to treat X and Z positions as absolute positions from program zero.'
+      explanation: 'Z is the absolute axial coordinate. W is an incremental Z distance.'
     });
 
     updateQuestion('u1-l2', 'u1-l2-q7', {
-      question: 'You are writing a beginner lathe program from a known part zero. Which positioning mode is the safer normal choice?',
-      options: ['G91 incremental for every move', 'G90 absolute for normal cutting positions', 'No positioning mode', 'Switch modes every block'],
-      answer: 1,
-      explanation: 'G90 absolute mode is easier to audit because each programmed position points back to part zero.'
+      question: 'Which beginner lathe style is easiest to audit from a known work zero?',
+      options: ['Use X/Z absolute positions and reserve U/W for intentional incrementals', 'Use U/W for every destination', 'Issue G90 without checking the control', 'Switch conventions every block'],
+      answer: 0,
+      explanation: 'X/Z positions point back to the active work zero on this convention. U/W are intentional incremental distances.'
     });
 
     addQuestion('u1-l2', {
@@ -2582,6 +2567,44 @@ Object.entries(LESSON_QUESTION_EXPANSIONS).forEach(([lessonId, additions]) => {
       explanation: 'Most CNC lathes use diameter mode for X. X1.500 means a 1.500 diameter, even though the physical radius is 0.750.'
     });
   })();
+
+const CNC_AUDIT_SOURCES = [
+  { title: "NIST RS274/NGC Interpreter", url: "https://www.nist.gov/publications/nist-rs274ngc-interpreter-version-3" },
+  { title: "Haas Lathe Programming Manual", url: "https://www.haascnc.com/service/online-operator-s-manuals/lathe-operator-s-manual/lathe---programming.html" },
+  { title: "Haas Lathe G-Code List", url: "https://www.haascnc.com/service/service-content/guide-procedures/lathe---g-codes.html" },
+  { title: "LinuxCNC G-Code Reference", url: "https://linuxcnc.org/docs/stable/html/gcode/g-code.html" },
+  { title: "OSHA Machine Guarding", url: "https://www.osha.gov/machine-guarding/" }
+];
+
+const PRINTING_AUDIT_SOURCES = [
+  { title: "Marlin G-Code Index", url: "https://marlinfw.org/meta/gcode/" },
+  { title: "Klipper G-Codes", url: "https://www.klipper3d.org/G-Codes.html" },
+  { title: "Klipper Command Templates", url: "https://www.klipper3d.org/Command_Templates.html" },
+  { title: "Prusa Filament Material Guide", url: "https://help.prusa3d.com/filament-material-guide" },
+  { title: "Prusa Print Quality Troubleshooting", url: "https://help.prusa3d.com/category/print-quality-troubleshooting_225" }
+];
+
+const LESSON_AUDIT_DIALECTS = {
+  "u3-l2": "Fanuc-style two-block G71 example",
+  "u3-l3": "Fanuc-style two-block G76 example",
+  "u6-l2": "Fanuc and Haas feed-mode comparison",
+  "u9-l1": "3-axis mill drilling example",
+  "p-u1-l2": "Marlin and Klipper comparison",
+  "p-u1-l3": "Marlin temperature-command semantics",
+  "p-u4-l2": "Relative extrusion example (M83)",
+  "p-u4-l3": "Marlin and Klipper flow-command comparison",
+  "p-u7-l1": "Marlin and Klipper firmware comparison"
+};
+
+[...LESSONS, ...PRINTING_LESSONS].forEach(lesson => {
+  const printing = lesson.id.startsWith("p-");
+  lesson.factCheck = {
+    reviewed: "2026-07-13",
+    dialect: LESSON_AUDIT_DIALECTS[lesson.id] || (printing ? "Firmware-specific 3D-printer G-code" : "Controller-specific RS274-family concepts"),
+    sources: printing ? PRINTING_AUDIT_SOURCES : CNC_AUDIT_SOURCES
+  };
+});
+
 // Export for use in app
 if (typeof module !== "undefined") {
   module.exports = { LESSONS, UNITS, PRINTING_LESSONS, PRINTING_UNITS, TRACKS };
