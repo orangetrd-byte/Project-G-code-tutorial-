@@ -8,6 +8,6 @@
     { "code": "M06", "description": "Tool change" },
     { "code": "M08", "description": "Flood coolant ON" },
     { "code": "M09", "description": "Coolant OFF" },
-    { "code": "M30", "description": "End of program + reset" }
+    { "code": "M30", "description": "End program and reset to the beginning", "usage": "End the program, stop the spindle, turn off coolant, and return the program cursor to the beginning.", "notes": "Additional reset or power-off behavior depends on the control software and settings; do not assume M30 clears every modal state or offset.", "source": "Haas M30 documentation", "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dmcode.machine%3Dmill.value%3DM30.html" }
   ]
 }

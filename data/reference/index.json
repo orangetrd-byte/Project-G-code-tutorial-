@@ -12,7 +12,7 @@
       "file": "mill-g-codes.json",
       "category": "cnc_milling",
       "type": "g_codes",
-      "count": 16
+      "count": 19
     },
     {
       "file": "mill-m-codes.json",
@@ -30,7 +30,7 @@
       "file": "lathe-m-codes.json",
       "category": "cnc_turning",
       "type": "m_codes",
-      "count": 5
+      "count": 3
     },
     {
       "file": "programming-symbols.json",
@@ -60,7 +60,7 @@
       "file": "marlin-3d-printer-m-codes.json",
       "category": "3d_printing_marlin",
       "type": "m_codes",
-      "count": 3
+      "count": 5
     }
   ]
 }

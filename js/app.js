@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.4 | Build 2026.07.11.06';
+const APP_BUILD = 'MGP | Version v2.57.5 | Build 2026.07.13.01';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -580,19 +580,21 @@ const REF_DATA = [
   {
     category: "Motion",
     codes: [
-      { code: "G00", name: "Rapid Positioning", body: `<p>Moves the tool at maximum traverse speed. No cutting — positioning only.</p><pre>G00 X2.200 Z0.100</pre>` },
-      { code: "G01", name: "Linear Feed", body: `<p>Straight-line cutting move at controlled feedrate (F word required).</p><pre>G01 Z-1.500 F0.012</pre>` },
-      { code: "G02", name: "Circular CW", body: `<p>Clockwise arc. Use R for simple arcs or I/K for center-offset method.</p><pre>G02 X1.500 Z-0.500 R0.250 F0.008</pre>` },
-      { code: "G03", name: "Circular CCW", body: `<p>Counter-clockwise arc.</p><pre>G03 X2.000 Z-0.500 R0.125 F0.008</pre>` },
+      { code: "G00", name: "Rapid Positioning", body: `<p>Rapidly positions one or more axes for a non-cutting move. Axes can move independently, so the path may not be straight. Verify clearance first.</p><pre>G00 X2.200 Z0.100</pre>` },
+      { code: "G01", name: "Linear Feed", body: `<p>Moves in a straight line to the endpoint at the active feed rate. Feed meaning depends on the active feed mode and units.</p><pre>G01 Z-1.500 F0.012</pre>` },
+      { code: "G02", name: "Circular CW", body: `<p>Moves clockwise along an arc in the active plane. Use the control-approved I/K center offsets or R format.</p><pre>G02 X1.500 Z-0.500 R0.250 F0.008</pre>` },
+      { code: "G03", name: "Circular CCW", body: `<p>Moves counterclockwise along an arc in the active plane. Arc format and full-circle rules vary by control.</p><pre>G03 X2.000 Z-0.500 R0.125 F0.008</pre>` },
       { code: "G04", name: "Dwell", body: `<p>Pause for a set time. P = time in milliseconds (Fanuc).</p><pre>G04 P500 ; Dwell 0.5 sec</pre>` },
     ]
   },
   {
     category: "Modes",
     codes: [
-      { code: "G20", name: "Inch Mode", body: `<p>Sets control to inch units. Typically in safety block at program start.</p>` },
-      { code: "G21", name: "Metric Mode", body: `<p>Sets control to millimeter units.</p>` },
-      { code: "G40", name: "Cancel Cutter Comp", body: `<p>Cancels cutter radius compensation (G41/G42). Always include in safety block.</p>` },
+      { code: "G20", name: "Inch Units", body: `<p>Selects or verifies inch programming units. On Haas controls it checks Setting 9; it does not convert stored coordinates.</p>` },
+      { code: "G21", name: "Metric Units", body: `<p>Selects or verifies metric programming units. Do not assume the control converts an existing program.</p>` },
+      { code: "G28", name: "Machine-Zero Return", body: `<p>Returns selected axes to machine zero, optionally through an intermediate point. Verify the axis selection and clearance.</p>` },
+      { code: "G40", name: "Cancel Tool-Nose Comp", body: `<p>Cancels G41/G42 tool-nose compensation. Use a deliberate lead-out clear of the part.</p>` },
+      { code: "G54", name: "Work Coordinate System 1", body: `<p>Selects the stored G54 work offset as part zero. It does not measure or set part zero.</p>` },
       { code: "G90", name: "Absolute Mode", body: `<p>All coordinates reference program zero. Default for most programs.</p>` },
       { code: "G91", name: "Incremental Mode", body: `<p>Coordinates are distances from current position. Use sparingly.</p>` },
     ]
@@ -620,7 +622,7 @@ const REF_DATA = [
       { code: "M04", name: "Spindle CCW", body: `<p>Turns spindle on, counter-clockwise (used for left-hand tools, back-turning).</p>` },
       { code: "M05", name: "Spindle Off", body: `<p>Stops the spindle. Always call before tool changes and at program end.</p>` },
       { code: "M08", name: "Coolant On", body: `<p>Turns flood coolant on. M09 = coolant off.</p>` },
-      { code: "M30", name: "End Program / Rewind", body: `<p>Ends execution and rewinds to program start. Always the last line.</p>` },
+      { code: "M30", name: "End Program / Reset", body: `<p>Ends the program, stops the spindle, turns off coolant, and returns to the beginning. Other reset behavior depends on the control and settings.</p>` },
     ]
   }
 ];
@@ -1047,6 +1049,11 @@ function escapeRefText(value) {
   return escapeHtmlAttr(String(value ?? ''));
 }
 
+function safeReferenceUrl(value) {
+  const url = String(value || '').trim();
+  return /^https:\/\//i.test(url) ? escapeHtmlAttr(url) : '';
+}
+
 function referenceCategoryTitle(entry) {
   const labels = {
     cnc_milling: 'CNC Milling',
@@ -1076,6 +1083,10 @@ function referenceItemBody(item) {
   if (item.usage) meta.push(`Usage: ${escapeRefText(item.usage)}`);
   if (meta.length) lines.push(`<p>${meta.join(' | ')}</p>`);
   if (item.notes) lines.push(`<p>${escapeRefText(item.notes)}</p>`);
+  const sourceUrl = safeReferenceUrl(item.source_url);
+  if (sourceUrl) {
+    lines.push(`<p>Source: <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer">${escapeRefText(item.source || 'Official documentation')}</a></p>`);
+  }
   return lines.join('') || '<p>Reference definition pending.</p>';
 }
 

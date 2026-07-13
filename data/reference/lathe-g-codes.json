@@ -7,28 +7,36 @@
       "description": "Rapid positioning",
       "params": "X Z",
       "usage": "Move to a clearance or approach position without cutting feed.",
-      "notes": "Rapid paths are machine-dependent. Verify clearance before cycle start or single-block operation."
+      "notes": "Axes can move independently at their rapid rates, so the path may not be a straight line. Verify clearance before every rapid.",
+      "source": "Haas G00 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dmill.value%3DG00.html"
     },
     {
       "code": "G01",
       "description": "Linear feed move",
       "params": "X Z F",
       "usage": "Cut a straight line at the programmed feedrate.",
-      "notes": "On many lathes, feed interpretation depends on G98/G99 or the control's equivalent mode."
+      "notes": "Feed interpretation depends on the active feed mode, units, and machine setup.",
+      "source": "Haas G01 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG01.html"
     },
     {
       "code": "G02",
       "description": "Clockwise circular interpolation",
       "params": "X Z I K or R",
       "usage": "Cut a clockwise arc in the active turning plane.",
-      "notes": "Arc direction is viewed in the active plane. Confirm the control's I/K or R rules."
+      "notes": "Arc direction is viewed in the active plane. I/K or R rules and full-circle support vary by control.",
+      "source": "Haas G02/G03 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dmill.value%3DG02.html"
     },
     {
       "code": "G03",
       "description": "Counterclockwise circular interpolation",
       "params": "X Z I K or R",
       "usage": "Cut a counterclockwise arc in the active turning plane.",
-      "notes": "Arc direction and center-word format vary by control and postprocessor."
+      "notes": "Arc direction is viewed in the active plane. I/K or R rules and full-circle support vary by control.",
+      "source": "Haas G02/G03 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dmill.value%3DG02.html"
     },
     {
       "code": "G18",
@@ -39,27 +47,35 @@
     {
       "code": "G20",
       "description": "Inch programming mode",
-      "usage": "Interprets programmed dimensions in inches.",
-      "notes": "Confirm the control and machine setup before changing unit mode."
+      "usage": "Select or verify inch programming units for the active control.",
+      "notes": "On Haas controls, G20 checks that Setting 9 is Inch; it does not convert stored coordinates. Other controls may behave differently.",
+      "source": "Haas G20 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG20.html"
     },
     {
       "code": "G21",
       "description": "Metric programming mode",
-      "usage": "Interprets programmed dimensions in millimeters.",
-      "notes": "Do not assume the unit mode from displayed decimals alone."
+      "usage": "Select or verify metric programming units for the active control.",
+      "notes": "On Haas controls, G21 checks that Setting 9 is Metric; it does not convert stored coordinates. Other controls may behave differently.",
+      "source": "Haas Setting 9 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dsetting.machine%3Dlathe.value%3DS9.html"
     },
     {
       "code": "G28",
       "description": "Reference return through an intermediate point",
       "params": "U W or X Z, control-dependent",
       "usage": "Returns one or more axes toward machine reference using the control's defined format.",
-      "notes": "Syntax varies. An unsafe intermediate point can cause a collision."
+      "notes": "Coordinates on the G28 block can create an intermediate move. Verify axis selection and clearance; G28 is not automatically a safe retract.",
+      "source": "Haas G28 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dmill.value%3DG28.html"
     },
     {
       "code": "G40",
       "description": "Cancel tool nose radius compensation",
       "usage": "Cancels active tool nose compensation before a safe exit or tool change.",
-      "notes": "Compensation entry and exit moves must follow control rules."
+      "notes": "Use a deliberate lead-out clear of the part before or while canceling tool-nose compensation, following the control manual.",
+      "source": "Haas lathe G40 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG40.html"
     },
     {
       "code": "G50",
@@ -71,8 +87,10 @@
     {
       "code": "G54",
       "description": "Work coordinate system 1",
-      "usage": "Selects the first work offset when supported by the control.",
-      "notes": "Lathe work-offset conventions vary between Fanuc, Haas, and other controls."
+      "usage": "Select the stored G54 work offset as the programmed part-zero reference.",
+      "notes": "G54 selects stored values; it does not measure or set part zero. Work offsets and tool offsets are different.",
+      "source": "Haas mill basic programming",
+      "source_url": "https://www.haascnc.com/service/online-operator-s-manuals/mill-operator-s-manual/mill---basic-programming.html"
     },
     {
       "code": "G70",
