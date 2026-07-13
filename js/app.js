@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.9 | Build 2026.07.13.05';
+const APP_BUILD = 'MGP | Version v2.57.10 | Build 2026.07.13.06';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -2830,7 +2830,7 @@ function finishWeakReview() {
       <div class="complete-screen review-retry-screen">
         <div class="complete-icon">↻</div>
         <div class="complete-title">Keep These Warm</div>
-        <div class="complete-subtitle">${missed} weak spot${missed === 1 ? '' : 's'} need another pass.</div>
+        <div class="complete-subtitle">${missed} weak spot${missed === 1 ? ' needs' : 's need'} another pass.</div>
         <div class="xp-badge">${State.sessionCorrect}/${State.sessionTotal} corrected</div>
       </div>`;
     $('#lesson-progress-fill').style.width = '100%';
@@ -2880,7 +2880,7 @@ function finishTrackReview() {
       <div class="complete-screen review-retry-screen">
         <div class="complete-icon">↻</div>
         <div class="complete-title">Mixed Review Needs Another Pass</div>
-        <div class="complete-subtitle">${missed} question${missed === 1 ? '' : 's'} need another pass.</div>
+        <div class="complete-subtitle">${missed} question${missed === 1 ? ' needs' : 's need'} another pass.</div>
         <div class="xp-badge">${State.sessionCorrect}/${State.sessionTotal} correct so far</div>
       </div>`;
     $('#lesson-progress-fill').style.width = '100%';
@@ -2928,7 +2928,7 @@ function finishUnitReview() {
       <div class="complete-screen review-retry-screen">
         <div class="complete-icon">↻</div>
         <div class="complete-title">Review Missed Questions</div>
-        <div class="complete-subtitle">${missed} question${missed === 1 ? '' : 's'} need another pass.</div>
+        <div class="complete-subtitle">${missed} question${missed === 1 ? ' needs' : 's need'} another pass.</div>
         <div class="xp-badge">${State.sessionCorrect}/${State.sessionTotal} correct so far</div>
       </div>`;
     $('#lesson-progress-fill').style.width = '100%';

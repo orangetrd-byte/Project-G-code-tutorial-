@@ -66,6 +66,12 @@ function validateFactCheckContent() {
   assert.match(app, /function renderLessonFactCheck/, 'Learners must be able to inspect curriculum sources');
 }
 
+function validateGrammar() {
+  const app = read('js/app.js');
+  assert.doesNotMatch(app, /question\$\{missed === 1 \? '' : 's'\} need/, 'Dynamic question counts need singular/plural verb agreement');
+  assert.doesNotMatch(app, /weak spot\$\{missed === 1 \? '' : 's'\} need/, 'Dynamic weak-spot counts need singular/plural verb agreement');
+}
+
 function validateReferences() {
   const directory = path.join(ROOT, 'data', 'reference');
   fs.readdirSync(directory)
@@ -173,6 +179,7 @@ const runtime = loadAppRuntime();
 validateVersions();
 validateReferences();
 validateActiveCorrection();
+validateGrammar();
 validateFactCheckContent();
 validateCurriculum(runtime.api);
 validateStateAndRetries(runtime.api, runtime.storage);

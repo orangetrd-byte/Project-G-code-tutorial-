@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const BUILD_VERSION = '2026.07.13.05';
+const BUILD_VERSION = '2026.07.13.06';
 const CACHE_VERSION = 'pgct-' + BUILD_VERSION;
 const CACHE_NAME = CACHE_VERSION;
 
