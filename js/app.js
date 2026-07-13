@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.7 | Build 2026.07.13.03';
+const APP_BUILD = 'MGP | Version v2.57.8 | Build 2026.07.13.04';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -2027,6 +2027,7 @@ function renderQuestionContext(q) {
 function renderQuiz(container, q, idx) {
   const div = document.createElement('div');
   div.className = 'step-card active has-audio';
+  q.awaitingCorrection = false;
 
   if (q.type === 'multiple-choice') {
     const letters = ['A','B','C','D'];
@@ -2053,14 +2054,21 @@ function renderQuiz(container, q, idx) {
     $$('.option-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         if (State.currentQuizAnswered) return;
-        const chosen = btn.dataset.idx;
+        const chosen = parseInt(btn.dataset.idx, 10);
+        if (q.awaitingCorrection) {
+          if (chosen !== correctIdx) return;
+          $$('.option-btn').forEach(b => { b.disabled = true; });
+          btn.classList.add('correct');
+          completeCorrection(q);
+          return;
+        }
         q.chosenAnswer = btn.dataset.selectedAnswer || '';
-        const correct = parseInt(chosen, 10) === correctIdx;
+        const correct = chosen === correctIdx;
         $$('.option-btn').forEach(b => {
           const i = parseInt(b.dataset.idx);
           if (i === correctIdx) b.classList.add('correct');
-          else if (b.dataset.idx === chosen && !correct) b.classList.add('wrong');
-          b.disabled = true;
+          else if (i === chosen && !correct) b.classList.add('wrong');
+          b.disabled = correct || i !== correctIdx;
         });
         if (correct) {
           State.sessionCorrect++;
@@ -2070,11 +2078,13 @@ function renderQuiz(container, q, idx) {
           State.missedQuestions.push(q);
           State.trackWeakQuestion(q);
           if (State.currentMode === 'weak-review') applyLearnedCodeMiss(q);
+          q.awaitingCorrection = true;
         }
-        State.currentQuizAnswered = true;
+        State.currentQuizAnswered = correct;
         AudioFeedback.play(correct);
         showExplanation(q.explanation, q, correct);
-        setAnsweredAction(correct);
+        if (correct) setAnsweredAction(true);
+        else requireCorrectionAction('Tap the correct answer');
         showToast(correct ? '✅ Correct!' : '❌ Not quite — see explanation', correct ? 'success' : 'error');
       });
     });
@@ -2097,13 +2107,20 @@ function renderQuiz(container, q, idx) {
       btn.addEventListener('click', () => {
         if (State.currentQuizAnswered) return;
         const chosen = btn.dataset.value === 'true';
+        if (q.awaitingCorrection) {
+          if (chosen !== q.answer) return;
+          $$('.tf-btn').forEach(b => { b.disabled = true; });
+          btn.classList.add('correct');
+          completeCorrection(q);
+          return;
+        }
         q.chosenAnswer = String(chosen);
         const correct = chosen === q.answer;
         $$('.tf-btn').forEach(b => {
           const value = b.dataset.value === 'true';
           if (value === q.answer) b.classList.add('correct');
           else if (value === chosen && !correct) b.classList.add('wrong');
-          b.disabled = true;
+          b.disabled = correct || value !== q.answer;
         });
         if (correct) {
           State.sessionCorrect++;
@@ -2113,11 +2130,13 @@ function renderQuiz(container, q, idx) {
           State.missedQuestions.push(q);
           State.trackWeakQuestion(q);
           if (State.currentMode === 'weak-review') applyLearnedCodeMiss(q);
+          q.awaitingCorrection = true;
         }
-        State.currentQuizAnswered = true;
+        State.currentQuizAnswered = correct;
         AudioFeedback.play(correct);
         showExplanation(q.explanation, q, correct);
-        setAnsweredAction(correct);
+        if (correct) setAnsweredAction(true);
+        else requireCorrectionAction('Tap the correct answer');
         showToast(correct ? '✅ Correct!' : '❌ Not quite — see explanation', correct ? 'success' : 'error');
       });
     });
@@ -2200,15 +2219,30 @@ function getAnswerPattern(q) {
 
 function checkFillBlank(q, inp) {
   const userVal = inp.value.trim().replace(/^G|^g/, match => match.toUpperCase());
-  q.chosenAnswer = userVal;
   const expected = q.answer.trim();
   const normalizedUser = normalizeCodeAnswer(userVal);
   const normalizedExpected = normalizeCodeAnswer(expected);
   const correct = normalizedUser === normalizedExpected;
   const usedShortGCode = correct && /^G[0-9]$/i.test(userVal) && /^G0[0-9]$/i.test(expected);
+
+  if (q.awaitingCorrection) {
+    if (!correct) {
+      AudioFeedback.play(false);
+      showToast('Type the correct answer to continue.', 'error');
+      inp.select();
+      return;
+    }
+    inp.classList.remove('wrong');
+    inp.classList.add('correct');
+    inp.disabled = true;
+    completeCorrection(q);
+    return;
+  }
+
+  q.chosenAnswer = userVal;
   inp.classList.add(correct ? 'correct' : 'wrong');
-  inp.disabled = true;
   if (correct) {
+    inp.disabled = true;
     State.sessionCorrect++;
     if (shouldClearWeakOnCorrect()) State.clearWeakQuestion(q);
     applyLearnedCodeProgress(q, true);
@@ -2216,11 +2250,19 @@ function checkFillBlank(q, inp) {
     State.missedQuestions.push(q);
     State.trackWeakQuestion(q);
     if (State.currentMode === 'weak-review') applyLearnedCodeMiss(q);
+    q.awaitingCorrection = true;
   }
-  State.currentQuizAnswered = true;
+  State.currentQuizAnswered = correct;
   AudioFeedback.play(correct);
   showExplanation(q.explanation + (usedShortGCode ? ' G0 and G00 style codes are both used depending on the control or post. The leading zero form is common in teaching material because it is easier to scan.' : ''), q, correct);
-  setAnsweredAction(correct);
+  if (correct) setAnsweredAction(true);
+  else {
+    inp.value = '';
+    inp.classList.remove('wrong');
+    inp.disabled = false;
+    inp.focus();
+    requireCorrectionAction('Type the correct answer');
+  }
   showToast(correct ? '✅ Correct!' : `❌ Answer: ${q.answer}`, correct ? 'success' : 'error');
 }
 
@@ -2309,22 +2351,50 @@ function checkMatching(q) {
   const hadMismatch = board?.dataset.hadMismatch === 'true';
   board.dataset.hadMismatch = 'false';
   const correct = !hadMismatch;
-  cards.forEach(card => { card.disabled = true; });
+
+  if (q.awaitingCorrection && correct) {
+    cards.forEach(card => { card.disabled = true; });
+    completeCorrection(q);
+    return;
+  }
 
   if (correct) {
+    cards.forEach(card => { card.disabled = true; });
     State.sessionCorrect++;
     if (shouldClearWeakOnCorrect()) State.clearWeakQuestion(q);
     applyLearnedCodeProgress(q, true);
   } else {
-    State.missedQuestions.push(q);
-    State.trackWeakQuestion(q);
-    if (State.currentMode === 'weak-review') applyLearnedCodeMiss(q);
+    if (!q.awaitingCorrection) {
+      State.missedQuestions.push(q);
+      State.trackWeakQuestion(q);
+      if (State.currentMode === 'weak-review') applyLearnedCodeMiss(q);
+      showExplanation(q.explanation, q, false);
+    }
+    q.awaitingCorrection = true;
+    State.currentQuizAnswered = false;
+    AudioFeedback.play(false);
+    resetMatchingForCorrection(cards, board);
+    showToast('Rematch every pair without a mismatch.', 'error');
+    return;
   }
   State.currentQuizAnswered = true;
-  AudioFeedback.play(correct);
-  showExplanation(q.explanation, q, correct);
-  setAnsweredAction(correct);
-  showToast(correct ? '✅ Correct!' : '❌ Not quite — see explanation', correct ? 'success' : 'error');
+  AudioFeedback.play(true);
+  showExplanation(q.explanation, q, true);
+  setAnsweredAction(true);
+  showToast('✅ Correct!', 'success');
+}
+
+function resetMatchingForCorrection(cards, board) {
+  cards.forEach(card => {
+    card.classList.remove('selected', 'matched', 'wrong');
+    card.disabled = false;
+  });
+  board.dataset.hadMismatch = 'false';
+  const count = $('[data-matching-count]');
+  const help = $('[data-matching-help]');
+  if (count) count.textContent = '0/' + (board.dataset.totalPairs || 0);
+  if (help) help.textContent = 'Match every pair again without a mismatch.';
+  requireCorrectionAction('Match every pair again');
 }
 function normalizeCodeAnswer(value) {
   return String(value)
@@ -2337,6 +2407,7 @@ function normalizeCodeAnswer(value) {
 function setAnsweredAction(correct) {
   const btn = $('#lesson-action-btn');
   if (!btn) return;
+  btn.disabled = false;
   if (isReviewLikeMode()) {
     btn.textContent = isLastStep() ? 'Finish Review' : 'Next →';
     btn.className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
@@ -2344,6 +2415,22 @@ function setAnsweredAction(correct) {
   }
   btn.textContent = isLastStep() ? 'Finish Lesson 🎉' : 'Next →';
   btn.className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
+}
+
+function requireCorrectionAction(label = 'Correct the answer to continue') {
+  const btn = $('#lesson-action-btn');
+  if (!btn) return;
+  btn.textContent = label;
+  btn.className = 'btn-primary';
+  btn.disabled = true;
+}
+
+function completeCorrection(q) {
+  q.awaitingCorrection = false;
+  State.currentQuizAnswered = true;
+  AudioFeedback.play(true);
+  setAnsweredAction(false);
+  showToast('✅ Correction locked in', 'success');
 }
 
 function getCorrectAnswerText(q) {

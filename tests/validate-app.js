@@ -46,6 +46,14 @@ function validateVersions() {
   assert.match(read('css/style.css'), /body\.theme-light \.callout\.warning\s*\{\s*color:\s*#6F101A;/, 'Light warning callouts need dark readable text');
 }
 
+function validateActiveCorrection() {
+  const app = read('js/app.js');
+  assert.match(app, /function requireCorrectionAction/, 'Missed questions must lock the action button');
+  assert.match(app, /function completeCorrection/, 'Corrected answers must explicitly unlock progression');
+  assert.match(app, /q\.awaitingCorrection/, 'Quiz handlers must track active correction state');
+  assert.match(app, /function resetMatchingForCorrection/, 'Matching misses must require a clean rematch');
+}
+
 function validateReferences() {
   const directory = path.join(ROOT, 'data', 'reference');
   fs.readdirSync(directory)
@@ -144,6 +152,7 @@ function validateStateAndRetries(api, storage) {
 const runtime = loadAppRuntime();
 validateVersions();
 validateReferences();
+validateActiveCorrection();
 validateCurriculum(runtime.api);
 validateStateAndRetries(runtime.api, runtime.storage);
 console.log('Project G-Code validation passed.');
