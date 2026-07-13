@@ -43,6 +43,7 @@ function validateVersions() {
   assert.ok(swMatch, 'Service-worker build is missing');
   assert.equal(appMatch[1], swMatch[1], 'App and service-worker builds must match');
   assert.match(read('js/app.js'), /MGP \| Version/, 'MGP must remain visible in version information');
+  assert.match(read('css/style.css'), /body\.theme-light \.callout\.warning\s*\{\s*color:\s*#6F101A;/, 'Light warning callouts need dark readable text');
 }
 
 function validateReferences() {

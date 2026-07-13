@@ -364,6 +364,9 @@ strong { color: var(--c-text); font-weight: 600; }
   border-left: 3px solid var(--c-wrong);
   color: #F8A5AE;
 }
+body.theme-light .callout.warning {
+  color: #6F101A;
+}
 .callout.tip {
   background: rgba(245, 166, 35, 0.10);
   border-left: 3px solid var(--c-accent);
