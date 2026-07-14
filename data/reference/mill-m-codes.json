@@ -2,12 +2,12 @@
   "category": "cnc_milling",
   "type": "m_codes",
   "items": [
-    { "code": "M00", "description": "Program stop" },
-    { "code": "M03", "description": "Spindle CW" },
-    { "code": "M05", "description": "Spindle stop" },
-    { "code": "M06", "description": "Tool change" },
-    { "code": "M08", "description": "Flood coolant ON" },
-    { "code": "M09", "description": "Coolant OFF" },
+    { "code": "M00", "description": "Program stop", "source": "Haas mill M00 documentation", "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dmcode.machine%3Dmill.value%3DM00.html" },
+    { "code": "M03", "description": "Spindle clockwise", "notes": "Rotation direction follows the machine manual's documented viewing convention.", "source": "Haas mill M03 documentation", "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dmcode.machine%3Dmill.value%3DM03.html" },
+    { "code": "M05", "description": "Spindle stop", "source": "Haas mill M05 documentation", "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dmcode.machine%3Dmill.value%3DM05.html" },
+    { "code": "M06", "description": "Tool change", "notes": "Tool-change behavior, prerequisites, and supported addresses are machine-specific.", "source": "Haas mill M06 documentation", "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dmcode.machine%3Dmill.value%3DM06.html" },
+    { "code": "M08", "description": "Flood coolant on", "source": "Haas mill M08 documentation", "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dmcode.machine%3Dmill.value%3DM08.html" },
+    { "code": "M09", "description": "Coolant off", "source": "Haas mill M09 documentation", "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dmcode.machine%3Dmill.value%3DM09.html" },
     { "code": "M30", "description": "End program and reset to the beginning", "usage": "End the program, stop the spindle, turn off coolant, and return the program cursor to the beginning.", "notes": "Additional reset or power-off behavior depends on the control software and settings; do not assume M30 clears every modal state or offset.", "source": "Haas M30 documentation", "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dmcode.machine%3Dmill.value%3DM30.html" }
   ]
 }

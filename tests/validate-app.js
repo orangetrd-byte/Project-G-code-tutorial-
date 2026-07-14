@@ -70,6 +70,9 @@ function validateGrammar() {
   const app = read('js/app.js');
   assert.doesNotMatch(app, /question\$\{missed === 1 \? '' : 's'\} need/, 'Dynamic question counts need singular/plural verb agreement');
   assert.doesNotMatch(app, /weak spot\$\{missed === 1 \? '' : 's'\} need/, 'Dynamic weak-spot counts need singular/plural verb agreement');
+  assert.doesNotMatch(app, /G90", name: "Absolute Mode"/, 'Lathe fallback must not teach G90 as universal absolute mode');
+  assert.doesNotMatch(app, /Required for threading, drilling, boring/, 'Constant RPM must remain process-specific');
+  assert.doesNotMatch(app, /Always call before tool changes/, 'Spindle-stop procedure must remain machine-specific');
 }
 
 function validateReferences() {
@@ -89,6 +92,43 @@ function validateReferences() {
   const requiredGCodes = ['G00', 'G01', 'G02', 'G03', 'G20', 'G21', 'G28', 'G40', 'G54'];
   const gCodeItems = ['mill-g-codes.json', 'lathe-g-codes.json']
     .flatMap(file => readJson(`data/reference/${file}`).items);
+  index.files
+    .filter(entry => ['g_codes', 'm_codes'].includes(entry.type))
+    .forEach(entry => {
+      const data = readJson(`data/reference/${entry.file}`);
+      data.items.forEach(item => {
+        assert.match(item.source_url || '', /^https:\/\//, `${entry.file} ${item.code} needs an official source`);
+        const host = new URL(item.source_url).hostname;
+        if (entry.category === '3d_printing_marlin') {
+          assert.equal(host, 'marlinfw.org', `${entry.file} ${item.code} must use official Marlin documentation`);
+        } else {
+          assert.equal(host, 'www.haascnc.com', `${entry.file} ${item.code} must use official Haas documentation`);
+        }
+        if (entry.category === 'cnc_milling') {
+          assert.doesNotMatch(item.source_url, /machine%3Dlathe|lathe-operator-s-manual/, `${entry.file} ${item.code} links to lathe documentation`);
+        }
+        if (entry.category === 'cnc_turning') {
+          assert.doesNotMatch(item.source_url, /machine%3Dmill|mill-operator-s-manual/, `${entry.file} ${item.code} links to mill documentation`);
+        }
+      });
+    });
+
+  const metadata = readJson('data/reference/metadata.json');
+  assert.equal(metadata.reviewed, '2026-07-14', 'Reference package needs a current source-audit date');
+  const blueprintSymbols = readJson('data/reference/blueprint-gdt-symbols.json').items;
+  assert.ok(blueprintSymbols.some(item => item.symbol === '▱' && /Flatness/.test(item.meaning)), 'Flatness needs the parallelogram GD&T symbol');
+  assert.ok(!blueprintSymbols.some(item => item.symbol === '⏤' && /Flatness/.test(item.meaning)), 'Straightness must not be labeled as flatness');
+
+  ['blueprint-gdt-symbols.json', 'programming-symbols.json'].forEach(file => {
+    readJson(`data/reference/${file}`).items.forEach(item => {
+      assert.match(item.source_url || '', /^https:\/\//, `${file} ${item.symbol} needs an authoritative source`);
+    });
+  });
+
+  readJson('data/reference/operation-sheet-symbols.json').items.forEach(item => {
+    assert.match(item.notes || '', /Project example only/, `${item.symbol} must be labeled as a shop-defined example`);
+  });
+
   requiredGCodes.forEach(code => {
     const matches = gCodeItems.filter(item => item.code === code);
     assert.ok(matches.length, `Missing beginner reference ${code}`);

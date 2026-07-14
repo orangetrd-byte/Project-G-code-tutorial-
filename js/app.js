@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.10 | Build 2026.07.13.06';
+const APP_BUILD = 'MGP | Version v2.57.11 | Build 2026.07.14.01';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -584,7 +584,7 @@ const REF_DATA = [
       { code: "G01", name: "Linear Feed", body: `<p>Moves in a straight line to the endpoint at the active feed rate. Feed meaning depends on the active feed mode and units.</p><pre>G01 Z-1.500 F0.012</pre>` },
       { code: "G02", name: "Circular CW", body: `<p>Moves clockwise along an arc in the active plane. Use the control-approved I/K center offsets or R format.</p><pre>G02 X1.500 Z-0.500 R0.250 F0.008</pre>` },
       { code: "G03", name: "Circular CCW", body: `<p>Moves counterclockwise along an arc in the active plane. Arc format and full-circle rules vary by control.</p><pre>G03 X2.000 Z-0.500 R0.125 F0.008</pre>` },
-      { code: "G04", name: "Dwell", body: `<p>Pause for a set time. P = time in milliseconds (Fanuc).</p><pre>G04 P500 ; Dwell 0.5 sec</pre>` },
+      { code: "G04", name: "Dwell", body: `<p>Pauses for a programmed duration. Address format and time units vary by controller; verify the exact manual.</p><pre>G04 P500 ; controller-specific dwell example</pre>` },
     ]
   },
   {
@@ -595,15 +595,13 @@ const REF_DATA = [
       { code: "G28", name: "Machine-Zero Return", body: `<p>Returns selected axes to machine zero, optionally through an intermediate point. Verify the axis selection and clearance.</p>` },
       { code: "G40", name: "Cancel Tool-Nose Comp", body: `<p>Cancels G41/G42 tool-nose compensation. Use a deliberate lead-out clear of the part.</p>` },
       { code: "G54", name: "Work Coordinate System 1", body: `<p>Selects the stored G54 work offset as part zero. It does not measure or set part zero.</p>` },
-      { code: "G90", name: "Absolute Mode", body: `<p>All coordinates reference program zero. Default for most programs.</p>` },
-      { code: "G91", name: "Incremental Mode", body: `<p>Coordinates are distances from current position. Use sparingly.</p>` },
     ]
   },
   {
     category: "Spindle",
     codes: [
       { code: "G96", name: "Constant Surface Speed", body: `<p>S value = surface feet per minute (SFM). RPM varies with diameter. Pair with G50 to clamp max RPM.</p><pre>G50 S3000\nG96 S400 M03</pre>` },
-      { code: "G97", name: "Constant RPM", body: `<p>S value = RPM. Required for threading, drilling, boring.</p><pre>G97 S1200 M03</pre>` },
+      { code: "G97", name: "Constant RPM", body: `<p>S commands a fixed spindle RPM in this controller family. Use it when the verified process and machine procedure call for constant RPM.</p><pre>G97 S1200 M03</pre>` },
     ]
   },
   {
@@ -612,15 +610,15 @@ const REF_DATA = [
       { code: "G70", name: "Finish Turning Cycle", body: `<p>Finish pass following G71/G72 rough. Uses same P-Q profile blocks.</p><pre>G70 P100 Q200 F0.007</pre>` },
       { code: "G71", name: "Rough Turning Cycle", body: `<p>Automatic rough turning with multiple passes.</p><pre>G71 U0.100 R0.050\nG71 P100 Q200 U0.020 W0.005 F0.015</pre>` },
       { code: "G72", name: "Rough Facing Cycle", body: `<p>Same as G71 but removes material in the Z direction (facing operations).</p>` },
-      { code: "G76", name: "Threading Cycle", body: `<p>Multi-pass threading cycle. Requires G97 (constant RPM) active.</p><pre>G76 P010060 Q0050 R0.003\nG76 X0.8647 Z-1.500 P0677 Q0200 F0.0625</pre>` },
+      { code: "G76", name: "Threading Cycle", body: `<p>Controller-specific multi-pass threading cycle. Format and required spindle mode vary; follow the exact machine manual.</p><pre>G76 P010060 Q0050 R0.003\nG76 X0.8647 Z-1.500 P0677 Q0200 F0.0625</pre>` },
     ]
   },
   {
     category: "M-Codes",
     codes: [
-      { code: "M03", name: "Spindle CW", body: `<p>Turns spindle on, clockwise rotation (standard for OD turning).</p>` },
-      { code: "M04", name: "Spindle CCW", body: `<p>Turns spindle on, counter-clockwise (used for left-hand tools, back-turning).</p>` },
-      { code: "M05", name: "Spindle Off", body: `<p>Stops the spindle. Always call before tool changes and at program end.</p>` },
+      { code: "M03", name: "Spindle CW", body: `<p>Commands clockwise spindle rotation as defined from the machine's documented viewing direction. Tooling and spindle orientation determine the correct direction.</p>` },
+      { code: "M04", name: "Spindle CCW", body: `<p>Commands counterclockwise spindle rotation as defined by the machine manual. Do not choose direction from operation name alone.</p>` },
+      { code: "M05", name: "Spindle Off", body: `<p>Stops the spindle. Use it wherever the machine's approved program and tool-change procedure require a spindle stop.</p>` },
       { code: "M08", name: "Coolant On", body: `<p>Turns flood coolant on. M09 = coolant off.</p>` },
       { code: "M30", name: "End Program / Reset", body: `<p>Ends the program, stops the spindle, turns off coolant, and returns to the beginning. Other reset behavior depends on the control and settings.</p>` },
     ]
@@ -642,9 +640,9 @@ const PRINTING_REF_DATA = [
     category: "Temperature",
     codes: [
       { code: "M104", name: "Set Hotend Temp", body: `<p>Sets nozzle temperature and continues immediately.</p><pre>M104 S210</pre>` },
-      { code: "M109", name: "Set Hotend Temp and Wait", body: `<p>Sets nozzle temperature and waits until the target is reached.</p><pre>M109 S210</pre>` },
+      { code: "M109", name: "Set Hotend Temp and Wait", body: `<p>In Marlin, S waits while heating but does not wait for cooling; R waits for heating or cooling. Firmware behavior must be verified.</p><pre>M109 S210</pre>` },
       { code: "M140", name: "Set Bed Temp", body: `<p>Sets heated bed temperature and continues immediately.</p><pre>M140 S60</pre>` },
-      { code: "M190", name: "Set Bed Temp and Wait", body: `<p>Sets heated bed temperature and waits until the target is reached.</p><pre>M190 S60</pre>` },
+      { code: "M190", name: "Set Bed Temp and Wait", body: `<p>In Marlin, S waits while heating but does not wait for cooling; R waits for heating or cooling. Firmware behavior must be verified.</p><pre>M190 S60</pre>` },
     ]
   },
   {

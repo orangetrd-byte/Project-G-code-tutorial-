@@ -32,4 +32,8 @@ Files included:
 - `marlin-3d-printer-m-codes.json`
 - `index.json` — lookup file for the app
 
-Note: This is still a summarized reference. Machine-specific behavior can vary between Fanuc, Haas, and Marlin-based systems.
+Each G-code and M-code card includes a direct official Haas or Marlin documentation link. Symbol cards are summarized separately because shop notation and drawing requirements may use different governing standards.
+
+This remains a learning reference, not a machine-ready programming authority. Verify every command against the exact machine, controller or firmware version, options, postprocessor, tooling procedure, and shop documentation.
+
+Last source audit: 2026-07-14.

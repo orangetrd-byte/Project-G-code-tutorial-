@@ -2,14 +2,14 @@
   "category": "symbols",
   "type": "programming_symbols",
   "items": [
-    { "symbol": "N", "meaning": "Sequence number" },
-    { "symbol": "G", "meaning": "Preparatory code" },
-    { "symbol": "M", "meaning": "Miscellaneous code" },
-    { "symbol": "X Y Z", "meaning": "Coordinates" },
-    { "symbol": "F", "meaning": "Feedrate" },
-    { "symbol": "S", "meaning": "Spindle speed" },
-    { "symbol": "T", "meaning": "Tool selection" },
-    { "symbol": "I J K", "meaning": "Arc center" },
-    { "symbol": "( ) or ;", "meaning": "Comment" }
+    { "symbol": "N", "meaning": "Sequence-number word", "source": "NIST RS274/NGC Interpreter", "source_url": "https://www.nist.gov/publications/nist-rs274ngc-interpreter-version-3" },
+    { "symbol": "G", "meaning": "Preparatory-function word", "source": "NIST RS274/NGC Interpreter", "source_url": "https://www.nist.gov/publications/nist-rs274ngc-interpreter-version-3" },
+    { "symbol": "M", "meaning": "Miscellaneous-function word", "source": "NIST RS274/NGC Interpreter", "source_url": "https://www.nist.gov/publications/nist-rs274ngc-interpreter-version-3" },
+    { "symbol": "X Y Z", "meaning": "Axis words; interpretation depends on the active coordinate and unit modes", "source": "NIST RS274/NGC Interpreter", "source_url": "https://www.nist.gov/publications/nist-rs274ngc-interpreter-version-3" },
+    { "symbol": "F", "meaning": "Feed-rate word; units depend on the active feed mode", "source": "NIST RS274/NGC Interpreter", "source_url": "https://www.nist.gov/publications/nist-rs274ngc-interpreter-version-3" },
+    { "symbol": "S", "meaning": "Spindle-speed word in the referenced machining dialect", "source": "NIST RS274/NGC Interpreter", "source_url": "https://www.nist.gov/publications/nist-rs274ngc-interpreter-version-3" },
+    { "symbol": "T", "meaning": "Tool-selection word; tool-change behavior is controller-specific", "source": "NIST RS274/NGC Interpreter", "source_url": "https://www.nist.gov/publications/nist-rs274ngc-interpreter-version-3" },
+    { "symbol": "I J K", "meaning": "Arc-center data in common RS274-family formats; exact interpretation is controller-specific", "source": "NIST RS274/NGC Interpreter", "source_url": "https://www.nist.gov/publications/nist-rs274ngc-interpreter-version-3" },
+    { "symbol": "( ) or ;", "meaning": "Comment syntax; parentheses and semicolon support vary by controller dialect", "source": "NIST RS274/NGC Interpreter", "source_url": "https://www.nist.gov/publications/nist-rs274ngc-interpreter-version-3" }
   ]
 }

@@ -6,31 +6,41 @@
       "code": "M104",
       "description": "Set hotend temperature",
       "params": "S",
-      "notes": "Sets nozzle target temperature and continues without waiting."
+      "notes": "Sets a hotend target temperature and continues without waiting.",
+      "source": "Marlin M104 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M104.html"
     },
     {
       "code": "M109",
       "description": "Set hotend temperature and wait",
-      "params": "S",
-      "notes": "Sets nozzle target temperature and waits until reached."
+      "params": "S or R",
+      "notes": "S waits only while heating; R waits for heating or cooling. A host-command interruption can also affect the wait.",
+      "source": "Marlin M109 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M109.html"
     },
     {
       "code": "M140",
       "description": "Set bed temperature",
       "params": "S",
-      "notes": "Sets bed target temperature and continues without waiting."
+      "notes": "Sets a heated-bed target temperature and continues without waiting.",
+      "source": "Marlin M140 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M140.html"
     },
     {
       "code": "M190",
       "description": "Set bed temperature and wait",
-      "params": "S",
-      "notes": "Sets bed target temperature and waits until reached."
+      "params": "S or R",
+      "notes": "S waits only while heating; R waits for heating or cooling. A host-command interruption can also affect the wait.",
+      "source": "Marlin M190 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M190.html"
     },
     {
       "code": "M106",
       "description": "Set fan speed",
-      "params": "S",
-      "notes": "Controls fan speed, commonly S0-S255 in Marlin."
+      "params": "P S",
+      "notes": "Controls a selected fan. S commonly ranges from 0 to 255, while fan selection and extra parameters depend on configuration.",
+      "source": "Marlin M106 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M106.html"
     }
   ]
 }

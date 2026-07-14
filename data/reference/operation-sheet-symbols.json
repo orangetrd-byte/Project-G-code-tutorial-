@@ -5,17 +5,20 @@
     {
       "symbol": "OP",
       "meaning": "Operation",
-      "usage": "OP10: first machining operation or setup step"
+      "usage": "OP10: first machining operation or setup step",
+      "notes": "Project example only. OP numbering and meaning are shop-defined, not a universal machining standard."
     },
     {
       "symbol": "SU",
       "meaning": "Setup",
-      "usage": "SU1: fixture, jaws, or setup instructions for an operation"
+      "usage": "SU1: fixture, jaws, or setup instructions for an operation",
+      "notes": "Project example only. Verify the abbreviation and setup convention in the governing shop documentation."
     },
     {
       "symbol": "QC",
       "meaning": "Quality check",
-      "usage": "Inspection requirement such as visual check, gage check, or CMM check"
+      "usage": "Inspection requirement such as visual check, gage check, or CMM check",
+      "notes": "Project example only. QC labels and required inspection methods are defined by the governing quality documentation."
     }
   ]
 }

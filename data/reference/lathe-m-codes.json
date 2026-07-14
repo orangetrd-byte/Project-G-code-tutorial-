@@ -2,8 +2,8 @@
   "category": "cnc_turning",
   "type": "m_codes",
   "items": [
-    { "code": "M03", "description": "Spindle CW" },
-    { "code": "M04", "description": "Spindle CCW" },
-    { "code": "M05", "description": "Spindle stop" }
+    { "code": "M03", "description": "Spindle clockwise", "notes": "Rotation direction follows the machine manual's documented viewing convention.", "source": "Haas lathe M03 documentation", "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dmcode.machine%3Dlathe.value%3DM03.html" },
+    { "code": "M04", "description": "Spindle counterclockwise", "notes": "Choose spindle direction from the verified setup and tooling procedure.", "source": "Haas lathe M04 documentation", "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dmcode.machine%3Dlathe.value%3DM04.html" },
+    { "code": "M05", "description": "Spindle stop", "source": "Haas lathe M05 documentation", "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dmcode.machine%3Dlathe.value%3DM05.html" }
   ]
 }

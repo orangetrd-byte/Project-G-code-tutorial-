@@ -9,7 +9,7 @@
       "usage": "Move to a clearance or approach position without cutting feed.",
       "notes": "Axes can move independently at their rapid rates, so the path may not be a straight line. Verify clearance before every rapid.",
       "source": "Haas G00 documentation",
-      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dmill.value%3DG00.html"
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG00.html"
     },
     {
       "code": "G01",
@@ -27,7 +27,7 @@
       "usage": "Cut a clockwise arc in the active turning plane.",
       "notes": "Arc direction is viewed in the active plane. I/K or R rules and full-circle support vary by control.",
       "source": "Haas G02/G03 documentation",
-      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dmill.value%3DG02.html"
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG02.html"
     },
     {
       "code": "G03",
@@ -36,13 +36,15 @@
       "usage": "Cut a counterclockwise arc in the active turning plane.",
       "notes": "Arc direction is viewed in the active plane. I/K or R rules and full-circle support vary by control.",
       "source": "Haas G02/G03 documentation",
-      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dmill.value%3DG02.html"
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG03.html"
     },
     {
       "code": "G18",
       "description": "Select the XZ plane",
       "usage": "Sets the normal turning plane for lathe arcs and canned cycles.",
-      "notes": "Usually the default plane on a standard two-axis lathe."
+      "notes": "Usually the default plane on a standard two-axis lathe.",
+      "source": "Haas lathe G18 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG18.html"
     },
     {
       "code": "G20",
@@ -67,7 +69,7 @@
       "usage": "Returns one or more axes toward machine reference using the control's defined format.",
       "notes": "Coordinates on the G28 block can create an intermediate move. Verify axis selection and clearance; G28 is not automatically a safe retract.",
       "source": "Haas G28 documentation",
-      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dmill.value%3DG28.html"
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG28.html"
     },
     {
       "code": "G40",
@@ -82,77 +84,97 @@
       "description": "Spindle speed clamp or coordinate function, control-dependent",
       "params": "S or axis words",
       "usage": "Commonly limits maximum RPM when using constant surface speed on Fanuc-style lathes.",
-      "notes": "G50 has different meanings on some controls. Verify the machine manual."
+      "notes": "G50 has different meanings on some controls. Verify the machine manual.",
+      "source": "Haas lathe G50 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG50.html"
     },
     {
       "code": "G54",
       "description": "Work coordinate system 1",
       "usage": "Select the stored G54 work offset as the programmed part-zero reference.",
       "notes": "G54 selects stored values; it does not measure or set part zero. Work offsets and tool offsets are different.",
-      "source": "Haas mill basic programming",
-      "source_url": "https://www.haascnc.com/service/online-operator-s-manuals/mill-operator-s-manual/mill---basic-programming.html"
+      "source": "Haas lathe G54 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG54.html"
     },
     {
       "code": "G70",
       "description": "Finishing cycle",
       "params": "P Q",
       "usage": "Finishes a profile previously defined by sequence blocks.",
-      "notes": "Often used after G71 or G72. Exact behavior depends on the control."
+      "notes": "Often used after G71 or G72. Exact behavior depends on the control.",
+      "source": "Haas lathe G70 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG70.html"
     },
     {
       "code": "G71",
       "description": "Rough turning stock-removal cycle",
       "params": "U R P Q W F, format varies",
       "usage": "Removes material in repeated roughing passes along a defined profile.",
-      "notes": "One-line and two-line formats differ. Never copy a format without matching the machine control."
+      "notes": "One-line and two-line formats differ. Never copy a format without matching the machine control.",
+      "source": "Haas lathe G71 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG71.html"
     },
     {
       "code": "G72",
       "description": "Rough facing stock-removal cycle",
       "params": "W R P Q U F, format varies",
       "usage": "Removes material in repeated facing passes across a defined profile.",
-      "notes": "Parameter letters and cycle format vary by control."
+      "notes": "Parameter letters and cycle format vary by control.",
+      "source": "Haas lathe G72 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG72.html"
     },
     {
       "code": "G74",
       "description": "Peck drilling or face-grooving cycle, control-dependent",
       "params": "R Z Q F or control-specific format",
       "usage": "Used for repeated pecking or grooving motion depending on the machine.",
-      "notes": "This code is especially control-specific. Verify the manual before use."
+      "notes": "This code is especially control-specific. Verify the manual before use.",
+      "source": "Haas lathe G74 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG74.html"
     },
     {
       "code": "G75",
       "description": "Grooving or pecking cycle, control-dependent",
       "params": "R X Z P Q F or control-specific format",
       "usage": "Commonly used for OD or ID grooving with repeated pecks on Fanuc-style controls.",
-      "notes": "Cycle meaning and parameter format vary."
+      "notes": "Cycle meaning and parameter format vary.",
+      "source": "Haas lathe G75 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG75.html"
     },
     {
       "code": "G76",
       "description": "Multiple-pass threading cycle",
       "params": "P Q R X Z F, format varies",
       "usage": "Cuts a thread over multiple controlled passes.",
-      "notes": "One-line and two-line formats differ significantly by control generation."
+      "notes": "One-line and two-line formats differ significantly by control generation.",
+      "source": "Haas lathe G76 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG76.html"
     },
     {
       "code": "G96",
       "description": "Constant surface speed",
       "params": "S",
       "usage": "Automatically changes spindle RPM as cutting diameter changes.",
-      "notes": "Use a safe maximum-RPM clamp such as G50 S... where appropriate."
+      "notes": "Use the machine's verified maximum-RPM limit where the procedure requires one.",
+      "source": "Haas lathe G96 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG96.html"
     },
     {
       "code": "G97",
       "description": "Constant spindle RPM",
       "params": "S",
       "usage": "Runs the spindle at a fixed commanded RPM.",
-      "notes": "Commonly used for drilling, threading setup, or before tool changes depending on the process."
+      "notes": "Use constant RPM when required by the verified process and controller procedure.",
+      "source": "Haas lathe G97 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG97.html"
     },
     {
       "code": "G98 / G99",
       "description": "Feed mode selection, control-dependent",
       "usage": "Selects feed per minute or feed per revolution on many turning controls.",
-      "notes": "The assignment of G98 and G99 can differ between control families. Verify the machine manual."
+      "notes": "Haas lathes use G98 for feed per minute and G99 for feed per revolution; other control families may assign different codes.",
+      "source": "Haas lathe G98/G99 documentation",
+      "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG98.html"
     }
   ]
 }

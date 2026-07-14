@@ -4,23 +4,33 @@
   "items": [
     {
       "symbol": "⌀",
-      "meaning": "Diameter"
+      "meaning": "Diameter",
+      "source": "ASME Y14.5 Dimensioning and Tolerancing",
+      "source_url": "https://www.asme.org/codes-standards/find-codes-standards/y14-5-dimensioning-tolerancing"
     },
     {
       "symbol": "R",
-      "meaning": "Radius"
+      "meaning": "Radius",
+      "source": "ASME Y14.5 Dimensioning and Tolerancing",
+      "source_url": "https://www.asme.org/codes-standards/find-codes-standards/y14-5-dimensioning-tolerancing"
     },
     {
       "symbol": "⌖",
-      "meaning": "Position tolerance (GD&T)"
+      "meaning": "Position tolerance (GD&T)",
+      "source": "ASME Y14.5 Dimensioning and Tolerancing",
+      "source_url": "https://www.asme.org/codes-standards/find-codes-standards/y14-5-dimensioning-tolerancing"
     },
     {
-      "symbol": "⏤",
-      "meaning": "Flatness (GD&T)"
+      "symbol": "▱",
+      "meaning": "Flatness (GD&T)",
+      "source": "ASME Y14.5 Dimensioning and Tolerancing",
+      "source_url": "https://www.asme.org/codes-standards/find-codes-standards/y14-5-dimensioning-tolerancing"
     },
     {
       "symbol": "∥",
-      "meaning": "Parallelism (GD&T)"
+      "meaning": "Parallelism (GD&T)",
+      "source": "ASME Y14.5 Dimensioning and Tolerancing",
+      "source_url": "https://www.asme.org/codes-standards/find-codes-standards/y14-5-dimensioning-tolerancing"
     }
   ]
 }
