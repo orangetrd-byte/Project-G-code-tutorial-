@@ -431,6 +431,7 @@ G01 X1.750 Z-1.500 F0.010</pre>
     title: "Spindle Speed: G96 & G97",
     icon: "🔩",
     xp: 20,
+    why: "The same cutting speed can require very different RPM at large and small diameters. Choosing the right spindle mode—and a verified RPM limit—helps protect the tool, workholding, and finish.",
     theory: `
       <p>The lathe spindle can be controlled in two ways:</p>
       <h4>G96 — Constant Surface Speed (CSS)</h4>
@@ -485,6 +486,7 @@ G96 S400 M03 ; CSS at 400 SFM</pre>
     title: "G71 — Rough Turning Cycle",
     icon: "🔧",
     xp: 25,
+    why: "A long profile may need many roughing passes. A roughing cycle can repeat a verified profile consistently while leaving controlled stock for the finishing pass.",
     theory: `
       <p>This lesson shows a <strong>Fanuc-style two-block G71 example</strong>. G71 formats, allowances, retracts, and profile restrictions vary by controller; verify the exact manual revision before use.</p>
       <pre>G71 U0.100 R0.050
@@ -549,6 +551,7 @@ G71 P100 Q200 U0.020 W0.005 F0.015</pre>
     title: "G76 — Threading Cycle",
     icon: "🔩",
     xp: 30,
+    why: "Threads must stay synchronized with spindle rotation. Understanding lead, depth, and the controller's exact cycle format helps prevent a small code error from ruining the thread or tool.",
     theory: `
       <p>This lesson shows a <strong>Fanuc-style two-block G76 example</strong>. G76 formats and packed P/Q meanings vary substantially by controller; verify the exact manual revision before use.</p>
       <pre>G97 S700 M03         ; Constant RPM for threading

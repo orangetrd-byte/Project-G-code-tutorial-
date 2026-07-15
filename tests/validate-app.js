@@ -144,6 +144,10 @@ function validateCurriculum(api) {
   const firstCncLesson = api.TRACKS.cnc.lessons.find(lesson => lesson.id === 'u1-l1');
   assert.ok(firstCncLesson.quiz.some(question => question.id === 'u1-l1-q8'), 'Beginner context questions must load from curriculum data');
   assert.doesNotMatch(read('index.html'), /const updateQuestion\s*=/, 'Curriculum patches do not belong in index.html');
+  api.TRACKS.cnc.lessons.slice(0, 9).forEach(lesson => {
+    assert.ok(String(lesson.why || '').trim(), `${lesson.id} must explain why the concept matters before teaching syntax`);
+  });
+  assert.match(read('js/app.js'), /\$\{whyBlock\}\s*<div class="theory-body">/, 'Why-this-matters content must render before lesson theory');
 
   const lessonIds = new Set();
   const questionIds = new Set();

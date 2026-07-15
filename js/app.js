@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.11 | Build 2026.07.14.01';
+const APP_BUILD = 'MGP | Version v2.57.12 | Build 2026.07.15.01';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
