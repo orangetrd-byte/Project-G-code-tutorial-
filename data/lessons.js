@@ -620,6 +620,7 @@ G76 X0.8647 Z-1.500 P0677 Q0200 F0.0625</pre>
     title: "Tool Calls & Offsets",
     icon: "🎯",
     xp: 20,
+    why: "The T-word links a physical tool to its measured geometry. Getting the tool/offset pairing right — and keeping tool number matched to offset number — prevents the control from cutting with the wrong geometry or wear values, which is a fast way to crash a tool or scrap a part.",
     theory: `
       <p>This lesson uses a common Haas/Fanuc-style four-digit T-word convention:</p>
       <pre>T0101   ; Tool 1, Offset 1
@@ -681,6 +682,7 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
     title: "Work Offsets & G54",
     icon: "📍",
     xp: 20,
+    why: "Every position in a program is measured from part zero, and the work offset is what tells the control where part zero is. Selecting the wrong offset — or trusting one that was never verified — makes every move land in the wrong place, so the offset must be chosen and proven before any motion that relies on it.",
     theory: `
       <p>Work offsets define a program's part-zero reference relative to machine coordinates. This Haas lathe example uses G54 through G59 work-offset selections.</p>
       <pre>G54   ; Select work offset 1 in this Haas example
@@ -729,6 +731,7 @@ G56   ; Work offset 3</pre>
     title: "Measure, Compare, Adjust",
     icon: "CHK",
     xp: 20,
+    why: "A first part is only correct after measurement. Comparing the measured size to the print tells you which direction to adjust, and correcting through the wear offset (not the program) keeps the saved geometry intact for the next run — but only if you confirm the sign and field first.",
     theory: `
       <p>After the first part, the job is not done. You measure the part, compare it to print,
       then adjust the program or wear offset.</p>
@@ -761,6 +764,7 @@ Correction: remove 0.0020 from diameter</pre>
     title: "Wear Offsets vs Program Edits",
     icon: "ADJ",
     xp: 20,
+    why: "Small size errors and wrong geometry need different fixes. A wear offset nudges a correct path; a program edit changes the path itself. Knowing which one to use — and that both still change machine motion — stops you from editing the program when an offset would do, or vice versa.",
     theory: `
       <p>When the approved process uses wear offsets, they are intended for minute tool-position corrections. Change the program when the commanded geometry or sequence itself is wrong.</p>
       <pre>Wear offset: part is 0.0015 oversize
@@ -790,6 +794,7 @@ Program edit: groove is in the wrong Z location</pre>
     title: "Single Block and Dry Run",
     icon: "RUN",
     xp: 20,
+    why: "A new or edited program is unproven until you watch it run. Single Block and Dry Run let you check one move at a time and at reduced rates, but they still move the machine — so prove-out is a habit of watching and verifying, not a guarantee the path is safe.",
     theory: `
       <p>Before trusting a new or edited program, prove it with the exact machine's approved process. On the referenced Haas control, Single Block executes one program block per press of Cycle Start. Dry Run still moves the machine and can execute programmed tool changes, while replacing programmed rapid/feed rates with selected dry-run rates.</p>
       <pre>Single Block ON
@@ -1037,6 +1042,7 @@ G80 ; cancel cycle</pre>
     title: "Feed Hold, Restart, and Alarm Thinking",
     icon: "REC",
     xp: 25,
+    why: "Most crashes happen during recovery, not during normal running. After an alarm or a wrong move, the machine still holds all its modal state — modes, offsets, spindle, tool — so restarting blindly can repeat or worsen the mistake. Calm, verified recovery protects the machine, tool, part, and operator.",
     theory: `
       <p>Good recovery is calm and methodical. When something looks wrong, stop motion, understand
       the current modal state, and restart only from a safe known point.</p>

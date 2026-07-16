@@ -169,6 +169,10 @@ function validateCurriculum(api) {
       assert.equal(lesson.factCheck?.reviewed, expectedReviewDate, `${lesson.id} needs a current fact-check date`);
       assert.ok(String(lesson.factCheck?.dialect || '').trim(), `${lesson.id} needs a controller or firmware scope`);
       assert.ok(Array.isArray(lesson.factCheck?.sources) && lesson.factCheck.sources.length >= 3, `${lesson.id} needs primary source coverage`);
+      // Regression: every CNC lesson (id matches uN-lM, not printing p-uN-lM) must have a visible why-before-how.
+      if (/^u\d+-l\d+$/.test(lesson.id)) {
+        assert.ok(String(lesson.why || '').trim(), `${lesson.id} needs a visible 'why' before the how`);
+      }
       lesson.factCheck.sources.forEach(source => {
         assert.match(source.url || '', /^https:\/\//, `${lesson.id} has an invalid audit source`);
       });
