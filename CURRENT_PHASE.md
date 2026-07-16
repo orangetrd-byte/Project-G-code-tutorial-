@@ -6,12 +6,12 @@ Phase 6: Retention Polish
 
 ## Handoff Status
 
-- Last updated: 2026-07-06.
-- Codi is done for the day; Hermes should continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest pushed commit: 747e49f fix: style app update reload button.
-- Current app build: MGP | Version v2.56.7 | Build 2026.07.07.07.
-- Current service-worker cache: pgct-2026.07.07.07.
-- Local main is aligned with origin/main; only backup files are untracked and intentionally separate.
+- Last updated: 2026-07-16.
+- Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
+- Latest pushed commit: 59f7f0d add why-before-how to turning lessons.
+- Current app build: MGP | Version v2.57.13 | Build 2026.07.16.01.
+- Current service-worker cache: pgct-2026.07.16.01.
+- Local main was aligned with origin/main before this audit pass.
 
 ## Phase 5 Completion Summary
 
@@ -39,6 +39,9 @@ Phase 6: Retention Polish
 - Styles: added missing `--c-error` and `--shadow-sm` design tokens for dark and light themes.
 - Lesson visuals: added missing SVG visual strings for `program-structure`, `linear-feed`, and `spindle-speed`.
 - Accessibility: added `aria-live="polite"` to `#lesson-content` for screen-reader question transitions.
+- Accuracy: completed a source-backed curriculum pass across 39 lessons and 392 questions.
+- Reference: added official Haas, Marlin, ASME, and NIST sources with machine-family link guards.
+- Retention: added why-before-how framing through CNC Unit 3 and regression coverage for ordering.
 - Keyboard: matching cards now support Enter/Space selection.
 - Lesson engine: retry-number generation no longer returns the original value as its fallback.
 - Lesson engine: retry-number replacement works inside parenthesized/delimited text.
@@ -49,22 +52,21 @@ Phase 6: Retention Polish
 
 ## Next Actions
 
-- Choose the next polish lane from BACKLOG.md / PHASE_PLAN.md:
-  - Code Bank + learned-code filtering
-  - Why-before-how curriculum rules
-  - Lightweight reward/rank polish
+- Continue the source-backed curriculum audit in small controller-specific batches.
+- Extend why-before-how framing beyond CNC Unit 3 without mixing it into accuracy-only changes.
+- Choose the next retention lane after the audit batch: Code Bank or lightweight reward/rank polish.
 - Verify lesson completion, daily practice, weak review, matching, and mixed review after any behavior changes.
 - Keep examples educational, not production-ready machine instructions.
 - Tune reward/rank ideas carefully so they support retention instead of becoming noisy.
 - Add curriculum depth in small batches only when review flows remain stable.
-- Add a source-backed reference audit table before changing disputed definitions: `code`, `track`, `current definition`, `source/manual`, `confidence`, and `notes`.
-- Cross-check semicolon/comment/block-end wording, `G04` dwell timing, printer firmware codes, CNC M-codes, units, feed, and spindle assumptions against official control/firmware docs before editing learner-facing definitions.
+- Keep disputed definitions traceable to a named controller or firmware source before editing learner-facing text.
+- Continue cross-checking offsets, prove-out controls, canned cycles, and printer recovery behavior against official documentation.
 
 ## Planned Ideas
 
-- Strengthen why-before-how curriculum rules by keeping visible lesson reasons before syntax/details.
+- Extend the established why-before-how rule beyond CNC Unit 3.
 - Add Code Bank / learned-code filtering so Reference feels like a collection as well as a lookup.
-- Build a source-backed Reference QA pass so code definitions are traceable to Fanuc-style CNC manuals or Marlin/Klipper firmware docs instead of unsourced general knowledge.
+- Maintain the completed source-backed Reference QA rules as new cards are added.
 - Add lightweight reward/rank moments for meaningful progress milestones.
 - Keep matching as a game-like review mode, especially on mobile and light theme.
 - Add more visual logic blocks for coordinates, motion, offsets, cycles, and troubleshooting patterns.

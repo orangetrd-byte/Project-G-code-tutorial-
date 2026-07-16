@@ -626,11 +626,11 @@ G76 X0.8647 Z-1.500 P0677 Q0200 F0.0625</pre>
 T0202   ; Tool 2, Offset 2
 T0100   ; Cancel offset (tool 1, no offset)</pre>
       <p>In this convention, the T-word is <code>T</code> + two-digit tool number + two-digit offset number. Other machines format tool and offset calls differently.</p>
-      <p>The <strong>tool offset</strong> (stored in the control's wear offset page) compensates for:</p>
+      <p>On the referenced Haas lathe, tool geometry and tool wear are separate fields with different jobs:</p>
       <ul>
-        <li>Exact tool tip position after touch-off</li>
-        <li>Tool wear (small adjustments to hit size)</li>
-        <li>Nose radius compensation geometry</li>
+        <li><strong>X/Z geometry</strong> stores the measured distance from machine zero to the tool tip.</li>
+        <li><strong>Radius geometry and tip direction</strong> support tool-nose compensation.</li>
+        <li><strong>X/Z and radius wear</strong> are intended for minute adjustments as the tool wears.</li>
       </ul>
       <p>On many Fanuc-style lathes, the turret indexes from the <code>T0101</code> call itself.
       <code>M06</code> is common on mills, but is not the normal beginner pattern for this lathe track.</p>
@@ -682,22 +682,19 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
     icon: "📍",
     xp: 20,
     theory: `
-      <p>Work offsets define where your program zero is relative to machine home. 
-      G54 through G59 are the standard work offset registers.</p>
-      <pre>G54   ; Use work offset 1 (most common)
+      <p>Work offsets define a program's part-zero reference relative to machine coordinates. This Haas lathe example uses G54 through G59 work-offset selections.</p>
+      <pre>G54   ; Select work offset 1 in this Haas example
 G55   ; Work offset 2
 G56   ; Work offset 3</pre>
-      <p>On a lathe, the work offset stores the Z distance from machine home to the 
-      face of your part (after facing). The X offset is typically set at the spindle centerline.</p>
-      <p><strong>Setting a work offset (touch-off procedure):</strong></p>
+      <p>On a common two-axis lathe setup, part Z0 is often established at the faced end of the part. The exact X/Z values and setup method depend on the machine, tooling, probe options, and shop procedure.</p>
+      <p><strong>Conceptual verification workflow:</strong></p>
       <ol>
-        <li>Face the part to clean up the end face</li>
-        <li>Without moving Z, measure the part length or touch the face</li>
-        <li>Enter the Z value into the G54 offset register</li>
-        <li>The control now knows where Z0 is on your part</li>
+        <li>Select the intended work-offset register.</li>
+        <li>Establish part zero with the controller-approved manual or probing method.</li>
+        <li>Verify the stored axis values and active offset independently.</li>
+        <li>Prove the resulting coordinates using the machine's approved setup process.</li>
       </ol>
-      <p>Always call your work offset at the top of the program, before any motion — 
-      usually in the same block as the safety line or immediately after.</p>
+      <p>Make the required work-coordinate selection explicit before motion that depends on it. Power-up and retained modal behavior are controller-specific.</p>
     `,
     visual: "work-offsets",
     quiz: [
@@ -715,10 +712,10 @@ G56   ; Work offset 3</pre>
       },
       {
         type: "multiple-choice",
-        question: "Which G-code is the most commonly used work offset on a lathe?",
+        question: "Which code selects the first work-offset register in this Haas lathe example?",
         options: ["G52", "G53", "G54", "G92"],
         answer: 2,
-        explanation: "G54 is the first — and most commonly used — work coordinate offset register. It's the default starting point for most lathe programs."
+        explanation: "G54 selects the first work-offset register in this Haas example. Other controls and approved programs may use a different work-coordinate strategy."
       }
     ]
   },
@@ -738,21 +735,20 @@ G56   ; Work offset 3</pre>
       <pre>Target OD: 1.0000
 Measured OD: 1.0020
 Correction: remove 0.0020 from diameter</pre>
-      <p>On a lathe in diameter mode, X wear adjustments are usually entered as diameter changes.
-      If the OD is too big by 0.0020, adjust X wear by -0.0020.</p>
+      <p>In the Haas/Fanuc coordinate example used here, X wear is entered as a diameter change. For conventional O.D. turning in that documented setup, a -0.0020 X wear entry moves the cut toward a diameter that is 0.0020 smaller. Confirm the active tool, offset field, sign, orientation, and control behavior before changing a machine.</p>
       <p class="callout tip">Make one small correction, rerun, and measure again.</p>
     `,
     visual: "tool-offsets",
     quiz: [
       { type: "multiple-choice", question: "Target OD is 1.0000 and measured OD is 1.0020. What is the part?", options: ["0.0020 oversized", "0.0020 undersized", "Perfect size", "Missing Z offset"], answer: 0, explanation: "The measured diameter is larger than target by 0.0020." },
-      { type: "multiple-choice", question: "In diameter mode, if an OD is too big by 0.0020, the usual X wear correction is:", options: ["X +0.0020", "X -0.0020", "Z -0.0020", "F +0.0020"], answer: 1, explanation: "A negative X wear correction makes the tool cut a smaller diameter." },
+      { type: "multiple-choice", question: "In this documented Haas/Fanuc O.D.-turning example, an OD is 0.0020 too large. After verifying the active offset and sign convention, which X wear entry targets a diameter 0.0020 smaller?", options: ["X +0.0020", "X -0.0020", "Z -0.0020", "F +0.0020"], answer: 1, explanation: "For this stated Haas/Fanuc setup, negative X wear moves the cut toward a smaller O.D. Do not transfer the sign blindly to another tool orientation or control." },
       { type: "fill-blank", question: "Measured OD is 2.0050, target is 2.0000. How far oversized is it?\n___", answer: "0.0050", hint: "Measured minus target", explanation: "2.0050 - 2.0000 = 0.0050 oversized." },
       { type: "multiple-choice", question: "Which offset is normally used for small size corrections after touch-off?", options: ["Wear offset", "Program number", "Spindle override", "Coolant switch"], answer: 0, explanation: "Wear offsets are meant for small tool-position corrections." },
       { type: "multiple-choice", question: "Why make one correction at a time?", options: ["So you know what changed the result", "Because G-code cannot have comments", "Because M03 only works once", "To avoid using G54"], answer: 0, explanation: "One change at a time makes troubleshooting clear." },
       { type: "fill-blank", question: "Type the common offset type used for small corrections:\n____ offset", answer: "wear", hint: "Small adjustment page", explanation: "Wear offsets are commonly used for small corrections after measuring parts." },
       { type: "multiple-choice", question: "A Z length is 0.010 too long. Which direction is the correction about?", options: ["Z position", "Spindle RPM", "Program number", "Coolant"], answer: 0, explanation: "Length errors are corrected in the Z direction or Z wear offset." },
-      { type: "multiple-choice", question: "What is the safest habit before changing offsets?", options: ["Confirm the measured error and sign", "Guess and rerun", "Change every tool", "Skip inspection"], answer: 0, explanation: "Most offset mistakes come from using the wrong sign or wrong tool offset." },
-      { type: "multiple-choice", question: "If a bore is too small, what usually needs to happen?", options: ["Move the boring tool to cut larger", "Lower spindle speed only", "Cancel M30", "Remove all comments"], answer: 0, explanation: "A boring tool must cut farther out to make the inside diameter larger." },
+      { type: "multiple-choice", question: "What is the safest habit before changing offsets?", options: ["Confirm the measured error and sign", "Guess and rerun", "Change every tool", "Skip inspection"], answer: 0, explanation: "Wrong-sign and wrong-offset entries are serious risks. Confirm the measurement, tool, field, sign convention, and intended result first." },
+      { type: "multiple-choice", question: "In a verified conventional boring setup, what geometric change makes a small bore larger?", options: ["Move the boring cut farther from spindle centerline", "Lower spindle speed only", "Cancel M30", "Remove all comments"], answer: 0, explanation: "A larger bore requires the cutting edge to machine farther from the spindle centerline. The commanded sign depends on the tool orientation and control." },
       { type: "multiple-choice", question: "What should you do after making a wear offset change?", options: ["Measure the next part", "Delete the program", "Change every offset", "Ignore the print"], answer: 0, explanation: "Always verify the correction by cutting and measuring again." }
     ]
   },
@@ -766,14 +762,14 @@ Correction: remove 0.0020 from diameter</pre>
     icon: "ADJ",
     xp: 20,
     theory: `
-      <p>Use wear offsets for small tool corrections. Use program edits when the toolpath itself is wrong.</p>
+      <p>When the approved process uses wear offsets, they are intended for minute tool-position corrections. Change the program when the commanded geometry or sequence itself is wrong.</p>
       <pre>Wear offset: part is 0.0015 oversize
 Program edit: groove is in the wrong Z location</pre>
-      <p>Offsets are fast and reversible. Program edits change the path for every future part.</p>
+      <p>A wear entry leaves the saved program geometry unchanged but affects subsequent motion for the active offset. A saved program edit changes the commanded path for future runs. Both require authorization, documentation, and verification.</p>
     `,
     visual: "work-offsets",
     quiz: [
-      { type: "multiple-choice", question: "A turned diameter is 0.001 high but the path is correct. Best first fix?", options: ["Wear offset", "Rewrite the whole program", "Change M30", "Delete G54"], answer: 0, explanation: "Small size corrections are a wear offset job." },
+      { type: "multiple-choice", question: "A turned diameter is 0.001 high, the toolpath is verified, and the approved process permits a minute offset correction. Best first fix?", options: ["Wear offset", "Rewrite the whole program", "Change M30", "Delete G54"], answer: 0, explanation: "Under the stated conditions, the wear field is intended for a minute tool-position correction." },
       { type: "multiple-choice", question: "A groove is programmed at the wrong Z location. Best fix?", options: ["Program edit", "Spindle override", "Coolant off", "Comment only"], answer: 0, explanation: "If the geometry or path is wrong, edit the program." },
       { type: "fill-blank", question: "If the correction is a tiny tool-position change, use a ____ offset.", answer: "wear", hint: "Small correction offset", explanation: "Wear offsets are used for small tool-position corrections." },
       { type: "multiple-choice", question: "Which change affects every future run of that program?", options: ["Program edit", "Temporary single-block mode", "Measuring the part", "Reading a comment"], answer: 0, explanation: "A saved program edit changes future runs." },
@@ -782,7 +778,7 @@ Program edit: groove is in the wrong Z location</pre>
       { type: "fill-blank", question: "Program edits change the tool____.", answer: "path", hint: "Where the tool moves", explanation: "Program edits change the path the tool follows." },
       { type: "multiple-choice", question: "Before editing a proven program, what should you confirm?", options: ["The measured problem is real", "The app theme", "The icon size", "The operator name only"], answer: 0, explanation: "Confirm the issue before changing a program that may already be correct." },
       { type: "multiple-choice", question: "Which correction is most likely an offset change?", options: ["OD is 0.0015 big", "Tool is cutting wrong feature", "Program ends too early", "Wrong tool called"], answer: 0, explanation: "A small size error on a correct path is typically a wear correction." },
-      { type: "multiple-choice", question: "Why are wear offsets safer for small size changes?", options: ["They are small and reversible", "They erase the program", "They disable G00", "They set metric mode"], answer: 0, explanation: "Wear offsets let you correct size without changing the toolpath." }
+      { type: "multiple-choice", question: "Why can an approved wear-offset change be useful for a small size correction?", options: ["It preserves the saved program geometry while applying a documented offset adjustment", "It erases the program", "It disables G00", "It sets metric mode"], answer: 0, explanation: "A wear entry can correct a minute tool-position error without rewriting the saved path, but it still changes machine motion and must be verified." }
     ]
   },
 
@@ -795,24 +791,23 @@ Program edit: groove is in the wrong Z location</pre>
     icon: "RUN",
     xp: 20,
     theory: `
-      <p>Before trusting a new or edited program, prove it carefully. Single block runs one block
-      at a time. Dry run tests motion without cutting at normal conditions.</p>
+      <p>Before trusting a new or edited program, prove it with the exact machine's approved process. On the referenced Haas control, Single Block executes one program block per press of Cycle Start. Dry Run still moves the machine and can execute programmed tool changes, while replacing programmed rapid/feed rates with selected dry-run rates.</p>
       <pre>Single Block ON
 Feed Hold ready
 Rapid override reduced</pre>
-      <p>Use these controls when checking clearances, tool changes, first moves, and any edited line.</p>
+      <p>These controls can support prove-out, but they do not make a path safe. Graphics or simulation may avoid axis motion, though not every function or motion is necessarily modeled. Follow the machine and shop procedure.</p>
     `,
     visual: "rapid-path",
     quiz: [
       { type: "multiple-choice", question: "What does single block do?", options: ["Runs one block at a time", "Deletes comments", "Turns coolant on", "Changes G54"], answer: 0, explanation: "Single block pauses after each block so you can verify the next move." },
       { type: "multiple-choice", question: "Why reduce rapid override during prove-out?", options: ["To give time to react", "To improve surface finish", "To change units", "To end the program"], answer: 0, explanation: "Reduced rapid speed gives the operator more time to stop a bad move." },
-      { type: "multiple-choice", question: "Which button should you be ready to use during first run?", options: ["Feed Hold", "Caps Lock", "Print Screen", "Wi-Fi"], answer: 0, explanation: "Feed Hold pauses controlled motion and is a key prove-out habit." },
+      { type: "multiple-choice", question: "On the referenced Haas control, what does Feed Hold do during a run?", options: ["Stops axis motion while the spindle can continue turning", "Turns off all stored offsets", "Rewinds the program", "Changes the active units"], answer: 0, explanation: "Haas documents Feed Hold as stopping axis motion while the spindle continues to turn. It is not the same as an emergency stop or a complete energy-isolation procedure." },
       { type: "fill-blank", question: "Running one block at a time is called ____ block.", answer: "single", hint: "One at a time", explanation: "Single block mode runs one program block at a time." },
       { type: "multiple-choice", question: "When should you be most cautious?", options: ["After a program edit", "After reading a comment", "After opening settings", "After changing app theme"], answer: 0, explanation: "Edited lines need careful prove-out." },
       { type: "multiple-choice", question: "What should you watch on first motion?", options: ["Clearance and direction", "Only the clock", "Only the part color", "Only the logo"], answer: 0, explanation: "Verify the tool moves the expected direction with safe clearance." },
-      { type: "multiple-choice", question: "What is dry run mainly for?", options: ["Checking motion safely", "Measuring final size", "Replacing offsets", "Turning comments into code"], answer: 0, explanation: "Dry run helps verify motion before normal cutting." },
+      { type: "multiple-choice", question: "What does Dry Run do on the referenced Haas control?", options: ["Moves the machine using selected dry-run rates to help check a program", "Measures final part size", "Replaces all offsets", "Turns comments into code"], answer: 0, explanation: "Dry Run changes how rapid and feed motion rates are executed, but it still moves axes and may perform tool changes. It is a check mode, not a guarantee of safety." },
       { type: "fill-blank", question: "Type the control mode: ____ Block ON", answer: "Single", hint: "Runs one line at a time", explanation: "Single Block ON is used for careful prove-out." },
-      { type: "multiple-choice", question: "Which move deserves extra attention?", options: ["First rapid after tool change", "A blank comment", "The app build number", "A finished review"], answer: 0, explanation: "The first rapid after a tool change is a common crash point." },
+      { type: "multiple-choice", question: "Which move deserves extra attention?", options: ["First rapid after tool change", "A blank comment", "The app build number", "A finished review"], answer: 0, explanation: "After a tool change, the active tool, offset, orientation, and full clearance path must all be verified before rapid motion." },
       { type: "multiple-choice", question: "A safe prove-out mindset is:", options: ["Assume nothing, verify each move", "Assume the program is always safe", "Ignore offsets", "Run at 100% rapid immediately"], answer: 0, explanation: "Good operators verify before trusting the program." }
     ]
   },
@@ -2277,10 +2272,10 @@ const LESSON_QUESTION_EXPANSIONS = {
     },
     {
       type: "fill-blank",
-      question: "Type the most common first work offset code:",
+      question: "Type the first Haas work-offset selection taught in this track:",
       answer: "G54",
       hint: "First work coordinate offset",
-      explanation: "G54 is the first common work coordinate offset."
+      explanation: "G54 selects the first work-offset register in this Haas example."
     },
     {
       type: "multiple-choice",
@@ -2575,6 +2570,9 @@ const CNC_AUDIT_SOURCES = [
   { title: "NIST RS274/NGC Interpreter", url: "https://www.nist.gov/publications/nist-rs274ngc-interpreter-version-3" },
   { title: "Haas Lathe Programming Manual", url: "https://www.haascnc.com/service/online-operator-s-manuals/lathe-operator-s-manual/lathe---programming.html" },
   { title: "Haas Lathe G-Code List", url: "https://www.haascnc.com/service/service-content/guide-procedures/lathe---g-codes.html" },
+  { title: "Haas Lathe Part Setup", url: "https://www.haascnc.com/service/online-operator-s-manuals/lathe-operator-s-manual/lathe---part-setup.html" },
+  { title: "Haas Control Pendant", url: "https://www.haascnc.com/service/online-operator-s-manuals/lathe-operator-s-manual/lathe---control-pendant.html" },
+  { title: "Haas Control Icons", url: "https://www.haascnc.com/service/online-operator-s-manuals/lathe-operator-s-manual/lathe---control-icons.html" },
   { title: "LinuxCNC G-Code Reference", url: "https://linuxcnc.org/docs/stable/html/gcode/g-code.html" },
   { title: "OSHA Machine Guarding", url: "https://www.osha.gov/machine-guarding/" }
 ];
@@ -2590,6 +2588,11 @@ const PRINTING_AUDIT_SOURCES = [
 const LESSON_AUDIT_DIALECTS = {
   "u3-l2": "Fanuc-style two-block G71 example",
   "u3-l3": "Fanuc-style two-block G76 example",
+  "u4-l1": "Haas lathe tool-geometry and wear-offset model",
+  "u4-l2": "Haas lathe G54-G59 work-offset example",
+  "u5-l1": "Haas/Fanuc-style conventional O.D.-turning example",
+  "u5-l2": "Haas lathe geometry and wear-offset model",
+  "u5-l3": "Haas lathe prove-out controls",
   "u6-l2": "Fanuc and Haas feed-mode comparison",
   "u9-l1": "3-axis mill drilling example",
   "p-u1-l2": "Marlin and Klipper comparison",
@@ -2599,10 +2602,18 @@ const LESSON_AUDIT_DIALECTS = {
   "p-u7-l1": "Marlin and Klipper firmware comparison"
 };
 
+const LESSON_AUDIT_REVIEWED = {
+  "u4-l1": "2026-07-16",
+  "u4-l2": "2026-07-16",
+  "u5-l1": "2026-07-16",
+  "u5-l2": "2026-07-16",
+  "u5-l3": "2026-07-16"
+};
+
 [...LESSONS, ...PRINTING_LESSONS].forEach(lesson => {
   const printing = lesson.id.startsWith("p-");
   lesson.factCheck = {
-    reviewed: "2026-07-13",
+    reviewed: LESSON_AUDIT_REVIEWED[lesson.id] || "2026-07-13",
     dialect: LESSON_AUDIT_DIALECTS[lesson.id] || (printing ? "Firmware-specific 3D-printer G-code" : "Controller-specific RS274-family concepts"),
     sources: printing ? PRINTING_AUDIT_SOURCES : CNC_AUDIT_SOURCES
   };

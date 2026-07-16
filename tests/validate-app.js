@@ -61,6 +61,10 @@ function validateFactCheckContent() {
   assert.doesNotMatch(curriculum, /G00 ignores feedrate override/, 'Rapid override behavior must remain controller-specific');
   assert.doesNotMatch(curriculum, /Always leave 0\.050/, 'Fixed rapid clearances must not be labeled universally safe');
   assert.doesNotMatch(curriculum, /G02 cuts a concave/, 'Arc direction must not be equated with concavity');
+  assert.doesNotMatch(curriculum, /tool offset \(stored in the wear offset page\)/i, 'Geometry and wear offsets must remain distinct');
+  assert.doesNotMatch(curriculum, /Dry run tests motion/i, 'Dry Run must not be presented as motion-free verification');
+  assert.doesNotMatch(curriculum, /Most offset mistakes come from/i, 'Unsupported incident rankings must not be taught as fact');
+  assert.match(curriculum, /Dry Run still moves the machine and can execute programmed tool changes/, 'Dry Run movement and tool-change risk must remain explicit');
   assert.match(curriculum, /M83 ; relative extrusion mode/, 'Retraction examples must declare relative extrusion mode');
   assert.match(curriculum, /M109 S waits while heating/, 'Marlin temperature waits must distinguish S from R');
   assert.match(app, /function renderLessonFactCheck/, 'Learners must be able to inspect curriculum sources');
@@ -159,7 +163,8 @@ function validateCurriculum(api) {
       assert.ok(lesson.id && !lessonIds.has(lessonKey), `Duplicate lesson ${lessonKey}`);
       lessonIds.add(lessonKey);
       assert.ok(Array.isArray(lesson.quiz) && lesson.quiz.length, `${lesson.id} needs quiz questions`);
-      assert.equal(lesson.factCheck?.reviewed, '2026-07-13', `${lesson.id} needs a current fact-check date`);
+      const expectedReviewDate = ['u4-l1', 'u4-l2', 'u5-l1', 'u5-l2', 'u5-l3'].includes(lesson.id) ? '2026-07-16' : '2026-07-13';
+      assert.equal(lesson.factCheck?.reviewed, expectedReviewDate, `${lesson.id} needs a current fact-check date`);
       assert.ok(String(lesson.factCheck?.dialect || '').trim(), `${lesson.id} needs a controller or firmware scope`);
       assert.ok(Array.isArray(lesson.factCheck?.sources) && lesson.factCheck.sources.length >= 3, `${lesson.id} needs primary source coverage`);
       lesson.factCheck.sources.forEach(source => {

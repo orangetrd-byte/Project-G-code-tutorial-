@@ -1,6 +1,6 @@
 # Project G-Code Tutorial — Backlog
 
-Last updated: 2026-07-06
+Last updated: 2026-07-16
 
 ---
 
@@ -25,8 +25,8 @@ These define what Project G-Code can do better than a PDF, video playlist, or ge
    Acceptance: user can jump from a weak spot to the exact concept in one tap.
 
 5. Correction rewrite after a miss
-   After a wrong answer, require a short corrected answer or tap-pair retry before advancing in review modes.
-   Acceptance: the learner recalls the correction instead of only reading feedback.
+   Status: completed. Wrong answers now require an active correction before progression.
+   Acceptance met: the learner recalls the correction instead of only reading feedback.
 
 ---
 
@@ -35,7 +35,8 @@ These define what Project G-Code can do better than a PDF, video playlist, or ge
 These reduce guessing and improve retention.
 
 1. Job-first lesson framing
-   Rewrite lesson intros as "make this move / machine this feature / prepare this print state" before naming the code.
+   Status: in progress through CNC Unit 3 using visible why-before-how framing.
+   Continue later units in small curriculum-only batches.
 
 2. Beginner checkpoints
    Add short checkpoints for safety-critical concepts such as units, coordinates, rapid moves, offsets, canned cycles, homing, temperatures, and end commands.

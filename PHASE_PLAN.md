@@ -1,5 +1,7 @@
 # G-Code Tutorial Phase Plan
 
+Last updated: 2026-07-16
+
 ## Summary
 
 G-Code Tutorial is the structured learning app for CNC and related machine-code fundamentals. It should keep the Duolingo-style lesson loop: short theory, quiz, feedback, XP, and unlock progression.
@@ -17,7 +19,7 @@ Default constraints:
 - Keep lesson flow reliable: theory, quiz, feedback, XP, unlock next lesson.
 - Keep state persistence stable in localStorage.
 - Ensure reference search and progress screens remain fast and mobile-friendly.
-- Start a source-backed reference audit table for learner-facing definitions that need manual/firmware verification.
+- Maintain source-backed reference coverage and controller/firmware scope for learner-facing definitions.
 
 ## Phase 2: Curriculum Expansion
 
@@ -49,7 +51,7 @@ Default constraints:
 
 - Every lesson must have a clear learning objective, feedback, and explanation.
 - Track content must not blur CNC machining and 3D printing concepts.
-- Reference definitions that vary by control or firmware must name the context or be marked as needing source verification.
+- Reference definitions that vary by control or firmware must name the context and cite an authoritative source.
 - Every PWA-facing change that affects cached files must bump the visible version and `sw.js` cache name.
 - `.codex-remote-attachments/` must remain ignored.
 - Before editing, confirm local `main` is clean and aligned with `origin/main`.
