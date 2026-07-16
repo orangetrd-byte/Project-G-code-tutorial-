@@ -41,6 +41,10 @@ function loadAppRuntime() {
   return { api: context.__testApi, storage };
 }
 
+function isCodeLearned(api, code, trackId = api.State.trackId) {
+  return api.State.learnedCodeCodes.includes(api.escapeLearnedCodeKey(code, trackId));
+}
+
 function validateVersions() {
   const appMatch = read('js/app.js').match(/Build (\d{4}\.\d{2}\.\d{2}\.\d{2})/);
   const swMatch = read('sw.js').match(/const BUILD_VERSION = '(\d{4}\.\d{2}\.\d{2}\.\d{2})'/);
