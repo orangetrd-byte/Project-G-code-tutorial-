@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.13 | Build 2026.07.16.05';
+const APP_BUILD = 'MGP | Version v2.57.13 | Build 2026.07.16.06';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -686,13 +686,32 @@ function toggleLearnedCode(code, trackId = State.trackId) {
   State.save();
 }
 
+function escapeLearnedCodeKey(code, trackId) {
+  return `${trackId || State.trackId}::${String(code || '').trim().toUpperCase()}`;
+}
+
+const CODE_TOKEN_RE = /\b(G|M)\d{1,3}\b/gi;
+function extractCodeTokens(text) {
+  if (!text) return [];
+  const m = String(text).match(CODE_TOKEN_RE);
+  return m ? m.map(c => c.toUpperCase()) : [];
+}
+
 function queueCodesFromQuestion(question = {}) {
   const meta = question?.meta || {};
   const explicitCodes = Array.isArray(meta.codes) ? meta.codes : [];
-  const answerCode = typeof question.answer === 'string' && /^(G|M)\d+$/i.test(question.answer.trim())
-    ? [question.answer.trim()]
-    : [];
-  return [...new Set([...explicitCodes, ...answerCode].map(code => String(code).trim().toUpperCase()).filter(Boolean))];
+  const codes = [...explicitCodes];
+  // Multiple-choice: the correct option may embed one or more codes
+  // (e.g. "G00 X2.500", "G97 (CSS)", "M106 S128"), so extract every code token.
+  if (question.type === 'multiple-choice' && Array.isArray(question.options)) {
+    const chosen = question.options[question.answer];
+    if (chosen) codes.push(...extractCodeTokens(chosen));
+  }
+  // Bare-string answer (fill-blank) such as "G54" or "G97".
+  if (typeof question.answer === 'string') {
+    codes.push(...extractCodeTokens(question.answer));
+  }
+  return [...new Set(codes.map(c => String(c).trim().toUpperCase()).filter(Boolean))];
 }
 
 function applyLearnedCodeProgress(question = {}, correct) {

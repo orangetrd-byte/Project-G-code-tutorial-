@@ -30,7 +30,12 @@ function loadAppRuntime() {
     TRACKS,
     initConceptPools,
     createRetryNumberVariant,
-    normalizeCodeAnswer
+    normalizeCodeAnswer,
+    applyLearnedCodeProgress,
+    getLearnedCodeCount,
+    toggleLearnedCode,
+    escapeLearnedCodeKey,
+    queueCodesFromQuestion
   };`;
   vm.runInContext(`${read('data/lessons.js')}\n${appBeforeBoot}\n${expose}`, context);
   return { api: context.__testApi, storage };
@@ -230,6 +235,90 @@ function validateStateAndRetries(api, storage) {
   });
 }
 
+function isCodeLearned(api, code, trackId = api.State.trackId) {
+  return api.State.learnedCodeCodes.includes(api.escapeLearnedCodeKey(code, trackId));
+}
+
+function validateLearnedCodeAutoUnlock(api) {
+  api.initConceptPools();
+  const codeRe = /\b(G|M)\d{1,3}\b/i;
+  let covered = 0;
+  let gaps = 0;
+  Object.entries(api.TRACKS).forEach(([trackId, track]) => {
+    track.lessons.forEach(lesson => {
+      lesson.quiz.forEach(question => {
+        if (question.type !== 'multiple-choice' && question.type !== 'fill-blank') return;
+        const teaches = codeRe.test(`${question.question} ${question.explanation}`);
+        if (!teaches) return; // only code-bearing questions must auto-unlock
+        const unlocked = api.queueCodesFromQuestion(question);
+        if (unlocked.length === 0) {
+          gaps += 1;
+          console.error(`  code gap: ${trackId}/${lesson.id}/${question.id}`);
+        } else {
+          covered += 1;
+        }
+      });
+    });
+  });
+  assert.ok(covered > 0, 'At least some code-bearing questions should auto-unlock');
+  assert.equal(gaps, 0, `Every code-bearing question must unlock a code (gaps=${gaps})`);
+}
+
+function validateLearnedCodeLifecycle(api, storage) {
+  api.initConceptPools();
+  api.State.trackId = 'cnc';
+  api.State.learnedCodeCodes = [];
+  api.State.save();
+
+  // Manual marking (toggleLearnedCode) persists a track-scoped key.
+  api.State.trackId = 'cnc';
+  api.toggleLearnedCode('G54');
+  assert.ok(isCodeLearned(api, 'G54'), 'Manually marked CNC code should be learned');
+  assert.ok(api.State.learnedCodeCodes.includes('cnc::G54'), 'CNC learned code must be stored track-scoped');
+  assert.equal(api.getLearnedCodeCount('cnc'), 1, 'CNC learned-code count should be 1 after marking');
+
+  // Track separation: a CNC code must NOT appear under the printing track.
+  api.State.trackId = 'printing';
+  assert.equal(api.getLearnedCodeCount('printing'), 0, 'Printing count must stay separate from CNC');
+  assert.ok(!isCodeLearned(api, 'G54'), 'CNC G54 must not be learned under the printing track');
+  api.toggleLearnedCode('G1');
+  assert.ok(isCodeLearned(api, 'G1'), 'Manually marked printing code should be learned');
+  assert.ok(api.State.learnedCodeCodes.includes('printing::G1'), 'Printing learned code must be stored track-scoped');
+  assert.equal(api.getLearnedCodeCount('cnc'), 1, 'CNC count must remain unchanged after printing edit');
+  assert.equal(api.getLearnedCodeCount('printing'), 1, 'Printing learned-code count should be 1');
+
+  // Persistence: reload State from the same localStorage and confirm codes survive.
+  const saved = storage.get('pgct_state_v2');
+  assert.ok(saved && saved.includes('cnc::G54') && saved.includes('printing::G1'), 'Learned codes must persist to storage');
+  api.State.load();
+  assert.ok(api.State.learnedCodeCodes.includes('cnc::G54'), 'CNC G54 must survive a state reload');
+  assert.ok(api.State.learnedCodeCodes.includes('printing::G1'), 'Printing G1 must survive a state reload');
+
+  // Automatic unlocking: answering a code-bearing question correctly queues its code.
+  api.State.trackId = 'cnc';
+  api.State.learnedCodeCodes = []; // isolate the auto-unlock phase from the manual marks above
+  api.State.save();
+  const g54Question = api.TRACKS.cnc.lessons
+    .flatMap(l => l.quiz)
+    .find(q => q.type === 'multiple-choice' && api.queueCodesFromQuestion(q).includes('G54'));
+  assert.ok(g54Question, 'A CNC question that unlocks G54 must exist');
+  const before = api.getLearnedCodeCount('cnc');
+  api.applyLearnedCodeProgress(g54Question, true);
+  assert.ok(api.getLearnedCodeCount('cnc') > before, 'Correct answer must increase learned-code count');
+  assert.ok(isCodeLearned(api, 'G54'), 'Auto-unlock must learn G54 after a correct answer');
+
+  // Wrong answers must NOT unlock codes.
+  const beforeWrong = api.getLearnedCodeCount('cnc');
+  api.applyLearnedCodeProgress(g54Question, false);
+  assert.equal(api.getLearnedCodeCount('cnc'), beforeWrong, 'Incorrect answers must not unlock codes');
+
+  // Reset clears all learned codes (the app reset is global).
+  api.State.trackId = 'cnc';
+  api.State.resetAllData();
+  assert.equal(api.getLearnedCodeCount('cnc'), 0, 'Reset must clear CNC learned codes');
+  assert.equal(api.getLearnedCodeCount('printing'), 0, 'Reset must clear all track learned codes');
+}
+
 const runtime = loadAppRuntime();
 validateVersions();
 validateReferences();
@@ -238,4 +327,6 @@ validateGrammar();
 validateFactCheckContent();
 validateCurriculum(runtime.api);
 validateStateAndRetries(runtime.api, runtime.storage);
+validateLearnedCodeAutoUnlock(runtime.api);
+validateLearnedCodeLifecycle(runtime.api, runtime.storage);
 console.log('Project G-Code validation passed.');
