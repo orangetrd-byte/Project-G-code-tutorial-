@@ -952,7 +952,9 @@ M00 ; mandatory stop</pre>
     title: "M98, M99, and Repeated Motion",
     icon: "SUB",
     xp: 25,
+    why: "Repetitive motion belongs in one place. A subprogram lets one tested routine run many times, but a single edit then affects every repeat — so the call, the repeat count, and the return must be unambiguous.",
     theory: `
+      <p>This shows a <strong>Haas/Fanuc-style subprogram example</strong>. Call and return words, P/L word meanings, and where a subprogram may live vary by control; verify the exact manual before use.</p>
       <p>Subprograms keep repeated motion in one place. The main program calls the subprogram,
       the subprogram runs, then returns.</p>
       <pre>M98 P2000 L3 ; call O2000 three times
@@ -960,13 +962,21 @@ M00 ; mandatory stop</pre>
 O2000
 G01 Z-0.100 F0.006
 M99 ; return</pre>
-      <p>This is powerful, but it must be readable. Repeats should be documented so the next person
-      understands what repeats and why.</p>
+      <p><strong>Local vs external subprograms:</strong></p>
+      <ul>
+        <li><code>M98 P____</code> calls a subprogram by number. On Haas/Fanuc it usually points to another program (external O-number) held in the control, or to a local routine.</li>
+        <li><code>M97 P____</code> is the <em>local</em> subprogram call: it jumps to a line or routine <em>inside the same program</em> and returns to the line after the M97. Use M97 when the repeat lives in the current program.</li>
+        <li><code>M99</code> returns from a subprogram. In an external subprogram it returns to the caller; in a local routine called by M97 it returns to the block right after the M97.</li>
+      </ul>
+      <p>The <code>L</code> word gives the repeat count. Repeats must be documented so the next person
+      understands what repeats and why — and remembers that one edit changes every repeat.</p>
     `,
     visual: "program-structure",
     quiz: [
       { type: "multiple-choice", question: "What does M98 commonly do?", options: ["Calls a subprogram", "Turns coolant off", "Selects inch mode", "Cancels comp"], answer: 0, explanation: "M98 is commonly used to call a subprogram." },
       { type: "multiple-choice", question: "What does M99 commonly do inside a subprogram?", options: ["Returns to the caller", "Turns spindle off", "Sets feed per rev", "Starts coolant"], answer: 0, explanation: "M99 returns from the subprogram on many controls." },
+      { type: "multiple-choice", question: "On a Haas/Fanuc-style control, what is M97 used for?", options: ["A LOCAL subprogram call inside the same program", "An external program call", "Coolant on", "Spindle stop"], answer: 0, explanation: "M97 is the local subprogram call; it jumps to a routine within the current program and returns to the line after the M97." },
+      { type: "multiple-choice", question: "How does a local call (M97) differ from an external call (M98)?", options: ["M97 jumps within the same program; M98 calls another program by O-number", "They are identical in every control", "M97 cancels the cycle", "M98 only repeats three times"], answer: 0, explanation: "M97 is local (same program); M98 typically calls an external subprogram held in the control." },
       { type: "multiple-choice", question: "In M98 P2000 L3, what does L3 usually mean?", options: ["Repeat three times", "Use tool 3", "Set line 3", "Move 3 inches"], answer: 0, explanation: "L often gives the repeat count for a subprogram call." },
       { type: "multiple-choice", question: "In M98 P2000 L3, what does P2000 point to?", options: ["Subprogram O2000", "Feedrate 2000", "Tool 2000", "Coolant pressure"], answer: 0, explanation: "P commonly identifies the subprogram number to call." },
       { type: "fill-blank", question: "Complete the subprogram call:\n___ P2000 L2", answer: "M98", hint: "Subprogram call", explanation: "M98 calls a subprogram on many controls." },
@@ -2601,6 +2611,7 @@ const LESSON_AUDIT_DIALECTS = {
   "u6-l2": "Haas/Fanuc lathe feed modes (G98/G99) vs mill (G94/G95)",
   "u6-l3": "Haas/Fanuc lathe modal setup block",
   "u7-l1": "Haas/Fanuc auxiliary M-codes (M08/M09/M00/M01)",
+  "u8-l1": "Haas/Fanuc subprogram calls (M97 local, M98 external, M99 return)",
   "u9-l1": "3-axis mill drilling example",
   "p-u1-l2": "Marlin and Klipper comparison",
   "p-u1-l3": "Marlin temperature-command semantics",
@@ -2618,7 +2629,8 @@ const LESSON_AUDIT_REVIEWED = {
   "u6-l1": "2026-07-16",
   "u6-l2": "2026-07-16",
   "u6-l3": "2026-07-16",
-  "u7-l1": "2026-07-16"
+  "u7-l1": "2026-07-16",
+  "u8-l1": "2026-07-16"
 };
 
 [...LESSONS, ...PRINTING_LESSONS].forEach(lesson => {
