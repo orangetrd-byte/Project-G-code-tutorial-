@@ -821,8 +821,9 @@ Rapid override reduced</pre>
     title: "Units: G20 and G21",
     icon: "UNIT",
     xp: 20,
+    why: "Units decide how every number in the program is read. A wrong unit mode turns a safe move into a crash, so setting it explicitly is a basic safety habit.",
     theory: `
-      <p><code>G20</code> selects inch units. <code>G21</code> selects metric units. Unit mode changes how the control reads X, Z, F, and many other numeric values.</p>
+      <p>On Haas and Fanuc controls, <code>G20</code> selects inch units and <code>G21</code> selects metric units. Unit mode changes how the control reads X, Z, F, and many other numeric values.</p>
       <pre>G20 ; inch mode
 G00 X2.000 Z0.100
 
@@ -850,28 +851,29 @@ G00 X50.8 Z2.5</pre>
     unit: 6,
     unitName: "Modes & Controller Habits",
     lesson: 2,
-    title: "Feed Modes: G94 and G95",
+    title: "Feed Modes: G98 and G99",
     icon: "FMD",
     xp: 20,
+    why: "Feed mode decides what the F number actually means. The same F can be per-revolution or per-minute, so knowing the active mode prevents a feed that is wildly too fast or too slow.",
     theory: `
-      <p>Feedrate mode controls what the <code>F</code> value means, but lathe dialects differ. This lesson's Fanuc-style examples use <code>G94</code> for feed per minute and <code>G95</code> for feed per revolution. Haas lathes use <code>G98</code> and <code>G99</code> for those modes.</p>
-      <pre>G94 F5.0    ; Fanuc-style feed per minute
-G95 F0.012  ; Fanuc-style feed per revolution
-G98 F5.0    ; Haas feed per minute
-G99 F0.012  ; Haas feed per revolution</pre>
-      <p>Turning programs often use feed per revolution so chip load stays tied to spindle rotation. Always verify the active feed mode before cutting.</p>
+      <p>Feedrate mode controls what the <code>F</code> value means. On Haas and Fanuc <strong>lathes</strong>, <code>G99</code> is feed per revolution and <code>G98</code> is feed per minute. On a <strong>mill</strong>, the same ideas use <code>G94</code> (per minute) and <code>G95</code> (per revolution). The letters depend on machine type, not brand.</p>
+      <pre>G98 F5.0    ; lathe feed per minute
+G99 F0.012  ; lathe feed per revolution
+G94 F5.0    ; mill feed per minute
+G95 F0.012  ; mill feed per revolution</pre>
+      <p>This tutorial's turning examples are lathe-based, so they use <code>G99</code> for feed per revolution. Turning programs often use feed per revolution so chip load stays tied to spindle rotation. Always verify the active feed mode before cutting.</p>
     `,
     visual: "program-structure",
     quiz: [
       { type: "multiple-choice", question: "What does feed mode control?", options: ["What the F value means", "Tool number only", "Comment style", "Program name"], answer: 0, explanation: "Feed mode changes how the control interprets feedrate." },
-      { type: "multiple-choice", question: "On many Fanuc-style lathes, G95 means:", options: ["Feed per revolution", "Feed per minute", "Metric units", "Rapid motion"], answer: 0, explanation: "G95 is commonly feed per revolution on Fanuc-style lathes." },
-      { type: "multiple-choice", question: "On many Fanuc-style lathes, G94 means:", options: ["Feed per minute", "Feed per revolution", "Spindle stop", "Work offset"], answer: 0, explanation: "G94 is commonly feed per minute." },
-      { type: "fill-blank", question: "Complete feed per revolution:\n___ F0.012", answer: "G95", hint: "Per spindle rev", explanation: "G95 selects feed per revolution on many Fanuc-style lathes." },
-      { type: "fill-blank", question: "Complete feed per minute:\n___ F5.0", answer: "G94", hint: "Per minute", explanation: "G94 selects feed per minute on many controls." },
+      { type: "multiple-choice", question: "On Haas and Fanuc lathes, G99 means:", options: ["Feed per revolution", "Feed per minute", "Metric units", "Rapid motion"], answer: 0, explanation: "G99 is feed per revolution on Haas/Fanuc lathes." },
+      { type: "multiple-choice", question: "On Haas and Fanuc lathes, G98 means:", options: ["Feed per minute", "Feed per revolution", "Spindle stop", "Work offset"], answer: 0, explanation: "G98 is feed per minute on lathes." },
+      { type: "fill-blank", question: "Complete lathe feed per revolution:\n___ F0.012", answer: "G99", hint: "Per spindle rev on a lathe", explanation: "G99 selects feed per revolution on Haas/Fanuc lathes." },
+      { type: "fill-blank", question: "Complete lathe feed per minute:\n___ F5.0", answer: "G98", hint: "Per minute on a lathe", explanation: "G98 selects feed per minute on lathes." },
       { type: "multiple-choice", question: "Why is feed per revolution common in turning?", options: ["Chip load follows spindle rotation", "It turns coolant on", "It homes X", "It cancels G54"], answer: 0, explanation: "Feed per rev keeps chip load related to spindle speed." },
       { type: "multiple-choice", question: "If the wrong feed mode is active, the machine may:", options: ["Feed too fast or too slow", "Ignore all coordinates", "Delete the program", "Change tool numbers"], answer: 0, explanation: "The same F number can mean very different speeds in different feed modes." },
-      { type: "multiple-choice", question: "Which line clearly sets feed per rev?", options: ["G95 F0.010", "M30", "G54", "T0101"], answer: 0, explanation: "G95 sets the feed mode and F0.010 gives the feed amount." },
-      { type: "multiple-choice", question: "What should a good setup block do?", options: ["Declare important modes", "Hide units", "Skip offsets", "Avoid feed mode"], answer: 0, explanation: "Setup blocks should make modal assumptions explicit." },
+      { type: "multiple-choice", question: "Which line clearly sets lathe feed per rev?", options: ["G99 F0.010", "M30", "G54", "T0101"], answer: 0, explanation: "G99 sets feed per revolution on a lathe; the F word gives the amount." },
+      { type: "multiple-choice", question: "On a mill, which code is feed per revolution?", options: ["G95", "G98", "G99", "M03"], answer: 0, explanation: "Mills use G94 (per minute) and G95 (per revolution); lathes use G98/G99 for the same ideas." },
       { type: "multiple-choice", question: "Which word is affected by feed mode?", options: ["F", "M30", "O number", "Comment text"], answer: 0, explanation: "Feed mode changes how the F word is interpreted." }
     ]
   },
@@ -884,9 +886,10 @@ G99 F0.012  ; Haas feed per revolution</pre>
     title: "Modal State Checklist",
     icon: "MODE",
     xp: 20,
+    why: "Modal codes stay active until something changes them. A program that states its modes up front is safer to read, prove out, and recover from than one that relies on hidden state.",
     theory: `
       <p>Modal state is the machine's memory. Motion mode, units, feed mode, offsets, and spindle mode can stay active until changed.</p>
-      <pre>G20 G40 G54 G95 ; Fanuc-style feed-per-revolution example
+      <pre>G20 G40 G54 G99 ; Haas/Fanuc lathe feed-per-revolution example
 G97 S800 M03
 G00 X2.000 Z0.100</pre>
       <p>A safe program does not rely on mystery state. It declares the modes it needs before motion.</p>
@@ -896,7 +899,7 @@ G00 X2.000 Z0.100</pre>
       { type: "multiple-choice", question: "What is modal state?", options: ["Codes that stay active until changed", "Only comments", "Only the current tool name", "The app progress screen"], answer: 0, explanation: "Modal codes remain active until another code changes or cancels them." },
       { type: "multiple-choice", question: "Which is a modal setting?", options: ["G20 or G21 units", "A comment only", "Program title text", "Operator name"], answer: 0, explanation: "Unit mode is modal." },
       { type: "multiple-choice", question: "Why use a setup block?", options: ["To declare needed modes before motion", "To make the file longer", "To hide feedrate", "To skip offsets"], answer: 0, explanation: "Setup blocks reduce surprise by setting important modes." },
-      { type: "multiple-choice", question: "For the Fanuc-style example in this lesson, which block is a better modal checklist?", options: ["G20 G40 G54 G95", "(START)", "M30", "X2.0 Z0.1"], answer: 0, explanation: "That Fanuc-style block declares units, compensation cancel, work offset, and feed-per-revolution mode. A Haas lathe would use G99 for feed per revolution." },
+      { type: "multiple-choice", question: "For the Haas/Fanuc lathe example in this lesson, which block is a better modal checklist?", options: ["G20 G40 G54 G99", "(START)", "M30", "X2.0 Z0.1"], answer: 0, explanation: "That block declares units, compensation cancel, work offset, and feed-per-revolution mode (G99 on a Haas/Fanuc lathe). Mills use G94/G95 for the same ideas." },
       { type: "fill-blank", question: "Complete the idea: modal codes stay active until ____.", answer: "changed", hint: "Another code replaces them", explanation: "Modal codes stay active until changed or canceled." },
       { type: "multiple-choice", question: "Before rapid motion, what should be known?", options: ["Units, offset, and motion state", "Only phone battery", "Only app theme", "Only the comment"], answer: 0, explanation: "Motion is only safe when the active modes and offsets are known." },
       { type: "multiple-choice", question: "Which code often cancels cutter compensation?", options: ["G40", "G21", "M03", "M30"], answer: 0, explanation: "G40 cancels cutter compensation on many controls." },
@@ -915,14 +918,15 @@ G00 X2.000 Z0.100</pre>
     title: "Coolant, Stops, and Operator Control",
     icon: "AUX",
     xp: 20,
+    why: "Auxiliary functions keep the cut safe and observable. Coolant protects the tool and finish; planned stops let the operator inspect. Knowing what each M-code does prevents a surprise stop or a dry, overheating cut.",
     theory: `
-      <p>M-codes handle machine functions around the cut. They do not usually define the toolpath,
+      <p>On Haas and Fanuc controls, M-codes handle machine functions around the cut. They do not usually define the toolpath,
       but they can decide whether the cut is safe, cool, paused, or finished.</p>
       <pre>M08 ; coolant on
 M09 ; coolant off
 M01 ; optional stop if enabled
 M00 ; mandatory stop</pre>
-      <p>Controls and machines vary, so always verify shop-specific M-codes before running production.</p>
+      <p>M-code assignments can vary by machine builder and options, so always verify shop-specific M-codes in your control's manual before running production.</p>
     `,
     visual: "program-structure",
     quiz: [
@@ -2593,7 +2597,10 @@ const LESSON_AUDIT_DIALECTS = {
   "u5-l1": "Haas/Fanuc-style conventional O.D.-turning example",
   "u5-l2": "Haas lathe geometry and wear-offset model",
   "u5-l3": "Haas lathe prove-out controls",
-  "u6-l2": "Fanuc and Haas feed-mode comparison",
+  "u6-l1": "Haas/Fanuc unit-mode codes (G20/G21)",
+  "u6-l2": "Haas/Fanuc lathe feed modes (G98/G99) vs mill (G94/G95)",
+  "u6-l3": "Haas/Fanuc lathe modal setup block",
+  "u7-l1": "Haas/Fanuc auxiliary M-codes (M08/M09/M00/M01)",
   "u9-l1": "3-axis mill drilling example",
   "p-u1-l2": "Marlin and Klipper comparison",
   "p-u1-l3": "Marlin temperature-command semantics",
@@ -2607,7 +2614,11 @@ const LESSON_AUDIT_REVIEWED = {
   "u4-l2": "2026-07-16",
   "u5-l1": "2026-07-16",
   "u5-l2": "2026-07-16",
-  "u5-l3": "2026-07-16"
+  "u5-l3": "2026-07-16",
+  "u6-l1": "2026-07-16",
+  "u6-l2": "2026-07-16",
+  "u6-l3": "2026-07-16",
+  "u7-l1": "2026-07-16"
 };
 
 [...LESSONS, ...PRINTING_LESSONS].forEach(lesson => {

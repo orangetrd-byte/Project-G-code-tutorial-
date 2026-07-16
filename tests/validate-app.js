@@ -58,6 +58,8 @@ function validateFactCheckContent() {
   const curriculum = read('data/lessons.js');
   const app = read('js/app.js');
   assert.doesNotMatch(curriculum, /G90 = absolute mode/, 'Lathe G90 must not be taught as a universal absolute mode');
+  assert.doesNotMatch(curriculum, /Haas lathes use G98 and G99 for those modes/, 'Lathe feed modes must not be framed as a Haas-only brand split; mills use G94/G95');
+  assert.match(curriculum, /G99 is feed per revolution on Haas\/Fanuc lathes/, 'Lathe feed-per-revolution must be taught as G99 (not a Fanuc-vs-Haas split)');
   assert.doesNotMatch(curriculum, /G00 ignores feedrate override/, 'Rapid override behavior must remain controller-specific');
   assert.doesNotMatch(curriculum, /Always leave 0\.050/, 'Fixed rapid clearances must not be labeled universally safe');
   assert.doesNotMatch(curriculum, /G02 cuts a concave/, 'Arc direction must not be equated with concavity');
@@ -163,7 +165,7 @@ function validateCurriculum(api) {
       assert.ok(lesson.id && !lessonIds.has(lessonKey), `Duplicate lesson ${lessonKey}`);
       lessonIds.add(lessonKey);
       assert.ok(Array.isArray(lesson.quiz) && lesson.quiz.length, `${lesson.id} needs quiz questions`);
-      const expectedReviewDate = ['u4-l1', 'u4-l2', 'u5-l1', 'u5-l2', 'u5-l3'].includes(lesson.id) ? '2026-07-16' : '2026-07-13';
+      const expectedReviewDate = ['u4-l1', 'u4-l2', 'u5-l1', 'u5-l2', 'u5-l3', 'u6-l1', 'u6-l2', 'u6-l3', 'u7-l1'].includes(lesson.id) ? '2026-07-16' : '2026-07-13';
       assert.equal(lesson.factCheck?.reviewed, expectedReviewDate, `${lesson.id} needs a current fact-check date`);
       assert.ok(String(lesson.factCheck?.dialect || '').trim(), `${lesson.id} needs a controller or firmware scope`);
       assert.ok(Array.isArray(lesson.factCheck?.sources) && lesson.factCheck.sources.length >= 3, `${lesson.id} needs primary source coverage`);
