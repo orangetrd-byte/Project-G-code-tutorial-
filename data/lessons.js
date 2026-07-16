@@ -997,12 +997,19 @@ M99 ; return</pre>
     title: "G81, G83, R Plane, and Return",
     icon: "DRL",
     xp: 25,
+    why: "Drilling cycles repeat a safe plunge automatically, but the retract level and peck depth decide whether chips clear and whether the tool returns to the right height. Getting R and the return mode wrong can crash the tool or leave a poor hole.",
     theory: `
       <p>This is a <strong>3-axis mill drilling example</strong>. Live-tool lathe syntax, active planes, axes, and supported cycle words differ by machine and controller; do not transfer this block directly to a lathe.</p>
       <pre>G81 X1.000 Y0.500 Z-0.750 R0.100 F5.0 ; drill
 G83 X2.000 Y0.500 Z-1.500 R0.100 Q0.200 F4.0 ; peck drill
 G80 ; cancel cycle</pre>
-      <p>The R plane is the clearance height. G80 cancels the canned cycle before normal motion resumes.</p>
+      <p>The <code>R</code> plane is the clearance height the tool rapid-feeds to before each plunge. <code>G80</code> cancels the canned cycle before normal motion resumes.</p>
+      <p><strong>Retract (return) mode — set once per cycle group:</strong></p>
+      <ul>
+        <li><code>G98</code> — return to the <em>initial</em> level (the position before the cycle started).</li>
+        <li><code>G99</code> — return to the <code>R</code> plane after each hole. On a mill this is the usual choice so the tool stays just above the part between holes.</li>
+      </ul>
+      <p><strong>Peck behavior in G83:</strong> the <code>Q</code> word is the <em>incremental</em> peck depth. The tool feeds down by Q, then retracts fully to the R plane to break and clear the chip, then plunges again — repeating until it reaches Z. Use pecking for deeper holes where a single plunge would pack chips or overheat.</p>
     `,
     visual: "block-anatomy",
     quiz: [
@@ -1012,7 +1019,9 @@ G80 ; cancel cycle</pre>
       { type: "multiple-choice", question: "What does G80 do after canned cycles?", options: ["Cancels the cycle", "Turns coolant on", "Calls O80", "Sets inch units"], answer: 0, explanation: "G80 cancels canned cycles on many controls." },
       { type: "fill-blank", question: "Complete peck drilling:\n___ X2.000 Z-1.500 R0.100 Q0.200", answer: "G83", hint: "Peck drilling cycle", explanation: "G83 is commonly peck drilling." },
       { type: "fill-blank", question: "Cancel a drilling cycle:\n___", answer: "G80", hint: "Cancel canned cycle", explanation: "G80 cancels canned cycles." },
+      { type: "multiple-choice", question: "In G83, what does the Q word usually set?", options: ["Incremental peck depth", "Hole diameter", "Spindle RPM", "Coolant pressure"], answer: 0, explanation: "Q is the incremental peck depth; the tool retracts to R and repeats until reaching Z." },
       { type: "multiple-choice", question: "Why use peck drilling?", options: ["To break chips and clear the hole", "To turn coolant off", "To change app language", "To home all axes"], answer: 0, explanation: "Pecking helps chip evacuation and reduces drilling load." },
+      { type: "multiple-choice", question: "On a mill, G99 return mode sends the tool back to:", options: ["The R plane after each hole", "The initial start level", "Machine home", "The tool changer"], answer: 0, explanation: "G99 returns to the R plane between holes; G98 returns to the initial level." },
       { type: "multiple-choice", question: "Which value is the hole depth here?\nG81 X1.0 Y0.5 Z-0.750 R0.100 F5.0", options: ["Z-0.750", "R0.100", "F5.0", "X1.0"], answer: 0, explanation: "Z is the drilling depth target in this example." },
       { type: "multiple-choice", question: "Which value is the clearance plane here?\nG81 X1.0 Y0.5 Z-0.750 R0.100 F5.0", options: ["R0.100", "Z-0.750", "F5.0", "G81"], answer: 0, explanation: "R0.100 is the retract/clearance plane." },
       { type: "multiple-choice", question: "Why cancel with G80 before unrelated motion?", options: ["So the control leaves drilling-cycle mode", "So comments run", "So M08 turns off", "So G20 becomes metric"], answer: 0, explanation: "Leaving a canned cycle active can make later motion behave unexpectedly." }
@@ -2612,7 +2621,7 @@ const LESSON_AUDIT_DIALECTS = {
   "u6-l3": "Haas/Fanuc lathe modal setup block",
   "u7-l1": "Haas/Fanuc auxiliary M-codes (M08/M09/M00/M01)",
   "u8-l1": "Haas/Fanuc subprogram calls (M97 local, M98 external, M99 return)",
-  "u9-l1": "3-axis mill drilling example",
+  "u9-l1": "3-axis mill drilling cycles (G80/G81/G83, G98/G99 retract, peck Q)",
   "p-u1-l2": "Marlin and Klipper comparison",
   "p-u1-l3": "Marlin temperature-command semantics",
   "p-u4-l2": "Relative extrusion example (M83)",
@@ -2630,7 +2639,8 @@ const LESSON_AUDIT_REVIEWED = {
   "u6-l2": "2026-07-16",
   "u6-l3": "2026-07-16",
   "u7-l1": "2026-07-16",
-  "u8-l1": "2026-07-16"
+  "u8-l1": "2026-07-16",
+  "u9-l1": "2026-07-16"
 };
 
 [...LESSONS, ...PRINTING_LESSONS].forEach(lesson => {
