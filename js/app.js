@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.13 | Build 2026.07.16.07';
+const APP_BUILD = 'MGP | Version v2.57.13 | Build 2026.07.16.08';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -51,6 +51,7 @@ const State = {
       dailyCompletions: [],
       confidenceRatings: {},
       learnedCodeCodes: [],
+      roadmap: {},           // { milestoneId: true } — Mike's personal path checklist
     };
   },
 
@@ -72,6 +73,7 @@ const State = {
     this.learnedCodeCodes = Array.isArray(profile.learnedCodeCodes)
       ? profile.learnedCodeCodes
       : [];
+    this.roadmap = profile.roadmap && typeof profile.roadmap === 'object' ? profile.roadmap : {};
   },
 
   syncProfile() {
@@ -86,6 +88,7 @@ const State = {
       dailyCompletions: this.dailyCompletions,
       confidenceRatings: this.confidenceRatings,
       learnedCodeCodes: this.learnedCodeCodes,
+      roadmap: this.roadmap,
     };
   },
 
@@ -159,6 +162,13 @@ const State = {
   setPreference(key, value) {
     if (key === 'language') this.language = value === 'es' ? 'es' : 'en';
     if (key === 'theme') this.theme = value === 'light' ? 'light' : 'dark';
+    this.save();
+  },
+
+  toggleRoadmapMilestone(id, done) {
+    if (!this.roadmap) this.roadmap = {};
+    if (done) this.roadmap[id] = true;
+    else delete this.roadmap[id];
     this.save();
   },
 
@@ -3213,12 +3223,127 @@ function renderPractice() {
 }
 
 // ─── PROGRESS SCREEN ─────────────────────────────────────────
+// ─── MIKE'S PERSONAL ROADMAP (My Path panel) ──────────────────
+// Static content. Milestone completion state lives in State.activeProfile().roadmap.
+const ROADMAP = [
+  {
+    id: 'p1', name: 'Phase 1 — Close the lathe gap',
+    note: 'Your training stopped after the Johnford HT 60CX-2D. Lock the basics underneath it.',
+    milestones: [
+      { id: 'p1-a', text: 'Explain G00 vs G01 to a coworker without notes' },
+      { id: 'p1-b', text: 'Read a turning block and name every code in it' },
+      { id: 'p1-c', text: 'Hand-write a simple G01 turning pass on paper' },
+      { id: 'p1-d', text: 'Explain what G96 (constant surface speed) protects against' },
+    ],
+  },
+  {
+    id: 'p2', name: 'Phase 2 — Offsets & setup',
+    note: 'Own this and you stop being the last choice.',
+    milestones: [
+      { id: 'p2-a', text: 'Set G54 work offset from a known part zero, by hand' },
+      { id: 'p2-b', text: 'Fix a 0.002" oversize with wear offsets (no program edit)' },
+      { id: 'p2-c', text: 'Run a new program in Single Block + Dry Run, spot the crash first' },
+      { id: 'p2-d', text: 'Explain to a rookie why Dry Run still moves the machine' },
+    ],
+  },
+  {
+    id: 'p3', name: 'Phase 3 — Fixtures & tooling',
+    note: 'Your stated strength. Make it deliberate.',
+    milestones: [
+      { id: 'p3-a', text: 'Sketch a 3-step fixture plan for a simple block' },
+      { id: 'p3-b', text: 'Name the difference between roughing and finishing inserts' },
+      { id: 'p3-c', text: 'Pick the insert for: aluminum finish, steel rough, deep groove' },
+      { id: 'p3-d', text: 'Explain feed-per-rev (G99) vs feed-per-min (G98)' },
+    ],
+  },
+  {
+    id: 'p4', name: 'Phase 4 — Angled cuts & drilling',
+    note: 'The literal "code angles" goal.',
+    milestones: [
+      { id: 'p4-a', text: 'Compute X/Z move for a 30° chamfer from a known start' },
+      { id: 'p4-b', text: 'Explain G01 with both axes moving = an angle' },
+      { id: 'p4-c', text: 'Write a G83 peck drill cycle for a blind hole' },
+      { id: 'p4-d', text: 'Know why G80 cancels a cycle before the next op' },
+    ],
+  },
+  {
+    id: 'p5', name: 'Phase 5 — Home benchtop mill',
+    note: 'MILESTONE, not the start. Funded by the app or side cash.',
+    milestones: [
+      { id: 'p5-a', text: 'Research benchtop mills (Tormach 440-class vs import)' },
+      { id: 'p5-b', text: 'Set up the mill, indicate the vise, prove G54' },
+      { id: 'p5-c', text: 'First paid part: a simple fixture or plate' },
+      { id: 'p5-d', text: 'List a small local service (fixtures, plates, prototypes)' },
+    ],
+  },
+];
+
+const ROADMAP_LANES = [
+  { id: 'lane-a', title: 'App earns', body: 'CNC tutorial app is public. Affiliate links to tooling, a cheat-sheet PDF, or ad-free paid version funds Phase 5.' },
+  { id: 'lane-b', title: 'Teach in public', body: 'Post short "what this G-code does" clips. You are a peer-learner, not a guru — other learners trust that.' },
+  { id: 'lane-c', title: 'Local parts', body: 'Once Phase 5 lands, real parts from a home shop.' },
+];
+
+function renderRoadmap() {
+  const profile = State.activeProfile();
+  const done = ROADMAP.reduce((n, ph) => n + ph.milestones.filter(m => profile.roadmap[m.id]).length, 0);
+  const total = ROADMAP.reduce((n, ph) => n + ph.milestones.length, 0);
+  const pct = total ? Math.round((done / total) * 100) : 0;
+
+  const list = $('#prog-roadmap-list');
+  if (!list) return;
+  list.innerHTML = `
+    <div class="prog-unit-card">
+      <div class="prog-unit-header">
+        <span class="prog-unit-name">🛤️ My Path</span>
+        <span class="prog-pct">${pct}%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+      <div class="prog-lessons-done">${done} of ${total} milestones complete</div>
+    </div>
+    ${ROADMAP.map(ph => {
+      const phDone = ph.milestones.filter(m => profile.roadmap[m.id]).length;
+      return `
+      <div class="roadmap-phase">
+        <div class="roadmap-phase__head">
+          <span class="roadmap-phase__name">${ph.name}</span>
+          <span class="roadmap-phase__count">${phDone}/${ph.milestones.length}</span>
+        </div>
+        <div class="roadmap-phase__note">${ph.note}</div>
+        ${ph.milestones.map(m => `
+          <label class="roadmap-item ${profile.roadmap[m.id] ? 'done' : ''}">
+            <input type="checkbox" data-roadmap="${m.id}" ${profile.roadmap[m.id] ? 'checked' : ''}>
+            <span>${m.text}</span>
+          </label>`).join('')}
+      </div>`;
+    }).join('')}`;
+
+  list.querySelectorAll('input[data-roadmap]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      State.toggleRoadmapMilestone(cb.dataset.roadmap, cb.checked);
+      renderRoadmap();
+    });
+  });
+
+  const lanes = $('#roadmap-lanes');
+  if (lanes) {
+    lanes.innerHTML = `
+      <div class="roadmap-lanes__head">Side-income lanes</div>
+      ${ROADMAP_LANES.map(l => `
+        <div class="roadmap-lane">
+          <div class="roadmap-lane__title">${l.title}</div>
+          <div class="roadmap-lane__body">${l.body}</div>
+        </div>`).join('')}`;
+  }
+}
+
 function renderProgress() {
   const units = getUnits();
   updateStaticText();
   $('#prog-total-xp').textContent = State.xp;
   $('#prog-streak').textContent = State.streak;
   renderMistakeBank();
+  renderRoadmap();
 
   const learnedTotal = getCodeLibrarySize();
   const learned = learnedTotal ? getLearnedCodeCount() : 0;

@@ -35,7 +35,10 @@ function loadAppRuntime() {
     getLearnedCodeCount,
     toggleLearnedCode,
     escapeLearnedCodeKey,
-    queueCodesFromQuestion
+    queueCodesFromQuestion,
+    toggleRoadmapMilestone: State.toggleRoadmapMilestone,
+    ROADMAP,
+    ROADMAP_LANES
   };`;
   vm.runInContext(`${read('data/lessons.js')}\n${appBeforeBoot}\n${expose}`, context);
   return { api: context.__testApi, storage };
@@ -323,6 +326,35 @@ function validateLearnedCodeLifecycle(api, storage) {
   assert.equal(api.getLearnedCodeCount('printing'), 0, 'Reset must clear all track learned codes');
 }
 
+function validateRoadmap(api, storage) {
+  api.initConceptPools();
+  api.State.trackId = 'cnc';
+  api.State.roadmap = {};
+  api.State.save();
+
+  // Toggling a milestone persists it under the active track profile.
+  api.State.toggleRoadmapMilestone('p1-a', true);
+  assert.ok(api.State.roadmap['p1-a'], 'Toggled milestone must be recorded on State');
+  assert.ok(api.State.activeProfile().roadmap['p1-a'], 'Milestone must persist in the active profile');
+
+  // It survives a localStorage reload (persistence).
+  const saved = storage.get('pgct_state_v2');
+  assert.ok(saved && saved.includes('"roadmap"') && saved.includes('p1-a'), 'Roadmap must persist to storage');
+  api.State.load();
+  assert.ok(api.State.roadmap['p1-a'], 'Milestone must survive a state reload');
+
+  // Unchecking removes it.
+  api.State.toggleRoadmapMilestone('p1-a', false);
+  assert.ok(!api.State.roadmap['p1-a'], 'Unchecking must remove the milestone');
+  assert.ok(!api.State.activeProfile().roadmap['p1-a'], 'Removal must reflect in the active profile');
+
+  // Roadmap constant must define all five phases with milestones and side-income lanes.
+  assert.ok(Array.isArray(api.ROADMAP) && api.ROADMAP.length === 5, 'ROADMAP must define 5 phases');
+  const milestoneCount = api.ROADMAP.reduce((n, ph) => n + ph.milestones.length, 0);
+  assert.ok(milestoneCount > 0, 'ROADMAP phases must each carry milestones');
+  assert.ok(Array.isArray(api.ROADMAP_LANES) && api.ROADMAP_LANES.length === 3, 'ROADMAP_LANES must define 3 side-income lanes');
+}
+
 const runtime = loadAppRuntime();
 validateVersions();
 validateReferences();
@@ -333,4 +365,5 @@ validateCurriculum(runtime.api);
 validateStateAndRetries(runtime.api, runtime.storage);
 validateLearnedCodeAutoUnlock(runtime.api);
 validateLearnedCodeLifecycle(runtime.api, runtime.storage);
+validateRoadmap(runtime.api, runtime.storage);
 console.log('Project G-Code validation passed.');
