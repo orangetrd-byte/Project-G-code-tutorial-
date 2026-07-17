@@ -543,74 +543,6 @@ G71 P100 Q200 U0.020 W0.005 F0.015</pre>
     ]
   },
 
-  {
-    id: "u3-l3",
-    unit: 3,
-    unitName: "Turning Ops",
-    lesson: 3,
-    title: "G76 — Threading Cycle",
-    icon: "🔩",
-    xp: 30,
-    why: "Threads must stay synchronized with spindle rotation. Understanding lead, depth, and the controller's exact cycle format helps prevent a small code error from ruining the thread or tool.",
-    theory: `
-      <p>This lesson shows a <strong>Fanuc-style two-block G76 example</strong>. G76 formats and packed P/Q meanings vary substantially by controller; verify the exact manual revision before use.</p>
-      <pre>G97 S700 M03         ; Constant RPM for threading
-G00 X1.100 Z0.200    ; Approach
-
-G76 P010060 Q0050 R0.003
-G76 X0.8647 Z-1.500 P0677 Q0200 F0.0625</pre>
-      <p><strong>First line — thread form:</strong></p>
-      <ul>
-        <li><code>P010060</code> — 01 = number of spring passes, 00 = thread chamfer, 60 = thread angle (60° for UN threads)</li>
-        <li><code>Q0050</code> — minimum depth of cut (0.0050")</li>
-        <li><code>R0.003</code> — finish allowance</li>
-      </ul>
-      <p><strong>Second line — thread dimensions:</strong></p>
-      <ul>
-        <li><code>X0.8647</code> — minor diameter (thread root)</li>
-        <li><code>Z-1.500</code> — thread length</li>
-        <li><code>P0677</code> — thread depth (0.0677")</li>
-        <li><code>Q0200</code> — first pass depth (0.0200")</li>
-        <li><code>F0.0625</code> — lead (1/16 = 16 TPI)</li>
-      </ul>
-      <p class="callout tip">💡 For 1"-8 UN thread: minor Ø ≈ 0.8647", thread depth ≈ 0.0677", F = 0.125 (1/8" lead)</p>
-    `,
-    visual: "threading",
-    quiz: [
-      {
-        type: "multiple-choice",
-        question: "Why does this Fanuc-style G76 example specify G97 constant RPM?", meta: { codes: ["G76", "G97"] },
-        options: [
-          "CSS uses too much power",
-          "This procedure calls for stable spindle speed with synchronized feed",
-          "G96 doesn't work with G76",
-          "Constant RPM gives better surface finish"
-        ],
-        answer: 1,
-        explanation: "The example follows a constant-RPM threading procedure. Threading synchronizes feed to spindle feedback; use the spindle mode required by the exact controller manual."
-      },
-      {
-        type: "multiple-choice",
-        question: "In G76, the F word represents:", meta: { codes: ["G76"] },
-        options: [
-          "The feedrate in IPR",
-          "The thread lead (pitch)",
-          "The finish feedrate",
-          "The number of passes"
-        ],
-        answer: 1,
-        explanation: "In a threading cycle, F = lead (distance the tool travels per spindle revolution = pitch for single-start threads). For 16 TPI: F = 1/16 = 0.0625\"."
-      },
-      {
-        type: "fill-blank",
-        question: "What F value programs a 20 TPI thread? (F = 1/TPI)\nF___",
-        answer: "0.050",
-        hint: "1 ÷ 20 = ?",
-        explanation: "Lead = 1 ÷ TPI. 1 ÷ 20 = 0.050\". So F0.050 programs a 20 TPI thread."
-      }
-    ]
-  },
-
   // ─── UNIT 4: TOOLING & OFFSETS ──────────────────────────────
   {
     id: "u4-l1",
@@ -1066,6 +998,75 @@ Restart from a proven block</pre>
       { type: "multiple-choice", question: "Which block is safer to restart from?", options: ["A setup or approach block you understand", "Inside an unknown canned cycle", "Mid-threading pass", "Halfway through a subprogram"], answer: 0, explanation: "Restart from a clear, known point rather than inside complex motion." },
       { type: "multiple-choice", question: "Recovery thinking should be:", options: ["Slow, verified, and deliberate", "Fast and guessed", "Based on luck", "Only about XP"], answer: 0, explanation: "Careful recovery protects the machine, tool, part, and operator." }
     ]
+  },
+
+  // ─── UNIT 11: THREADING CYCLES ──────────────────────────
+  {
+    id: "u11-l1",
+    unit: 11,
+    unitName: "Threading Cycles",
+    lesson: 1,
+    title: "G76 — Threading Cycle",
+    icon: "🔩",
+    xp: 30,
+    why: "Threads must stay synchronized with spindle rotation. Understanding lead, depth, and the controller's exact cycle format helps prevent a small code error from ruining the thread or tool.",
+    theory: `
+      <p>This lesson shows a <strong>Fanuc-style two-block G76 example</strong>. G76 formats and packed P/Q meanings vary substantially by controller; verify the exact manual revision before use.</p>
+      <pre>G97 S700 M03         ; Constant RPM for threading
+G00 X1.100 Z0.200    ; Approach
+
+G76 P010060 Q0050 R0.003
+G76 X0.8647 Z-1.500 P0677 Q0200 F0.0625</pre>
+      <p><strong>First line — thread form:</strong></p>
+      <ul>
+        <li><code>P010060</code> — 01 = number of spring passes, 00 = thread chamfer, 60 = thread angle (60° for UN threads)</li>
+        <li><code>Q0050</code> — minimum depth of cut (0.0050")</li>
+        <li><code>R0.003</code> — finish allowance</li>
+      </ul>
+      <p><strong>Second line — thread dimensions:</strong></p>
+      <ul>
+        <li><code>X0.8647</code> — minor diameter (thread root)</li>
+        <li><code>Z-1.500</code> — thread length</li>
+        <li><code>P0677</code> — thread depth (0.0677")</li>
+        <li><code>Q0200</code> — first pass depth (0.0200")</li>
+        <li><code>F0.0625</code> — lead (1/16 = 16 TPI)</li>
+      </ul>
+      <p class="callout tip">💡 For 1"-8 UN thread: minor Ø ≈ 0.8647", thread depth ≈ 0.0677", F = 0.125 (1/8" lead)</p>
+    `,
+    visual: "threading",
+    quiz: [
+      {
+        type: "multiple-choice",
+        question: "Why does this Fanuc-style G76 example specify G97 constant RPM?", meta: { codes: ["G76", "G97"] },
+        options: [
+          "CSS uses too much power",
+          "This procedure calls for stable spindle speed with synchronized feed",
+          "G96 doesn't work with G76",
+          "Constant RPM gives better surface finish"
+        ],
+        answer: 1,
+        explanation: "The example follows a constant-RPM threading procedure. Threading synchronizes feed to spindle feedback; use the spindle mode required by the exact controller manual."
+      },
+      {
+        type: "multiple-choice",
+        question: "In G76, the F word represents:", meta: { codes: ["G76"] },
+        options: [
+          "The feedrate in IPR",
+          "The thread lead (pitch)",
+          "The finish feedrate",
+          "The number of passes"
+        ],
+        answer: 1,
+        explanation: "In a threading cycle, F = lead (distance the tool travels per spindle revolution = pitch for single-start threads). For 16 TPI: F = 1/16 = 0.0625\"."
+      },
+      {
+        type: "fill-blank",
+        question: "What F value programs a 20 TPI thread? (F = 1/TPI)\nF___",
+        answer: "0.050",
+        hint: "1 ÷ 20 = ?",
+        explanation: "Lead = 1 ÷ TPI. 1 ÷ 20 = 0.050\". So F0.050 programs a 20 TPI thread."
+      }
+    ]
   }
 ];
 
@@ -1073,14 +1074,15 @@ Restart from a proven block</pre>
 const UNITS = [
   { id: 1, name: "Foundations",    icon: "📋", color: "#1A6B5C", lessons: 3 },
   { id: 2, name: "Motion Codes",   icon: "⚡", color: "#2D5986", lessons: 3 },
-  { id: 3, name: "Turning Ops",    icon: "🔩", color: "#7B4F12", lessons: 3 },
+  { id: 3, name: "Turning Ops",    icon: "🔩", color: "#7B4F12", lessons: 2 },
   { id: 4, name: "Tooling & Offsets", icon: "🎯", color: "#5C2D6B", lessons: 2 },
   { id: 5, name: "Inspection & Adjustment", icon: "CHK", color: "#286B4D", lessons: 3 },
   { id: 6, name: "Modes & Controller Habits", icon: "MODE", color: "#355C7D", lessons: 3 },
   { id: 7, name: "Coolant & Auxiliary M-Codes", icon: "AUX", color: "#0B6E7A", lessons: 1 },
   { id: 8, name: "Subprograms & Repeats", icon: "SUB", color: "#6B4A8F", lessons: 1 },
   { id: 9, name: "Drilling Cycles", icon: "DRL", color: "#806027", lessons: 1 },
-  { id: 10, name: "Safe Recovery", icon: "REC", color: "#7A2E2E", lessons: 1 }
+  { id: 10, name: "Safe Recovery", icon: "REC", color: "#7A2E2E", lessons: 1 },
+  { id: 11, name: "Threading Cycles", icon: "THD", color: "#7B4F12", lessons: 1 }
 ];
 
 const PRINTING_LESSONS = [
@@ -2616,7 +2618,7 @@ const PRINTING_AUDIT_SOURCES = [
 
 const LESSON_AUDIT_DIALECTS = {
   "u3-l2": "Fanuc-style two-block G71 example",
-  "u3-l3": "Fanuc-style two-block G76 example",
+  "u11-l1": "Fanuc-style two-block G76 example",
   "u4-l1": "Haas lathe tool-geometry and wear-offset model",
   "u4-l2": "Haas lathe G54-G59 work-offset example",
   "u5-l1": "Haas/Fanuc-style conventional O.D.-turning example",
