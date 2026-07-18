@@ -1412,6 +1412,26 @@ body.theme-light .fact-check-card summary,
 body.theme-light .fact-check-links a {
   color: #0B5D50;
 }
+.fact-check-card--compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.76rem;
+}
+.fact-check-label {
+  color: var(--c-teal-l);
+  font-family: var(--f-display);
+  font-weight: 800;
+}
+.fact-check-date { color: var(--c-text-2); }
+body.theme-light .fact-check-label { color: #0B5D50; }
+.question-visual .visual-aid {
+  margin: 0.75rem 0 1rem;
+  padding: 0.65rem;
+}
+
 .theory-body p { margin-bottom: 0.85rem; }
 .theory-body ul, .theory-body ol { margin-bottom: 0.85rem; }
 

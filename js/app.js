@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.13 | Build 2026.07.16.09';
+const APP_BUILD = 'MGP | Version v2.57.13 | Build 2026.07.18.10';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -2001,17 +2001,10 @@ function renderLessonStep() {
 function renderLessonFactCheck(lesson) {
   const audit = lesson.factCheck;
   if (!audit || !Array.isArray(audit.sources)) return '';
-  const links = audit.sources
-    .map(source => {
-      const url = safeReferenceUrl(source.url);
-      if (!url) return '';
-      return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + escapeRefText(source.title) + '</a>';
-    })
-    .filter(Boolean)
-    .join('');
-  return '<details class="fact-check-card"><summary>Fact-checked · ' + escapeRefText(audit.dialect) + '</summary>' +
-    '<p>Reviewed ' + escapeRefText(audit.reviewed) + '. Educational examples only: verify the exact machine, controller or firmware manual before use.</p>' +
-    '<div class="fact-check-links">' + links + '</div></details>';
+  return '<div class="fact-check-card fact-check-card--compact" title="' + escapeHtmlAttr(audit.dialect) + '">' +
+    '<span class="fact-check-label">&#10003; Fact-checked</span>' +
+    '<span class="fact-check-date">Reviewed ' + escapeRefText(audit.reviewed) + '</span>' +
+    '</div>';
 }
 
 function renderTheoryStep(lesson) {
@@ -2140,6 +2133,7 @@ function renderQuiz(container, q, idx) {
       ${renderQuestionContext(q)}
       ${q.retakeNotice ? `<div class="pool-notice">${q.retakeNotice}</div>` : ''}
       <div class="quiz-question true-false-question">${q.question}</div>
+      ${q.visual ? `<div class="question-visual">${Visuals.render(q.visual)}</div>` : ''}
       <div class="true-false-actions">
         <button class="tf-btn" data-value="true" aria-label="True">✓</button>
         <button class="tf-btn" data-value="false" aria-label="False">×</button>

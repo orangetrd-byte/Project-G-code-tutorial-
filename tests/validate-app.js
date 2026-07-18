@@ -81,7 +81,10 @@ function validateFactCheckContent() {
   assert.match(curriculum, /Dry Run still moves the machine and can execute programmed tool changes/, 'Dry Run movement and tool-change risk must remain explicit');
   assert.match(curriculum, /M83 ; relative extrusion mode/, 'Retraction examples must declare relative extrusion mode');
   assert.match(curriculum, /M109 S waits while heating/, 'Marlin temperature waits must distinguish S from R');
-  assert.match(app, /function renderLessonFactCheck/, 'Learners must be able to inspect curriculum sources');
+  assert.match(app, /function renderLessonFactCheck/, 'Learners must see curriculum audit status');
+  assert.match(app, /fact-check-card--compact/, 'Lesson fact-check status must remain compact on mobile');
+  assert.doesNotMatch(app, /fact-check-links/, 'Lesson theory must not render the full audit-source list');
+  assert.match(app, /q\.visual \? `<div class="question-visual">/, 'Questions with required visual context must render it');
 }
 
 function validateGrammar() {
@@ -160,7 +163,10 @@ function validateReferences() {
 function validateCurriculum(api) {
   api.initConceptPools();
   const firstCncLesson = api.TRACKS.cnc.lessons.find(lesson => lesson.id === 'u1-l1');
+  const latheAxesLesson = api.TRACKS.cnc.lessons.find(lesson => lesson.id === 'u1-l2');
+  const illustratedAxesQuestion = latheAxesLesson?.quiz.find(question => question.id === 'u1-l2-q5');
   assert.ok(firstCncLesson.quiz.some(question => question.id === 'u1-l1-q8'), 'Beginner context questions must load from curriculum data');
+  assert.equal(illustratedAxesQuestion?.visual, 'lathe-axes', 'Questions that reference the lathe setup must display its diagram');
   assert.doesNotMatch(read('index.html'), /const updateQuestion\s*=/, 'Curriculum patches do not belong in index.html');
   api.TRACKS.cnc.lessons.slice(0, 9).forEach(lesson => {
     assert.ok(String(lesson.why || '').trim(), `${lesson.id} must explain why the concept matters before teaching syntax`);

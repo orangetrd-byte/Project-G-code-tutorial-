@@ -164,7 +164,8 @@ M0;</pre>
       {
         id: "u1-l2-q5",
         type: "true-false",
-        question: "In the conventional front-working lathe setup illustrated here, negative Z moves toward the chuck.",
+        question: "In the conventional front-working lathe setup illustrated below, negative Z moves toward the chuck.",
+        visual: "lathe-axes",
         answer: true,
         explanation: "True for the illustrated setup. Confirm axis direction on the actual machine coordinate display and manual."
       },
