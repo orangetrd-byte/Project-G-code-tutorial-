@@ -78,6 +78,12 @@ function validateFactCheckContent() {
   assert.doesNotMatch(curriculum, /tool offset \(stored in the wear offset page\)/i, 'Geometry and wear offsets must remain distinct');
   assert.doesNotMatch(curriculum, /Dry run tests motion/i, 'Dry Run must not be presented as motion-free verification');
   assert.doesNotMatch(curriculum, /Most offset mistakes come from/i, 'Unsupported incident rankings must not be taught as fact');
+  assert.doesNotMatch(curriculum, /Most crashes happen during recovery/i, 'Unsupported crash rankings must not be taught as fact');
+  assert.doesNotMatch(curriculum, /Fanuc-style two-block G76 example/, 'G76 must not mix an unsourced controller dialect into the Haas lesson');
+  assert.doesNotMatch(curriculum, /G76 P010060 Q0050/, 'Packed two-block G76 syntax must not return to the Haas lesson');
+  assert.match(curriculum, /G76 X0\.913 Z-0\.85 K0\.042 D0\.0115 F0\.0714/, 'The Haas G76 lesson must retain the official one-block example');
+  assert.match(curriculum, /return move does not retrace the path used to jog away/, 'Recovery content must retain the documented Haas return-path warning');
+  assert.match(curriculum, /With Haas Setting 36 enabled/, 'Recovery content must retain the controller-specific restart scan');
   assert.match(curriculum, /Dry Run still moves the machine and can execute programmed tool changes/, 'Dry Run movement and tool-change risk must remain explicit');
   assert.match(curriculum, /M83 ; relative extrusion mode/, 'Retraction examples must declare relative extrusion mode');
   assert.match(curriculum, /M109 S waits while heating/, 'Marlin temperature waits must distinguish S from R');
@@ -183,7 +189,11 @@ function validateCurriculum(api) {
       assert.ok(lesson.id && !lessonIds.has(lessonKey), `Duplicate lesson ${lessonKey}`);
       lessonIds.add(lessonKey);
       assert.ok(Array.isArray(lesson.quiz) && lesson.quiz.length, `${lesson.id} needs quiz questions`);
-      const expectedReviewDate = ['u4-l1', 'u4-l2', 'u5-l1', 'u5-l2', 'u5-l3', 'u6-l1', 'u6-l2', 'u6-l3', 'u7-l1', 'u8-l1', 'u9-l1'].includes(lesson.id) ? '2026-07-16' : '2026-07-13';
+      const expectedReviewDate = ['u10-l1', 'u11-l1'].includes(lesson.id)
+        ? '2026-07-20'
+        : ['u4-l1', 'u4-l2', 'u5-l1', 'u5-l2', 'u5-l3', 'u6-l1', 'u6-l2', 'u6-l3', 'u7-l1', 'u8-l1', 'u9-l1'].includes(lesson.id)
+          ? '2026-07-16'
+          : '2026-07-13';
       assert.equal(lesson.factCheck?.reviewed, expectedReviewDate, `${lesson.id} needs a current fact-check date`);
       assert.ok(String(lesson.factCheck?.dialect || '').trim(), `${lesson.id} needs a controller or firmware scope`);
       assert.ok(Array.isArray(lesson.factCheck?.sources) && lesson.factCheck.sources.length >= 3, `${lesson.id} needs primary source coverage`);
