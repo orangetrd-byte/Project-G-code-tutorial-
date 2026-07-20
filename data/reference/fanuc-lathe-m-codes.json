@@ -1,0 +1,98 @@
+{
+  "category": "cnc_turning_fanuc",
+  "type": "fanuc_m_codes",
+  "brand": "Fanuc",
+  "items": [
+    {
+      "code": "M00",
+      "description": "Program stop",
+      "notes": "Halts the program; press cycle start to resume. No reset of modal state.",
+      "source": "CNC Cookbook — Lathe G/M reference",
+      "source_url": "https://www.cnccookbook.com/cnc-lathe-gcode-mcode-reference-list-turning/"
+    },
+    {
+      "code": "M01",
+      "description": "Optional stop",
+      "notes": "Halts only if the optional-stop button is enabled on the control.",
+      "source": "FanucWorld — Fanuc M-code list",
+      "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
+    },
+    {
+      "code": "M02",
+      "description": "Program end",
+      "notes": "Ends the program without rewinding to the start.",
+      "source": "FanucWorld — Fanuc M-code list",
+      "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
+    },
+    {
+      "code": "M03",
+      "description": "Spindle on, clockwise",
+      "notes": "Rotation direction follows the machine manual's viewing convention. Pair with S word and G96/G97.",
+      "source": "G-Code Tutor — M-codes",
+      "source_url": "https://gcodetutor.com/gcode-tutorial/cnc-m-codes.html"
+    },
+    {
+      "code": "M04",
+      "description": "Spindle on, counterclockwise",
+      "notes": "Use for left-hand threads / reversed direction per verified setup.",
+      "source": "G-Code Tutor — M-codes",
+      "source_url": "https://gcodetutor.com/gcode-tutorial/cnc-m-codes.html"
+    },
+    {
+      "code": "M05",
+      "description": "Spindle stop",
+      "notes": "Stops spindle rotation. Issued before retracts/changes as required by procedure.",
+      "source": "G-Code Tutor — M-codes",
+      "source_url": "https://gcodetutor.com/gcode-tutorial/cnc-m-codes.html"
+    },
+    {
+      "code": "M08",
+      "description": "Coolant on (flood)",
+      "notes": "Turns on flood coolant. Some controls use M08/M09 or separate codes for thru-spindle/mist.",
+      "source": "Machining Concepts — M-code cheat sheet",
+      "source_url": "https://machiningconceptserie.com/m-code-cheat-sheet/"
+    },
+    {
+      "code": "M09",
+      "description": "Coolant off",
+      "notes": "Turns off coolant. Often issued at program end.",
+      "source": "FanucWorld — Fanuc M-code list",
+      "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
+    },
+    {
+      "code": "M30",
+      "description": "Program end and reset",
+      "notes": "Ends the program and rewinds to the start. Standard end-of-program code.",
+      "source": "Machining Concepts — M-code cheat sheet",
+      "source_url": "https://machiningconceptserie.com/m-code-cheat-sheet/"
+    },
+    {
+      "code": "M41",
+      "description": "Low gear range (geared spindle)",
+      "notes": "Builder-specific. Only meaningful on machines with a geared headstock. Verify your Johnford manual — may be unused.",
+      "source": "FanucWorld — Fanuc M-code list",
+      "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
+    },
+    {
+      "code": "M42",
+      "description": "High gear range (geared spindle)",
+      "notes": "Builder-specific. Verify your Johnford manual — may be unused or remapped.",
+      "source": "FanucWorld — Fanuc M-code list",
+      "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
+    },
+    {
+      "code": "M23",
+      "description": "Chuck open (often builder-defined)",
+      "notes": "Builder-specific on many lathes (not a universal Fanuc code). Verify your Johnford manual before relying on it.",
+      "source": "FanucWorld — Fanuc M-code list",
+      "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
+    },
+    {
+      "code": "M24",
+      "description": "Chuck close (often builder-defined)",
+      "notes": "Builder-specific on many lathes (not a universal Fanuc code). Verify your Johnford manual before relying on it.",
+      "source": "FanucWorld — Fanuc M-code list",
+      "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
+    }
+  ]
+}

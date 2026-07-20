@@ -33,6 +33,18 @@
       "count": 3
     },
     {
+      "file": "fanuc-lathe-g-codes.json",
+      "category": "cnc_turning_fanuc",
+      "type": "fanuc_g_codes",
+      "count": 35
+    },
+    {
+      "file": "fanuc-lathe-m-codes.json",
+      "category": "cnc_turning_fanuc",
+      "type": "fanuc_m_codes",
+      "count": 13
+    },
+    {
       "file": "programming-symbols.json",
       "category": "symbols",
       "type": "programming_symbols",

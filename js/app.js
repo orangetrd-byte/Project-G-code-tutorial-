@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.13 | Build 2026.07.18.10';
+const APP_BUILD = 'MGP | Version v2.57.14 | Build 2026.07.20.12';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1084,13 +1084,16 @@ function safeReferenceUrl(value) {
 function referenceCategoryTitle(entry) {
   const labels = {
     cnc_milling: 'CNC Milling',
-    cnc_turning: 'CNC Turning',
+    cnc_turning: 'CNC Turning (Haas)',
+    cnc_turning_fanuc: 'CNC Turning (Fanuc)',
     '3d_printing_marlin': 'Marlin 3D Printing',
     symbols: 'Symbols'
   };
   const typeLabels = {
     g_codes: 'G-Codes',
     m_codes: 'M-Codes',
+    fanuc_g_codes: 'Fanuc G-Codes',
+    fanuc_m_codes: 'Fanuc M-Codes',
     programming_symbols: 'Programming Symbols',
     blueprint_symbols: 'Blueprint / GD&T Symbols',
     operation_sheet_symbols: 'Operation Sheet Symbols'
