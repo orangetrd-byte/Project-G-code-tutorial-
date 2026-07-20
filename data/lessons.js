@@ -66,7 +66,7 @@ M0;</pre>
           { left: "X / Z", right: "Position coordinates" },
           { left: ";", right: "Comment or block end" }
         ],
-        explanation: "G00 tells the machine to rapid and X/Z tell it where to go. A semicolon may start a note/comment in many files, or mark the end of a block on some controls."
+        explanation: "G00 commands a rapid positioning move, and X/Z tell it where to go. A semicolon may start a note/comment in many files, or mark the end of a block on some controls."
       },
       {
         id: "u1-l1-q5",
@@ -89,7 +89,7 @@ M0;</pre>
         question: "Which block is a complete rapid positioning move?",
         options: ["X2.000 Z0.100", "G00 X2.000 Z0.100", "M03 S800", "N010"],
         answer: 1,
-        explanation: "G00 gives the motion type, and X/Z give the position to rapid toward."
+        explanation: "G00 sets the motion type, and X/Z give the destination position."
       }
     ]
   },
@@ -975,28 +975,27 @@ G80 ; cancel cycle</pre>
     title: "Feed Hold, Restart, and Alarm Thinking",
     icon: "REC",
     xp: 25,
-    why: "Most crashes happen during recovery, not during normal running. After an alarm or a wrong move, the machine still holds all its modal state — modes, offsets, spindle, tool — so restarting blindly can repeat or worsen the mistake. Calm, verified recovery protects the machine, tool, part, and operator.",
+    why: "Recovery motion can be hazardous when the machine state or return path is misunderstood. Verifying tools, offsets, modes, spindle state, position, and clearance before resuming helps protect the operator, machine, tool, and part.",
     theory: `
-      <p>Good recovery is calm and methodical. When something looks wrong, stop motion, understand
-      the current modal state, and restart only from a safe known point.</p>
-      <pre>Feed Hold
-Spindle/Coolant state checked
-Tool clear of part
-Restart from a proven block</pre>
-      <p>Never restart in the middle of a modal sequence unless you know which modes, offsets,
-      spindle commands, and tool calls are already active.</p>
+      <p>This lesson uses documented Haas NGC concepts. Feed Hold stops axis motion, but the spindle can continue turning. Use the exact machine and shop stop procedure for the situation.</p>
+      <pre>Stop condition identified
+Tool, offsets, modes, and position verified
+Return path checked for clearance
+Controller-approved restart procedure followed</pre>
+      <p>Haas Run-Stop-Jog-Continue stores the interrupted position. Its return move does not retrace the path used to jog away, and the previous offsets are used for the return position. Haas therefore warns against changing tools or offsets during the interruption.</p>
+      <p>With Haas Setting 36 enabled, the control scans earlier program blocks for tools, offsets, G/M codes, and axis positions before a mid-program restart. With it disabled, that scan does not occur. A scan is not a substitute for an approved recovery procedure or a clear motion path.</p>
     `,
     visual: "rapid-path",
     quiz: [
-      { type: "multiple-choice", question: "What should you do first if motion looks wrong?", options: ["Use the machine/shop stop procedure", "Increase rapid override", "Ignore it", "Edit random offsets"], answer: 0, explanation: "Use feed hold for a controlled concern or emergency stop for imminent danger, as defined by the machine manual and shop procedure; then diagnose." },
-      { type: "multiple-choice", question: "Why is mid-program restart risky?", options: ["Modal states may not be active as expected", "Comments become active", "The screen turns off", "G-code cannot restart"], answer: 0, explanation: "Restarting can miss setup lines that selected modes, offsets, tools, spindle, or coolant." },
-      { type: "multiple-choice", question: "Before restart, the tool should be:", options: ["Clear of the part", "Buried in the cut", "Unknown", "At any random X"], answer: 0, explanation: "Restart should begin with safe clearance." },
+      { type: "multiple-choice", question: "What should you do first if motion looks wrong?", options: ["Use the machine/shop stop procedure", "Increase rapid override", "Ignore it", "Edit random offsets"], answer: 0, explanation: "Use the stop action defined for the situation by the machine manual and shop procedure, then diagnose before resuming." },
+      { type: "multiple-choice", question: "Why is a mid-program restart risky?", options: ["The expected tools, offsets, modes, or positions may not be restored", "Comments become active", "The screen turns off", "G-code cannot restart"], answer: 0, explanation: "A restart can omit or reinterpret earlier setup state. Haas Setting 36 can scan earlier blocks, but its behavior and limitations must be understood." },
+      { type: "multiple-choice", question: "Before any recovery return motion, what must be confirmed?", options: ["The return path is unobstructed and the machine state is understood", "The tool is touching the part", "Rapid override is 100%", "The current position is ignored"], answer: 0, explanation: "The documented Haas return does not retrace the jog-away path, so clearance and machine state must be verified." },
       { type: "multiple-choice", question: "What should be checked before cycle start after an alarm?", options: ["Tool, offset, mode, spindle, and position", "Only the app icon", "Only the comment spelling", "Only screen brightness"], answer: 0, explanation: "Recovery requires checking all state that affects motion." },
       { type: "fill-blank", question: "A safe restart begins from a known ____.", answer: "state", hint: "Known condition", explanation: "Known state means modes, offsets, tool, and position are understood." },
       { type: "multiple-choice", question: "Why avoid guessing after an alarm?", options: ["Wrong assumptions can cause a crash", "Guessing improves accuracy", "Alarms erase all danger", "Offsets stop mattering"], answer: 0, explanation: "A wrong recovery move can be more dangerous than the original alarm." },
-      { type: "multiple-choice", question: "Which is a safe habit?", options: ["Read the active modal screen before restart", "Restart from any line", "Turn rapid to 100 immediately", "Skip tool verification"], answer: 0, explanation: "The active modal screen helps verify what the control will do." },
+      { type: "multiple-choice", question: "Which is a safer verification habit?", options: ["Check the active state and the approved restart procedure", "Restart from any line", "Turn rapid to 100 immediately", "Skip tool verification"], answer: 0, explanation: "Displayed state and the controller-approved procedure both help verify what the machine is prepared to do." },
       { type: "multiple-choice", question: "What should be done if you are unsure how to recover?", options: ["Ask or follow shop recovery procedure", "Press cycle start anyway", "Delete G54", "Change units randomly"], answer: 0, explanation: "A written procedure or experienced help is safer than guessing." },
-      { type: "multiple-choice", question: "Which block is safer to restart from?", options: ["A setup or approach block you understand", "Inside an unknown canned cycle", "Mid-threading pass", "Halfway through a subprogram"], answer: 0, explanation: "Restart from a clear, known point rather than inside complex motion." },
+      { type: "multiple-choice", question: "What determines whether a restart block is acceptable?", options: ["The controller behavior, verified machine state, clear path, and shop procedure", "The shortest-looking line", "The nearest comment", "The highest rapid setting"], answer: 0, explanation: "No block is safe by label alone. The control's restart behavior, current state, path, and approved procedure must agree." },
       { type: "multiple-choice", question: "Recovery thinking should be:", options: ["Slow, verified, and deliberate", "Fast and guessed", "Based on luck", "Only about XP"], answer: 0, explanation: "Careful recovery protects the machine, tool, part, and operator." }
     ]
   },
@@ -1007,50 +1006,45 @@ Restart from a proven block</pre>
     unit: 11,
     unitName: "Threading Cycles",
     lesson: 1,
-    title: "G76 — Threading Cycle",
+    title: "G76 — Haas Multiple-Pass Threading",
     icon: "🔩",
     xp: 30,
     why: "Threads must stay synchronized with spindle rotation. Understanding lead, depth, and the controller's exact cycle format helps prevent a small code error from ruining the thread or tool.",
     theory: `
-      <p>This lesson shows a <strong>Fanuc-style two-block G76 example</strong>. G76 formats and packed P/Q meanings vary substantially by controller; verify the exact manual revision before use.</p>
-      <pre>G97 S700 M03         ; Constant RPM for threading
-G00 X1.100 Z0.200    ; Approach
+      <p>This lesson uses the <strong>one-block Haas lathe G76 format</strong>. Other controls use different G76 formats and address meanings; do not transfer this block to another controller.</p>
+      <pre>G00 G18 G20 G40 G80 G99
+G50 S1000
+G97 S500 M03
+G00 G54 X1.2 Z0.3
 
-G76 P010060 Q0050 R0.003
-G76 X0.8647 Z-1.500 P0677 Q0200 F0.0625</pre>
-      <p><strong>First line — thread form:</strong></p>
+G76 X0.913 Z-0.85 K0.042 D0.0115 F0.0714</pre>
+      <p><strong>Documented Haas address meanings:</strong></p>
       <ul>
-        <li><code>P010060</code> — 01 = number of spring passes, 00 = thread chamfer, 60 = thread angle (60° for UN threads)</li>
-        <li><code>Q0050</code> — minimum depth of cut (0.0050")</li>
-        <li><code>R0.003</code> — finish allowance</li>
+        <li><code>X0.913</code> — absolute X location at maximum thread-depth diameter</li>
+        <li><code>Z-0.85</code> — absolute Z endpoint</li>
+        <li><code>K0.042</code> — thread height, measured radially</li>
+        <li><code>D0.0115</code> — first-pass cutting depth</li>
+        <li><code>F0.0714</code> — thread lead</li>
       </ul>
-      <p><strong>Second line — thread dimensions:</strong></p>
-      <ul>
-        <li><code>X0.8647</code> — minor diameter (thread root)</li>
-        <li><code>Z-1.500</code> — thread length</li>
-        <li><code>P0677</code> — thread depth (0.0677")</li>
-        <li><code>Q0200</code> — first pass depth (0.0200")</li>
-        <li><code>F0.0625</code> — lead (1/16 = 16 TPI)</li>
-      </ul>
-      <p class="callout tip">💡 For 1"-8 UN thread: minor Ø ≈ 0.8647", thread depth ≈ 0.0677", F = 0.125 (1/8" lead)</p>
+      <p>Haas recommends programming <code>G99</code> feed per revolution before G76. The official example also uses <code>G97</code> fixed RPM. Thread dimensions and cutting values must come from the approved print, tooling data, and machine procedure.</p>
     `,
     visual: "threading",
     quiz: [
       {
         type: "multiple-choice",
-        question: "Why does this Fanuc-style G76 example specify G97 constant RPM?", meta: { codes: ["G76", "G97"] },
+        question: "Why does this documented Haas G76 example specify G97?", meta: { codes: ["G76", "G97"] },
         options: [
           "CSS uses too much power",
-          "This procedure calls for stable spindle speed with synchronized feed",
+          "The documented example turns CSS off and commands a fixed spindle speed",
           "G96 doesn't work with G76",
           "Constant RPM gives better surface finish"
         ],
         answer: 1,
-        explanation: "The example follows a constant-RPM threading procedure. Threading synchronizes feed to spindle feedback; use the spindle mode required by the exact controller manual."
+        explanation: "Haas labels G97 as CSS off and uses a fixed 500 RPM in this example. Follow the spindle mode required by the exact controller and approved process."
       },
       {
         type: "multiple-choice",
-        question: "In G76, the F word represents:", meta: { codes: ["G76"] },
+        question: "In this Haas G76 format, the F word represents:", meta: { codes: ["G76"] },
         options: [
           "The feedrate in IPR",
           "The thread lead (pitch)",
@@ -1058,14 +1052,14 @@ G76 X0.8647 Z-1.500 P0677 Q0200 F0.0625</pre>
           "The number of passes"
         ],
         answer: 1,
-        explanation: "In a threading cycle, F = lead (distance the tool travels per spindle revolution = pitch for single-start threads). For 16 TPI: F = 1/16 = 0.0625\"."
+        explanation: "Haas defines F as the thread lead. For a single-start thread, lead equals pitch."
       },
       {
         type: "fill-blank",
-        question: "What F value programs a 20 TPI thread? (F = 1/TPI)\nF___",
+        question: "For a single-start 20 TPI thread, what lead value follows from F = 1/TPI?\nF___",
         answer: "0.050",
         hint: "1 ÷ 20 = ?",
-        explanation: "Lead = 1 ÷ TPI. 1 ÷ 20 = 0.050\". So F0.050 programs a 20 TPI thread."
+        explanation: "For this single-start example, lead = 1 ÷ 20 = 0.050\". Verify the exact thread specification and controller format before programming."
       }
     ]
   }
@@ -2523,7 +2517,7 @@ Object.entries(LESSON_QUESTION_EXPANSIONS).forEach(([lessonId, additions]) => {
         'Naming the cutting insert grade'
       ],
       answer: 0,
-      explanation: 'G-code is machine-readable instruction text. In this block, G00 tells the machine what kind of move to make and X/Z tell it where to go.'
+      explanation: 'G-code is machine-readable instruction text. In this block, G00 commands the type of move, and X/Z give the destination.'
     });
 
     updateQuestion('u1-l1', 'u1-l1-q2', {
@@ -2550,7 +2544,7 @@ Object.entries(LESSON_QUESTION_EXPANSIONS).forEach(([lessonId, additions]) => {
       question: 'A complete beginner rapid block needs a motion word and coordinates. Which block has both?',
       options: ['X2.000 Z0.100', 'G00 X2.000 Z0.100', 'M03 S800', 'N010'],
       answer: 1,
-      explanation: 'G00 gives the motion type, and X/Z give the destination. Coordinates alone do not clearly teach the move type to a beginner.'
+      explanation: 'G00 sets the motion type, and X/Z give the destination. Coordinates alone do not clearly teach the move type to a beginner.'
     });
 
     addQuestion('u1-l1', {
@@ -2605,6 +2599,8 @@ const CNC_AUDIT_SOURCES = [
   { title: "Haas Lathe Part Setup", url: "https://www.haascnc.com/service/online-operator-s-manuals/lathe-operator-s-manual/lathe---part-setup.html" },
   { title: "Haas Control Pendant", url: "https://www.haascnc.com/service/online-operator-s-manuals/lathe-operator-s-manual/lathe---control-pendant.html" },
   { title: "Haas Control Icons", url: "https://www.haascnc.com/service/online-operator-s-manuals/lathe-operator-s-manual/lathe---control-icons.html" },
+  { title: "Haas Lathe Operation", url: "https://www.haascnc.com/service/online-operator-s-manuals/lathe-operator-s-manual/lathe---operation.html" },
+  { title: "Haas G76 Multiple-Pass Threading", url: "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG76.html" },
   { title: "LinuxCNC G-Code Reference", url: "https://linuxcnc.org/docs/stable/html/gcode/g-code.html" },
   { title: "OSHA Machine Guarding", url: "https://www.osha.gov/machine-guarding/" }
 ];
@@ -2619,7 +2615,8 @@ const PRINTING_AUDIT_SOURCES = [
 
 const LESSON_AUDIT_DIALECTS = {
   "u3-l2": "Fanuc-style two-block G71 example",
-  "u11-l1": "Fanuc-style two-block G76 example",
+  "u10-l1": "Haas NGC Run-Stop-Jog-Continue and Setting 36 concepts",
+  "u11-l1": "Haas one-block G76 multiple-pass threading cycle",
   "u4-l1": "Haas lathe tool-geometry and wear-offset model",
   "u4-l2": "Haas lathe G54-G59 work-offset example",
   "u5-l1": "Haas/Fanuc-style conventional O.D.-turning example",
@@ -2649,7 +2646,9 @@ const LESSON_AUDIT_REVIEWED = {
   "u6-l3": "2026-07-16",
   "u7-l1": "2026-07-16",
   "u8-l1": "2026-07-16",
-  "u9-l1": "2026-07-16"
+  "u9-l1": "2026-07-16",
+  "u10-l1": "2026-07-20",
+  "u11-l1": "2026-07-20"
 };
 
 [...LESSONS, ...PRINTING_LESSONS].forEach(lesson => {

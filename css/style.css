@@ -1081,6 +1081,7 @@ body.theme-light .lesson-row__xp {
 }
 .wrong-path-preview__hint {
   font-size: 0.78rem;
+  font-family: var(--f-body);
   color: var(--c-text-2);
   margin-top: 0.2rem;
 }
