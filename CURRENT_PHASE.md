@@ -6,11 +6,11 @@ Phase 6: Retention Polish
 
 ## Handoff Status
 
-- Last updated: 2026-07-16.
+- Last updated: 2026-07-20.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest pushed commit: 59f7f0d add why-before-how to turning lessons.
-- Current app build: MGP | Version v2.57.13 | Build 2026.07.16.01.
-- Current service-worker cache: pgct-2026.07.16.01.
+- Latest pushed commit: 01bd32c ci: sync validator to lessons.js fact-check dates (u10/u11=2026-07-20); add G76/Haas-source guards.
+- Current app build: MGP | Version v2.57.14 | Build 2026.07.20.15.
+- Current service-worker cache: pgct-2026.07.20.15.
 - Local main was aligned with origin/main before this audit pass.
 
 ## Phase 5 Completion Summary
@@ -39,9 +39,11 @@ Phase 6: Retention Polish
 - Styles: added missing `--c-error` and `--shadow-sm` design tokens for dark and light themes.
 - Lesson visuals: added missing SVG visual strings for `program-structure`, `linear-feed`, and `spindle-speed`.
 - Accessibility: added `aria-live="polite"` to `#lesson-content` for screen-reader question transitions.
-- Accuracy: completed a source-backed curriculum pass across 39 lessons and 392 questions.
+- Accuracy: completed source-backed coverage across all existing lessons and questions.
 - Reference: added official Haas, Marlin, ASME, and NIST sources with machine-family link guards.
-- Retention: added why-before-how framing through CNC Unit 3 and regression coverage for ordering.
+- Retention: completed why-before-how framing across every CNC lesson with regression coverage.
+- Retention: completed Code Bank filtering, metadata-backed unlocks, persistence, progress counts, and track separation.
+- Accuracy: audited Haas recovery behavior and converted Unit 11 to the official Haas one-block G76 format.
 - Keyboard: matching cards now support Enter/Space selection.
 - Lesson engine: retry-number generation no longer returns the original value as its fallback.
 - Lesson engine: retry-number replacement works inside parenthesized/delimited text.
@@ -53,8 +55,7 @@ Phase 6: Retention Polish
 ## Next Actions
 
 - Continue the source-backed curriculum audit in small controller-specific batches.
-- Extend why-before-how framing beyond CNC Unit 3 without mixing it into accuracy-only changes.
-- Choose the next retention lane after the audit batch: Code Bank or lightweight reward/rank polish.
+- Build the selected retention lane: Today's Line, one short track-specific recall prompt in Practice.
 - Verify lesson completion, daily practice, weak review, matching, and mixed review after any behavior changes.
 - Keep examples educational, not production-ready machine instructions.
 - Tune reward/rank ideas carefully so they support retention instead of becoming noisy.
@@ -64,8 +65,8 @@ Phase 6: Retention Polish
 
 ## Planned Ideas
 
-- Extend the established why-before-how rule beyond CNC Unit 3.
-- Add Code Bank / learned-code filtering so Reference feels like a collection as well as a lookup.
+- Maintain the established why-before-how rule for every new CNC lesson.
+- Maintain Code Bank / learned-code filtering as curriculum questions evolve.
 - Maintain the completed source-backed Reference QA rules as new cards are added.
 - Add lightweight reward/rank moments for meaningful progress milestones.
 - Keep matching as a game-like review mode, especially on mobile and light theme.

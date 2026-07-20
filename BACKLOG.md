@@ -1,6 +1,6 @@
 # Project G-Code Tutorial — Backlog
 
-Last updated: 2026-07-16
+Last updated: 2026-07-20
 
 ---
 
@@ -35,8 +35,7 @@ These define what Project G-Code can do better than a PDF, video playlist, or ge
 These reduce guessing and improve retention.
 
 1. Job-first lesson framing
-   Status: in progress through CNC Unit 3 using visible why-before-how framing.
-   Continue later units in small curriculum-only batches.
+   Status: completed for every CNC lesson, with a regression guard for new lessons.
 
 2. Beginner checkpoints
    Add short checkpoints for safety-critical concepts such as units, coordinates, rapid moves, offsets, canned cycles, homing, temperatures, and end commands.
@@ -47,6 +46,7 @@ These reduce guessing and improve retention.
    Acceptance: streak/gamification cannot hide unresolved weak spots.
 
 4. Today's line
+   Status: selected as the next retention lane.
    One small daily card asks the learner to read or write exactly one useful G-code line.
    Acceptance: the line is short, track-specific, and recall-focused.
 
@@ -63,6 +63,7 @@ Reliability and mobile usability once P1/P2 are stable.
 1. Mobile safe-area handling for bottom nav, lesson footer, and practice cards.
 2. Light theme contrast fixes for theory blocks, disabled text, and code panels.
 3. Code Bank / Reference collection: learned-code filters, important codes, exact-match search, and lesson link-back.
+   Status: learned filtering, automatic unlocks, persistence, progress counts, and track separation are complete.
 4. Practice hub polish: daily drill, mistake repair, code bank, mixed review, and clear locked/ready states.
 5. Lightweight rewards/ranks: milestone moments that reinforce recall without becoming noisy gamification.
 6. Startup/loading screen cleanup: keep the accepted boot-rig style and remove unused legacy loading CSS when safe.
