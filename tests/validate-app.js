@@ -104,6 +104,9 @@ function validateGrammar() {
 
 function validateReferences() {
   const directory = path.join(ROOT, 'data', 'reference');
+  const fanucHaasNotes = read('data/reference/fanuc-vs-haas-notes.json');
+  assert.doesNotMatch(fanucHaasNotes, /assignment is OPPOSITE|Haas lathes: G98 = feed per REVOLUTION/, 'Reference cards must not reverse Haas lathe G98/G99 meanings');
+  assert.match(fanucHaasNotes, /Both use G98 = feed per MINUTE and G99 = feed per REVOLUTION/, 'Fanuc/Haas lathe feed-mode comparison must match the audited curriculum');
   fs.readdirSync(directory)
     .filter(file => file.endsWith('.json'))
     .forEach(file => JSON.parse(fs.readFileSync(path.join(directory, file), 'utf8')));
