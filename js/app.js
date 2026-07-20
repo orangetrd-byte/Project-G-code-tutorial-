@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.14 | Build 2026.07.20.12';
+const APP_BUILD = 'MGP | Version v2.57.14 | Build 2026.07.20.13';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -1086,6 +1086,7 @@ function referenceCategoryTitle(entry) {
     cnc_milling: 'CNC Milling',
     cnc_turning: 'CNC Turning (Haas)',
     cnc_turning_fanuc: 'CNC Turning (Fanuc)',
+    cnc_turning_notes: 'Fanuc vs Haas Notes',
     '3d_printing_marlin': 'Marlin 3D Printing',
     symbols: 'Symbols'
   };
@@ -1094,6 +1095,7 @@ function referenceCategoryTitle(entry) {
     m_codes: 'M-Codes',
     fanuc_g_codes: 'Fanuc G-Codes',
     fanuc_m_codes: 'Fanuc M-Codes',
+    fanuc_vs_haas_notes: 'Fanuc vs Haas Notes',
     programming_symbols: 'Programming Symbols',
     blueprint_symbols: 'Blueprint / GD&T Symbols',
     operation_sheet_symbols: 'Operation Sheet Symbols'

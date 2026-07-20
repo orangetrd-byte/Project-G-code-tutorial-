@@ -1,0 +1,49 @@
+{
+  "category": "cnc_turning_notes",
+  "type": "fanuc_vs_haas_notes",
+  "brand": "Fanuc vs Haas",
+  "items": [
+    {
+      "symbol": "G98 / G99",
+      "meaning": "Feed-mode assignment is OPPOSITE between the two brands.",
+      "notes": "Fanuc lathes: G98 = feed per MINUTE, G99 = feed per REVOLUTION. Haas lathes: G98 = feed per REVOLUTION, G99 = feed per MINUTE. A program copied from one brand to the other without swapping these will feed at the wrong rate — a real crash/gouge risk. Always re-check feed mode when porting code.",
+      "source": "Helman CNC (Fanuc) vs Haas lathe G98/G99 docs",
+      "source_url": "https://www.helmancnc.com/g-code/"
+    },
+    {
+      "symbol": "G20 / G21",
+      "meaning": "Inch vs metric input — same on both, but confirm Setting 9 on Haas.",
+      "notes": "Both brands use G20=inch, G21=metric. On Haas, G20/G21 check Setting 9 (Inch/Metric) rather than converting stored coordinates; other controls may differ. Verify the active unit mode, don't assume.",
+      "source": "CNC Cookbook — Lathe G/M reference",
+      "source_url": "https://www.cnccookbook.com/cnc-lathe-gcode-mcode-reference-list-turning/"
+    },
+    {
+      "symbol": "G50",
+      "meaning": "Meaning differs by control.",
+      "notes": "On Fanuc-style lathes G50 commonly clamps maximum spindle RPM (used with G96 constant surface speed). On some other controls G50 sets the coordinate system. Never assume — verify the machine manual before using G50.",
+      "source": "Helman CNC — Fanuc G-code list",
+      "source_url": "https://www.helmancnc.com/g-code/"
+    },
+    {
+      "symbol": "G70 / G71 / G72 / G76",
+      "meaning": "Canned-cycle PARAMETER FORMAT varies by control generation.",
+      "notes": "The letter order and whether the cycle is one-line or two-line differs between Fanuc generations and other brands (incl. Haas). Copying a cycle block verbatim across brands will likely be misread. Match the exact format in your control's programming manual.",
+      "source": "Helman CNC — Fanuc G-code list",
+      "source_url": "https://www.helmancnc.com/g-code/"
+    },
+    {
+      "symbol": "M41 / M42 / M23 / M24",
+      "meaning": "Gear-range and chuck codes are BUILDER-DEFINED, not universal.",
+      "notes": "M41/M42 (gear range) and M23/M24 (chuck open/close) exist on some machines but are NOT standard Fanuc codes — they are set by the machine builder (e.g. your Johnford HT 60CX-2D). Do not assume these work; check the builder's manual. M00–M30 are the near-universal set.",
+      "source": "FanucWorld — Fanuc M-code list",
+      "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
+    },
+    {
+      "symbol": "Always",
+      "meaning": "Verify against YOUR machine's manual — not a generic list.",
+      "notes": "Fanuc publishes per-model manuals (e.g. 0i-T, 18i-T); Haas publishes per-model code pages. Builder options, parameter settings, and ladder logic remap codes. The lists here are a learning aid — the machine manual and a dry run / single-block prove-out are the real authority.",
+      "source": "Project G-Code reference caveat",
+      "source_url": "https://www.haascnc.com/service/codes-settings.html"
+    }
+  ]
+}

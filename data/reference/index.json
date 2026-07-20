@@ -45,6 +45,12 @@
       "count": 13
     },
     {
+      "file": "fanuc-vs-haas-notes.json",
+      "category": "cnc_turning_notes",
+      "type": "fanuc_vs_haas_notes",
+      "count": 6
+    },
+    {
       "file": "programming-symbols.json",
       "category": "symbols",
       "type": "programming_symbols",
