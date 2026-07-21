@@ -1,6 +1,6 @@
 # Project G-Code Tutorial — Backlog
 
-Last updated: 2026-07-20
+Last updated: 2026-07-21
 
 ---
 
@@ -46,7 +46,7 @@ These reduce guessing and improve retention.
    Acceptance: streak/gamification cannot hide unresolved weak spots.
 
 4. Today's line
-   Status: selected as the next retention lane.
+   Status: completed with one track-specific free-recall line drawn only from completed lessons.
    One small daily card asks the learner to read or write exactly one useful G-code line.
    Acceptance: the line is short, track-specific, and recall-focused.
 

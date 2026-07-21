@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.57.15 | Build 2026.07.20.16';
+const APP_BUILD = 'MGP | Version v2.58.0 | Build 2026.07.21.01';
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
@@ -23,6 +23,7 @@ const State = {
   lessonScores: {},     // { lessonId: { correct, total } }
   weakQuestions: [],     // questions missed and due for focused review
   dailyCompletions: [],
+  todaysLineCompletions: [],
   confidenceRatings: {},
 
   // Runtime only
@@ -49,6 +50,7 @@ const State = {
       lessonScores: {},
       weakQuestions: [],
       dailyCompletions: [],
+      todaysLineCompletions: [],
       confidenceRatings: {},
       learnedCodeCodes: [],
       roadmap: {},           // { milestoneId: true } — Mike's personal path checklist
@@ -69,6 +71,7 @@ const State = {
     this.lessonScores = profile.lessonScores || {};
     this.weakQuestions = profile.weakQuestions || [];
     this.dailyCompletions = profile.dailyCompletions || [];
+    this.todaysLineCompletions = profile.todaysLineCompletions || [];
     this.confidenceRatings = profile.confidenceRatings || {};
     this.learnedCodeCodes = Array.isArray(profile.learnedCodeCodes)
       ? profile.learnedCodeCodes
@@ -86,6 +89,7 @@ const State = {
       lessonScores: this.lessonScores,
       weakQuestions: this.weakQuestions,
       dailyCompletions: this.dailyCompletions,
+      todaysLineCompletions: this.todaysLineCompletions,
       confidenceRatings: this.confidenceRatings,
       learnedCodeCodes: this.learnedCodeCodes,
       roadmap: this.roadmap,
@@ -137,6 +141,7 @@ const State = {
         lessonScores: d.lessonScores || {},
         weakQuestions: [],
         dailyCompletions: [],
+        todaysLineCompletions: [],
         confidenceRatings: {},
       };
       this.trackId = 'cnc';
@@ -283,6 +288,15 @@ const State = {
     if (firstCompletionToday) this.updateStreak();
     this.save();
     return bonus;
+  },
+
+  completeTodaysLine() {
+    const today = getTodayKey();
+    const firstCompletionToday = !this.todaysLineCompletions.includes(today);
+    if (firstCompletionToday) this.todaysLineCompletions.push(today);
+    this.todaysLineCompletions = this.todaysLineCompletions.slice(-30);
+    this.save();
+    return firstCompletionToday;
   },
 
   setConfidence(lessonId, rating) {
@@ -1826,6 +1840,90 @@ function buildDailyMissionQuestions() {
     .slice(0, 5);
 }
 
+const TODAYS_LINE_CATALOG = {
+  cnc: [
+    { lessonId: 'u1-l1', line: 'G00 X2.000 Z0.100', prompt: 'Write the rapid-positioning example that moves to X2.000 and Z0.100.', explanation: 'G00 selects rapid positioning; X and Z specify the taught example destination.' },
+    { lessonId: 'u2-l1', line: 'G00 X2.200 Z0.100', prompt: 'Write the taught clearance move to X2.200 and Z0.100.', explanation: 'This is the lesson’s rapid approach example. Real clearance remains setup-specific.' },
+    { lessonId: 'u2-l2', line: 'G01 X1.500 Z-1.000 F0.010', prompt: 'Write the taught linear cutting move to X1.500 and Z-1.000 at F0.010.', explanation: 'G01 commands the straight feed move, and F0.010 supplies the lesson’s feed value.' },
+    { lessonId: 'u3-l1', line: 'G97 S1200 M03', prompt: 'Write the taught fixed-RPM spindle line for 1200 RPM clockwise.', explanation: 'G97 selects fixed RPM, S1200 sets the speed, and M03 starts the spindle clockwise in this scoped example.' },
+    { lessonId: 'u6-l1', line: 'G20', prompt: 'Write the taught code that selects inch input.', explanation: 'G20 selects inch units on the Haas and Fanuc controls covered by the lesson.' },
+    { lessonId: 'u7-l1', line: 'M08', prompt: 'Write the taught command for flood coolant on.', explanation: 'M08 commonly turns flood coolant on in the lesson’s Haas/Fanuc scope.' },
+    { lessonId: 'u9-l1', line: 'G81 X1.000 Y0.500 Z-0.750 R0.100 F5.0', prompt: 'Write the taught G81 drilling line at X1.000 Y0.500, Z-0.750, R0.100, and F5.0.', explanation: 'G81 calls the simple drilling cycle with the taught hole location, depth, retract plane, and feed.' }
+  ],
+  printing: [
+    { lessonId: 'p-u1-l1', line: 'G1 X82.4 Y104.2 E0.036 F1800', prompt: 'Write the taught printer move to X82.4 Y104.2 with E0.036 and F1800.', explanation: 'G1 commands the controlled move; X/Y locate it, E supplies extrusion, and F sets feedrate.' },
+    { lessonId: 'p-u1-l2', line: 'G28', prompt: 'Write the taught command that homes all printer axes.', explanation: 'G28 homes the configured axes so the printer can establish known positions.' },
+    { lessonId: 'p-u1-l3', line: 'M104 S210', prompt: 'Write the taught Marlin line that sets the nozzle to 210 C without waiting.', explanation: 'M104 sets the hotend target and continues without waiting for the target temperature.' },
+    { lessonId: 'p-u2-l2', line: 'G1 X40 Y40 F9000', prompt: 'Write the taught fast travel move to X40 Y40 at F9000.', explanation: 'This G1 line moves at the taught travel feedrate without an E extrusion word.' },
+    { lessonId: 'p-u2-l3', line: 'M107', prompt: 'Write the taught command that turns the part-cooling fan off.', explanation: 'M107 turns off the part-cooling fan in the Marlin scope used by the lesson.' },
+    { lessonId: 'p-u3-l1', line: 'G92 E0', prompt: 'Write the taught start-code line that resets the extruder position to zero.', explanation: 'G92 E0 declares the current extruder position as zero.' },
+    { lessonId: 'p-u3-l2', line: 'M104 S0', prompt: 'Write the taught end-code line that sets the hotend target to zero.', explanation: 'M104 S0 turns off the hotend target without waiting.' }
+  ]
+};
+
+function getTodaysLineCandidates() {
+  return (TODAYS_LINE_CATALOG[State.trackId] || [])
+    .filter(item => State.isLessonDone(item.lessonId))
+    .map(item => {
+      const lesson = getLessons().find(candidate => candidate.id === item.lessonId);
+      return { ...item, lesson };
+    })
+    .filter(item => item.lesson && item.lesson.theory.includes(item.line));
+}
+
+function buildTodaysLineQuestion() {
+  const candidates = getTodaysLineCandidates();
+  if (!candidates.length) return null;
+  const seed = `${getTodayKey()}|${State.trackId}`;
+  const index = [...seed].reduce((total, char) => total + char.charCodeAt(0), 0) % candidates.length;
+  const selected = candidates[index];
+  return {
+    id: `todays-line-${State.trackId}-${selected.lessonId}`,
+    type: 'fill-blank',
+    question: selected.prompt,
+    answer: selected.line,
+    explanation: selected.explanation,
+    sourceLessonId: selected.lessonId,
+    sourceTitle: selected.lesson.title,
+    sourceUnit: selected.lesson.unit,
+    meta: { codes: selected.line.match(/\b[GM]\d{1,3}\b/g) || [] }
+  };
+}
+
+function startTodaysLine() {
+  const question = buildTodaysLineQuestion();
+  if (!question) {
+    showToast('Complete one lesson to unlock Today’s Line.', 'error');
+    return;
+  }
+
+  State.currentLesson = {
+    id: 'todays-line',
+    unit: 'Daily',
+    lesson: 'Line',
+    title: 'Today’s Line',
+    icon: '1L',
+    xp: 0,
+    theory: '',
+    visual: '',
+    quiz: [question]
+  };
+  State.currentReviewUnit = null;
+  State.currentMode = 'todays-line';
+  State.currentStep = 1;
+  State.currentQuizAnswered = false;
+  State.retryCurrentLesson = false;
+  State.lessonFinished = false;
+  State.missedQuestions = [];
+  State.practiceQuestions = null;
+  State.nextActionLessonId = null;
+  State.sessionCorrect = 0;
+  State.sessionTotal = 1;
+
+  renderLessonStep();
+  showScreen('screen-lesson');
+}
+
 function startDailyMission() {
   const questions = buildDailyMissionQuestions();
   if (questions.length === 0) {
@@ -2232,16 +2330,17 @@ function renderQuiz(container, q, idx) {
 }
 
 function isReviewLikeMode() {
-  return State.currentMode === 'review' || State.currentMode === 'weak-review' || State.currentMode === 'track-review' || State.currentMode === 'daily-review';
+  return State.currentMode === 'review' || State.currentMode === 'weak-review' || State.currentMode === 'track-review' || State.currentMode === 'daily-review' || State.currentMode === 'todays-line';
 }
 
 function shouldClearWeakOnCorrect() {
-  return State.currentMode === 'weak-review' || State.currentMode === 'daily-review';
+  return State.currentMode === 'weak-review' || State.currentMode === 'daily-review' || State.currentMode === 'todays-line';
 }
 
 function getQuizModeLabel() {
   if (State.currentMode === 'lesson') return 'Practice Check';
   if (State.currentMode === 'daily-review') return 'Daily Practice';
+  if (State.currentMode === 'todays-line') return 'Today’s Line';
   if (State.currentMode === 'weak-review') return 'Weak Spot Review';
   if (State.currentMode === 'track-review') return 'Mixed Review';
   return 'Unit Review';
@@ -2451,6 +2550,11 @@ function setAnsweredAction(correct) {
   const btn = $('#lesson-action-btn');
   if (!btn) return;
   btn.disabled = false;
+  if (State.currentMode === 'todays-line') {
+    btn.textContent = 'Finish Line';
+    btn.className = 'btn-primary accent-btn';
+    return;
+  }
   if (isReviewLikeMode()) {
     btn.textContent = isLastStep() ? 'Finish Review' : 'Next →';
     btn.className = 'btn-primary' + (isLastStep() ? ' accent-btn' : '');
@@ -2679,6 +2783,10 @@ function finishLesson() {
     finishDailyReview();
     return;
   }
+  if (State.currentMode === 'todays-line') {
+    finishTodaysLine();
+    return;
+  }
   if (State.missedQuestions.length > 0) {
     showLessonPracticeRetry();
     return;
@@ -2847,6 +2955,45 @@ function finishDailyReview() {
   State.lessonFinished = true;
 }
 
+
+
+function finishTodaysLine() {
+  const missed = State.missedQuestions.length;
+  const content = $('#lesson-content');
+
+  if (missed > 0) {
+    content.innerHTML = `
+      <div class="complete-screen review-retry-screen">
+        <div class="complete-icon">↻</div>
+        <div class="complete-title">Recall It Once More</div>
+        <div class="complete-subtitle">Write the same line again from memory to finish today’s recall.</div>
+        <div class="xp-badge">One line · no guessing</div>
+      </div>`;
+    $('#lesson-progress-fill').style.width = '100%';
+    $('#lesson-step-count').textContent = 'Line';
+    $('#lesson-action-btn').textContent = 'Retry Today’s Line';
+    $('#lesson-action-btn').className = 'btn-primary accent-btn';
+    State.lessonFinished = true;
+    return;
+  }
+
+  const firstCompletionToday = State.completeTodaysLine();
+  const line = State.currentLesson.quiz[0]?.answer || '';
+  AudioFeedback.lessonComplete();
+  content.innerHTML = `
+    <div class="complete-screen">
+      <div class="complete-icon">✓</div>
+      <div class="complete-title">Today’s Line Recalled</div>
+      <div class="complete-subtitle">${firstCompletionToday ? 'One useful line retrieved from memory.' : 'Extra recall complete for today.'}</div>
+      <div class="xp-badge"><code>${escapeRefText(line)}</code></div>
+    </div>`;
+  $('#lesson-progress-fill').style.width = '100%';
+  $('#lesson-step-count').textContent = 'Done!';
+  $('#lesson-action-btn').textContent = 'Back to Lessons';
+  $('#lesson-action-btn').className = 'btn-primary accent-btn';
+  State.lessonFinished = true;
+}
+
 function finishWeakReview() {
   const missed = State.missedQuestions.length;
   const content = $('#lesson-content');
@@ -2994,6 +3141,17 @@ function finishUnitReview() {
 function handleLessonAction() {
   if (!State.currentLesson) return;
   if (State.lessonFinished) {
+    if (State.currentMode === 'todays-line' && State.missedQuestions.length > 0) {
+      State.currentLesson.quiz = State.missedQuestions.map(q => ({ ...q, awaitingCorrection: false, chosenAnswer: undefined }));
+      State.missedQuestions = [];
+      State.currentStep = 1;
+      State.currentQuizAnswered = false;
+      State.lessonFinished = false;
+      State.sessionCorrect = 0;
+      State.sessionTotal = 1;
+      renderLessonStep();
+      return;
+    }
     if (State.currentMode === 'daily-review' && State.missedQuestions.length > 0) {
       State.currentLesson.quiz = getRetakeQuestions(State.missedQuestions);
       State.missedQuestions = [];
@@ -3155,11 +3313,21 @@ function renderPractice() {
   if (!list) return;
   const dailyQuestions = buildDailyMissionQuestions().length;
   const weakCount = State.weakQuestions.length;
+  const todaysLine = buildTodaysLineQuestion();
+  const todaysLineDone = State.todaysLineCompletions.includes(getTodayKey());
   const { done, total } = State.getTotalProgress();
   const trackComplete = total > 0 && done === total;
   const codeCount = getRefData().reduce((sum, category) => sum + category.codes.length, 0);
 
   const cards = [
+    {
+      id: 'todays-line',
+      title: 'Today’s Line',
+      subtitle: todaysLine ? (todaysLineDone ? 'Recalled today · run it again anytime' : `One line from ${todaysLine.sourceTitle}`) : 'Complete one lesson to unlock',
+      icon: '1L',
+      badge: todaysLineDone ? 'Done' : 'Recall',
+      disabled: !todaysLine
+    },
     {
       id: 'daily',
       title: 'Daily Drill',
@@ -3213,6 +3381,7 @@ function renderPractice() {
       if (action === 'daily') startDailyMission();
       if (action === 'mistakes') startWeakReview();
       if (action === 'mixed') startTrackReview();
+      if (action === 'todays-line') startTodaysLine();
       if (action === 'codes') {
         renderReference();
         showScreen('screen-reference');

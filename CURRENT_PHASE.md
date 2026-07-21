@@ -6,11 +6,11 @@ Phase 6: Retention Polish
 
 ## Handoff Status
 
-- Last updated: 2026-07-20.
+- Last updated: 2026-07-21.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest pushed commit: 01bd32c ci: sync validator to lessons.js fact-check dates (u10/u11=2026-07-20); add G76/Haas-source guards.
-- Current app build: MGP | Version v2.57.14 | Build 2026.07.20.15.
-- Current service-worker cache: pgct-2026.07.20.15.
+- Latest pushed commit before this pass: 23a8480 fix: correct Fanuc and Haas feed-mode comparison.
+- Current app build: MGP | Version v2.58.0 | Build 2026.07.21.01.
+- Current service-worker cache: pgct-2026.07.21.01.
 - Local main was aligned with origin/main before this audit pass.
 
 ## Phase 5 Completion Summary
@@ -44,6 +44,7 @@ Phase 6: Retention Polish
 - Retention: completed why-before-how framing across every CNC lesson with regression coverage.
 - Retention: completed Code Bank filtering, metadata-backed unlocks, persistence, progress counts, and track separation.
 - Accuracy: audited Haas recovery behavior and converted Unit 11 to the official Haas one-block G76 format.
+- Retention: added track-specific Today’s Line free recall using only completed, previously taught lesson examples; no XP or rank changes.
 - Keyboard: matching cards now support Enter/Space selection.
 - Lesson engine: retry-number generation no longer returns the original value as its fallback.
 - Lesson engine: retry-number replacement works inside parenthesized/delimited text.
@@ -55,7 +56,7 @@ Phase 6: Retention Polish
 ## Next Actions
 
 - Continue the source-backed curriculum audit in small controller-specific batches.
-- Build the selected retention lane: Today's Line, one short track-specific recall prompt in Practice.
+- Maintain Today’s Line as a single free-recall prompt sourced from completed lessons.
 - Verify lesson completion, daily practice, weak review, matching, and mixed review after any behavior changes.
 - Keep examples educational, not production-ready machine instructions.
 - Tune reward/rank ideas carefully so they support retention instead of becoming noisy.

@@ -36,6 +36,14 @@ function loadAppRuntime() {
     toggleLearnedCode,
     escapeLearnedCodeKey,
     queueCodesFromQuestion,
+    pickLessonQuestions,
+    buildUnitReviewQuestions,
+    buildTrackReviewQuestions,
+    buildDailyMissionQuestions,
+    buildTodaysLineQuestion,
+    getTodaysLineCandidates,
+    TODAYS_LINE_CATALOG,
+    startTodaysLine,
     toggleRoadmapMilestone: State.toggleRoadmapMilestone,
     ROADMAP,
     ROADMAP_LANES
@@ -56,6 +64,106 @@ function validateVersions() {
   assert.equal(appMatch[1], swMatch[1], 'App and service-worker builds must match');
   assert.match(read('js/app.js'), /MGP \| Version/, 'MGP must remain visible in version information');
   assert.match(read('css/style.css'), /body\.theme-light \.callout\.warning\s*\{\s*color:\s*#6F101A;/, 'Light warning callouts need dark readable text');
+}
+
+function validateTodaysLine(api, storage) {
+  api.initConceptPools();
+  Object.entries(api.TODAYS_LINE_CATALOG).forEach(([trackId, entries]) => {
+    assert.ok(entries.length > 0, `${trackId} needs Today’s Line entries`);
+    const track = api.TRACKS[trackId];
+    entries.forEach(entry => {
+      const lesson = track.lessons.find(item => item.id === entry.lessonId);
+      assert.ok(lesson, `${trackId} Today’s Line references missing lesson ${entry.lessonId}`);
+      assert.ok(lesson.theory.includes(entry.line), `${entry.line} must already appear in ${entry.lessonId}`);
+      assert.match(entry.line, /^(G|M)\d+\b/, `${entry.line} must be one executable G-code line`);
+      assert.ok(String(entry.prompt).trim() && String(entry.explanation).trim(), `${entry.lessonId} needs a recall prompt and explanation`);
+    });
+  });
+
+  api.State.resetAllData();
+  assert.equal(api.buildTodaysLineQuestion(), null, 'Today’s Line must stay locked before a lesson is completed');
+
+  api.State.trackId = 'cnc';
+  api.State.completedLessons = ['u1-l1'];
+  const cncQuestion = api.buildTodaysLineQuestion();
+  assert.equal(cncQuestion.type, 'fill-blank', 'Today’s Line must use free recall instead of answer choices');
+  assert.equal(cncQuestion.sourceLessonId, 'u1-l1', 'Today’s Line must use completed material only');
+  assert.equal(api.getTodaysLineCandidates().length, 1, 'Only completed CNC lessons may enter Today’s Line');
+  assert.equal(api.buildTodaysLineQuestion().answer, cncQuestion.answer, 'Today’s Line must remain stable during the day');
+
+  const xpBefore = api.State.xp;
+  assert.equal(api.State.completeTodaysLine(), true, 'First Today’s Line completion should be recorded');
+  assert.equal(api.State.completeTodaysLine(), false, 'Repeat completion should not create another daily record');
+  assert.equal(api.State.xp, xpBefore, 'Today’s Line must not change XP or the reward system');
+  assert.ok(storage.get('pgct_state_v2').includes('todaysLineCompletions'), 'Today’s Line completion must persist');
+
+  api.State.switchTrack('printing');
+  assert.equal(api.buildTodaysLineQuestion(), null, 'CNC completion must not unlock a printing line');
+  api.State.completedLessons = ['p-u1-l1'];
+  const printingQuestion = api.buildTodaysLineQuestion();
+  assert.equal(printingQuestion.sourceLessonId, 'p-u1-l1', 'Printing Today’s Line must use printing material');
+  assert.notEqual(printingQuestion.answer, cncQuestion.answer, 'Track-specific Today’s Line content must stay separated');
+}
+
+function validateLessonAndReviewBuilders(api) {
+  api.State.resetAllData();
+  api.State.trackId = 'cnc';
+  const firstLesson = api.TRACKS.cnc.lessons[0];
+  const lessonQuestions = api.pickLessonQuestions(firstLesson, 5);
+  assert.equal(lessonQuestions.length, Math.min(5, firstLesson.quiz.length), 'Lesson practice must retain its five-question cap');
+  lessonQuestions.forEach(question => {
+    assert.ok(question.id && firstLesson.quiz.some(source => source.id === question.originalQuestionId || source.id === question.id), 'Lesson practice question must come from its lesson');
+  });
+
+  const unitQuestions = api.buildUnitReviewQuestions(firstLesson.unit);
+  assert.ok(unitQuestions.length > 0 && unitQuestions.length <= 10, 'Unit quiz must remain bounded');
+  assert.ok(unitQuestions.every(question => question.sourceUnit === firstLesson.unit), 'Unit quiz must stay inside its unit');
+
+  api.State.completedLessons = [firstLesson.id];
+  const dailyQuestions = api.buildDailyMissionQuestions();
+  assert.ok(dailyQuestions.length > 0 && dailyQuestions.length <= 5, 'Daily review must remain a short completed-lesson review');
+  assert.ok(dailyQuestions.every(question => question.sourceLessonId === firstLesson.id), 'Daily review must use completed lessons');
+
+  const weakQuestion = firstLesson.quiz[0];
+  api.State.trackWeakQuestion(weakQuestion, firstLesson);
+  assert.equal(api.State.weakQuestions.length, 1, 'Weak review must retain a missed question');
+  assert.equal(api.State.weakQuestions[0].question.sourceLessonId, firstLesson.id, 'Weak review must retain lesson context');
+
+  api.State.completedLessons = api.TRACKS.cnc.lessons.map(lesson => lesson.id);
+  const mixedQuestions = api.buildTrackReviewQuestions();
+  assert.equal(mixedQuestions.length, 12, 'Mixed review must retain its 12-question cap');
+  assert.ok(new Set(mixedQuestions.map(question => question.sourceUnit)).size > 1, 'Mixed review must span multiple units');
+
+  const matchingQuestion = api.TRACKS.cnc.lessons
+    .flatMap(lesson => lesson.quiz)
+    .find(question => question.type === 'matching');
+  assert.ok(matchingQuestion?.pairs.length >= 2, 'Matching review must retain complete pairs');
+  assert.equal(new Set(matchingQuestion.pairs.map(pair => pair.left)).size, matchingQuestion.pairs.length, 'Matching left-side prompts must stay distinct');
+  api.State.resetAllData();
+}
+
+function validateRegressionSurfaces() {
+  const app = read('js/app.js');
+  const css = read('css/style.css');
+  const sw = read('sw.js');
+  assert.match(app, /State\.currentMode === 'lesson'/, 'Lesson mode regression guard is missing');
+  assert.match(app, /State\.currentMode === 'weak-review'/, 'Weak-review mode regression guard is missing');
+  assert.match(app, /State\.currentMode === 'track-review'/, 'Mixed-review mode regression guard is missing');
+  assert.match(app, /function checkMatching\(q\)/, 'Matching behavior must remain wired');
+  assert.match(sw, /'\.\/index\.html'/, 'Offline cache must retain the app shell');
+  assert.match(sw, /'\.\/js\/app\.js'/, 'Offline cache must retain app logic');
+  assert.match(sw, /'\.\/data\/lessons\.js'/, 'Offline cache must retain curriculum data');
+  const precacheBlock = sw.match(/const PRECACHE_ASSETS = \[([\s\S]*?)\]/)?.[1] || '';
+  const precacheAssets = [...precacheBlock.matchAll(/'([^']+)'/g)].map(match => match[1]);
+  assert.ok(precacheAssets.length > 0, 'Offline precache list must not be empty');
+  precacheAssets.filter(asset => !asset.startsWith('http')).forEach(asset => {
+    const relativePath = asset === './' ? '.' : asset.replace(/^\.\//, '');
+    assert.ok(fs.existsSync(path.join(ROOT, relativePath)), `Offline precache asset is missing: ${asset}`);
+  });
+  assert.match(css, /\.practice-scroll[\s\S]*?safe-area-inset-bottom/, 'Practice cards need bottom safe-area clearance');
+  assert.match(css, /\.fill-blank-input[\s\S]*?max-width:\s*calc\(100vw - 2rem\)/, 'Recall input must fit narrow mobile screens');
+  assert.match(css, /@media\s*\(max-width:\s*\d+px\)/, 'Mobile layout regression rules must remain present');
+  assert.match(read('index.html'), /name="viewport"/, 'Mobile viewport configuration must remain present');
 }
 
 function validateActiveCorrection() {
@@ -376,11 +484,14 @@ function validateRoadmap(api, storage) {
 
 const runtime = loadAppRuntime();
 validateVersions();
+validateRegressionSurfaces();
 validateReferences();
 validateActiveCorrection();
 validateGrammar();
 validateFactCheckContent();
 validateCurriculum(runtime.api);
+validateTodaysLine(runtime.api, runtime.storage);
+validateLessonAndReviewBuilders(runtime.api);
 validateStateAndRetries(runtime.api, runtime.storage);
 validateLearnedCodeAutoUnlock(runtime.api);
 validateLearnedCodeLifecycle(runtime.api, runtime.storage);
