@@ -24,6 +24,31 @@
 - Improve mobile lesson flow and quiz feedback.
 - Add better review pacing and completion states.
 - Keep the app lightweight and static-host friendly.
+
+## Phase 5: Reliability and Review Hardening — Complete
+
+- Fixed matching scoring and added keyboard-friendly matching controls.
+- Hardened lesson correction, retry, weak-review, mixed-review, and mistake-bank behavior.
+- Improved mobile sizing, safe-area handling, accessibility, and offline PWA reliability.
+- Added source-backed curriculum and reference validation with controller and firmware scope.
+
+## Phase 6: Retention Polish — Active
+
+Completed retention work:
+
+- Added why-before-how framing across every CNC lesson, with regression coverage.
+- Added Code Bank learned filtering, automatic unlocks, persistence, progress counts, and track separation.
+- Added mistake-bank lesson link-back and active correction after missed answers.
+- Added the track-specific Today’s Line free-recall exercise using only completed, previously taught material.
+- Preserved daily practice, weak review, mixed review, matching, offline, and mobile behavior while adding retention features.
+
+Phase 6 guardrails and next direction:
+
+- Keep Today’s Line to one short free-recall prompt with no answer choices or new XP/rank system.
+- Keep CNC and 3D printing retention content separated by track and completed-lesson history.
+- Continue source-backed curriculum updates in small controller- or firmware-specific batches.
+- Add retention polish only when it improves recall without cluttering the Practice hub.
+
 ## Planned Learning Architecture Ideas
 
 These ideas belong to the future learning direction for the app. They should guide curriculum and feature planning, but they are not all immediate implementation tasks.
