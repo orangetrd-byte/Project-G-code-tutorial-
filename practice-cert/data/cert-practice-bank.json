@@ -1533,7 +1533,7 @@
       "id": "st3-q05",
       "domain": "nims-stamping-level-3",
       "topic": "Continuous Improvement",
-      "question": "A practical continuous-improvement action in stamping is to:",
+      "question": "A practical process-improvement action in stamping is to:",
       "answers": [
         "Repeat mistakes for consistency",
         "Reduce scrap, standardize die changeover, and track key variables",
@@ -1761,7 +1761,7 @@
       "answers": [
         "Slower cutting only",
         "Repeatability and confirming tools/work offsets/conditions",
-        "Guaranteeing zero inspection",
+        "Relying on zero inspection only",
         "Reducing coolant temperature"
       ],
       "correct_index": 1,
