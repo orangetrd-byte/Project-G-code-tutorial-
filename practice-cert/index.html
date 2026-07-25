@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0F1923">
+  <title>Project G-Code Tutorial — Cert Practice</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .cert-root {
+      padding: 1rem;
+      max-width: 920px;
+      margin: 0 auto;
+    }
+    .cert-home__title { font-size: 1.25rem; font-weight: 700; margin: 0.5rem 0 0.75rem; }
+    .cert-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      border-radius: 14px;
+      padding: 1rem;
+      margin: 0.5rem 0;
+    }
+    .cert-card__name { font-weight: 700; }
+    .cert-card__meta { opacity: 0.7; font-size: 0.9rem; margin-top: 0.25rem; }
+    .cert-card__hint { font-size: 0.8rem; opacity: 0.6; margin-top: 0.25rem; }
+    .cert-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.6rem;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.05);
+      color: #ECF7F5;
+      padding: 0.55rem 0.9rem;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .cert-btn:disabled { opacity: 0.38; cursor: not-allowed; }
+    .cert-quiz { }
+    .cert-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .cert-progress { opacity: 0.8; font-weight: 700; }
+    .cert-question { font-weight: 700; font-size: 1.05rem; margin: 0.5rem 0 0.6rem; }
+    .cert-answers { display: grid; gap: 0.5rem; }
+    .cert-answer {
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: #ECF7F5;
+      padding: 0.7rem 0.9rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .cert-answer.correct { border-color: #20C997; background: rgba(32,201,151,0.14); }
+    .cert-answer.wrong { border-color: #FF6B81; background: rgba(255,107,129,0.12); }
+    .cert-answer:disabled { cursor: not-allowed; }
+    .cert-feedback { margin-top: 0.7rem; min-height: 1.4rem; }
+    .cert-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .cert-result {
+      text-align: center;
+      padding: 1.2rem 1rem;
+    }
+    .cert-result__score { font-size: 2.2rem; font-weight: 900; }
+    .cert-result__sub { opacity: 0.8; margin-top: 0.25rem; }
+    .cert-controversy { font-size: 0.82rem; opacity: 0.75; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+
+<section class="screen active cert-root" id="screen-cert-practice">
+  <div id="cert-app"></div>
+</section>
+
+<script>
+window.CERT_PRACTICE_BANK = {
+  "meta": {
+    "title": "Machinist Certification Practice Test",
+    "default_filter": "all",
+    "controversy_note": "Questions were drawn from public NIMS preparation guides as of 2026-07-25. Certification content changes; this is study aid, not official exam content."
+  },
+  "domains": [
+    {
+      "id": "nims-manual-turning-level-1",
+      "name": "NIMS Manual Turning Level 1",
+      "description": "Lathe operations, tool setup, threading, measurement, safety, and process control.",
+      "question_count": 75,
+      "exam_style": "multiple_choice",
+      "topics": [
+        "Turning Speeds and Feeds",
+        "Work Holding Devices and Basic Setup",
+        "Lathe Components",
+        "Turning Operations",
+        "Process Improvement and Troubleshooting",
+        "Turning Safety",
+        "Single Point Threading",
+        "Tapping, Fits and Allowances",
+        "Measurement",
+        "Process Control",
+        "Tooling and Lathe Setup",
+        "Layout Procedures"
+      ]
+    },
+    {
+      "id": "nims-manual-milling-level-1",
+      "name": "NIMS Manual Milling Level 1",
+      "description": "Milling setup, drilling, quality control, work-holding, and tool holding.",
+      "question_count": 51,
+      "exam_style": "multiple_choice",
+      "topics": [
+        "Measurement Practices",
+        "Drilling Operations",
+        "Feeds and Speeds",
+        "Safety Practices",
+        "Tapping",
+        "Basic Milling Operations",
+        "Clamping and Vise Applications",
+        "Milling Operations Setup",
+        "Milling Machine Components",
+        "Process Improvement",
+        "Tool Holding Applications"
+      ]
+    },
+    {
+      "id": "nims-cnc-machining",
+      "name": "NIMS CNC Machining",
+      "description": "CNC programming, setup, tooling and fixturing, QA, and safety.",
+      "question_count": 100,
+      "exam_style": "multiple_choice",
+      "topics": [
+        "CNC Programming",
+        "G-code and M-code",
+        "Machine Setup",
+        "Work Holding and Fixtures",
+        "Tooling and Tool Parameters",
+        "Quality Control and Inspection",
+        "Blueprint / Geometry Interpretation",
+        "Safety Protocols"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "nt1-q01",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Process Control",
+      "question": "A part can be rejected when:",
+      "answers": [
+        "A dimension is made out of tolerance",
+        "The wrong material is used",
+        "The part does not follow the process flow",
+        "The wrong revision of the print is used to make the part",
+        "All of the above",
+        "Only a and b"
+      ],
+      "correct_index": 4,
+      "difficulty": "easy"
+    },
+    {
+      "id": "nt1-q02",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Tooling and Lathe Setup",
+      "question": "Which of the following provides the highest level of repeatability when turning a shoulder?",
+      "answers": [
+        "Screw feed stop on the cross side",
+        "Compound rest set perpendicular to the centerline axis of the lathe",
+        "Compound rest set parallel to the centerline axis of the lathe",
+        "Tailstock",
+        "Indicol stop set on the tailstock"
+      ],
+      "correct_index": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nt1-q03",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Tooling and Lathe Setup",
+      "question": "The compound rest can be rotated:",
+      "answers": [
+        "45 degrees",
+        "180 degrees",
+        "235 degrees",
+        "360 degrees"
+      ],
+      "correct_index": 3,
+      "difficulty": "easy"
+    },
+    {
+      "id": "nm1-q01",
+      "domain": "nims-manual-milling-level-1",
+      "topic": "Tool Holding Applications",
+      "question": "Which spindle taper is most commonly found on a Bridgeport milling machine?",
+      "answers": [
+        "Jarno taper",
+        "Morse taper",
+        "R-8",
+        "5-C",
+        "Brown & Sharpe"
+      ],
+      "correct_index": 2,
+      "difficulty": "easy"
+    },
+    {
+      "id": "nm1-q02",
+      "domain": "nims-manual-milling-level-1",
+      "topic": "Milling Operations Setup",
+      "question": "To bore a hole perpendicular to the face of the workpiece, the machine table should be _____________ to the spindle.",
+      "answers": [
+        "Tangent",
+        "Parallel",
+        "Perpendicular",
+        "Offset at 45 degrees"
+      ],
+      "correct_index": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nc1-q01",
+      "domain": "nims-cnc-machining",
+      "topic": "G-code and M-code",
+      "question": "In CNC programming, what does M01 signify regarding program execution?",
+      "answers": [
+        "Execution mandatory",
+        "Optional execution",
+        "Execution required",
+        "End program"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    }
+  ]
+};
+</script>
+
+<script>
+(function() {
+  'use strict';
+  const bank = window.CERT_PRACTICE_BANK;
+  if (!bank?.questions?.length) {
+    document.getElementById('cert-app').innerHTML = '<div class="cert-card">Practice bank failed to load.</div>';
+    return;
+  }
+  const els = {
+    app: document.getElementById('cert-app'),
+    back: document.getElementById('back-btn')
+  };
+
+  const state = {
+    mode: 'home',
+    domain: null,
+    questions: [],
+    index: 0,
+    score: 0,
+    answered: false,
+    chosen: null
+  };
+
+  function setMode(mode) {
+    state.mode = mode;
+  }
+  function setDomain(id) {
+    state.domain = id;
+    state.questions = bank.questions.filter(q => q.domain === id);
+    state.index = 0;
+    state.score = 0;
+    state.answered = false;
+    state.chosen = null;
+  }
+  function current() {
+    return state.questions[state.index];
+  }
+  function countForDomain(id) {
+    return bank.questions.filter(q => q.domain === id).length;
+  }
+
+  function renderHome() {
+    setMode('home');
+    els.app.innerHTML = `
+      <div class="cert-home__title">${bank.meta?.title || 'Certification Practice Test'}</div>
+      <div class="cert-card">
+        <div class="cert-card__name">Domains</div>
+        <div class="cert-card__meta">${bank.domains.length} domains · ${bank.questions.length} seed questions</div>
+        <div class="cert-controversy">${escapeHtml(bank.meta?.controversy_note || '')}</div>
+      </div>
+      ${bank.domains.map(domain => `
+        <div class="cert-card">
+          <div class="cert-card__name">${escapeHtml(domain.name)}</div>
+          <div class="cert-card__meta">${domain.exam_style} · ${countForDomain(domain.id)} questions available</div>
+          <div class="cert-card__hint">${escapeHtml(domain.description || '')}</div>
+          <button class="cert-btn" type="button" data-start="${domain.id}">Start practice →</button>
+        </div>
+      `).join('')}
+    `;
+    bindHome();
+  }
+
+  function bindHome() {
+    els.app.querySelectorAll('button[data-start]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.start;
+        if (!countForDomain(id)) return;
+        setDomain(id);
+        renderQuiz();
+      });
+    });
+  }
+
+  function renderQuiz() {
+    setMode('quiz');
+    const q = current();
+    state.answered = false;
+    state.chosen = null;
+    els.app.innerHTML = `
+      <div class="cert-quiz">
+        <div class="cert-top">
+          <div class="cert-progress">Question ${state.index + 1} of ${state.questions.length}</div>
+          <button class="cert-btn" type="button" id="cert-home-btn">Exit</button>
+        </div>
+        <div class="cert-question">${escapeHtml(q.question)}</div>
+        <div class="cert-answers" id="cert-answers"></div>
+        <div class="cert-feedback" id="cert-feedback"></div>
+        <div class="cert-nav">
+          <button class="cert-btn" id="cert-next" type="button" disabled>Next →</button>
+        </div>
+        <div class="cert-controversy">${escapeHtml(bank.meta?.controversy_note || '')}</div>
+      </div>
+    `;
+    document.getElementById('cert-home-btn').addEventListener('click', renderHome);
+    const answersEl = document.getElementById('cert-answers');
+    q.answers.forEach((text, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'cert-answer';
+      btn.type = 'button';
+      btn.textContent = text;
+      btn.addEventListener('click', () => selectAnswer(idx, btn));
+      answersEl.appendChild(btn);
+    });
+    const nextBtn = document.getElementById('cert-next');
+    nextBtn.addEventListener('click', () => {
+      if (state.index + 1 < state.questions.length) {
+        state.index += 1;
+        renderQuiz();
+      } else {
+        renderResult();
+      }
+    });
+  }
+
+  function selectAnswer(chosenIdx, btnEl) {
+    if (state.answered) return;
+    state.answered = true;
+    state.chosen = chosenIdx;
+    const q = current();
+    const correctIdx = q.correct_index;
+    const feedback = document.getElementById('cert-feedback');
+    if (chosenIdx === correctIdx) {
+      state.score += 1;
+      btnEl.classList.add('correct');
+      feedback.textContent = 'Correct.';
+    } else {
+      btnEl.classList.add('wrong');
+      feedback.textContent = 'Correct answer: ' + q.answers[correctIdx];
+      const correctBtn = document.getElementById('cert-answer-' + correctIdx);
+      if (correctBtn) correctBtn.classList.add('correct');
+    }
+    const all = document.querySelectorAll('.cert-answer');
+    all.forEach(b => b.disabled = true);
+    document.getElementById('cert-next').disabled = false;
+    if (state.index + 1 >= state.questions.length) {
+      document.getElementById('cert-next').textContent = 'Finish';
+    }
+  }
+
+  function renderResult() {
+    setMode('result');
+    const total = state.questions.length;
+    const score = state.score;
+    const pct = Math.round((score / total) * 100);
+    els.app.innerHTML = `
+      <div class="cert-card cert-result">
+        <div class="cert-result__score">${score} / ${total}</div>
+        <div class="cert-result__sub">${pct}% on this run</div>
+        <button class="cert-btn" type="button" id="cert-retry">Retry</button>
+        <button class="cert-btn" type="button" id="cert-home">Domain menu</button>
+        <div class="cert-controversy">${escapeHtml(bank.meta?.controversy_note || '')}</div>
+      </div>
+    `;
+    document.getElementById('cert-retry').addEventListener('click', () => {
+      setDomain(state.domain.id);
+      renderQuiz();
+    });
+    document.getElementById('cert-home').addEventListener('click', renderHome);
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  renderHome();
+})();
+</script>
+</body>
+</html>

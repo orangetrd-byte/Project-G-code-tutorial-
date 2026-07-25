@@ -1,0 +1,157 @@
+{
+  "meta": {
+    "title": "Machinist Certification Practice Test",
+    "default_filter": "all",
+    "controversy_note": "Questions were drawn from public NIMS preparation guides as of 2026-07-25. Certification content changes; this is study aid, not exam content."
+  },
+  "domains": [
+    {
+      "id": "nims-manual-turning-level-1",
+      "name": "NIMS Manual Turning Level 1",
+      "description": "Lathe operations, tool setup, threading, measurement, safety, and process control.",
+      "question_count": 75,
+      "exam_style": "multiple_choice",
+      "topics": [
+        "Turning Speeds and Feeds",
+        "Work Holding Devices and Basic Setup",
+        "Lathe Components",
+        "Turning Operations",
+        "Process Improvement and Troubleshooting",
+        "Turning Safety",
+        "Single Point Threading",
+        "Tapping, Fits and Allowances",
+        "Measurement",
+        "Process Control",
+        "Tooling and Lathe Setup",
+        "Layout Procedures"
+      ]
+    },
+    {
+      "id": "nims-manual-milling-level-1",
+      "name": "NIMS Manual Milling Level 1",
+      "description": "Milling setup, drilling, quality control, work-holding, and tool holding.",
+      "question_count": 51,
+      "exam_style": "multiple_choice",
+      "topics": [
+        "Measurement Practices",
+        "Drilling Operations",
+        "Feeds and Speeds",
+        "Safety Practices",
+        "Tapping",
+        "Basic Milling Operations",
+        "Clamping and Vise Applications",
+        "Milling Operations Setup",
+        "Milling Machine Components",
+        "Process Improvement",
+        "Tool Holding Applications"
+      ]
+    },
+    {
+      "id": "nims-cnc-machining",
+      "name": "NIMS CNC Machining",
+      "description": "CNC programming, setup, tooling and fixturing, QA, and safety.",
+      "question_count": 100,
+      "exam_style": "multiple_choice",
+      "topics": [
+        "CNC Programming",
+        "G-code and M-code",
+        "Machine Setup",
+        "Work Holding and Fixtures",
+        "Tooling and Tool Parameters",
+        "Quality Control and Inspection",
+        "Blueprint / Geometry Interpretation",
+        "Safety Protocols"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "nt1-q01",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Process Control",
+      "question": "A part can be rejected when:",
+      "answers": [
+        "A dimension is made out of tolerance",
+        "The wrong material is used",
+        "The part does not follow the process flow",
+        "The wrong revision of the print is used to make the part",
+        "All of the above",
+        "Only a and b"
+      ],
+      "correct_index": 4,
+      "difficulty": "easy"
+    },
+    {
+      "id": "nt1-q02",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Tooling and Lathe Setup",
+      "question": "Which of the following provides the highest level of repeatability when turning a shoulder?",
+      "answers": [
+        "Screw feed stop on the cross side",
+        "Compound rest set perpendicular to the centerline axis of the lathe",
+        "Compound rest set parallel to the centerline axis of the lathe",
+        "Tailstock",
+        "Indicol stop set on the tailstock"
+      ],
+      "correct_index": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nt1-q03",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Tooling and Lathe Setup",
+      "question": "The compound rest can be rotated:",
+      "answers": [
+        "45 degrees",
+        "180 degrees",
+        "235 degrees",
+        "360 degrees"
+      ],
+      "correct_index": 3,
+      "difficulty": "easy"
+    },
+    {
+      "id": "nm1-q01",
+      "domain": "nims-manual-milling-level-1",
+      "topic": "Tool Holding Applications",
+      "question": "Which spindle taper is most commonly found on a Bridgeport milling machine?",
+      "answers": [
+        "Jarno taper",
+        "Morse taper",
+        "R-8",
+        "5-C",
+        "Brown & Sharpe"
+      ],
+      "correct_index": 2,
+      "difficulty": "easy"
+    },
+    {
+      "id": "nm1-q02",
+      "domain": "nims-manual-milling-level-1",
+      "topic": "Milling Operations Setup",
+      "question": "To bore a hole perpendicular to the face of the workpiece, the machine table should be _____________ to the spindle.",
+      "answers": [
+        "Tangent",
+        "Parallel",
+        "Perpendicular",
+        "Offset at 45 degrees"
+      ],
+      "correct_index": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nc1-q01",
+      "domain": "nims-cnc-machining",
+      "topic": "G-code and M-code",
+      "question": "In CNC programming, what does M01 signify regarding program execution?",
+      "answers": [
+        "Execution mandatory",
+        "Optional execution",
+        "Execution required",
+        "End program"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    }
+  ]
+}
