@@ -2,15 +2,21 @@
   "meta": {
     "title": "Machinist Certification Practice Test",
     "default_filter": "all",
-    "controversy_note": "Questions were drawn from public NIMS preparation guides as of 2026-07-25. Certification content changes; this is study aid, not exam content."
+    "controversy_note": "Questions were drawn from public NIMS preparation guides as of 2026-07-25. Certification content changes; this is study aid, not official exam content."
   },
   "domains": [
     {
       "id": "nims-manual-turning-level-1",
       "name": "NIMS Manual Turning Level 1",
       "description": "Lathe operations, tool setup, threading, measurement, safety, and process control.",
-      "question_count": 75,
+      "question_count": 50,
       "exam_style": "multiple_choice",
+      "exam_sections": [
+        "Turning Speeds and Feeds",
+        "Work Holding Devices and Basic Setup",
+        "Lathe Components",
+        "Turning Operations"
+      ],
       "topics": [
         "Turning Speeds and Feeds",
         "Work Holding Devices and Basic Setup",
@@ -32,6 +38,12 @@
       "description": "Milling setup, drilling, quality control, work-holding, and tool holding.",
       "question_count": 51,
       "exam_style": "multiple_choice",
+      "exam_sections": [
+        "Drilling Operations on a Vertical Milling Machine",
+        "Milling Operations",
+        "Quality Control and Inspection Tasks",
+        "Workpiece Clamping and Tool Holding"
+      ],
       "topics": [
         "Measurement Practices",
         "Drilling Operations",
@@ -61,6 +73,320 @@
         "Quality Control and Inspection",
         "Blueprint / Geometry Interpretation",
         "Safety Protocols"
+      ]
+    },
+    {
+      "id": "nims-measurement-materials-safety",
+      "name": "NIMS Measurement, Materials, and Safety",
+      "description": "Measurement, materials, safety, maintenance, mathematics, handbook reference, SPC, inspection, and process adjustment.",
+      "question_count": 50,
+      "exam_style": "multiple_choice",
+      "exam_sections": [
+        "General Maintenance Tasks",
+        "Industrial Safety & Environmental Protection Tasks"
+      ],
+      "topics": [
+        "Machinery's Handbook Usage",
+        "Basic Mathematics",
+        "Industrial Safety",
+        "Maintenance Tasks",
+        "Maintenance and Hand Tool Safety",
+        "Environmental Protection",
+        "Process Adjustment",
+        "Tapping Process Adjustment",
+        "Threading Process Adjustment",
+        "Drilling Process Adjustment",
+        "Milling Process Adjustment",
+        "Reaming Process Adjustment",
+        "Grinding Process Adjustment",
+        "Quality Control Procedures",
+        "SPC Concepts",
+        "Sampling Plans",
+        "Inspection Plans",
+        "Measuring Instruments",
+        "Inspection Setups"
+      ]
+    },
+    {
+      "id": "nims-grinding-level-1",
+      "name": "NIMS Grinding Level 1",
+      "description": "Surface grinding, wheel selection, dressing, safety, setup, feeds and speeds, inspection, and process control.",
+      "question_count": 45,
+      "exam_style": "multiple_choice",
+      "exam_sections": [
+        "Grinding Operations",
+        "Wheel Selection and Dressing",
+        "Safety and Environment",
+        "Measurement and Inspection",
+        "Machine Setup"
+      ],
+      "topics": [
+        "Grinding Wheel Types",
+        "Wheel Dressing and Truing",
+        "Work Holding and Setup",
+        "Surface Grinding Operations",
+        "Cylindrical Grinding Fundamentals",
+        "Feeds and Speeds",
+        "Coolant Application",
+        "Safety and PPE",
+        "Surface Finish and Tolerances",
+        "Measuring Instruments"
+      ]
+    },
+    {
+      "id": "nims-drill-press-level-1",
+      "name": "NIMS Drill Press Level 1",
+      "description": "Drill press setup, speeds and feeds, work holding, twist drills, tapping, layout, reaming, and inspection.",
+      "question_count": 58,
+      "exam_style": "multiple_choice",
+      "exam_sections": [
+        "Basic Drilling Procedures",
+        "Drilling Speeds, Feeds and Basic Math",
+        "Reaming Procedures"
+      ],
+      "topics": [
+        "Drill Press Components",
+        "Twist Drill Nomenclature and Sizing",
+        "Drilling Speeds and Feeds",
+        "Basic Mathematics",
+        "Work Holding",
+        "Countersinking",
+        "Counterboring",
+        "Spotfacing",
+        "Center Drilling",
+        "Layout and Inspection",
+        "Measuring Instruments",
+        "Tapping",
+        "Thread Percentages",
+        "Reaming",
+        "Process Improvement",
+        "Safety Practices"
+      ]
+    },
+    {
+      "id": "nims-job-planning-benchwork-layout",
+      "name": "NIMS Job Planning, Benchwork, and Layout",
+      "description": "Process planning, operations, machining theory, benchwork, layout, print reading, and measurement.",
+      "question_count": 60,
+      "exam_style": "multiple_choice",
+      "exam_sections": [
+        "Job Planning and Management Tasks",
+        "Layout Tasks",
+        "Benchwork Tasks"
+      ],
+      "topics": [
+        "Job Planning and Sequencing",
+        "Operation Sheets",
+        "Process Planning",
+        "Machining Theory",
+        "Tooling Selection",
+        "Basic Measurement",
+        "Semiprecision Measurement",
+        "Precision Measurement",
+        "Machinery's Handbook Applications",
+        "Tolerances, Fits, and Allowances",
+        "Speeds and Feeds Formulas",
+        "Taper Calculations",
+        "Math Applications",
+        "Threads and Tapping",
+        "Reaming",
+        "Layout Methods",
+        "Print Reading",
+        "Blueprint Line Conventions",
+        "Orthographic Projection",
+        "Surface Finish Symbols",
+        "Benchwork Operations",
+        "Filing",
+        "Deburring",
+        "Sawing",
+        "Knurling",
+        "Materials Knowledge"
+      ]
+    },
+    {
+      "id": "nims-cam-level-1",
+      "name": "NIMS CAM Level 1",
+      "description": "CAM programming fundamentals, process planning, modeling, setups, and 2D milling toolpath strategy.",
+      "question_count": 55,
+      "exam_style": "multiple_choice",
+      "exam_sections": [
+        "Process Planning",
+        "2D Sketching and 3D Modeling",
+        "Setups-Milling",
+        "2D Milling Toolpaths"
+      ],
+      "topics": [
+        "Blueprint and Toolpath Planning",
+        "2D Sketching",
+        "3D Modeling",
+        "Part Positioning in CAM",
+        "Work Coordinate Setup",
+        "Pocketing",
+        "Contouring",
+        "Drilling and Hole Features",
+        "Lead-in/Lead-out",
+        "Depth Cuts",
+        "Tabs",
+        "Multi Passes",
+        "Post Processor Output",
+        "Coolant and Cutting Method",
+        "CAM Verification"
+      ],
+      "source_status": "taxonomy and task structure sourced from public NIMS CAM Level I preparation guide; questions authored originally",
+      "controversy_note": "Taxonomy reflects public prep guide structure; practice questions are original and not copied from the guide."
+    },
+    {
+      "id": "nims-edm-plunge",
+      "name": "NIMS EDM Plunge",
+      "description": "Electrical discharge machining, plunge operations, electrode selection, flushing, parameters, and safety.",
+      "question_count": 40,
+      "exam_style": "multiple_choice",
+      "topics": [
+        "EDM Process Fundamentals",
+        "Electrode Materials",
+        "Dielectric and Flushing",
+        "Plunge Strategy",
+        "Parameters and Settings",
+        "Wear and Surface Finish",
+        "Safety and Environment",
+        "Machine Setup"
+      ]
+    },
+    {
+      "id": "nims-metalforming-level-1",
+      "name": "NIMS Metalforming Level 1",
+      "description": "Press operation, metalforming theory, process control, safety, PPE, housekeeping, maintenance, and measurement.",
+      "question_count": 88,
+      "exam_style": "multiple_choice",
+      "exam_sections": [
+        "Press Operation and Safety",
+        "Basic Safety in the Workplace",
+        "Math, Print Reading and Measurement"
+      ],
+      "topics": [
+        "Press Components and Controls",
+        "Punch Press Operation",
+        "CNC Turret Press",
+        "Laser Cutting",
+        "Press Brake",
+        "Metalforming Theory",
+        "Bend Behavior and Grain",
+        "Material Types",
+        "Ferrous vs Non-Ferrous",
+        "Process Control",
+        "SPC Basics",
+        "Surface Defects vs Coatings",
+        "Housekeeping",
+        "Lubricant Management",
+        "Preventative Maintenance",
+        "Personal Protective Equipment",
+        "Overhead Crane Safety",
+        "Math, Print Reading, Measurement",
+        "Inspection",
+        "Burr and Edge Characteristics",
+        "Scrap Control"
+      ]
+    },
+    {
+      "id": "nims-stamping-level-2",
+      "name": "NIMS Stamping Level 2",
+      "description": "Advanced stamping operations, control plans, inspection, die maintenance, safety, and process improvement.",
+      "question_count": 68,
+      "exam_style": "multiple_choice",
+      "topics": [
+        "Coil Equipment and Coil Defects",
+        "Die Components",
+        "Shearing Theory",
+        "Materials and Material Defects",
+        "Measurement and Tolerancing",
+        "Preventative Maintenance/Safe Start Up",
+        "Basic Press Terminology",
+        "Lockout/Tagout",
+        "Control Plan and Inspection Sheet",
+        "Process Control",
+        "Scrap Control"
+      ],
+      "exam_sections": [
+        "Press Safety and Guarding",
+        "Press Components and Controls",
+        "Troubleshooting/Problem Solving"
+      ],
+      "source_status": "taxonomy sourced from public NIMS Stamping Level II preparation guide",
+      "controversy_note": "Structure from official prep guide; practice questions are original."
+    },
+    {
+      "id": "nims-stamping-level-3",
+      "name": "NIMS Stamping Level 3",
+      "description": "Complex stamping supervision, quality plans, advanced inspection, troubleshooting, and documentation control.",
+      "question_count": 70,
+      "exam_style": "multiple_choice",
+      "topics": [
+        "Press Operation and Advanced Safety",
+        "Quality Assurance and Inspection",
+        "Advanced Die and Tooling Systems",
+        "Process Improvement",
+        "Material Verification and Routing",
+        "Documentation Control",
+        "Training and Supervision"
+      ],
+      "source_status": "taxonomy inferred from Level III exam scope and related stamps; not yet verified from a public Level III prep guide",
+      "controversy_note": "Level III public prep-guide extraction pending; topics are provisional."
+    },
+    {
+      "id": "nims-manual-milling-skills-1",
+      "name": "NIMS Manual Milling Skills I",
+      "description": "Vertical milling setup, operations, workholding, inspection, and process control.",
+      "question_count": 40,
+      "exam_style": "multiple_choice",
+      "source_status": "no public prep-guide extraction yet; taxonomy is provisional and needs verification",
+      "controversy_note": "Topics inferred from credential family naming, not extracted from an official sample-test PDF.",
+      "topics": [
+        "Milling Machine Setup",
+        "Workholding",
+        "Cutting Tool Selection",
+        "Feeds and Speeds",
+        "Basic Milling Operations",
+        "Inspection and Measurement",
+        "Process Adjustment",
+        "Safety"
+      ]
+    },
+    {
+      "id": "nims-cnc-mill-programming-setup-operations",
+      "name": "NIMS CNC Mill Programming, Setup, and Operations",
+      "description": "CNC mill programming, setup, offsets, workholding, verification, and machining operations.",
+      "question_count": 60,
+      "exam_style": "multiple_choice",
+      "source_status": "no public prep-guide extraction yet; taxonomy is provisional and needs verification",
+      "controversy_note": "Official study guide is login-only/paid; only the credential fact sheet was publicly available.",
+      "topics": [
+        "Mill Programming",
+        "Toolpath Selection",
+        "Workholding and Fixtures",
+        "Work Offsets",
+        "Tool Length and Radius Offsets",
+        "Machine Setup",
+        "Program Verification",
+        "Quality and Inspection"
+      ]
+    },
+    {
+      "id": "nims-moldmaking-level-2",
+      "name": "NIMS Moldmaking Level II",
+      "description": "Mold manufacturing planning, quality planning, EDM, machining, and inspection.",
+      "question_count": 60,
+      "exam_style": "multiple_choice",
+      "source_status": "no public prep-guide extraction yet; taxonomy is provisional and needs verification",
+      "controversy_note": "No public preparation guide PDF was found during initial sourcing.",
+      "topics": [
+        "Process Planning",
+        "Quality Planning",
+        "EDM",
+        "Finishing Operations",
+        "Mold Components",
+        "Inspection and Metrology",
+        "Material Selection",
+        "Documentation"
       ]
     }
   ],
@@ -111,6 +437,328 @@
       "difficulty": "easy"
     },
     {
+      "id": "nt1-q04",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Process Improvement and Troubleshooting",
+      "question": "A turned part shows a tapered diameter when machined between centers. The most likely corrective action is to:",
+      "answers": [
+        "Adjust the tailstock toward the operator",
+        "Adjust the tailstock away from the operator",
+        "Increase the spindle speed",
+        "Change the cutting insert"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nt1-q05",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Measurement",
+      "question": "A caliper reads 1.5005 inches. The print calls out 1.500 ±0.001 inches. This part is:",
+      "answers": [
+        "In tolerance",
+        "Out of tolerance on the high side",
+        "Out of tolerance on the low side",
+        "Within the reject limit"
+      ],
+      "correct_index": 0,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nc1-q01",
+      "domain": "nims-cnc-machining",
+      "topic": "G-code and M-code",
+      "question": "In CNC programming, what does M01 signify regarding program execution?",
+      "answers": [
+        "Execution mandatory",
+        "Optional execution",
+        "Execution required",
+        "End program"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "nc1-q02",
+      "domain": "nims-cnc-machining",
+      "topic": "Machine Setup",
+      "question": "Before running a new program, the safest first program-level check is to:",
+      "answers": [
+        "Skip the tool change and run air cuts only",
+        "Verify tool lengths, work offsets, and stock location",
+        "Increase feedrate to maximum to save time",
+        "Disable coolant and watch for smoke"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nc1-q03",
+      "domain": "nims-cnc-machining",
+      "topic": "Quality Control and Inspection",
+      "question": "A machinist measures a finished feature and it is slightly undersized. The first action should be to:",
+      "answers": [
+        "Edit the program offset without measuring again",
+        "Check tool wear, offset values, and measurement method before adjusting",
+        "Increase spindle speed for the next part",
+        "Ignore it if the part still fits by hand"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nc1-q04",
+      "domain": "nims-cnc-machining",
+      "topic": "Work Holding and Fixtures",
+      "question": "A finished part moved during machining and shows a shift in features. The most likely root cause is:",
+      "answers": [
+        "The tool nose radius was too small",
+        "Workholding moved or clamps were insufficient",
+        "The control language was set to metric",
+        "The spindle was too slow"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nc1-q05",
+      "domain": "nims-cnc-machining",
+      "topic": "Safety Protocols",
+      "question": "When approaching a machine to inspect a freshly machined part, the safest first step is to:",
+      "answers": [
+        "Reach into the work area quickly",
+        "Confirm the spindle has stopped and the control is in a safe state",
+        "Leave the door closed and assume the program paused",
+        "Measure through the guard opening"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "mms-q01",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "Machinery's Handbook Usage",
+      "question": "What is the primary purpose of referencing the Machinery's Handbook during setup?",
+      "answers": [
+        "To select cutting tool colors",
+        "To find approved company logos",
+        "To verify thread percentages, tap drill sizes, and allowable limits",
+        "To read the operator's personal notes"
+      ],
+      "correct_index": 2,
+      "difficulty": "easy"
+    },
+    {
+      "id": "mms-q02",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "Measuring Instruments",
+      "question": "A dimension calls out 1.500 +/- 0.003 in. Which instrument is the better choice for checking it?",
+      "answers": [
+        "1-inch rule",
+        "Dial indicator",
+        "3-inch micrometer",
+        "Tape measure"
+      ],
+      "correct_index": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mms-q03",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "Industrial Safety",
+      "question": "Which organization sets federal workplace safety requirements for machine shops?",
+      "answers": [
+        "FDA",
+        "EPA",
+        "OSHA",
+        "DOT"
+      ],
+      "correct_index": 2,
+      "difficulty": "easy"
+    },
+    {
+      "id": "mms-q04",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "Maintenance and Hand Tool Safety",
+      "question": "Before using a hand tool such as a file, what basic maintenance check should be done?",
+      "answers": [
+        "Verify handle is tight and clean",
+        "Measure voltage with a multimeter",
+        "Test coolant concentration",
+        "Recalibrate the CNC controller"
+      ],
+      "correct_index": 0,
+      "difficulty": "easy"
+    },
+    {
+      "id": "mms-q05",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "Environmental Protection",
+      "question": "Coolant that has become rancid or bacteria-infested is primarily an issue of:",
+      "answers": [
+        "Machine aesthetics",
+        "Environmental and skin-safety concern",
+        "Tool coating warranty",
+        "Spindle alignment"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "mms-q06",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "Tapping Process Adjustment",
+      "question": "A tapped hole is consistently loose after assembly. The best first process adjustment is to:",
+      "answers": [
+        "Increase tap drill size for more thread engagement",
+        "Decrease tap drill size for more thread engagement",
+        "Reduce spindle RPM by half",
+        "Switch to a smaller tap without checking the drill"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mms-q07",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "SPC Concepts",
+      "question": "In basic SPC, what does an X-bar chart primarily track?",
+      "answers": [
+        "Color-coded scrap bins",
+        "Average values of sample sets over time",
+        "Total daily coolant volume",
+        "Operator lunch break schedules"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mms-q08",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "Inspection Setups",
+      "question": "Which inspection setup is generally the most repeatable for checking flatness on a surface plate?",
+      "answers": [
+        "Tape measure and straightedge",
+        "Height gage and dial indicator",
+        "Inside caliper only",
+        "Visual comparison by feel"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mms-q09",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "Basic Mathematics",
+      "question": "Convert 0.625 inches to a common fraction.",
+      "answers": [
+        "1/16",
+        "3/8",
+        "5/8",
+        "7/8"
+      ],
+      "correct_index": 2,
+      "difficulty": "easy"
+    },
+    {
+      "id": "mms-q10",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "Materials Knowledge",
+      "question": "Which property describes how much a material resists localized indentation?",
+      "answers": [
+        "Tensile strength",
+        "Hardness",
+        "Ductility",
+        "Elastic modulus"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mms-q11",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "Inspection Setups",
+      "question": "A 0.001-inch variation across a surface is best detected with:",
+      "answers": [
+        "A steel rule",
+        "A dial indicator on a surface plate",
+        "A tape measure",
+        "A marker and straightedge"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mms-q12",
+      "domain": "nims-measurement-materials-safety",
+      "topic": "Quality Control Procedures",
+      "question": "An inspection sheet is intended to:",
+      "answers": [
+        "Increase machine runtime",
+        "Standardize checks and keep inspection consistent",
+        "Eliminate the need for measurements",
+        "Replace operator training"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "mm1-q01",
+      "domain": "nims-manual-milling-level-1",
+      "topic": "Clamping and Vise Applications",
+      "question": "A thin workpiece is lifting at the far end of the vise. The better remedy is to:",
+      "answers": [
+        "Over-tighten the vise jaws",
+        "Use a low profile stop or strap clamp to support the part",
+        "Reduce spindle speed by half",
+        "Switch to a larger cutter"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mm1-q02",
+      "domain": "nims-manual-milling-level-1",
+      "topic": "Milling Operations Setup",
+      "question": "After setting the vise, the next repeatability check should be:",
+      "answers": [
+        "Check coolant color",
+        "Verify the jaw faces are clean and the part is seated on parallels",
+        "Raise the quill and run the spindle at max RPM",
+        "Assume the table is trammed because it looks level"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mm1-q03",
+      "domain": "nims-manual-milling-level-1",
+      "topic": "Feeds and Speeds",
+      "question": "If the cutting sound gets harsh and the cutter loads up, a likely cause is:",
+      "answers": [
+        "Feed is too fast for the material or cutter size",
+        "Spindle speed is too low for carbide",
+        "Coolant is too cold",
+        "Tool holder is too short"
+      ],
+      "correct_index": 0,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mm1-q04",
+      "domain": "nims-manual-milling-level-1",
+      "topic": "Safety Practices",
+      "question": "When cleaning chips from a milling machine, the safest choice is to:",
+      "answers": [
+        "Use a brush, rag, or chip hook with the spindle stopped",
+        "Blow them away with compressed air while the spindle runs",
+        "Pick them out by hand near the cutter",
+        "Wipe them with a cloth while the quill is down"
+      ],
+      "correct_index": 0,
+      "difficulty": "easy"
+    },
+    {
       "id": "nm1-q01",
       "domain": "nims-manual-milling-level-1",
       "topic": "Tool Holding Applications",
@@ -140,18 +788,1082 @@
       "difficulty": "medium"
     },
     {
-      "id": "nc1-q01",
-      "domain": "nims-cnc-machining",
-      "topic": "G-code and M-code",
-      "question": "In CNC programming, what does M01 signify regarding program execution?",
+      "id": "nmms-q01",
+      "domain": "nims-manual-milling-skills-1",
+      "topic": "Milling Machine Setup",
+      "question": "Before machining on a vertical mill, the first setup check should be:",
       "answers": [
-        "Execution mandatory",
-        "Optional execution",
-        "Execution required",
-        "End program"
+        "Run the spindle at max RPM to warm up",
+        "Check table travel, gibs, and lock handles",
+        "Open the coolant tank",
+        "Load the program immediately"
       ],
       "correct_index": 1,
       "difficulty": "easy"
+    },
+    {
+      "id": "nmms-q02",
+      "domain": "nims-manual-milling-skills-1",
+      "topic": "Workholding",
+      "question": "When milling thin stock, the best practice to prevent lifting is to:",
+      "answers": [
+        "Use only one clamp at the center",
+        "Clamp the part with adequate support and low-profile stops",
+        "Remove all parallels",
+        "Increase depth of cut"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nmms-q03",
+      "domain": "nims-manual-milling-skills-1",
+      "topic": "Cutting Tool Selection",
+      "question": "For a light finishing pass in aluminum, the best choice is typically:",
+      "answers": [
+        "A high-speed steel end mill with tight margins",
+        "A carbide end mill with high helix and polished flutes",
+        "A center drill",
+        "A lathe boring bar"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nmms-q04",
+      "domain": "nims-manual-milling-skills-1",
+      "topic": "Basic Milling Operations",
+      "question": "In face milling, the primary purpose of the shell mill is to:",
+      "answers": [
+        "Drill deep holes",
+        "Create a flat surface perpendicular to the spindle",
+        "Cut internal threads",
+        "Produce chamfers only"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "nmms-q05",
+      "domain": "nims-manual-milling-skills-1",
+      "topic": "Safety",
+      "question": "The most important PPE when milling is:",
+      "answers": [
+        "Safety glasses and no loose clothing near rotating cutters",
+        "A hard hat only",
+        "Leather gloves during operation",
+        "Hearing protection only"
+      ],
+      "correct_index": 0,
+      "difficulty": "easy"
+    },
+    {
+      "id": "ncmp01",
+      "domain": "nims-cnc-mill-programming-setup-operations",
+      "topic": "Work Offsets",
+      "question": "A tool length offset (G43) is used to:",
+      "answers": [
+        "Shift the part XY coordinate system",
+        "Set the tool Z reference from a chosen location",
+        "Change coolant pressure",
+        "Select the next tool in the carousel"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmp02",
+      "domain": "nims-cnc-mill-programming-setup-operations",
+      "topic": "Program Verification",
+      "question": "Before cutting metal, the best verification method is to:",
+      "answers": [
+        "Dry run with feedrate override and single block",
+        "Run full auto with coolant on",
+        "Skip setup sheet review",
+        "Assume CAM generated correct code"
+      ],
+      "correct_index": 0,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmld01",
+      "domain": "nims-moldmaking-level-2",
+      "topic": "EDM",
+      "question": "In sinker EDM, the primary purpose of the dielectric is to:",
+      "answers": [
+        "Lubricate the spindle bearings",
+        "Flush debris and insulate between sparks",
+        "Increase cutting pressure",
+        "Cool the workpiece only"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmld02",
+      "domain": "nims-moldmaking-level-2",
+      "topic": "Material Selection",
+      "question": "A common mold core material chosen for high wear resistance is:",
+      "answers": [
+        "6061 aluminum annealed",
+        "P-20 or H-13 tool steel",
+        "Cold-rolled steel sheet",
+        "Cast iron without heat treatment"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmld03",
+      "domain": "nims-moldmaking-level-2",
+      "topic": "Quality Planning",
+      "question": "In moldmaking, a control plan is used to:",
+      "answers": [
+        "Eliminate CNC programming",
+        "Document inspection criteria and frequency",
+        "Generate CAM toolpaths automatically",
+        "Replace all hand measurements"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "cam01",
+      "domain": "nims-cam-level-1",
+      "topic": "Process Planning",
+      "question": "When planning CAM toolpaths from a print, the first question is usually:",
+      "answers": [
+        "Which coolant to use",
+        "What material is available and how features will be machined",
+        "What post processor has the coolest name",
+        "How big the tool library can be"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "cam02",
+      "domain": "nims-cam-level-1",
+      "topic": "2D Milling Toolpaths",
+      "question": "To machine an open pocket efficiently, the best first choice is:",
+      "answers": [
+        "Contour only",
+        "Pocket toolpath",
+        "Threading cycle",
+        "Manual G-code only"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "cam03",
+      "domain": "nims-cam-level-1",
+      "topic": "2D Milling Toolpaths",
+      "question": "For finishing a boss wall with climb milling, cutter travel should be:",
+      "answers": [
+        "Clockwise on the outside",
+        "Counterclockwise on the outside",
+        "Always from left to right regardless of rotation",
+        "Random for better finish"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "cam04",
+      "domain": "nims-cam-level-1",
+      "topic": "Setups-Milling",
+      "question": "When setting up CAM for a machining center, the most important setup match is:",
+      "answers": [
+        "Post processor to machine control",
+        "Window color theme",
+        "Monitor resolution only",
+        "Folder naming convention"
+      ],
+      "correct_index": 0,
+      "difficulty": "medium"
+    },
+    {
+      "id": "cam05",
+      "domain": "nims-cam-level-1",
+      "topic": "2D Milling Toolpaths",
+      "question": "Depth cuts are used primarily to:",
+      "answers": [
+        "Skip verification",
+        "Control load per pass when removing material in Z",
+        "Eliminate tabs and fixtures",
+        "Increase spindle RPM automatically"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "cam06",
+      "domain": "nims-cam-level-1",
+      "topic": "2D Milling Toolpaths",
+      "question": "Tabs during external contouring are used to:",
+      "answers": [
+        "Increase cutting speed",
+        "Keep the part from falling out of the vise",
+        "Center the tool automatically",
+        "Reduce coolant pressure"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "cam07",
+      "domain": "nims-cam-level-1",
+      "topic": "2D Sketching and 3D Modeling",
+      "question": "Before CAM machining, CAD geometry should typically be:",
+      "answers": [
+        "Closed, clean, and dimensionally consistent with the print",
+        "Skipped if you know the machine well",
+        "Exported as a screenshot",
+        "Drawn directly in g-code"
+      ],
+      "correct_index": 0,
+      "difficulty": "medium"
+    },
+    {
+      "id": "cam08",
+      "domain": "nims-cam-level-1",
+      "topic": "CAM Verification",
+      "question": "The best reason to simulate toolpaths before running the machine is to:",
+      "answers": [
+        "Warm up the spindle",
+        "Check for collisions, gouges, and missed features",
+        "Prove the CAM program has no typos",
+        "Make the post processor obsolete"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "st2-q01",
+      "domain": "nims-stamping-level-2",
+      "topic": "Coil Equipment and Coil Defects",
+      "question": "Clock springing in coil stock is best described as:",
+      "answers": [
+        "Camber along the width",
+        "Curl in the coil like a clock spring",
+        "Tapered thickness",
+        "Lamination between layers"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "st2-q02",
+      "domain": "nims-stamping-level-2",
+      "topic": "Lockout/Tagout",
+      "question": "The primary purpose of lockout/tagout in a pressroom is to:",
+      "answers": [
+        "Speed up die changes",
+        "Achieve zero energy before repairs or adjustments",
+        "Record scrap counts",
+        "Select tooling faster"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "st2-q03",
+      "domain": "nims-stamping-level-2",
+      "topic": "Shearing Theory",
+      "question": "During shearing, the correct stage sequence is:",
+      "answers": [
+        "Plastic deformation, fracture, shearing",
+        "Shearing, fracture, plastic deformation",
+        "Fracture, plastic deformation, shearing",
+        "Plastic deformation, shearing, fracture"
+      ],
+      "correct_index": 0,
+      "difficulty": "medium"
+    },
+    {
+      "id": "st2-q04",
+      "domain": "nims-stamping-level-2",
+      "topic": "Measurement and Tolerancing",
+      "question": "The difference between attribute and variable measurement is:",
+      "answers": [
+        "Attribute uses a dial indicator; variable uses go/no-go gages",
+        "Attribute is pass/fail; variable records a numeric value",
+        "Variable is visual; attribute requires a microscope",
+        "Attribute measures temperature; variable measures pressure"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "st2-q05",
+      "domain": "nims-stamping-level-2",
+      "topic": "Press Components and Controls",
+      "question": "Top dead center in a press stroke refers to:",
+      "answers": [
+        "The lowest ram position",
+        "The highest ram position",
+        "The mid-stroke pause point",
+        "The feeder release point"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "gr01",
+      "domain": "nims-grinding-level-1",
+      "topic": "Grinding Wheel Types",
+      "question": "A wheel grade \"A\" is generally considered:",
+      "answers": [
+        "Very hard",
+        "Very soft",
+        "Medium",
+        "Extra soft"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "gr02",
+      "domain": "nims-grinding-level-1",
+      "topic": "Wheel Dressing and Truing",
+      "question": "Truing a grinding wheel is done to:",
+      "answers": [
+        "Sharpen the grit",
+        "Restore flatness and roundness",
+        "Reduce wheel speed",
+        "Clean coolant"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "gr03",
+      "domain": "nims-grinding-level-1",
+      "topic": "Work Holding and Setup",
+      "question": "Between centers grinding requires proper alignment to prevent:",
+      "answers": [
+        "Tapered or bell-mouthed parts",
+        "Wheel chatter",
+        "Dressing marks",
+        "Coolant leaks"
+      ],
+      "correct_index": 0,
+      "difficulty": "medium"
+    },
+    {
+      "id": "gr04",
+      "domain": "nims-grinding-level-1",
+      "topic": "Feeds and Speeds",
+      "question": "If the workpiece becomes excessively warm, the first adjustment should be:",
+      "answers": [
+        "Increase wheel speed",
+        "Reduce wheel speed or depth of cut",
+        "Change dressing frequency only",
+        "Add more coolant only"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "gr05",
+      "domain": "nims-grinding-level-1",
+      "topic": "Safety and PPE",
+      "question": "Before mounting a new grinding wheel, the required check is to:",
+      "answers": [
+        "Check coolant color only",
+        "Inspect for cracks and perform the ring test",
+        "Run it at full speed immediately",
+        "Measure it with calipers"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "dp01",
+      "domain": "nims-drill-press-level-1",
+      "topic": "Drill Press Components",
+      "question": "The main purpose of the quill on a drill press is to:",
+      "answers": [
+        "Advance and retract the cutting tool",
+        "Adjust table height only",
+        "Control spindle RPM",
+        "Lock the workholding"
+      ],
+      "correct_index": 0,
+      "difficulty": "easy"
+    },
+    {
+      "id": "dp02",
+      "domain": "nims-drill-press-level-1",
+      "topic": "Twist Drill Nomenclature and Sizing",
+      "question": "The chisel edge of a twist drill is the:",
+      "answers": [
+        "Flute cutting edge",
+        "Land or margin",
+        "Web at the center of the point",
+        "Shank taper"
+      ],
+      "correct_index": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "dp03",
+      "domain": "nims-drill-press-level-1",
+      "topic": "Drilling Speeds and Feeds",
+      "question": "If the drill is cutting roughly and leaving a poor finish, a common cause is:",
+      "answers": [
+        "Too high RPM or too much feed",
+        "Coolant too cold",
+        "Workpiece too hard only",
+        "Drill too long for the job"
+      ],
+      "correct_index": 0,
+      "difficulty": "medium"
+    },
+    {
+      "id": "dp04",
+      "domain": "nims-drill-press-level-1",
+      "topic": "Safety Practices",
+      "question": "To remove a jammed drill from the chuck, the safest action is to:",
+      "answers": [
+        "Use a pipe wrench on the drill shank",
+        "Stop the machine and use the chuck key properly",
+        "Pull it out by hand while it is still spinning",
+        "Increase spindle speed to free it"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "dp05",
+      "domain": "nims-drill-press-level-1",
+      "topic": "Layout and Inspection",
+      "question": "Before drilling, the best layout check is to:",
+      "answers": [
+        "Start drilling immediately",
+        "Mark the center, use a center punch, and check position against the print",
+        "Guess based on eye alignment only",
+        "Measure the table only"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "jp01",
+      "domain": "nims-job-planning-benchwork-layout",
+      "topic": "Job Planning and Sequencing",
+      "question": "Good job planning primarily helps to:",
+      "answers": [
+        "Increase scrap rates",
+        "Reduce setup time and ensure features are made in the right order",
+        "Eliminate inspections",
+        "Use the largest cutter possible"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "jp02",
+      "domain": "nims-job-planning-benchwork-layout",
+      "topic": "Print Reading",
+      "question": "Selecting feature datums on a print is important because it:",
+      "answers": [
+        "Changes material hardness",
+        "Establishes measurement reference and affects tolerance buildup",
+        "Only affects the drawing title block",
+        "Is only used for cosmetic alignment"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "jp03",
+      "domain": "nims-job-planning-benchwork-layout",
+      "topic": "Layout Methods",
+      "question": "When laying out multiple holes on a bolt circle, the better practice is to:",
+      "answers": [
+        "Measure each hole from an arbitrary edge",
+        "Use a dividing head or rotary table / calculated chord/stepover for repeatability",
+        "Rely on scribe lines alone without layout fluid",
+        "Drill one hole and assume the rest align"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "jp04",
+      "domain": "nims-job-planning-benchwork-layout",
+      "topic": "Taper Calculations",
+      "question": "Taper per foot is calculated from:",
+      "answers": [
+        "Diameter only",
+        "Larger diameter minus smaller diameter over the length",
+        "Surface finish and RPM",
+        "Material hardness"
+      ],
+      "correct_index": 1,
+      "difficulty": "hard"
+    },
+    {
+      "id": "jp05",
+      "domain": "nims-job-planning-benchwork-layout",
+      "topic": "Benchwork Operations",
+      "question": "When hand filing a flat surface, cross-filing followed by draw-filing is intended to:",
+      "answers": [
+        "Heat the workpiece",
+        "Remove stock fast and then improve flatness/finish",
+        "Polish before grinding",
+        "Mark the surface"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "edm01",
+      "domain": "nims-edm-plunge",
+      "topic": "EDM Process Fundamentals",
+      "question": "EDM removes material primarily by:",
+      "answers": [
+        "Mechanical cutting",
+        "Electrical sparks between electrode and workpiece",
+        "Chemical etching",
+        "Laser ablation"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "edm02",
+      "domain": "nims-edm-plunge",
+      "topic": "Electrode Materials",
+      "question": "A common electrode material for EDM is:",
+      "answers": [
+        "Carbide only",
+        "Copper or graphite",
+        "Aluminum for all jobs",
+        "Cast iron"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "edm03",
+      "domain": "nims-edm-plunge",
+      "topic": "Parameters and Settings",
+      "question": "Increasing spark energy in EDM typically increases:",
+      "answers": [
+        "Surface finish quality only",
+        "Material removal rate and rougher surface finish",
+        "Electrode life only",
+        "Dimensional accuracy"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "edm04",
+      "domain": "nims-edm-plunge",
+      "topic": "Dielectric and Flushing",
+      "question": "Good flushing in EDM is important because it:",
+      "answers": [
+        "Changes part color",
+        "Removes debris and stabilizes spark gaps",
+        "Lubricates the spindle bearings",
+        "Cools the spindle motor"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "edm05",
+      "domain": "nims-edm-plunge",
+      "topic": "Safety and Environment",
+      "question": "A key safety consideration with EDM dielectric fluid is:",
+      "answers": [
+        "It is nontoxic only when heated",
+        "Vapor inhalation, flammability, and slip hazards",
+        "It never requires ventilation",
+        "It can be used indefinitely without filtering"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "edm06",
+      "domain": "nims-edm-plunge",
+      "topic": "Wear and Surface Finish",
+      "question": "Typical EDM surface texture is characterized by:",
+      "answers": [
+        "Perfectly smooth mirror finish",
+        "A crisscross or random ripple pattern called recast",
+        "Thread-like grooves only",
+        "No measurable roughness"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mf01",
+      "domain": "nims-metalforming-level-1",
+      "topic": "Press Components and Controls",
+      "question": "A common safety control near the point of operation on a press is:",
+      "answers": [
+        "Light curtain",
+        "Reduced air pressure",
+        "Slower stroke only",
+        "Higher lubrication rate"
+      ],
+      "correct_index": 0,
+      "difficulty": "easy"
+    },
+    {
+      "id": "mf02",
+      "domain": "nims-metalforming-level-1",
+      "topic": "Metalforming Theory",
+      "question": "Bend behavior in sheet metal is affected by:",
+      "answers": [
+        "Grain direction only",
+        "Grain direction, bend radius, and material thickness",
+        "Coolant color",
+        "Spindle RPM"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mf03",
+      "domain": "nims-metalforming-level-1",
+      "topic": "Surface Defects vs Coatings",
+      "question": "Lamination in sheet metal is best described as:",
+      "answers": [
+        "A surface coating defect",
+        "A separation or delamination within the material",
+        "Paint mismatch only",
+        "Rust on the edges"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mf04",
+      "domain": "nims-metalforming-level-1",
+      "topic": "Preventative Maintenance",
+      "question": "A key preventative maintenance task before startup includes:",
+      "answers": [
+        "Checking fluid levels, air pressure, and lubrication",
+        "Increasing stroke rate to warm up",
+        "Loading extra coil to save time",
+        "Skipping controls check if yesterday was good"
+      ],
+      "correct_index": 0,
+      "difficulty": "easy"
+    },
+    {
+      "id": "mf05",
+      "domain": "nims-metalforming-level-1",
+      "topic": "Math, Print Reading, Measurement",
+      "question": "If a finished stamped part shows a consistent undersize flange, the first check should usually be:",
+      "answers": [
+        "Operator work hours",
+        "Tool wear, die clearances, and material thickness",
+        "Coil color only",
+        "Ambient temperature only"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "st3-q01",
+      "domain": "nims-stamping-level-3",
+      "topic": "Quality Planning",
+      "question": "At Level III, a control plan is expected to define:",
+      "answers": [
+        "Scrap prices",
+        "Inspection criteria, frequency, and reaction rules",
+        "Tool ordering only",
+        "Lunch schedules"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "st3-q02",
+      "domain": "nims-stamping-level-3",
+      "topic": "Advanced Inspection",
+      "question": "For high-volume stamping control, the better quality approach is:",
+      "answers": [
+        "100% manual inspection forever",
+        "Sampling plans with SPC and defined control limits",
+        "Random checks once per month",
+        "No inspection if the die is new"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "st3-q03",
+      "domain": "nims-stamping-level-3",
+      "topic": "Troubleshooting",
+      "question": "When a progressive die breaks a pilot, the first action should usually be:",
+      "answers": [
+        "Run faster to finish the shift",
+        "Stop production, inspect die/burrs, and check strip guidance",
+        "Ignore it if only one part is bad",
+        "Increase air pressure blindly"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "st3-q04",
+      "domain": "nims-stamping-level-3",
+      "topic": "Documentation Control",
+      "question": "Documentation control in advanced stamping is important because it:",
+      "answers": [
+        "Wastes time",
+        "Maintains traceability and consistent process actions",
+        "Eliminates need for supervision",
+        "Replaces tool maintenance"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "st3-q05",
+      "domain": "nims-stamping-level-3",
+      "topic": "Continuous Improvement",
+      "question": "A practical continuous-improvement action in stamping is to:",
+      "answers": [
+        "Repeat mistakes for consistency",
+        "Reduce scrap, standardize die changeover, and track key variables",
+        "Increase changeover time for cooler tools",
+        "Remove all inspection sheets"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "t06",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Turning Speeds and Feeds",
+      "question": "If chatter appears on a turned surface, the most useful first adjustment is often:",
+      "answers": [
+        "Increase depth of cut dramatically",
+        "Reduce RPM, check tool overhang, and tighten setup",
+        "Change material type immediately",
+        "Remove the tailstock"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "t07",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Lathe Components",
+      "question": "The primary purpose of the leadscrew on a lathe is to:",
+      "answers": [
+        "Drive carriage movement for threading and power feeding",
+        "Rotate the chuck only",
+        "Cool the workpiece",
+        "Adjust tailstock height"
+      ],
+      "correct_index": 0,
+      "difficulty": "easy"
+    },
+    {
+      "id": "t08",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Single Point Threading",
+      "question": "For a Unified thread form, the infeed should usually be:",
+      "answers": [
+        "Full depth in one pass",
+        "Taper infeed or compound feed to avoid overload",
+        "Directly radial only",
+        "Perpendicular to the work"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "t09",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Tapping, Fits and Allowances",
+      "question": "A clearance fit means the assembled parts have:",
+      "answers": [
+        "No movement at all",
+        "Positive allowance for ease of assembly",
+        "Press fit only",
+        "Zero tolerance everywhere"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "t10",
+      "domain": "nims-manual-turning-level-1",
+      "topic": "Layout Procedures",
+      "question": "When laying out a turned part, a typical layout reference is:",
+      "answers": [
+        "A finished diameter only",
+        "Centerline and end faces with a height gage or surface gauge",
+        "Random scribe marks",
+        "Tailstock position alone"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nc06",
+      "domain": "nims-cnc-machining",
+      "topic": "CNC Programming",
+      "question": "A typical CAM-to-machine workflow usually ends with:",
+      "answers": [
+        "Skipping setup because CAM was used",
+        "Post-processing, verification, and setup sheet review",
+        "Writing each line by hand on the machine",
+        "Ignoring work offsets"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nc07",
+      "domain": "nims-cnc-machining",
+      "topic": "Blueprint / Geometry Interpretation",
+      "question": "A proper print-read habit before programming is to:",
+      "answers": [
+        "Assume feature sizes are nominal",
+        "Check tolerances, datum references, and revision block",
+        "Measure the raw stock only",
+        "Skip notes and GD&T symbols"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "nc08",
+      "domain": "nims-cnc-machining",
+      "topic": "Tooling and Tool Parameters",
+      "question": "Tool length compensation is important because it:",
+      "answers": [
+        "Changes part material",
+        "Sets each tool's length reference so Z depth is accurate",
+        "Controls feedrate automatically",
+        "Eliminates coolant need"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmq01",
+      "domain": "nims-cnc-mill-programming-setup-operations",
+      "topic": "Work Offsets",
+      "question": "Work offsets in mill CNC are used to:",
+      "answers": [
+        "Adjust spindle RPM",
+        "Establish part coordinate origins for different setups or fixtures",
+        "Set tool length only",
+        "Select coolant pressure"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmq02",
+      "domain": "nims-cnc-mill-programming-setup-operations",
+      "topic": "Mill Programming",
+      "question": "A typical manual CNC milling routine only sequence check should confirm:",
+      "answers": [
+        "Only the tool number",
+        "Tool sequence, feeds, speeds, rapids vs cuts, and safety moves",
+        "Window theme only",
+        "Monitor brightness"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmq03",
+      "domain": "nims-cnc-mill-programming-setup-operations",
+      "topic": "Workholding and Fixtures",
+      "question": "A fixture plate with repeatable locators primarily supports:",
+      "answers": [
+        "Longer programs",
+        "Consistent part location across setups or batches",
+        "Heavier coolant use",
+        "Slower feeds"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mld04",
+      "domain": "nims-moldmaking-level-2",
+      "topic": "Finishing Operations",
+      "question": "A common finishing method for mold cavities is:",
+      "answers": [
+        "Rough milling only",
+        "Hand stoning, polishing, or EDM finish",
+        "Skipping finish passes",
+        "Only paint"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "mld05",
+      "domain": "nims-moldmaking-level-2",
+      "topic": "Inspection and Metrology",
+      "question": "Mold cavity dimension verification often requires:",
+      "answers": [
+        "Visual check only",
+        "Traceable measurement and sometimes CMM or probe inspection",
+        "Count of drill holes only",
+        "Feeler gauges only"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmp-q03",
+      "domain": "nims-cnc-mill-programming-setup-operations",
+      "topic": "Program Verification",
+      "question": "A proven pre-run verification sequence should include:",
+      "answers": [
+        "Trusting CAM completely",
+        "Dry run, single block, offset confirmation, and stock check",
+        "Skipping offsets if the tool looks aligned",
+        "Full auto with coolant on the first try"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmp-q04",
+      "domain": "nims-cnc-mill-programming-setup-operations",
+      "topic": "Toolpath Selection",
+      "question": "Choosing finish versus roughing toolpaths is primarily about:",
+      "answers": [
+        "Color of the part print",
+        "Removing material fast vs maintaining tolerances and finish",
+        "Post processor brand only",
+        "Coolant brand"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmp-q05",
+      "domain": "nims-cnc-mill-programming-setup-operations",
+      "topic": "Machine Setup",
+      "question": "Before production on a new pallet, the setup sheet supports:",
+      "answers": [
+        "Slower cutting only",
+        "Repeatability and confirming tools/work offsets/conditions",
+        "Guaranteeing zero inspection",
+        "Reducing coolant temperature"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmp-q06",
+      "domain": "nims-cnc-mill-programming-setup-operations",
+      "topic": "Quality and Inspection",
+      "question": "First-article verification is used to:",
+      "answers": [
+        "Warm up the spindle",
+        "Confirm setup and program output before full production",
+        "Replace in-process checks",
+        "Reduce program length"
+      ],
+      "correct_index": 1,
+      "difficulty": "easy"
+    },
+    {
+      "id": "ncmp-q07",
+      "domain": "nims-cnc-mill-programming-setup-operations",
+      "topic": "Workholding and Fixtures",
+      "question": "RepeatLoc is important in workholding because it:",
+      "answers": [
+        "Reduces spindle RPM",
+        "Maintains positional accuracy across multiple setups",
+        "Increases chatter intentionally",
+        "Eliminates tool offset checks"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmld-q04",
+      "domain": "nims-moldmaking-level-2",
+      "topic": "Documentation",
+      "question": "A moldmaking traveler or router typically ensures:",
+      "answers": [
+        "Spindle RPM is always low",
+        "Routing of the part through inspection stages and process steps",
+        "EDM runs without dielectric",
+        "No drawings are needed"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmld-q05",
+      "domain": "nims-moldmaking-level-2",
+      "topic": "Finishing Operations",
+      "question": "Hand finishing after EDM in mold work is commonly required to:",
+      "answers": [
+        "Increase electrode wear",
+        "Remove recast layer and improve fit/finish",
+        "Reduce coolant use",
+        "Increase part hardness"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmld-q06",
+      "domain": "nims-moldmaking-level-2",
+      "topic": "Material Selection",
+      "question": "A common reason to use hardened tool steel for mold cores is:",
+      "answers": [
+        "Easier drilling only",
+        "Wear resistance and dimensional stability",
+        "Soft finish",
+        "No heat treatment needed"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmld-q07",
+      "domain": "nims-moldmaking-level-2",
+      "topic": "Inspection and Metrology",
+      "question": "Validating mold parting surfaces often requires:",
+      "answers": [
+        "Visual only",
+        "Flatness/parallelism checks and sometimes light/seal tests",
+        "Only one check at room temperature",
+        "Feeler gage everywhere"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "ncmld-q08",
+      "domain": "nims-moldmaking-level-2",
+      "topic": "Process Planning",
+      "question": "A process plan for mold components should address:",
+      "answers": [
+        "Machine color only",
+        "Operations sequence, stock removal, and gage/inspection steps",
+        "Operator lunch breaks",
+        "Fan speed"
+      ],
+      "correct_index": 1,
+      "difficulty": "medium"
     }
   ]
 }
