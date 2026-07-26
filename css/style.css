@@ -2821,9 +2821,104 @@ body.setup-required .setup-complete-btn { display: block; }
 .ref-scroll,
 .practice-scroll,
 .progress-scroll,
-.settings-scroll {
+.settings-scroll,
+.legal-scroll {
   padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + 1rem);
   scroll-padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + 1rem);
+}
+
+/* ─── ACCESS GATE ───────────────────────────────────────── */
+.screen-access-unlock,
+.screen-legal { display: none; }
+.screen-access-unlock.active,
+.screen-legal.active { display: block; position: fixed; inset: 0; z-index: 1500; background: var(--c-bg); color: var(--c-text); }
+
+.auth-wrap {
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+.auth-title {
+  font-family: var(--f-display);
+  font-size: clamp(1.25rem, 4vw, 1.65rem);
+  font-weight: 800;
+  text-align: center;
+}
+.auth-sub {
+  opacity: 0.75;
+  font-size: 0.9rem;
+  margin: 0.25rem 0 1rem;
+  text-align: center;
+}
+.auth-form {
+  width: min(94vw, 420px);
+  display: grid;
+  gap: 0.6rem;
+}
+.auth-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--c-text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.auth-input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-border);
+  background: rgba(255,255,255,0.04);
+  color: var(--c-text);
+  font-family: var(--f-body);
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+}
+body.theme-light .auth-input { background: #F4F7FA; }
+.auth-submit { width: 100%; justify-content: center; }
+.auth-error {
+  min-height: 1.1rem;
+  color: #F0A0A8;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.auth-note {
+  text-align: center;
+  opacity: 0.65;
+  font-size: 0.8rem;
+  margin-top: 0.6rem;
+}
+
+/* ─── LEGAL SCREEN ───────────────────────────────────────── */
+.legal-scroll {
+  height: 100dvh;
+  overflow-y: auto;
+  padding: 1rem 1rem calc(var(--bottom-nav-h) + 1.5rem);
+}
+.legal-card {
+  max-width: 860px;
+  margin: 0 auto;
+  border: 1px solid var(--c-border);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border-radius: var(--r);
+  padding: 1rem;
+}
+.legal-title {
+  font-family: var(--f-display);
+  font-size: clamp(1.15rem, 3.4vw, 1.45rem);
+  font-weight: 800;
+  margin-bottom: 0.6rem;
+}
+.legal-body {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--c-text-2);
+  white-space: pre-wrap;
+}
+.legal-body h2 {
+  margin-top: 0.6rem;
+  font-size: 1rem;
+  color: var(--c-text);
 }
 body.theme-light .bottom-nav .nav-btn.active { color: #8A5200 !important; }
 

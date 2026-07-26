@@ -5,7 +5,15 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.58.0 | Build 2026.07.21.01';
+const APP_BUILD = 'MGP | Version v2.58.0 | Build 2026.07.22.00';
+
+// ─── ACCESS GATE ────────────────────────────────────────────
+const AccessGate = {
+  key() {
+    try { return localStorage.getItem('pgct_license_key_hash'); } catch { return null; }
+  },
+  unlocked() { return !!this.key(); }
+};
 
 // ─── STATE ────────────────────────────────────────────────────
 const State = {
