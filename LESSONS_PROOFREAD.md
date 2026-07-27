@@ -227,7 +227,7 @@ A setup block makes required modal state explicit before motion. Use the exact b
 
 ## 4. G00 — Rapid Positioning
 
-**Why:** Rapid moves save time, but they leave little time to react. G00 is used to position the tool, not to cut.
+**Why:** Use G00 to position the tool fast. To avoid crashes, rapid only where you've verified a safe clearance.
 
 
 **Theory:**
@@ -309,7 +309,7 @@ The `F` word sets the feed rate:
  use tooling-manufacturer data and the approved process for the actual feed.
 
  
-**IPM** (inches per minute) — used in milling, some controls
+**IPM** (inches per minute) — commonly used in milling
 
  
 
@@ -506,7 +506,7 @@ G71 P100 Q200 U0.020 W0.005 F0.015
  
 
  
-`U0.100` — depth of cut per pass (0.100" on the radius)
+`U0.100` — depth of cut per pass, measured on the radius in this example
 
  
 `R0.050` — retract amount between passes
@@ -600,7 +600,7 @@ On the referenced Haas lathe, tool geometry and tool wear are separate fields wi
  
 
  
-On many Fanuc-style lathes, the turret indexes from the `T0101` call itself.
+On many Fanuc-style lathes, the turret usually indexes from the `T0101` call itself.
  `M06` is common on mills, but is not the normal beginner pattern for this lathe track.
 
  
@@ -692,7 +692,7 @@ Make the required work-coordinate selection explicit before motion that depends 
 
 ## 11. Measure, Compare, Adjust
 
-**Why:** A first part is only correct after measurement. Comparing the measured size to the print tells you which direction to adjust, and correcting through the wear offset (not the program) keeps the saved geometry intact for the next run — but only if you confirm the sign and field first.
+**Why:** A first part is only correct after measurement. Compare the measured size to the print. Then correct with the wear offset, not the program, if the path is already correct. Confirm the sign and field first.
 
 
 **Theory:**
@@ -962,7 +962,7 @@ These controls can support prove-out, but they do not make a path safe. Graphics
 
 **Theory:**
 
-On Haas and Fanuc controls, `G20` selects inch units and `G21` selects metric units. Unit mode changes how the control reads X, Z, F, and many other numeric values.
+On Haas and Fanuc controls, `G20` selects inch units and `G21` selects metric units. Unit mode changes how the control reads coordinates and feed values.
 
  
 G20 ; inch mode
@@ -1328,8 +1328,7 @@ G01 Z-1.000 F0.012
 This shows a **Haas/Fanuc-style subprogram example**. Call and return words, P/L word meanings, and where a subprogram may live vary by control; verify the exact manual before use.
 
  
-Subprograms keep repeated motion in one place. The main program calls the subprogram,
- the subprogram runs, then returns.
+Subprograms keep repeated motion in one place. The main program calls the subprogram; the subprogram runs and returns.
 
  
 M98 P2000 L3 ; call O2000 three times
@@ -1355,8 +1354,7 @@ M99 ; return
  
 
  
-The `L` word gives the repeat count. Repeats must be documented so the next person
- understands what repeats and why—and remembers that one edit changes every repeat.
+`L` gives the repeat count. Document repeats clearly so the next person understands what repeats and why—and remembers that one edit changes every repeat.
 
 
 **Quiz:**

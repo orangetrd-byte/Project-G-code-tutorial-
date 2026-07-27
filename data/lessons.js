@@ -270,7 +270,7 @@ N110 M30                   ; End program, rewind
     unitName: "Motion Codes",
     lesson: 1,
     title: "G00 — Rapid Positioning",
-    why: "Rapid moves save time, but they leave little time to react. G00 is used to position the tool, not to cut.",
+    why: "Use G00 to position the tool fast. To avoid crashes, rapid only where you've verified a safe clearance.",
     icon: "⚡",
     xp: 15,
     theory: `
@@ -328,7 +328,7 @@ N110 M30                   ; End program, rewind
       <ul>
         <li><strong>IPR</strong> (inches per revolution) — common for turning. Example values are not cutting recommendations;
         use tooling-manufacturer data and the approved process for the actual feed.</li>
-        <li><strong>IPM</strong> (inches per minute) — used in milling, some controls</li>
+        <li><strong>IPM</strong> (inches per minute) — commonly used in milling</li>
       </ul>
       <p>G01 can move in X only, Z only, or both simultaneously (taper cuts).</p>
       <pre>; Facing cut (X only)
@@ -494,7 +494,7 @@ G96 S400 M03 ; CSS at 400 SFM</pre>
 G71 P100 Q200 U0.020 W0.005 F0.015</pre>
       <p><strong>First line — depth and retract:</strong></p>
       <ul>
-        <li><code>U0.100</code> — depth of cut per pass (0.100" on the radius)</li>
+        <li><code>U0.100</code> — depth of cut per pass, measured on the radius in this example</li>
         <li><code>R0.050</code> — retract amount between passes</li>
       </ul>
       <p><strong>Second line — profile and stock:</strong></p>
@@ -566,7 +566,7 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
         <li><strong>Radius geometry and tip direction</strong> support tool-nose compensation.</li>
         <li><strong>X/Z and radius wear</strong> are intended for minute adjustments as the tool wears.</li>
       </ul>
-      <p>On many Fanuc-style lathes, the turret indexes from the <code>T0101</code> call itself.
+      <p>On many Fanuc-style lathes, the turret usually indexes from the <code>T0101</code> call itself.
       <code>M06</code> is common on mills, but is not the normal beginner pattern for this lathe track.</p>
       <p class="callout tip">💡 Keeping the tool and offset numbers matched (T0101, T0202, and so on) helps prevent confusion when troubleshooting offsets.</p>
     `,
@@ -663,7 +663,7 @@ G56   ; Work offset 3</pre>
     title: "Measure, Compare, Adjust",
     icon: "CHK",
     xp: 20,
-    why: "A first part is only correct after measurement. Comparing the measured size to the print tells you which direction to adjust, and correcting through the wear offset (not the program) keeps the saved geometry intact for the next run — but only if you confirm the sign and field first.",
+    why: "A first part is only correct after measurement. Compare the measured size to the print. Then correct with the wear offset, not the program, if the path is already correct. Confirm the sign and field first.",
     theory: `
       <p>After the first part, the job is not done. Measure the part, compare it with the print, and then adjust the program or wear offset as appropriate.</p>
       <pre>Target OD: 1.0000
@@ -759,7 +759,7 @@ Rapid override reduced</pre>
     xp: 20,
     why: "Units determine how every number in the program is read. The wrong unit mode can turn a safe move into a crash, so setting it explicitly is a basic safety habit.",
     theory: `
-      <p>On Haas and Fanuc controls, <code>G20</code> selects inch units and <code>G21</code> selects metric units. Unit mode changes how the control reads X, Z, F, and many other numeric values.</p>
+      <p>On Haas and Fanuc controls, <code>G20</code> selects inch units and <code>G21</code> selects metric units. Unit mode changes how the control reads coordinates and feed values.</p>
       <pre>G20 ; inch mode
 G00 X2.000 Z0.100
 
@@ -890,8 +890,7 @@ M00 ; mandatory stop</pre>
     why: "Repetitive motion belongs in one place. A subprogram lets one tested routine run many times, but a single edit then affects every repeat — so the call, the repeat count, and the return must be unambiguous.",
     theory: `
       <p>This shows a <strong>Haas/Fanuc-style subprogram example</strong>. Call and return words, P/L word meanings, and where a subprogram may live vary by control; verify the exact manual before use.</p>
-      <p>Subprograms keep repeated motion in one place. The main program calls the subprogram,
-      the subprogram runs, then returns.</p>
+      <p>Subprograms keep repeated motion in one place. The main program calls the subprogram; the subprogram runs and returns.</p>
       <pre>M98 P2000 L3 ; call O2000 three times
 ...
 O2000
@@ -903,8 +902,7 @@ M99 ; return</pre>
         <li><code>M97 P____</code> is the <em>local</em> subprogram call: it jumps to a line or routine <em>inside the same program</em> and returns to the line after the M97. Use M97 when the repeat lives in the current program.</li>
         <li><code>M99</code> returns from a subprogram. In an external subprogram it returns to the caller; in a local routine called by M97 it returns to the block right after the M97.</li>
       </ul>
-      <p>The <code>L</code> word gives the repeat count. Repeats must be documented so the next person
-      understands what repeats and why—and remembers that one edit changes every repeat.</p>
+      <p><code>L</code> gives the repeat count. Document repeats clearly so the next person understands what repeats and why—and remembers that one edit changes every repeat.</p>
     `,
     visual: "program-structure",
     quiz: [
