@@ -1220,9 +1220,7 @@ function initTrackSwitcher() {
 
 function showScreen(id) {
   stopSpeaking();
-  const lockedOut = window.ACCESS_GATE && typeof window.ACCESS_GATE.isUnlockedSync === 'function' && !window.ACCESS_GATE.isUnlockedSync();
-  if (!State.setupComplete && id !== 'screen-settings' && id !== 'screen-access-unlock') id = 'screen-settings';
-  if (lockedOut && id !== 'screen-access-unlock') id = 'screen-access-unlock';
+  if (!State.setupComplete && id !== 'screen-settings') id = 'screen-settings';
   $$('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
   if (el) { el.classList.add('active'); el.scrollTop = 0; }
@@ -3626,12 +3624,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     State.load();
     await loadReferencePackage();
     applyTheme();
-
-    if (window.ACCESS_GATE && typeof window.ACCESS_GATE.isUnlockedSync === 'function' && !window.ACCESS_GATE.isUnlockedSync()) {
-      showScreen('screen-access-unlock');
-      finishLoading({ hasError: false });
-      return;
-    }
 
     initNav();
     initTrackSwitcher();
