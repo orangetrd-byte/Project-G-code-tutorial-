@@ -395,9 +395,10 @@
 <script>
   (function(){
     'use strict';
-    const skins=['screen-access-unlock','screen-legal'];
     if(window.ACCESS_GATE && window.ACCESS_GATE.isUnlockedSync && window.ACCESS_GATE.isUnlockedSync()){
-      skins.forEach(id=>document.getElementById(id)?.classList.remove('active'));
+      document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
+      const home=document.getElementById('screen-home');
+      if(home) home.classList.add('active');
       return;
     }
     document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
