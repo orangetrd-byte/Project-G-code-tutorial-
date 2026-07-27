@@ -171,7 +171,7 @@
   </header>
 
   <!-- ── HOME SCREEN ──────────────────────────────────────── -->
-  <section class="screen active" id="screen-home">
+  <section class="screen" id="screen-home">
     <div class="home-scroll">
       <!-- Hero / progress block -->
       <div class="hero-block">
@@ -389,14 +389,14 @@
 
 <!-- Data & App -->
 <script src="data/lessons.js"></script>
-<script src="js/access-gate.js"></script>
+<script src="js/access-gate.js?v=2"></script>
 <script src="js/app.js"></script>
 
 <script>
   (function(){
     'use strict';
     const skins=['screen-access-unlock','screen-legal'];
-    if(window.ACCESS_GATE && window.ACCESS_GATE.alreadyUnlocked && window.ACCESS_GATE.alreadyUnlocked()){
+    if(window.ACCESS_GATE && window.ACCESS_GATE.isUnlockedSync && window.ACCESS_GATE.isUnlockedSync()){
       skins.forEach(id=>document.getElementById(id)?.classList.remove('active'));
       return;
     }

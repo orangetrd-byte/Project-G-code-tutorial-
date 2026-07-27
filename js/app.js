@@ -1220,7 +1220,9 @@ function initTrackSwitcher() {
 
 function showScreen(id) {
   stopSpeaking();
-  if (!State.setupComplete && id !== 'screen-settings') id = 'screen-settings';
+  const lockedOut = window.ACCESS_GATE && typeof window.ACCESS_GATE.isUnlockedSync === 'function' && !window.ACCESS_GATE.isUnlockedSync();
+  if (!State.setupComplete && id !== 'screen-settings' && id !== 'screen-access-unlock') id = 'screen-settings';
+  if (lockedOut && id !== 'screen-access-unlock') id = 'screen-access-unlock';
   $$('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
   if (el) { el.classList.add('active'); el.scrollTop = 0; }
@@ -1371,7 +1373,8 @@ function finishLoading(options = {}) {
   window.setTimeout(() => {
     splash?.classList.add('done');
     window.setTimeout(() => splash?.remove(), 300);
-    if (!State.setupComplete) showScreen('screen-settings');
+    const gated = window.ACCESS_GATE && typeof window.ACCESS_GATE.isUnlockedSync === 'function' && !window.ACCESS_GATE.isUnlockedSync();
+    if (!gated && !State.setupComplete) showScreen('screen-settings');
   }, options.hasError ? 4200 : 1800);
 }
 
@@ -3623,6 +3626,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     State.load();
     await loadReferencePackage();
     applyTheme();
+
+    if (window.ACCESS_GATE && typeof window.ACCESS_GATE.isUnlockedSync === 'function' && !window.ACCESS_GATE.isUnlockedSync()) {
+      showScreen('screen-access-unlock');
+      finishLoading({ hasError: false });
+      return;
+    }
+
     initNav();
     initTrackSwitcher();
     initSettings();
