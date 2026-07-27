@@ -17,9 +17,9 @@ const LESSONS = [
     icon: "📋",
     xp: 10,
     theory: `
-      <p>G-code is instruction text the machine reads. One block can combine compatible motion, coordinates, feed, speed, and auxiliary words; the control decides their execution order.</p>
+      <p>G-code is a set of instructions that the machine reads. One block can combine compatible motion, coordinates, feed, speed, and auxiliary words; the control decides their execution order.</p>
       <pre>G00 X2.000 Z0.100 ; example position — clearance is setup-specific</pre>
-      <p>A semicolon depends on the system. In many 3D-printer files it starts a comment. In some CNC/program formats it marks the end of a block, like pressing Enter for the next line.</p>
+      <p>The meaning of a semicolon depends on the system. In many 3D-printer files, it starts a comment. In some CNC program formats, it marks the end of a block, like pressing Enter to start the next line.</p>
       <pre>G00 X30.500 Z1.0;
 X30.478 Z0;
 G01 X-3.00;
@@ -44,7 +44,7 @@ M0;</pre>
       {
         id: "u1-l1-q2",
         type: "multiple-choice",
-        question: "Which part of this block tells the machine WHERE to move?\nN020 G00 X2.000 Z0.100 S800 M03",
+        question: "Which part of this block tells the machine where to move?\nN020 G00 X2.000 Z0.100 S800 M03",
         options: ["N020", "G00", "X2.000 Z0.100", "S800 M03"],
         answer: 2,
         explanation: "X and Z are coordinate words. They define the destination position for the move."
@@ -66,14 +66,14 @@ M0;</pre>
           { left: "X / Z", right: "Position coordinates" },
           { left: ";", right: "Comment or block end" }
         ],
-        explanation: "G00 commands a rapid positioning move, and X/Z tell it where to go. A semicolon may start a note/comment in many files, or mark the end of a block on some controls."
+        explanation: "G00 commands a rapid positioning move, and X/Z tell it where to go. A semicolon may start a comment in many files or mark the end of a block on some controls."
       },
       {
         id: "u1-l1-q5",
         type: "true-false",
         question: "A semicolon can mean different things depending on the control or file type.",
         answer: true,
-        explanation: "True. In many printer files it starts a comment; in some CNC/program formats it marks the end of a block. Always follow the control or post format."
+        explanation: "True. In many printer files it starts a comment; in some CNC/program formats it marks the end of a block. Always follow the control or postprocessor format."
       },
       {
         id: "u1-l1-q6",
@@ -100,7 +100,7 @@ M0;</pre>
     unitName: "Foundations",
     lesson: 2,
     title: "The Coordinate System",
-    why: "Coordinates decide where the tool actually goes. If X, Z, zero, or diameter mode are misunderstood, even correct-looking code can cut the wrong place.",
+    why: "Coordinates determine where the tool actually goes. If you misunderstand X, Z, part zero, or diameter mode, even correct-looking code can cut in the wrong place.",
     icon: "📐",
     xp: 10,
     theory: `
@@ -111,12 +111,12 @@ M0;</pre>
         <li><strong>X-axis</strong> — controls radial position. Many production lathes program X in diameter units, but diameter/radius behavior is controller- and setting-specific.</li>
       </ul>
       <p>A common turning convention sets X0 at the spindle centerline and Z0 at the finished face, but Z0 may use another documented datum.</p>
-      <p><strong>Absolute vs. Incremental on the lathe style taught here:</strong></p>
+      <p><strong>Absolute vs. incremental positioning in the lathe style taught here:</strong></p>
       <ul>
         <li><code>X</code> and <code>Z</code> command absolute positions from the active work zero.</li>
         <li><code>U</code> and <code>W</code> command incremental X and Z distances from the current position.</li>
       </ul>
-      <p class="callout warning">Do not assume G90/G91 select positioning mode on a lathe. On Haas lathes, G90 is an OD/ID turning cycle. Verify the exact controller dialect before running code.</p>
+      <p class="callout warning">Do not assume that G90/G91 select positioning mode on a lathe. On Haas lathes, G90 is an OD/ID turning cycle. Verify the exact controller dialect before running code.</p>
     `,
     visual: "lathe-axes",
     quiz: [
@@ -136,7 +136,7 @@ M0;</pre>
       {
         id: "u1-l2-q2",
         type: "multiple-choice",
-        question: "You program X1.500 on a lathe in diameter mode. What is the actual radius of cut?",
+        question: "You program X1.500 on a lathe in diameter mode. In diameter mode, what radius is represented by X1.500?",
         options: ["1.500\"", "3.000\"", "0.750\"", "0.375\""],
         answer: 2,
         explanation: "X values in diameter mode represent the full diameter. X1.500 = 1.500\" diameter = 0.750\" radius."
@@ -180,7 +180,7 @@ M0;</pre>
       {
         id: "u1-l2-q7",
         type: "multiple-choice",
-        question: "Which beginner lathe style is easiest to audit from a known work zero?",
+        question: "Which programming style is easiest for a beginner to verify from a known work zero?",
         options: ["Use X/Z absolute positions and reserve U/W for intentional incrementals", "Use U/W for every destination", "Issue G90 without checking the control", "Switch conventions every block"],
         answer: 0,
         explanation: "X/Z positions point back to the active work zero on this convention. U/W should be used only when an incremental move is intentional."
@@ -207,7 +207,7 @@ O1001                      ; Program number
 N10 G18 G20 G40 G80 G99    ; Haas-style example: verify every mode on your control
 N20 G28 U0. W0.            ; Machine home
 N30 T0101                  ; Tool call + offset call
-N40 G96 S400 M03 F0.012    ; CSS on, spindle on CW, feedrate
+N40 G96 S400 M03 F0.012    ; CSS on, spindle forward (M03), feed rate
 N50 G00 X2.200 Z0.100      ; Rapid to start position
 
 ( --- CUT --- )
@@ -234,7 +234,7 @@ N110 M30                   ; End program, rewind
           "Turn the spindle on",
           "Call a subroutine",
           "End the program and rewind to the start",
-          "Set the feedrate"
+          "Set the feed rate"
         ],
         answer: 2,
         explanation: "M30 commonly ends and resets a Haas/Fanuc-style part program. Other controls and workflows may use different end behavior, so verify the machine manual."
@@ -242,7 +242,7 @@ N110 M30                   ; End program, rewind
       {
         id: "u1-l3-q2",
         type: "multiple-choice",
-        question: "Why is a lathe safety block (e.g., G18 G20 G40 G80 G99) placed at the start of a program?", meta: { codes: ["G18", "G20", "G40", "G80", "G99"] },
+        question: "Why is a lathe safety block, such as G18 G20 G40 G80 G99, placed at the start of a program?", meta: { codes: ["G18", "G20", "G40", "G80", "G99"] },
         options: [
           "It sets the spindle speed",
           "It cancels leftover modal codes from a previous program",
@@ -257,7 +257,7 @@ N110 M30                   ; End program, rewind
         type: "fill-blank",
         question: "Write the M-code that turns the spindle ON clockwise:",
         answer: "M03",
-        hint: "Clockwise = conventional for most turning ops",
+        hint: "Clockwise is conventional for most turning operations.",
         explanation: "M03 = spindle on clockwise. M04 = counterclockwise. M05 = spindle off."
       }
     ]
@@ -270,7 +270,7 @@ N110 M30                   ; End program, rewind
     unitName: "Motion Codes",
     lesson: 1,
     title: "G00 — Rapid Positioning",
-    why: "Rapid moves are useful because they save time, but dangerous because they leave little time to react. The reason for G00 is positioning, not cutting.",
+    why: "Rapid moves save time, but they leave little time to react. G00 is used to position the tool, not to cut.",
     icon: "⚡",
     xp: 15,
     theory: `
@@ -304,7 +304,7 @@ N110 M30                   ; End program, rewind
       },
       {
         type: "fill-blank",
-        question: "Worked example target: X2.500 at example Z0.100 (not a universal safe position). Complete the block:\nG00 X___ Z0.100", meta: { codes: ["G00"] },
+        question: "Worked example: Move to X2.500 at the example coordinate Z0.100. (not a universal safe position). Complete the block:\nG00 X___ Z0.100", meta: { codes: ["G00"] },
         answer: "2.500",
         hint: "Example diameter value = 2.500",
         explanation: "X2.500 completes the example. Z0.100 is only an example coordinate; the actual setup must establish and prove a safe clearance."
@@ -318,13 +318,13 @@ N110 M30                   ; End program, rewind
     unitName: "Motion Codes",
     lesson: 2,
     title: "G01 — Linear Feed",
-    why: "Feed moves are controlled cutting moves. Understanding why G01 uses feedrate explains when the tool is meant to cut instead of just travel.",
+    why: "Feed moves are controlled cutting moves. Understanding how G01 uses feed rate helps you recognize when the tool is meant to cut instead of just travel.",
     icon: "➡️",
     xp: 15,
     theory: `
-      <p><code>G01</code> is your workhorse — straight-line cutting moves at a controlled feedrate.</p>
+      <p><code>G01</code> commands straight-line cutting moves at a controlled feed rate.</p>
       <pre>G01 X1.500 Z-1.000 F0.010</pre>
-      <p>The <code>F</code> word sets the feedrate:</p>
+      <p>The <code>F</code> word sets the feed rate:</p>
       <ul>
         <li><strong>IPR</strong> (inches per revolution) — common for turning. Example values are not cutting recommendations;
         use tooling-manufacturer data and the approved process for the actual feed.</li>
@@ -339,7 +339,7 @@ G01 Z-2.000 F0.012
 
 ; Taper (both axes at once)
 G01 X1.750 Z-1.500 F0.010</pre>
-      <p>Feedrate is <strong>modal</strong> — set it once and it carries forward until changed.</p>
+      <p>Feed rate is modal: once set, it remains active until it is changed.</p>
     `,
     visual: "linear-feed",
     quiz: [
@@ -357,7 +357,7 @@ G01 X1.750 Z-1.500 F0.010</pre>
       },
       {
         type: "multiple-choice",
-        question: "At constant 800 RPM in feed-per-revolution mode, F0.012 gives an actual feedrate of:",
+        question: "At a constant 800 RPM in feed-per-revolution mode, F0.012 gives an actual feed rate of:",
         options: ["0.012 IPM", "9.6 IPM", "12 IPM", "800 IPM"],
         answer: 1,
         explanation: "At constant 800 RPM, IPM = IPR × RPM: 0.012 × 800 = 9.6 inches per minute. Under CSS, RPM and instantaneous IPM can change with diameter."
@@ -386,14 +386,14 @@ G01 X1.750 Z-1.500 F0.010</pre>
       <p>There are two ways to define an arc:</p>
       <h4>Method 1: Radius (R)</h4>
       <pre>G02 X1.500 Z-0.500 R0.250 F0.008</pre>
-      <p>Moves to X1.500 Z-0.500 along a 0.250" radius arc, clockwise.</p>
+      <p>The tool moves to X1.500 Z-0.500 along a clockwise arc with a 0.250" radius.</p>
       <h4>Method 2: Center Offsets (I and K)</h4>
       <pre>G02 X1.500 Z-0.500 I0.0 K-0.250 F0.008</pre>
       <ul>
         <li><code>I</code> = X-direction center offset under the selected controller's lathe convention</li>
         <li><code>K</code> = Z-direction center offset under the selected controller's lathe convention</li>
       </ul>
-      <p>The R method is simpler for most cases. Use I/K when you need a full circle 
+      <p>The R method is simpler in most cases. Use I/K when you need a full circle 
       or when R gives an ambiguous result (two possible arcs).</p>
       <p class="callout tip">G02/G03 specify direction in the active plane and documented viewing convention. Concave versus convex depends on the contour, quadrant, and tool side—not the G-code number alone.</p>
     `,
@@ -417,7 +417,7 @@ G01 X1.750 Z-1.500 F0.010</pre>
         type: "fill-blank",
         question: "Complete the CCW arc to X2.000 Z-0.500 with R0.250:\nG___ X2.000 Z-0.500 R0.250 F0.008",
         answer: "G03",
-        hint: "CCW = counterclockwise",
+        hint: "CCW means counterclockwise.",
         explanation: "G03 is counterclockwise arc motion. G02 would be clockwise."
       }
     ]
@@ -445,8 +445,8 @@ G01 X1.750 Z-1.500 F0.010</pre>
 G96 S400 M03 ; CSS at 400 SFM</pre>
       <h4>G97 — Constant RPM</h4>
       <pre>G97 S1200 M03</pre>
-      <p>Spindle runs at a fixed 1200 RPM regardless of diameter.</p>
-      <p>Constant RPM is commonly used where the controller or process requires stable spindle speed, including many threading procedures. Do not choose spindle mode from operation name alone.</p>
+      <p>The spindle runs at a fixed 1200 RPM regardless of diameter.</p>
+      <p>Constant RPM is commonly used where the controller or process requires stable spindle speed, including many threading procedures. Do not choose the spindle mode based on the operation name alone.</p>
     `,
     visual: "spindle-speed",
     quiz: [
@@ -455,7 +455,7 @@ G96 S400 M03 ; CSS at 400 SFM</pre>
         question: "On this Haas/Fanuc-style lathe example, why is G50 S3000 paired with G96?", meta: { codes: ["G50", "G96"] },
         options: [
           "To set a minimum spindle speed",
-          "To clamp the maximum RPM so it doesn't spin dangerously fast at small diameters",
+          "To clamp the maximum RPM so the spindle does not turn dangerously fast at small diameters",
           "To switch to metric mode",
           "To cancel CSS mode"
         ],
@@ -471,7 +471,7 @@ G96 S400 M03 ; CSS at 400 SFM</pre>
       },
       {
         type: "fill-blank",
-        question: "Write the line to run constant surface speed at 350 SFM, spindle CW:\nG96 S___ M03", meta: { codes: ["G96", "M03"] },
+        question: "Write the line for a constant surface speed of 350 SFM with clockwise spindle rotation:\nG96 S___ M03", meta: { codes: ["G96", "M03"] },
         answer: "350",
         hint: "S value = surface feet per minute in G96 mode",
         explanation: "In G96 mode, the S word is surface feet per minute (or m/min in metric). S350 = 350 SFM."
@@ -503,10 +503,10 @@ G71 P100 Q200 U0.020 W0.005 F0.015</pre>
         <li><code>Q200</code> — block number where profile ends</li>
         <li><code>U0.020</code> — finish stock to leave on the diameter (0.020" total)</li>
         <li><code>W0.005</code> — finish stock to leave on the face (Z direction)</li>
-        <li><code>F0.015</code> — roughing feedrate</li>
+        <li><code>F0.015</code> — roughing feed rate</li>
       </ul>
-      <p>After G71, run a <code>G70 P100 Q200</code> finish pass with your finishing feedrate 
-      to clean up to the final profile.</p>
+      <p>After G71, run a <code>G70 P100 Q200</code> finish pass with your finishing feed rate 
+      to machine the final profile.</p>
     `,
     visual: "g71-cycle",
     quiz: [
@@ -517,7 +517,7 @@ G71 P100 Q200 U0.020 W0.005 F0.015</pre>
           "The finish stock on the diameter",
           "The depth of cut per roughing pass",
           "The retract distance",
-          "The feedrate"
+          "The feed rate"
         ],
         answer: 1,
         explanation: "In the first G71 block, U = depth of cut per pass (on the radius). A larger U means fewer, heavier passes."
@@ -527,11 +527,11 @@ G71 P100 Q200 U0.020 W0.005 F0.015</pre>
         question: "What code runs the finishing pass after a G71 rough cycle?",
         options: ["G72", "G70", "G73", "G76"],
         answer: 1,
-        explanation: "G70 is the finish turning cycle. It follows the same P-Q profile blocks as the G71 rough, but at finishing feedrate and to the final dimension."
+        explanation: "G70 is the finishing cycle. It follows the same P–Q profile blocks as G71 but uses the finishing feed rate and cuts to the final dimensions."
       },
       {
         type: "multiple-choice",
-        question: "U0.020 W0.005 in the G71 second block means:", meta: { codes: ["G70", "G71"] },
+        question: "What do U0.020 and W0.005 mean in the second G71 block?", meta: { codes: ["G70", "G71"] },
         options: [
           "Feed at 0.020 IPR with 0.005\" retract",
           "Leave 0.020\" stock on diameter, 0.005\" on face",
@@ -553,7 +553,7 @@ G71 P100 Q200 U0.020 W0.005 F0.015</pre>
     title: "Tool Calls & Offsets",
     icon: "🎯",
     xp: 20,
-    why: "The T-word links a physical tool to its measured geometry. Getting the tool/offset pairing right — and keeping tool number matched to offset number — prevents the control from cutting with the wrong geometry or wear values, which is a fast way to crash a tool or scrap a part.",
+    why: "The T-word links a physical tool to its measured geometry. Correctly pairing the tool and offset—and keeping tool number matched to offset number—prevents the control from cutting with the wrong geometry or wear values, which is a fast way to crash a tool or scrap a part.",
     theory: `
       <p>This lesson uses a common Haas/Fanuc-style four-digit T-word convention:</p>
       <pre>T0101   ; Tool 1, Offset 1
@@ -568,8 +568,7 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
       </ul>
       <p>On many Fanuc-style lathes, the turret indexes from the <code>T0101</code> call itself.
       <code>M06</code> is common on mills, but is not the normal beginner pattern for this lathe track.</p>
-      <p class="callout tip">💡 Keeping tool number = offset number (T0101, T0202...) 
-      prevents confusion when troubleshooting offsets.</p>
+      <p class="callout tip">💡 Keeping the tool and offset numbers matched (T0101, T0202, and so on) helps prevent confusion when troubleshooting offsets.</p>
     `,
     visual: "tool-offsets",
     quiz: [
@@ -583,7 +582,7 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
           "Tool 34, Offset 0"
         ],
         answer: 0,
-        explanation: "T-word format: T + 2-digit tool number + 2-digit offset number. T0304 = Tool station 3, using offset register 4."
+        explanation: "T-word format: T + 2-digit tool number + 2-digit offset number. T0304 selects tool station 3 and offset register 4."
       },
       {
         type: "multiple-choice",
@@ -601,7 +600,7 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
         type: "fill-blank",
         question: "Write the T-word for Tool 2 using Offset 2:\nT____",
         answer: "0202",
-        hint: "4 digits: tool number then offset number",
+        hint: "Use four digits: the tool number followed by the offset number.",
         explanation: "In this four-digit example, T0202 selects tool station 2 with offset register 2. Matching tool and offset numbers is a shop convention, not a universal requirement."
       }
     ]
@@ -615,7 +614,7 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
     title: "Work Offsets & G54",
     icon: "📍",
     xp: 20,
-    why: "Every position in a program is measured from part zero, and the work offset is what tells the control where part zero is. Selecting the wrong offset — or trusting one that was never verified — makes every move land in the wrong place, so the offset must be chosen and proven before any motion that relies on it.",
+    why: "Programmed positions are measured from part zero, and the work offset tells the control where that zero is located. Selecting the wrong offset — or trusting one that was never verified — can make every move end at the wrong position, so the offset must be chosen and proven before any motion that relies on it.",
     theory: `
       <p>Work offsets define a program's part-zero reference relative to machine coordinates. This Haas lathe example uses G54 through G59 work-offset selections.</p>
       <pre>G54   ; Select work offset 1 in this Haas example
@@ -643,7 +642,7 @@ G56   ; Work offset 3</pre>
           "1.000\" from the chuck face"
         ],
         answer: 1,
-        explanation: "With Z0 at the part face, Z-1.000 is 1.000\" into the part from that face — 1.000\" depth from the finished end."
+        explanation: "Z-1.000 is 1.000\" into the part from the finished face."
       },
       {
         type: "multiple-choice",
@@ -666,25 +665,24 @@ G56   ; Work offset 3</pre>
     xp: 20,
     why: "A first part is only correct after measurement. Comparing the measured size to the print tells you which direction to adjust, and correcting through the wear offset (not the program) keeps the saved geometry intact for the next run — but only if you confirm the sign and field first.",
     theory: `
-      <p>After the first part, the job is not done. You measure the part, compare it to print,
-      then adjust the program or wear offset.</p>
+      <p>After the first part, the job is not done. Measure the part, compare it with the print, and then adjust the program or wear offset as appropriate.</p>
       <pre>Target OD: 1.0000
 Measured OD: 1.0020
 Correction: remove 0.0020 from diameter</pre>
-      <p>In the Haas/Fanuc coordinate example used here, X wear is entered as a diameter change. For conventional O.D. turning in that documented setup, a -0.0020 X wear entry moves the cut toward a diameter that is 0.0020 smaller. Confirm the active tool, offset field, sign, orientation, and control behavior before changing a machine.</p>
+      <p>In the Haas/Fanuc coordinate example used here, X wear is entered as a diameter change. For conventional O.D. turning in that documented setup, a -0.0020 X wear entry moves the cut toward a diameter that is 0.0020 smaller. Confirm the active tool, offset field, sign, orientation, and control behavior before changing an offset on the machine.</p>
       <p class="callout tip">Make one small correction, rerun, and measure again.</p>
     `,
     visual: "tool-offsets",
     quiz: [
-      { type: "multiple-choice", question: "Target OD is 1.0000 and measured OD is 1.0020. What is the part?", options: ["0.0020 oversized", "0.0020 undersized", "Perfect size", "Missing Z offset"], answer: 0, explanation: "The measured diameter is larger than target by 0.0020." },
-      { type: "multiple-choice", question: "In this documented Haas/Fanuc O.D.-turning example, an OD is 0.0020 too large. After verifying the active offset and sign convention, which X wear entry targets a diameter 0.0020 smaller?", options: ["X +0.0020", "X -0.0020", "Z -0.0020", "F +0.0020"], answer: 1, explanation: "For this stated Haas/Fanuc setup, negative X wear moves the cut toward a smaller O.D. Do not transfer the sign blindly to another tool orientation or control." },
+      { type: "multiple-choice", question: "Target OD is 1.0000 and measured OD is 1.0020. What is the part?", options: ["0.0020 oversized", "0.0020 undersized", "Perfect size", "Missing Z offset"], answer: 0, explanation: "The measured diameter is 0.0020 larger than the target." },
+      { type: "multiple-choice", question: "In this documented Haas/Fanuc O.D.-turning example, an OD is 0.0020 too large. After verifying the active offset and sign convention, which X wear entry targets a diameter 0.0020 smaller?", options: ["X +0.0020", "X -0.0020", "Z -0.0020", "F +0.0020"], answer: 1, explanation: "For this stated Haas/Fanuc setup, negative X wear moves the cut toward a smaller O.D. Do not assume that the same sign applies to another tool orientation or control." },
       { type: "fill-blank", question: "Measured OD is 2.0050, target is 2.0000. How far oversized is it?\n___", answer: "0.0050", hint: "Measured minus target", explanation: "2.0050 - 2.0000 = 0.0050 oversized." },
       { type: "multiple-choice", question: "Which offset is normally used for small size corrections after touch-off?", options: ["Wear offset", "Program number", "Spindle override", "Coolant switch"], answer: 0, explanation: "Wear offsets are meant for small tool-position corrections." },
       { type: "multiple-choice", question: "Why make one correction at a time?", options: ["So you know what changed the result", "Because G-code cannot have comments", "Because M03 only works once", "To avoid using G54"], answer: 0, explanation: "One change at a time makes troubleshooting clear." },
       { type: "fill-blank", question: "Type the common offset type used for small corrections:\n____ offset", answer: "wear", hint: "Small adjustment page", explanation: "Wear offsets are commonly used for small corrections after measuring parts." },
-      { type: "multiple-choice", question: "A Z length is 0.010 too long. Which direction is the correction about?", options: ["Z position", "Spindle RPM", "Program number", "Coolant"], answer: 0, explanation: "Length errors are corrected in the Z direction or Z wear offset." },
+      { type: "multiple-choice", question: "A Z dimension is 0.010 too long. Which axis should be corrected?", options: ["Z position", "Spindle RPM", "Program number", "Coolant"], answer: 0, explanation: "Length errors are corrected in the Z direction or Z wear offset." },
       { type: "multiple-choice", question: "What is the safest habit before changing offsets?", options: ["Confirm the measured error and sign", "Guess and rerun", "Change every tool", "Skip inspection"], answer: 0, explanation: "Wrong-sign and wrong-offset entries are serious risks. Confirm the measurement, tool, field, sign convention, and intended result first." },
-      { type: "multiple-choice", question: "In a verified conventional boring setup, what geometric change makes a small bore larger?", options: ["Move the boring cut farther from spindle centerline", "Lower spindle speed only", "Cancel M30", "Remove all comments"], answer: 0, explanation: "A larger bore requires the cutting edge to machine farther from the spindle centerline. The commanded sign depends on the tool orientation and control." },
+      { type: "multiple-choice", question: "In a verified conventional boring setup, what geometric change makes a small bore larger?", options: ["Move the boring cut farther from the spindle centerline", "Lower spindle speed only", "Cancel M30", "Remove all comments"], answer: 0, explanation: "A larger bore requires the cutting edge to machine farther from the spindle centerline. The commanded sign depends on the tool orientation and control." },
       { type: "multiple-choice", question: "What should you do after making a wear offset change?", options: ["Measure the next part", "Delete the program", "Change every offset", "Ignore the print"], answer: 0, explanation: "Always verify the correction by cutting and measuring again." }
     ]
   },
@@ -697,7 +695,7 @@ Correction: remove 0.0020 from diameter</pre>
     title: "Wear Offsets vs Program Edits",
     icon: "ADJ",
     xp: 20,
-    why: "Small size errors and wrong geometry need different fixes. A wear offset nudges a correct path; a program edit changes the path itself. Knowing which one to use — and that both still change machine motion — stops you from editing the program when an offset would do, or vice versa.",
+    why: "Small size errors and incorrect geometry require different fixes. A wear offset makes a small adjustment to a correct path; a program edit changes the path itself. Knowing which one to use—and remembering that both change machine motion—helps you avoid editing the program when an offset would be appropriate, or vice versa.",
     theory: `
       <p>When the approved process uses wear offsets, they are intended for minute tool-position corrections. Change the program when the commanded geometry or sequence itself is wrong.</p>
       <pre>Wear offset: part is 0.0015 oversize
@@ -706,15 +704,15 @@ Program edit: groove is in the wrong Z location</pre>
     `,
     visual: "work-offsets",
     quiz: [
-      { type: "multiple-choice", question: "A turned diameter is 0.001 high, the toolpath is verified, and the approved process permits a minute offset correction. Best first fix?", options: ["Wear offset", "Rewrite the whole program", "Change M30", "Delete G54"], answer: 0, explanation: "Under the stated conditions, the wear field is intended for a minute tool-position correction." },
-      { type: "multiple-choice", question: "A groove is programmed at the wrong Z location. Best fix?", options: ["Program edit", "Spindle override", "Coolant off", "Comment only"], answer: 0, explanation: "If the geometry or path is wrong, edit the program." },
-      { type: "fill-blank", question: "If the correction is a tiny tool-position change, use a ____ offset.", answer: "wear", hint: "Small correction offset", explanation: "Wear offsets are used for small tool-position corrections." },
+      { type: "multiple-choice", question: "A turned diameter is 0.001 inch oversized, the toolpath is verified, and the approved process permits a minute offset correction. What is the best first correction?", options: ["Wear offset", "Rewrite the whole program", "Change M30", "Delete G54"], answer: 0, explanation: "Under the stated conditions, the wear field is intended for a minute tool-position correction." },
+      { type: "multiple-choice", question: "A groove is programmed at the wrong Z location. What is the best correction?", options: ["Program edit", "Spindle override", "Coolant off", "Comment only"], answer: 0, explanation: "If the geometry or path is wrong, edit the program." },
+      { type: "fill-blank", question: "If the correction is a small tool-position change, use a ____ offset.", answer: "wear", hint: "Small correction offset", explanation: "Wear offsets are used for small tool-position corrections." },
       { type: "multiple-choice", question: "Which change affects every future run of that program?", options: ["Program edit", "Temporary single-block mode", "Measuring the part", "Reading a comment"], answer: 0, explanation: "A saved program edit changes future runs." },
-      { type: "multiple-choice", question: "A chamfer is missing entirely. What kind of fix is needed?", options: ["Program/toolpath edit", "Only X wear", "Only spindle override", "Only coolant"], answer: 0, explanation: "Missing geometry requires a toolpath or program edit." },
+      { type: "multiple-choice", question: "A chamfer is missing entirely. What kind of fix is needed?", options: ["Program or toolpath edit", "Only X wear", "Only spindle override", "Only coolant"], answer: 0, explanation: "Missing geometry requires a toolpath or program edit." },
       { type: "multiple-choice", question: "Which is a bad habit?", options: ["Changing offsets without recording the reason", "Measuring after a correction", "Making one change at a time", "Checking the tool number"], answer: 0, explanation: "Unrecorded changes make troubleshooting hard." },
       { type: "fill-blank", question: "Program edits change the tool____.", answer: "path", hint: "Where the tool moves", explanation: "Program edits change the path the tool follows." },
       { type: "multiple-choice", question: "Before editing a proven program, what should you confirm?", options: ["The measured problem is real", "The app theme", "The icon size", "The operator name only"], answer: 0, explanation: "Confirm the issue before changing a program that may already be correct." },
-      { type: "multiple-choice", question: "Which correction is most likely an offset change?", options: ["OD is 0.0015 big", "Tool is cutting wrong feature", "Program ends too early", "Wrong tool called"], answer: 0, explanation: "A small size error on a correct path is typically a wear correction." },
+      { type: "multiple-choice", question: "Which correction is most likely an offset change?", options: ["The OD is 0.0015 oversized", "Tool is cutting wrong feature", "Program ends too early", "Wrong tool called"], answer: 0, explanation: "A small size error on a correct path is typically a wear correction." },
       { type: "multiple-choice", question: "Why can an approved wear-offset change be useful for a small size correction?", options: ["It preserves the saved program geometry while applying a documented offset adjustment", "It erases the program", "It disables G00", "It sets metric mode"], answer: 0, explanation: "A wear entry can correct a minute tool-position error without rewriting the saved path, but it still changes machine motion and must be verified." }
     ]
   },
@@ -727,9 +725,9 @@ Program edit: groove is in the wrong Z location</pre>
     title: "Single Block and Dry Run",
     icon: "RUN",
     xp: 20,
-    why: "A new or edited program is unproven until you watch it run. Single Block and Dry Run let you check one move at a time and at reduced rates, but they still move the machine — so prove-out is a habit of watching and verifying, not a guarantee the path is safe.",
+    why: "A new or edited program is unproven until you watch it run. Single Block lets you inspect one program block at a time, while Dry Run uses selected dry-run motion rates. Both modes still move the machine. Prove-out requires careful observation and verification; it does not guarantee that the path is safe.",
     theory: `
-      <p>Before trusting a new or edited program, prove it with the exact machine's approved process. On the referenced Haas control, Single Block executes one program block per press of Cycle Start. Dry Run still moves the machine and can execute programmed tool changes, while replacing programmed rapid/feed rates with selected dry-run rates.</p>
+      <p>Before trusting a new or edited program, prove it with the exact machine's approved process. On the referenced Haas control, Single Block executes one program block each time the operator presses Cycle Start. Dry Run still moves the machine and can execute programmed tool changes, while replacing programmed rapid and feed rates with selected dry-run rates.</p>
       <pre>Single Block ON
 Feed Hold ready
 Rapid override reduced</pre>
@@ -742,11 +740,11 @@ Rapid override reduced</pre>
       { type: "multiple-choice", question: "On the referenced Haas control, what does Feed Hold do during a run?", options: ["Stops axis motion while the spindle can continue turning", "Turns off all stored offsets", "Rewinds the program", "Changes the active units"], answer: 0, explanation: "Haas documents Feed Hold as stopping axis motion while the spindle continues to turn. It is not the same as an emergency stop or a complete energy-isolation procedure." },
       { type: "fill-blank", question: "Running one block at a time is called ____ block.", answer: "single", hint: "One at a time", explanation: "Single block mode runs one program block at a time." },
       { type: "multiple-choice", question: "When should you be most cautious?", options: ["After a program edit", "After reading a comment", "After opening settings", "After changing app theme"], answer: 0, explanation: "Edited lines need careful prove-out." },
-      { type: "multiple-choice", question: "What should you watch on first motion?", options: ["Clearance and direction", "Only the clock", "Only the part color", "Only the logo"], answer: 0, explanation: "Verify the tool moves the expected direction with safe clearance." },
+      { type: "multiple-choice", question: "What should you watch during the first move?", options: ["Clearance and direction", "Only the clock", "Only the part color", "Only the logo"], answer: 0, explanation: "Verify that the tool moves in the expected direction with safe clearance." },
       { type: "multiple-choice", question: "What does Dry Run do on the referenced Haas control?", options: ["Moves the machine using selected dry-run rates to help check a program", "Measures final part size", "Replaces all offsets", "Turns comments into code"], answer: 0, explanation: "Dry Run changes how rapid and feed motion rates are executed, but it still moves axes and may perform tool changes. It is a check mode, not a guarantee of safety." },
       { type: "fill-blank", question: "Type the control mode: ____ Block ON", answer: "Single", hint: "Runs one line at a time", explanation: "Single Block ON is used for careful prove-out." },
-      { type: "multiple-choice", question: "Which move deserves extra attention?", options: ["First rapid after tool change", "A blank comment", "The app build number", "A finished review"], answer: 0, explanation: "After a tool change, the active tool, offset, orientation, and full clearance path must all be verified before rapid motion." },
-      { type: "multiple-choice", question: "A safe prove-out mindset is:", options: ["Assume nothing, verify each move", "Assume the program is always safe", "Ignore offsets", "Run at 100% rapid immediately"], answer: 0, explanation: "Good operators verify before trusting the program." }
+      { type: "multiple-choice", question: "Which move deserves extra attention?", options: ["The first rapid move after a tool change", "A blank comment", "The app build number", "A finished review"], answer: 0, explanation: "After a tool change, the active tool, offset, orientation, and full clearance path must all be verified before rapid motion." },
+      { type: "multiple-choice", question: "A safe prove-out mindset is:", options: ["Assume nothing; verify each move.", "Assume the program is always safe", "Ignore offsets", "Run at 100% rapid immediately"], answer: 0, explanation: "Good operators verify before trusting the program." }
     ]
   },
 
@@ -759,7 +757,7 @@ Rapid override reduced</pre>
     title: "Units: G20 and G21",
     icon: "UNIT",
     xp: 20,
-    why: "Units decide how every number in the program is read. A wrong unit mode turns a safe move into a crash, so setting it explicitly is a basic safety habit.",
+    why: "Units determine how every number in the program is read. The wrong unit mode can turn a safe move into a crash, so setting it explicitly is a basic safety habit.",
     theory: `
       <p>On Haas and Fanuc controls, <code>G20</code> selects inch units and <code>G21</code> selects metric units. Unit mode changes how the control reads X, Z, F, and many other numeric values.</p>
       <pre>G20 ; inch mode
@@ -776,7 +774,7 @@ G00 X50.8 Z2.5</pre>
       { type: "multiple-choice", question: "Why set G20 or G21 near the top?", meta: { codes: ["G20", "G21"] }, options: ["So every number is read in the intended units", "To turn coolant on", "To home the machine", "To select a tool"], answer: 0, explanation: "Unit mode affects coordinate and feed values, so it must be known before motion." },
       { type: "fill-blank", question: "Complete inch mode:\n___ ; inch units", answer: "G20", hint: "Inch unit code", explanation: "G20 selects inch units." },
       { type: "fill-blank", question: "Complete metric mode:\n___ ; metric units", answer: "G21", hint: "Metric unit code", explanation: "G21 selects metric units." },
-      { type: "multiple-choice", question: "A program written in inches but run in metric mode will likely:", options: ["Move the wrong distances", "Automatically convert perfectly", "Only change comments", "Disable M03"], answer: 0, explanation: "The control reads numbers in the active unit mode; wrong units can make moves wildly wrong." },
+      { type: "multiple-choice", question: "A program written in inches but run in metric mode will likely:", options: ["Move the wrong distances", "Automatically convert perfectly", "Only change comments", "Disable M03"], answer: 0, explanation: "The control reads numbers in the active unit mode; the wrong units can produce dangerously incorrect moves." },
       { type: "multiple-choice", question: "Which safety line clearly sets inch mode?", options: ["G20 G40 G54", "G21 G40 G54", "M05 M30", "T0101"], answer: 0, explanation: "G20 is the inch-mode word in that safety line." },
       { type: "multiple-choice", question: "Which value changes meaning between G20 and G21?", meta: { codes: ["G20", "G21"] }, options: ["X2.000", "M30", "Program comments", "Tool name text"], answer: 0, explanation: "Coordinate values are interpreted in the active unit mode." },
       { type: "multiple-choice", question: "Before running an unfamiliar program, what should you check?", options: ["Unit mode", "Phone brightness", "App theme", "File color"], answer: 0, explanation: "Unit mode is a basic safety check before trusting coordinates." },
@@ -792,9 +790,9 @@ G00 X50.8 Z2.5</pre>
     title: "Feed Modes: G98 and G99",
     icon: "FMD",
     xp: 20,
-    why: "Feed mode decides what the F number actually means. The same F can be per-revolution or per-minute, so knowing the active mode prevents a feed that is wildly too fast or too slow.",
+    why: "Feed mode determines what the F value means. The same F can be per-revolution or per-minute, so knowing the active mode prevents a feed that is wildly too fast or too slow.",
     theory: `
-      <p>Feedrate mode controls what the <code>F</code> value means. On Haas and Fanuc <strong>lathes</strong>, <code>G99</code> is feed per revolution and <code>G98</code> is feed per minute. On a <strong>mill</strong>, the same ideas use <code>G94</code> (per minute) and <code>G95</code> (per revolution). The letters depend on machine type, not brand.</p>
+      <p>Feed rate mode controls what the <code>F</code> value means. On Haas and Fanuc <strong>lathes</strong>, <code>G99</code> is feed per revolution and <code>G98</code> is feed per minute. On a <strong>mill</strong>, the same ideas use <code>G94</code> (per minute) and <code>G95</code> (per revolution). The codes depend on the machine type, not the brand.</p>
       <pre>G98 F5.0    ; lathe feed per minute
 G99 F0.012  ; lathe feed per revolution
 G94 F5.0    ; mill feed per minute
@@ -803,14 +801,14 @@ G95 F0.012  ; mill feed per revolution</pre>
     `,
     visual: "program-structure",
     quiz: [
-      { type: "multiple-choice", question: "What does feed mode control?", options: ["What the F value means", "Tool number only", "Comment style", "Program name"], answer: 0, explanation: "Feed mode changes how the control interprets feedrate." },
+      { type: "multiple-choice", question: "What does feed mode control?", options: ["What the F value means", "Tool number only", "Comment style", "Program name"], answer: 0, explanation: "Feed mode changes how the control interprets feed rate." },
       { type: "multiple-choice", question: "On Haas and Fanuc lathes, G99 means:", meta: { codes: ["G99"] }, options: ["Feed per revolution", "Feed per minute", "Metric units", "Rapid motion"], answer: 0, explanation: "G99 is feed per revolution on Haas/Fanuc lathes." },
       { type: "multiple-choice", question: "On Haas and Fanuc lathes, G98 means:", meta: { codes: ["G98"] }, options: ["Feed per minute", "Feed per revolution", "Spindle stop", "Work offset"], answer: 0, explanation: "G98 is feed per minute on lathes." },
-      { type: "fill-blank", question: "Complete lathe feed per revolution:\n___ F0.012", answer: "G99", hint: "Per spindle rev on a lathe", explanation: "G99 selects feed per revolution on Haas/Fanuc lathes." },
+      { type: "fill-blank", question: "Complete lathe feed per revolution:\n___ F0.012", answer: "G99", hint: "Per spindle revolution on a lathe", explanation: "G99 selects feed per revolution on Haas/Fanuc lathes." },
       { type: "fill-blank", question: "Complete lathe feed per minute:\n___ F5.0", answer: "G98", hint: "Per minute on a lathe", explanation: "G98 selects feed per minute on lathes." },
-      { type: "multiple-choice", question: "Why is feed per revolution common in turning?", options: ["Chip load follows spindle rotation", "It turns coolant on", "It homes X", "It cancels G54"], answer: 0, explanation: "Feed per rev keeps chip load related to spindle speed." },
+      { type: "multiple-choice", question: "Why is feed per revolution common in turning?", options: ["Chip load follows spindle rotation", "It turns coolant on", "It homes X", "It cancels G54"], answer: 0, explanation: "Feed per revolution keeps chip load related to spindle speed." },
       { type: "multiple-choice", question: "If the wrong feed mode is active, the machine may:", options: ["Feed too fast or too slow", "Ignore all coordinates", "Delete the program", "Change tool numbers"], answer: 0, explanation: "The same F number can mean very different speeds in different feed modes." },
-      { type: "multiple-choice", question: "Which line clearly sets lathe feed per rev?", options: ["G99 F0.010", "M30", "G54", "T0101"], answer: 0, explanation: "G99 sets feed per revolution on a lathe; the F word gives the amount." },
+      { type: "multiple-choice", question: "Which line clearly sets lathe feed per revolution?", options: ["G99 F0.010", "M30", "G54", "T0101"], answer: 0, explanation: "G99 sets feed per revolution on a lathe; the F word gives the amount." },
       { type: "multiple-choice", question: "On a mill, which code is feed per revolution?", options: ["G95", "G98", "G99", "M03"], answer: 0, explanation: "Mills use G94 (per minute) and G95 (per revolution); lathes use G98/G99 for the same ideas." },
       { type: "multiple-choice", question: "Which word is affected by feed mode?", options: ["F", "M30", "O number", "Comment text"], answer: 0, explanation: "Feed mode changes how the F word is interpreted." }
     ]
@@ -830,19 +828,19 @@ G95 F0.012  ; mill feed per revolution</pre>
       <pre>G20 G40 G54 G99 ; Haas/Fanuc lathe feed-per-revolution example
 G97 S800 M03
 G00 X2.000 Z0.100</pre>
-      <p>A safe program does not rely on mystery state. It declares the modes it needs before motion.</p>
+      <p>A safe program does not rely on an unknown state. It declares the modes it needs before motion.</p>
     `,
     visual: "program-structure",
     quiz: [
       { type: "multiple-choice", question: "What is modal state?", options: ["Codes that stay active until changed", "Only comments", "Only the current tool name", "The app progress screen"], answer: 0, explanation: "Modal codes remain active until another code changes or cancels them." },
       { type: "multiple-choice", question: "Which is a modal setting?", options: ["G20 or G21 units", "A comment only", "Program title text", "Operator name"], answer: 0, explanation: "Unit mode is modal." },
-      { type: "multiple-choice", question: "Why use a setup block?", options: ["To declare needed modes before motion", "To make the file longer", "To hide feedrate", "To skip offsets"], answer: 0, explanation: "Setup blocks reduce surprise by setting important modes." },
+      { type: "multiple-choice", question: "Why use a setup block?", options: ["To declare needed modes before motion", "To make the file longer", "To hide feed rate", "To skip offsets"], answer: 0, explanation: "Setup blocks reduce surprise by setting important modes." },
       { type: "multiple-choice", question: "For the Haas/Fanuc lathe example in this lesson, which block is a better modal checklist?", options: ["G20 G40 G54 G99", "(START)", "M30", "X2.0 Z0.1"], answer: 0, explanation: "That block declares units, compensation cancel, work offset, and feed-per-revolution mode (G99 on a Haas/Fanuc lathe). Mills use G94/G95 for the same ideas." },
       { type: "fill-blank", question: "Complete the idea: modal codes stay active until ____.", answer: "changed", hint: "Another code replaces them", explanation: "Modal codes stay active until changed or canceled." },
       { type: "multiple-choice", question: "Before rapid motion, what should be known?", options: ["Units, offset, and motion state", "Only phone battery", "Only app theme", "Only the comment"], answer: 0, explanation: "Motion is only safe when the active modes and offsets are known." },
       { type: "multiple-choice", question: "Which code often cancels cutter compensation?", options: ["G40", "G21", "M03", "M30"], answer: 0, explanation: "G40 cancels cutter compensation on many controls." },
-      { type: "multiple-choice", question: "What makes hidden modal state dangerous?", options: ["The machine may interpret the next block differently than expected", "It changes the screen color", "It removes all tools", "It deletes comments"], answer: 0, explanation: "Unknown modal state can make a correct-looking block behave wrong." },
-      { type: "multiple-choice", question: "Which habit improves safety?", options: ["Read the active modes before cycle start", "Ignore the position display", "Run first, check later", "Delete setup blocks"], answer: 0, explanation: "Checking active modes helps catch wrong setup before motion." },
+      { type: "multiple-choice", question: "What makes hidden modal state dangerous?", options: ["The machine may interpret the next block differently than expected", "It changes the screen color", "It removes all tools", "It deletes comments"], answer: 0, explanation: "An unknown modal state can make a correct-looking block behave incorrectly." },
+      { type: "multiple-choice", question: "Which habit improves safety?", options: ["Read the active modes before starting the cycle", "Ignore the position display", "Run first, check later", "Delete setup blocks"], answer: 0, explanation: "Checking the active modes helps identify an incorrect setup before motion." },
       { type: "multiple-choice", question: "A good setup line should be:", options: ["Clear and intentional", "Random", "Hidden in comments", "Only M30"], answer: 0, explanation: "Setup lines should make the program's assumptions clear." }
     ]
   },
@@ -858,8 +856,7 @@ G00 X2.000 Z0.100</pre>
     xp: 20,
     why: "Auxiliary functions keep the cut safe and observable. Coolant protects the tool and finish; planned stops let the operator inspect. Knowing what each M-code does prevents a surprise stop or a dry, overheating cut.",
     theory: `
-      <p>On Haas and Fanuc controls, M-codes handle machine functions around the cut. They do not usually define the toolpath,
-      but they can decide whether the cut is safe, cool, paused, or finished.</p>
+      <p>On Haas and Fanuc controls, M-codes control coolant, program stops, and spindle actions around the cut. They do not usually define the toolpath. Verify each code in the control manual before running production.</p>
       <pre>M08 ; coolant on
 M09 ; coolant off
 M01 ; optional stop if enabled
@@ -872,12 +869,12 @@ M00 ; mandatory stop</pre>
       { type: "multiple-choice", question: "What does M09 usually do?", meta: { codes: ["M09"] }, options: ["Turns coolant off", "Turns spindle clockwise", "Homes the axes", "Starts a subprogram"], answer: 0, explanation: "M09 commonly turns coolant off." },
       { type: "multiple-choice", question: "Which code is an optional stop?", options: ["M01", "M00", "M30", "G01"], answer: 0, explanation: "M01 stops only when optional stop is enabled on the control." },
       { type: "multiple-choice", question: "Which code forces a stop regardless of optional stop setting?", options: ["M00", "M01", "M08", "G20"], answer: 0, explanation: "M00 is a mandatory program stop." },
-      { type: "fill-blank", question: "Complete coolant on:\n___ ; coolant on", answer: "M08", hint: "Flood coolant on", explanation: "M08 is commonly coolant on." },
-      { type: "fill-blank", question: "Complete coolant off:\n___ ; coolant off", answer: "M09", hint: "Coolant off", explanation: "M09 is commonly coolant off." },
+      { type: "fill-blank", question: "Complete coolant on:\n___ ; coolant on", answer: "M08", hint: "Flood coolant on", explanation: "M08 commonly turns the coolant on." },
+      { type: "fill-blank", question: "Complete coolant off:\n___ ; coolant off", answer: "M09", hint: "Coolant off", explanation: "M09 commonly turns the coolant off." },
       { type: "multiple-choice", question: "Why might a program use M01 after a roughing pass?", meta: { codes: ["M01"] }, options: ["To let the operator inspect before continuing", "To change inch to metric", "To make comments execute", "To cancel all tools"], answer: 0, explanation: "Optional stops are useful inspection checkpoints." },
       { type: "multiple-choice", question: "Which line turns coolant on before cutting?\nM08\nG01 Z-1.000 F0.012", options: ["M08", "G01 Z-1.000 F0.012", "F0.012", "Z-1.000"], answer: 0, explanation: "M08 is the machine-function line that starts coolant." },
       { type: "multiple-choice", question: "Why verify shop-specific M-codes?", options: ["Some machines customize auxiliary functions", "All controls ignore M-codes", "M-codes only work in apps", "M08 always means spindle off"], answer: 0, explanation: "Auxiliary functions can vary by machine builder and options." },
-      { type: "multiple-choice", question: "Which code should be near the end if coolant was used?", options: ["M09", "G91", "G76", "G21"], answer: 0, explanation: "Coolant should be turned off before the program ends or tool parks." }
+      { type: "multiple-choice", question: "Which code should appear near the end of a program if coolant was used?", options: ["M09", "G91", "G76", "G21"], answer: 0, explanation: "Coolant should be turned off before the program ends or the tool is parked." }
     ]
   },
 
@@ -900,19 +897,19 @@ M00 ; mandatory stop</pre>
 O2000
 G01 Z-0.100 F0.006
 M99 ; return</pre>
-      <p><strong>Local vs external subprograms:</strong></p>
+      <p><strong>Local vs. external subprograms:</strong></p>
       <ul>
-        <li><code>M98 P____</code> calls a subprogram by number. On Haas/Fanuc it usually points to another program (external O-number) held in the control, or to a local routine.</li>
+        <li><code>M98 P____</code> calls a subprogram by number. On many Haas/Fanuc-style controls, it usually points to another program (external O-number) held in the control, or to a local routine.</li>
         <li><code>M97 P____</code> is the <em>local</em> subprogram call: it jumps to a line or routine <em>inside the same program</em> and returns to the line after the M97. Use M97 when the repeat lives in the current program.</li>
         <li><code>M99</code> returns from a subprogram. In an external subprogram it returns to the caller; in a local routine called by M97 it returns to the block right after the M97.</li>
       </ul>
       <p>The <code>L</code> word gives the repeat count. Repeats must be documented so the next person
-      understands what repeats and why — and remembers that one edit changes every repeat.</p>
+      understands what repeats and why—and remembers that one edit changes every repeat.</p>
     `,
     visual: "program-structure",
     quiz: [
-      { type: "multiple-choice", question: "What does M98 commonly do?", meta: { codes: ["M98"] }, options: ["Calls a subprogram", "Turns coolant off", "Selects inch mode", "Cancels comp"], answer: 0, explanation: "M98 is commonly used to call a subprogram." },
-      { type: "multiple-choice", question: "What does M99 commonly do inside a subprogram?", meta: { codes: ["M99"] }, options: ["Returns to the caller", "Turns spindle off", "Sets feed per rev", "Starts coolant"], answer: 0, explanation: "M99 returns from the subprogram on many controls." },
+      { type: "multiple-choice", question: "What does M98 commonly do?", meta: { codes: ["M98"] }, options: ["Calls a subprogram", "Turns coolant off", "Selects inch mode", "Cancels compensation"], answer: 0, explanation: "M98 is commonly used to call a subprogram." },
+      { type: "multiple-choice", question: "What does M99 commonly do inside a subprogram?", meta: { codes: ["M99"] }, options: ["Returns to the caller", "Turns spindle off", "Sets feed per revolution", "Starts coolant"], answer: 0, explanation: "M99 returns from the subprogram on many controls." },
       { type: "multiple-choice", question: "On a Haas/Fanuc-style control, what is M97 used for?", meta: { codes: ["M97"] }, options: ["A LOCAL subprogram call inside the same program", "An external program call", "Coolant on", "Spindle stop"], answer: 0, explanation: "M97 is the local subprogram call; it jumps to a routine within the current program and returns to the line after the M97." },
       { type: "multiple-choice", question: "How does a local call (M97) differ from an external call (M98)?", options: ["M97 jumps within the same program; M98 calls another program by O-number", "They are identical in every control", "M97 cancels the cycle", "M98 only repeats three times"], answer: 0, explanation: "M97 is local (same program); M98 typically calls an external subprogram held in the control." },
       { type: "multiple-choice", question: "In M98 P2000 L3, what does L3 usually mean?", meta: { codes: ["M98"] }, options: ["Repeat three times", "Use tool 3", "Set line 3", "Move 3 inches"], answer: 0, explanation: "L often gives the repeat count for a subprogram call." },
@@ -920,7 +917,7 @@ M99 ; return</pre>
       { type: "fill-blank", question: "Complete the subprogram call:\n___ P2000 L2", answer: "M98", hint: "Subprogram call", explanation: "M98 calls a subprogram on many controls." },
       { type: "fill-blank", question: "Complete the return line at the end of a subprogram:\n___", answer: "M99", hint: "Return from subprogram", explanation: "M99 returns from a subprogram on many controls." },
       { type: "multiple-choice", question: "Why use a subprogram?", options: ["To avoid rewriting repeated motion", "To hide unsafe code", "To replace all offsets", "To make G00 slower"], answer: 0, explanation: "Subprograms reduce repeated code when motion patterns repeat." },
-      { type: "multiple-choice", question: "What is a risk with subprograms?", options: ["They can be hard to follow if undocumented", "They remove all modal state", "They prevent tool changes", "They cannot repeat"], answer: 0, explanation: "Subprograms need clear comments and careful review." },
+      { type: "multiple-choice", question: "What is a risk with subprograms?", options: ["They can be hard to follow without clear documentation", "They remove all modal state", "They prevent tool changes", "They cannot repeat"], answer: 0, explanation: "Subprograms need clear comments and careful review." },
       { type: "multiple-choice", question: "Which line marks a subprogram return?", options: ["M99", "M08", "G54", "T0101"], answer: 0, explanation: "M99 is the return code in many subprogram patterns." },
       { type: "multiple-choice", question: "Before editing a repeated subprogram, remember:", options: ["One edit can affect every repeat", "Only the first repeat changes", "Comments become motion", "M98 cancels all offsets"], answer: 0, explanation: "Subprogram edits can affect every call and every repeat." }
     ]
@@ -947,7 +944,7 @@ G80 ; cancel cycle</pre>
         <li><code>G98</code> — return to the <em>initial</em> level (the position before the cycle started).</li>
         <li><code>G99</code> — return to the <code>R</code> plane after each hole. On a mill this is the usual choice so the tool stays just above the part between holes.</li>
       </ul>
-      <p><strong>Peck behavior in G83:</strong> the <code>Q</code> word is the <em>incremental</em> peck depth. The tool feeds down by Q, then retracts fully to the R plane to break and clear the chip, then plunges again — repeating until it reaches Z. Use pecking for deeper holes where a single plunge would pack chips or overheat.</p>
+      <p><strong>Peck behavior in G83:</strong> the <code>Q</code> word is the <em>incremental</em> peck depth. In this controller-specific example, the tool feeds down by Q, retracts to the R plane to clear chips, and then plunges again. This sequence repeats until the tool reaches Z. Use pecking for deeper holes where a single plunge could pack chips or overheat the tool.</p>
     `,
     visual: "block-anatomy",
     quiz: [
@@ -955,8 +952,8 @@ G80 ; cancel cycle</pre>
       { type: "multiple-choice", question: "What is G83 commonly used for?", meta: { codes: ["G83"] }, options: ["Peck drilling", "Spindle stop", "Tool length cancel", "Optional stop"], answer: 0, explanation: "G83 is commonly a peck drilling cycle for deeper holes." },
       { type: "multiple-choice", question: "In a drilling cycle, what does R usually define?", options: ["Clearance plane", "Spindle RPM", "Tool radius", "Program number"], answer: 0, explanation: "The R plane is the retract or clearance height for the cycle." },
       { type: "multiple-choice", question: "What does G80 do after canned cycles?", meta: { codes: ["G80"] }, options: ["Cancels the cycle", "Turns coolant on", "Calls O80", "Sets inch units"], answer: 0, explanation: "G80 cancels canned cycles on many controls." },
-      { type: "fill-blank", question: "Complete peck drilling:\n___ X2.000 Z-1.500 R0.100 Q0.200", answer: "G83", hint: "Peck drilling cycle", explanation: "G83 is commonly peck drilling." },
-      { type: "fill-blank", question: "Cancel a drilling cycle:\n___", answer: "G80", hint: "Cancel canned cycle", explanation: "G80 cancels canned cycles." },
+      { type: "fill-blank", question: "Complete the peck-drilling block:\n___ X2.000 Z-1.500 R0.100 Q0.200", answer: "G83", hint: "Peck drilling cycle", explanation: "G83 is commonly peck drilling." },
+      { type: "fill-blank", question: "Complete the command that cancels a drilling cycle:\n___", answer: "G80", hint: "Cancel canned cycle", explanation: "G80 cancels canned cycles." },
       { type: "multiple-choice", question: "In G83, what does the Q word usually set?", meta: { codes: ["G83"] }, options: ["Incremental peck depth", "Hole diameter", "Spindle RPM", "Coolant pressure"], answer: 0, explanation: "Q is the incremental peck depth; the tool retracts to R and repeats until reaching Z." },
       { type: "multiple-choice", question: "Why use peck drilling?", options: ["To break chips and clear the hole", "To turn coolant off", "To change app language", "To home all axes"], answer: 0, explanation: "Pecking helps chip evacuation and reduces drilling load." },
       { type: "multiple-choice", question: "On a mill, G99 return mode sends the tool back to:", meta: { codes: ["G98", "G99"] }, options: ["The R plane after each hole", "The initial start level", "Machine home", "The tool changer"], answer: 0, explanation: "G99 returns to the R plane between holes; G98 returns to the initial level." },
@@ -990,13 +987,13 @@ Controller-approved restart procedure followed</pre>
       { type: "multiple-choice", question: "What should you do first if motion looks wrong?", options: ["Use the machine/shop stop procedure", "Increase rapid override", "Ignore it", "Edit random offsets"], answer: 0, explanation: "Use the stop action defined for the situation by the machine manual and shop procedure, then diagnose before resuming." },
       { type: "multiple-choice", question: "Why is a mid-program restart risky?", options: ["The expected tools, offsets, modes, or positions may not be restored", "Comments become active", "The screen turns off", "G-code cannot restart"], answer: 0, explanation: "A restart can omit or reinterpret earlier setup state. Haas Setting 36 can scan earlier blocks, but its behavior and limitations must be understood." },
       { type: "multiple-choice", question: "Before any recovery return motion, what must be confirmed?", options: ["The return path is unobstructed and the machine state is understood", "The tool is touching the part", "Rapid override is 100%", "The current position is ignored"], answer: 0, explanation: "The documented Haas return does not retrace the jog-away path, so clearance and machine state must be verified." },
-      { type: "multiple-choice", question: "What should be checked before cycle start after an alarm?", options: ["Tool, offset, mode, spindle, and position", "Only the app icon", "Only the comment spelling", "Only screen brightness"], answer: 0, explanation: "Recovery requires checking all state that affects motion." },
-      { type: "fill-blank", question: "A safe restart begins from a known ____.", answer: "state", hint: "Known condition", explanation: "Known state means modes, offsets, tool, and position are understood." },
+      { type: "multiple-choice", question: "What should be checked before starting the cycle after an alarm?", options: ["Tool, offset, mode, spindle, and position", "Only the app icon", "Only the comment spelling", "Only screen brightness"], answer: 0, explanation: "Recovery requires checking every machine state that affects motion." },
+      { type: "fill-blank", question: "A safe restart begins from a known ____.", answer: "state", hint: "Known condition", explanation: "A known state means that the modes, offsets, tool, and position are understood." },
       { type: "multiple-choice", question: "Why avoid guessing after an alarm?", options: ["Wrong assumptions can cause a crash", "Guessing improves accuracy", "Alarms erase all danger", "Offsets stop mattering"], answer: 0, explanation: "A wrong recovery move can be more dangerous than the original alarm." },
       { type: "multiple-choice", question: "Which is a safer verification habit?", options: ["Check the active state and the approved restart procedure", "Restart from any line", "Turn rapid to 100 immediately", "Skip tool verification"], answer: 0, explanation: "Displayed state and the controller-approved procedure both help verify what the machine is prepared to do." },
-      { type: "multiple-choice", question: "What should be done if you are unsure how to recover?", options: ["Ask or follow shop recovery procedure", "Press cycle start anyway", "Delete G54", "Change units randomly"], answer: 0, explanation: "A written procedure or experienced help is safer than guessing." },
+      { type: "multiple-choice", question: "What should be done if you are unsure how to recover?", options: ["Ask an experienced person for help or follow the shop recovery procedure", "Press Cycle Start anyway", "Delete G54", "Change units randomly"], answer: 0, explanation: "A written procedure or help from an experienced person is safer than guessing." },
       { type: "multiple-choice", question: "What determines whether a restart block is acceptable?", options: ["The controller behavior, verified machine state, clear path, and shop procedure", "The shortest-looking line", "The nearest comment", "The highest rapid setting"], answer: 0, explanation: "No block is safe by label alone. The control's restart behavior, current state, path, and approved procedure must agree." },
-      { type: "multiple-choice", question: "Recovery thinking should be:", options: ["Slow, verified, and deliberate", "Fast and guessed", "Based on luck", "Only about XP"], answer: 0, explanation: "Careful recovery protects the machine, tool, part, and operator." }
+      { type: "multiple-choice", question: "A safe approach to recovery should be:", options: ["Slow, verified, and deliberate", "Fast and based on guesses", "Based on luck", "Focused only on XP"], answer: 0, explanation: "Careful recovery protects the machine, tool, part, and operator." }
     ]
   },
 
@@ -1020,7 +1017,7 @@ G00 G54 X1.2 Z0.3
 G76 X0.913 Z-0.85 K0.042 D0.0115 F0.0714</pre>
       <p><strong>Documented Haas address meanings:</strong></p>
       <ul>
-        <li><code>X0.913</code> — absolute X location at maximum thread-depth diameter</li>
+        <li><code>X0.913</code> — absolute X position at full thread depth</li>
         <li><code>Z-0.85</code> — absolute Z endpoint</li>
         <li><code>K0.042</code> — thread height, measured radially</li>
         <li><code>D0.0115</code> — first-pass cutting depth</li>
@@ -1046,9 +1043,9 @@ G76 X0.913 Z-0.85 K0.042 D0.0115 F0.0714</pre>
         type: "multiple-choice",
         question: "In this Haas G76 format, the F word represents:", meta: { codes: ["G76"] },
         options: [
-          "The feedrate in IPR",
+          "The feed rate in IPR",
           "The thread lead (pitch)",
-          "The finish feedrate",
+          "The finish feed rate",
           "The number of passes"
         ],
         answer: 1,
@@ -1056,7 +1053,7 @@ G76 X0.913 Z-0.85 K0.042 D0.0115 F0.0714</pre>
       },
       {
         type: "fill-blank",
-        question: "For a single-start 20 TPI thread, what lead value follows from F = 1/TPI?\nF___",
+        question: "For a single-start 20 TPI thread, what lead value results from F = 1 ÷ TPI?\nF___",
         answer: "0.050",
         hint: "1 ÷ 20 = ?",
         explanation: "For this single-start example, lead = 1 ÷ 20 = 0.050\". Verify the exact thread specification and controller format before programming."
@@ -1098,7 +1095,7 @@ const PRINTING_LESSONS = [
         <li><code>G1</code> - controlled move</li>
         <li><code>X82.4 Y104.2</code> - nozzle position on the bed</li>
         <li><code>E0.036</code> - amount of filament to extrude</li>
-        <li><code>F1800</code> - feedrate in mm/min</li>
+        <li><code>F1800</code> - feed rate in mm/min</li>
       </ul>
       <p>Printer G-code is usually metric. Most slicers use millimeters for X, Y, Z, and E values.</p>
     `,
@@ -1134,7 +1131,7 @@ const PRINTING_LESSONS = [
           { left: "E", right: "Extrusion amount" },
           { left: "F", right: "Feedrate" }
         ],
-        explanation: "Printer moves commonly use G1 for controlled motion, E for extrusion amount, and F for feedrate."
+        explanation: "Printer moves commonly use G1 for controlled motion, E for extrusion amount, and F for feed rate."
       },
       {
         id: "p-u1-l1-q5",
@@ -1273,7 +1270,7 @@ M190 S60  ; wait while heating bed to at least 60 C</pre>
       { type: "multiple-choice", question: "Which command is the normal controlled move used for extrusion?", options: ["G1", "G28", "M190", "M107"], answer: 0, explanation: "G1 is the normal controlled move command in printer G-code." },
       { type: "fill-blank", question: "Complete the printing move:\nG1 X50 Y50 ___1.2 F1200", meta: { codes: ["G1"] }, answer: "E", hint: "Extrusion word", explanation: "E1.2 tells the extruder how much filament movement to command." },
       { type: "multiple-choice", question: "Why should beginners be careful editing E values?", options: ["Extrusion mode may be absolute or relative", "E always homes the printer", "E only controls the display", "E turns on the fan"], answer: 0, explanation: "Different slicers and firmware can use absolute or relative extrusion." },
-      { type: "multiple-choice", question: "Which value is not a motion coordinate in this line?\nG1 X82 Y104 E0.036 F1800", meta: { codes: ["G1"] }, options: ["F1800", "X82", "Y104", "E0.036"], answer: 0, explanation: "F sets feedrate/speed. X, Y, and E are axis/extrusion values." }
+      { type: "multiple-choice", question: "Which value is not a motion coordinate in this line?\nG1 X82 Y104 E0.036 F1800", meta: { codes: ["G1"] }, options: ["F1800", "X82", "Y104", "E0.036"], answer: 0, explanation: "F sets feed rate/speed. X, Y, and E are axis/extrusion values." }
     ]
   },
 
@@ -1286,7 +1283,7 @@ M190 S60  ; wait while heating bed to at least 60 C</pre>
     icon: "F",
     xp: 15,
     theory: `
-      <p>The <code>F</code> word sets feedrate. In most printer G-code, feedrate is in millimeters per minute.</p>
+      <p>The <code>F</code> word sets feed rate. In most printer G-code, feed rate is in millimeters per minute.</p>
       <pre>G1 X40 Y40 F9000  ; fast travel
 G1 X40 Y40 E0.4 F1800 ; slower print move</pre>
       <p>Travel moves are usually faster because they do not push filament. Print moves are slower so the
@@ -1294,14 +1291,14 @@ G1 X40 Y40 E0.4 F1800 ; slower print move</pre>
     `,
     visual: "rapid-path",
     quiz: [
-      { type: "multiple-choice", question: "In most printer G-code, F1800 means:", options: ["1800 mm/min feedrate", "1800 degrees", "1800 grams", "Fan speed 1800"], answer: 0, explanation: "Printer feedrate is commonly expressed in millimeters per minute." },
+      { type: "multiple-choice", question: "In most printer G-code, F1800 means:", options: ["1800 mm/min feed rate", "1800 degrees", "1800 grams", "Fan speed 1800"], answer: 0, explanation: "Printer feed rate is commonly expressed in millimeters per minute." },
       { type: "multiple-choice", question: "Which line is likely a fast travel move?", options: ["G1 X80 Y80 F9000", "G1 X80 Y80 E0.6 F1500", "M190 S60", "G28"], answer: 0, explanation: "A high-F move without E is usually travel." },
-      { type: "multiple-choice", question: "Which value sets speed in this line?\nG1 X10 Y10 E0.2 F1200", meta: { codes: ["G1"] }, options: ["F1200", "X10", "Y10", "E0.2"], answer: 0, explanation: "F sets feedrate." },
-      { type: "fill-blank", question: "Type the feedrate letter used in printer G-code:", answer: "F", hint: "Speed/feed word", explanation: "F is used for feedrate." },
+      { type: "multiple-choice", question: "Which value sets speed in this line?\nG1 X10 Y10 E0.2 F1200", meta: { codes: ["G1"] }, options: ["F1200", "X10", "Y10", "E0.2"], answer: 0, explanation: "F sets feed rate." },
+      { type: "fill-blank", question: "Type the feed rate letter used in printer G-code:", answer: "F", hint: "Speed/feed word", explanation: "F is used for feed rate." },
       { type: "multiple-choice", question: "Why are print moves often slower than travel moves?", options: ["Plastic needs time to lay down cleanly", "G1 cannot move fast", "Fans turn off motion", "Homing is required"], answer: 0, explanation: "Printing too fast can hurt extrusion consistency and layer quality." },
       { type: "multiple-choice", question: "A line with no E value usually means:", options: ["No extrusion on that move", "Bed heat only", "Fan full speed", "End print"], answer: 0, explanation: "Without E movement, the nozzle is usually just moving position." },
-      { type: "multiple-choice", question: "What is missing from this speed command?\nG1 X20 Y20 ___3000", meta: { codes: ["G1"] }, options: ["F", "M", "S", "T"], answer: 0, explanation: "F3000 sets the feedrate." },
-      { type: "fill-blank", question: "Complete the fast travel feedrate:\nG1 X100 Y100 F____", meta: { codes: ["G1"] }, answer: "9000", hint: "Common fast travel example from lesson", explanation: "F9000 is the fast travel example used in this lesson." },
+      { type: "multiple-choice", question: "What is missing from this speed command?\nG1 X20 Y20 ___3000", meta: { codes: ["G1"] }, options: ["F", "M", "S", "T"], answer: 0, explanation: "F3000 sets the feed rate." },
+      { type: "fill-blank", question: "Complete the fast travel feed rate:\nG1 X100 Y100 F____", meta: { codes: ["G1"] }, answer: "9000", hint: "Common fast travel example from lesson", explanation: "F9000 is the fast travel example used in this lesson." },
       { type: "multiple-choice", question: "If a travel move is too slow, what may increase?", options: ["Print time", "Bed size", "Nozzle diameter", "Firmware version"], answer: 0, explanation: "Slow travel moves can add unnecessary print time." },
       { type: "multiple-choice", question: "If print moves are too fast, what can happen?", options: ["Poor extrusion quality", "Automatic homing", "Comments disappear", "The bed turns off"], answer: 0, explanation: "Too-fast print moves can cause under-extrusion, weak walls, or rough surfaces." }
     ]
@@ -1761,7 +1758,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     {
       type: "multiple-choice",
       question: "In many files, what can the semicolon do here?\nG00 X1.000 Z0.100 ; move clear", meta: { codes: ["G00"] },
-      options: ["Mark a note/comment or block ending", "Call a tool change", "Set feedrate only", "Set a coordinate by itself"],
+      options: ["Mark a note/comment or block ending", "Call a tool change", "Set feed rate only", "Set a coordinate by itself"],
       answer: 0,
       explanation: "Semicolon meaning depends on the system. It often starts a note/comment, and on some controls or posted files it can mark the end of the block."
     },
@@ -1781,10 +1778,10 @@ const LESSON_QUESTION_EXPANSIONS = {
     },
     {
       type: "multiple-choice",
-      question: "Which part is the feedrate in this block?\nG01 X1.250 Z-0.500 F0.012",
+      question: "Which part is the feed rate in this block?\nG01 X1.250 Z-0.500 F0.012",
       options: ["G01", "X1.250", "Z-0.500", "F0.012"],
       answer: 3,
-      explanation: "The F word sets feedrate. On many lathes this may be inches per revolution."
+      explanation: "The F word sets feed rate. On many lathes this may be inches per revolution."
     },
     {
       type: "multiple-choice",
@@ -1795,10 +1792,10 @@ const LESSON_QUESTION_EXPANSIONS = {
     },
     {
       type: "fill-blank",
-      question: "Type the letter used for feedrate in this block:\nG01 X1.000 Z-0.250 ___0.010",
+      question: "Type the letter used for feed rate in this block:\nG01 X1.000 Z-0.250 ___0.010",
       answer: "F",
       hint: "Feedrate word",
-      explanation: "F is the feedrate word. It tells the machine how fast to make the controlled move."
+      explanation: "F is the feed rate word. It tells the machine how fast to make the controlled move."
     },
     {
       type: "multiple-choice",
@@ -1914,7 +1911,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     {
       type: "multiple-choice",
       question: "What should G00 usually be used for?", meta: { codes: ["G00"] },
-      options: ["Cutting at feedrate", "Positioning in clear space", "Threading", "Turning coolant off"],
+      options: ["Cutting at feed rate", "Positioning in clear space", "Threading", "Turning coolant off"],
       answer: 1,
       explanation: "G00 is rapid positioning. It should be used when the tool is clear of the part."
     },
@@ -1974,21 +1971,21 @@ const LESSON_QUESTION_EXPANSIONS = {
       question: "Model feed move:\nG01 Z-0.500 F0.012\n\nWhat is missing from this feed move?\nG01 Z-1.000 ___0.012", meta: { codes: ["G01"] },
       options: ["F", "S", "M", "T"],
       answer: 0,
-      explanation: "F sets the feedrate for a controlled G01 move."
+      explanation: "F sets the feed rate for a controlled G01 move."
     },
     {
       type: "multiple-choice",
       question: "Which line is a controlled cutting move?",
       options: ["G00 X2.000 Z0.100", "G01 Z-1.000 F0.012", "M30", "(ROUGH PASS)"],
       answer: 1,
-      explanation: "G01 with a feedrate is used for controlled cutting moves."
+      explanation: "G01 with a feed rate is used for controlled cutting moves."
     },
     {
       type: "multiple-choice",
-      question: "Why should a feedrate be present before cutting?",
+      question: "Why should a feed rate be present before cutting?",
       options: ["It controls cutting speed of the move", "It names the program", "It homes the machine", "It selects the tool"],
       answer: 0,
-      explanation: "Feedrate controls how fast the tool feeds through material."
+      explanation: "Feed rate controls how fast the tool feeds through material."
     },
     {
       type: "fill-blank",
@@ -2125,7 +2122,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     {
       type: "multiple-choice",
       question: "Why use a roughing cycle?",
-      options: ["To remove bulk material using repeated passes", "To write comments", "To set the date", "To disable feedrate"],
+      options: ["To remove bulk material using repeated passes", "To write comments", "To set the date", "To disable feed rate"],
       answer: 0,
       explanation: "Roughing cycles automate repeated material-removal passes."
     },
@@ -2366,7 +2363,7 @@ const LESSON_QUESTION_EXPANSIONS = {
       question: "What does F1800 usually mean in printer G-code?",
       options: ["Feedrate in mm/min", "Fan at 1800%", "Nozzle at 1800 C", "File number"],
       answer: 0,
-      explanation: "F sets feedrate, usually in millimeters per minute for printer G-code."
+      explanation: "F sets feed rate, usually in millimeters per minute for printer G-code."
     },
     {
       type: "multiple-choice",
@@ -2576,7 +2573,7 @@ Object.entries(LESSON_QUESTION_EXPANSIONS).forEach(([lessonId, additions]) => {
     });
 
     updateQuestion('u1-l2', 'u1-l2-q7', {
-      question: 'Which beginner lathe style is easiest to audit from a known work zero?',
+      question: 'Which programming style is easiest for a beginner to verify from a known work zero?',
       options: ['Use X/Z absolute positions and reserve U/W for intentional incrementals', 'Use U/W for every destination', 'Issue G90 without checking the control', 'Switch conventions every block'],
       answer: 0,
       explanation: 'X/Z positions point back to the active work zero on this convention. U/W are intentional incremental distances.'

@@ -2,3 +2,5 @@
 /reference/
 data/lessons.js.bak
 js/app.js.validate.backup
+.hermes/
+scripts/
