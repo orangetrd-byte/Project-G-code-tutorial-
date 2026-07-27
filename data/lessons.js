@@ -2550,7 +2550,7 @@ Object.entries(LESSON_QUESTION_EXPANSIONS).forEach(([lessonId, additions]) => {
     addQuestion('u1-l1', {
       id: 'u1-l1-q8',
       type: 'multiple-choice',
-      question: 'Correction check:\nX2.000 Z0.100\n\nWhy is this weak beginner code by itself?', meta: { codes: ["G00", "G01"] },
+      question: 'Correction check:\nX2.000 Z0.100\n\nWhy is this weak code on its own?', meta: { codes: ["G00", "G01"] },
       options: [
         'It has coordinates but no clear motion word in the block',
         'It has too many semicolons',
