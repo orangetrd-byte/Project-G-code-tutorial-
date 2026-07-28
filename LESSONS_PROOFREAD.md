@@ -9,7 +9,7 @@ Total lessons: 21
 
 **Theory:**
 
-G-code is a set of instructions that the machine reads. One block can combine compatible motion, coordinates, feed, speed, and auxiliary words; the control decides their execution order.
+G-code is a set of instructions that the machine reads. One block can combine compatible motion, coordinates, feed, speed, and auxiliary words; the control determines their execution order.
 
  
 G00 X2.000 Z0.100 ; example position — clearance is setup-specific
@@ -116,7 +116,7 @@ Do not assume that G90/G91 select positioning mode on a lathe. On Haas lathes, G
 
 **Quiz:**
 
-- Q1 [multiple-choice]: On a CNC lathe, moving Z in the negative direction means:
+- Q1 [multiple-choice]: On a CNC lathe, what does moving Z in the negative direction mean?
   - Increasing the cut diameter
   - Moving the tool away from the chuck
   - Moving the tool toward the chuck
@@ -289,7 +289,7 @@ G00 X___ Z0.100
 
 ## 5. G01 — Linear Feed
 
-**Why:** Feed moves are controlled cutting moves. Understanding how G01 uses feed rate helps you recognize when the tool is meant to cut instead of just travel.
+**Why:** Feed moves are controlled cutting moves. Understanding how G01 uses feed rate helps you recognize when the tool is meant to cut rather than travel at rapid speed.
 
 
 **Theory:**
@@ -339,7 +339,7 @@ Feed rate is modal: once set, it remains active until it is changed.
   - G00 Z-0.100
   - Correct answer: 1
   - Explanation: Under the stated example assumptions, G01 feeds across center. The required endpoint and sign depend on tool orientation, diameter/radius convention, and the verified setup.
-- Q2 [multiple-choice]: At a constant 800 RPM in feed-per-revolution mode, F0.012 gives an actual feed rate of:
+- Q2 [multiple-choice]: At a constant 800 RPM in feed-per-revolution mode, what actual feed rate does F0.012 produce?
   - 0.012 IPM
   - 9.6 IPM
   - 12 IPM
@@ -568,7 +568,7 @@ After G71, run a `G70 P100 Q200` finish pass with your finishing feed rate
 
 ## 9. Tool Calls & Offsets
 
-**Why:** The T-word links a physical tool to its measured geometry. Correctly pairing the tool and offset—and keeping tool number matched to offset number—prevents the control from cutting with the wrong geometry or wear values, which is a fast way to crash a tool or scrap a part.
+**Why:** The T-word links a physical tool to its measured geometry. Correctly pairing the tool and offset—and keeping their numbers matched—helps prevent the control from using the wrong geometry or wear values, which could cause a collision or scrap a part.
 
 
 **Theory:**
@@ -600,7 +600,7 @@ On the referenced Haas lathe, tool geometry and tool wear are separate fields wi
  
 
  
-On many Fanuc-style lathes, the turret usually indexes from the `T0101` call itself.
+On many Fanuc-style lathes, the `T0101` call itself indexes the turret.
  `M06` is common on mills, but is not the normal beginner pattern for this lathe track.
 
  
@@ -633,7 +633,7 @@ T____
 
 ## 10. Work Offsets & G54
 
-**Why:** Programmed positions are measured from part zero, and the work offset tells the control where that zero is located. Selecting the wrong offset — or trusting one that was never verified — can make every move end at the wrong position, so the offset must be chosen and proven before any motion that relies on it.
+**Why:** Programmed positions are measured from part zero, and the work offset tells the control where that zero is located. Selecting the wrong offset—or trusting one that was never verified—can make every move end at the wrong position, so the offset must be chosen and proven before any motion that relies on it.
 
 
 **Theory:**
@@ -673,7 +673,7 @@ Make the required work-coordinate selection explicit before motion that depends 
 
 **Quiz:**
 
-- Q1 [multiple-choice]: If you set Z0 at the finished face of the part, a cut to Z-1.000 means:
+- Q1 [multiple-choice]: If you set Z0 at the finished face of the part, what does a cut to Z-1.000 mean?
   - 1.000" above the face
   - 1.000" into the part from the face
   - 1.000" from machine home
@@ -945,8 +945,8 @@ These controls can support prove-out, but they do not make a path safe. Graphics
   - A finished review
   - Correct answer: 0
   - Explanation: After a tool change, the active tool, offset, orientation, and full clearance path must all be verified before rapid motion.
-- Q10 [multiple-choice]: A safe prove-out mindset is:
-  - Assume nothing; verify each move.
+- Q10 [multiple-choice]: What is a safe prove-out mindset?
+  - Assume nothing; verify each move
   - Assume the program is always safe
   - Ignore offsets
   - Run at 100% rapid immediately
@@ -1008,11 +1008,11 @@ ___ ; metric units
   - Correct answer: G21
   - Hint: Metric unit code
   - Explanation: G21 selects metric units.
-- Q6 [multiple-choice]: A program written in inches but run in metric mode will likely:
-  - Move the wrong distances
-  - Automatically convert perfectly
-  - Only change comments
-  - Disable M03
+- Q6 [multiple-choice]: What will likely happen if a program written in inches runs in metric mode?
+  - The machine will move the wrong distances
+  - The control will convert it perfectly
+  - Only the comments will change
+  - M03 will be disabled
   - Correct answer: 0
   - Explanation: The control reads numbers in the active unit mode; the wrong units can produce dangerously incorrect moves.
 - Q7 [multiple-choice]: Which safety line clearly sets inch mode?
@@ -1074,14 +1074,14 @@ This tutorial's turning examples are lathe-based, so they use `G99` for feed per
   - Program name
   - Correct answer: 0
   - Explanation: Feed mode changes how the control interprets feed rate.
-- Q2 [multiple-choice]: On Haas and Fanuc lathes, G99 means:
+- Q2 [multiple-choice]: What does G99 mean on Haas and Fanuc lathes?
   - Feed per revolution
   - Feed per minute
   - Metric units
   - Rapid motion
   - Correct answer: 0
   - Explanation: G99 is feed per revolution on Haas/Fanuc lathes.
-- Q3 [multiple-choice]: On Haas and Fanuc lathes, G98 means:
+- Q3 [multiple-choice]: What does G98 mean on Haas and Fanuc lathes?
   - Feed per minute
   - Feed per revolution
   - Spindle stop
@@ -1105,11 +1105,11 @@ ___ F5.0
   - It cancels G54
   - Correct answer: 0
   - Explanation: Feed per revolution keeps chip load related to spindle speed.
-- Q7 [multiple-choice]: If the wrong feed mode is active, the machine may:
-  - Feed too fast or too slow
-  - Ignore all coordinates
-  - Delete the program
-  - Change tool numbers
+- Q7 [multiple-choice]: What may happen if the wrong feed mode is active?
+  - The machine may feed too fast or too slow
+  - The control may ignore all coordinates
+  - The control may delete the program
+  - The tool numbers may change
   - Correct answer: 0
   - Explanation: The same F number can mean very different speeds in different feed modes.
 - Q8 [multiple-choice]: Which line clearly sets lathe feed per revolution?
@@ -1216,10 +1216,10 @@ A safe program does not rely on an unknown state. It declares the modes it needs
   - Delete setup blocks
   - Correct answer: 0
   - Explanation: Checking the active modes helps identify an incorrect setup before motion.
-- Q10 [multiple-choice]: A good setup line should be:
-  - Clear and intentional
-  - Random
-  - Hidden in comments
+- Q10 [multiple-choice]: What makes a good setup line?
+  - Clear and intentional choices
+  - Random choices
+  - Instructions hidden in comments
   - Only M30
   - Correct answer: 0
   - Explanation: Setup lines should make the program's assumptions clear.
@@ -1320,7 +1320,7 @@ G01 Z-1.000 F0.012
 
 ## 18. M98, M99, and Repeated Motion
 
-**Why:** Repetitive motion belongs in one place. A subprogram lets one tested routine run many times, but a single edit then affects every repeat — so the call, the repeat count, and the return must be unambiguous.
+**Why:** Repetitive motion belongs in one place. A subprogram lets one tested routine run many times, but a single edit affects every repeat. The call, repeat count, and return must therefore be unambiguous.
 
 
 **Theory:**
@@ -1343,7 +1343,7 @@ M99 ; return
  
 
  
-`M98 P____` calls a subprogram by number. On many Haas/Fanuc-style controls, it usually points to another program (external O-number) held in the control, or to a local routine.
+`M98 P____` calls a subprogram by number. On many Haas/Fanuc-style controls, it points to another program (an external O-number) held in the control or to a local routine.
 
  
 `M97 P____` is the *local* subprogram call: it jumps to a line or routine *inside the same program* and returns to the line after the M97. Use M97 when the repeat lives in the current program.
@@ -1396,7 +1396,7 @@ M99 ; return
   - Explanation: L often gives the repeat count for a subprogram call.
 - Q6 [multiple-choice]: In M98 P2000 L3, what does P2000 point to?
   - Subprogram O2000
-  - Feedrate 2000
+  - Feed rate 2000
   - Tool 2000
   - Coolant pressure
   - Correct answer: 0
@@ -1432,7 +1432,7 @@ ___
   - T0101
   - Correct answer: 0
   - Explanation: M99 is the return code in many subprogram patterns.
-- Q12 [multiple-choice]: Before editing a repeated subprogram, remember:
+- Q12 [multiple-choice]: What should you remember before editing a repeated subprogram?
   - One edit can affect every repeat
   - Only the first repeat changes
   - Comments become motion
@@ -1444,7 +1444,7 @@ ___
 
 ## 19. G81, G83, R Plane, and Return
 
-**Why:** Drilling cycles repeat a safe plunge automatically, but the retract level and peck depth decide whether chips clear and whether the tool returns to the right height. Getting R and the return mode wrong can crash the tool or leave a poor hole.
+**Why:** Drilling cycles repeat a programmed plunge automatically, but the retract level and peck depth determine whether chips clear and whether the tool returns to the right height. Getting R and the return mode wrong can crash the tool or leave a poor hole.
 
 
 **Theory:**
@@ -1530,8 +1530,8 @@ ___
   - To home all axes
   - Correct answer: 0
   - Explanation: Pecking helps chip evacuation and reduces drilling load.
-- Q9 [multiple-choice]: On a mill, G99 return mode sends the tool back to:
-  - The R plane after each hole
+- Q9 [multiple-choice]: On a mill, where does G99 return the tool after each hole?
+  - The R plane
   - The initial start level
   - Machine home
   - The tool changer
@@ -1647,11 +1647,11 @@ With Haas Setting 36 enabled, the control scans earlier program blocks for tools
   - The highest rapid setting
   - Correct answer: 0
   - Explanation: No block is safe by label alone. The control's restart behavior, current state, path, and approved procedure must agree.
-- Q10 [multiple-choice]: A safe approach to recovery should be:
-  - Slow, verified, and deliberate
-  - Fast and based on guesses
-  - Based on luck
-  - Focused only on XP
+- Q10 [multiple-choice]: What characterizes a safe approach to recovery?
+  - Slow, verified, and deliberate actions
+  - Fast actions based on guesses
+  - Decisions based on luck
+  - A focus only on XP
   - Correct answer: 0
   - Explanation: Careful recovery protects the machine, tool, part, and operator.
 
@@ -1709,7 +1709,7 @@ Haas recommends programming `G99` feed per revolution before G76. The official e
   - Constant RPM gives better surface finish
   - Correct answer: 1
   - Explanation: Haas labels G97 as CSS off and uses a fixed 500 RPM in this example. Follow the spindle mode required by the exact controller and approved process.
-- Q2 [multiple-choice]: In this Haas G76 format, the F word represents:
+- Q2 [multiple-choice]: In this Haas G76 format, what does the F word represent?
   - The feed rate in IPR
   - The thread lead (pitch)
   - The finish feed rate

@@ -282,7 +282,11 @@ function validateCurriculum(api) {
   const firstCncLesson = api.TRACKS.cnc.lessons.find(lesson => lesson.id === 'u1-l1');
   const latheAxesLesson = api.TRACKS.cnc.lessons.find(lesson => lesson.id === 'u1-l2');
   const illustratedAxesQuestion = latheAxesLesson?.quiz.find(question => question.id === 'u1-l2-q5');
-  assert.ok(firstCncLesson.quiz.some(question => question.id === 'u1-l1-q8'), 'Beginner context questions must load from curriculum data');
+  const modalContextQuestion = firstCncLesson?.quiz.find(question => question.id === 'u1-l1-q8');
+  assert.ok(modalContextQuestion, 'Beginner context questions must load from curriculum data');
+  assert.match(modalContextQuestion.question, /without the lines that come before it/, 'Coordinate-only questions must state that surrounding modal context is unavailable');
+  assert.match(modalContextQuestion.explanation, /motion mode set on an earlier line/, 'Coordinate-only explanations must teach modal carryover');
+  assert.doesNotMatch(modalContextQuestion.question, /weak beginner code|What is missing from this code/i, 'Ambiguous beginner wording must not return');
   assert.equal(illustratedAxesQuestion?.visual, 'lathe-axes', 'Questions that reference the lathe setup must display its diagram');
   assert.doesNotMatch(read('index.html'), /const updateQuestion\s*=/, 'Curriculum patches do not belong in index.html');
   api.TRACKS.cnc.lessons.slice(0, 9).forEach(lesson => {

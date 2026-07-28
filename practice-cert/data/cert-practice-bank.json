@@ -486,7 +486,7 @@
       "answers": [
         "Skip the tool change and run air cuts only",
         "Verify tool lengths, work offsets, and stock location",
-        "Increase feedrate to maximum to save time",
+        "Increase the feed rate to maximum to save time",
         "Disable coolant and watch for smoke"
       ],
       "correct_index": 1,
@@ -877,7 +877,7 @@
       "topic": "Program Verification",
       "question": "Before cutting metal, the best verification method is to:",
       "answers": [
-        "Dry run with feedrate override and single block",
+        "Dry run with feed rate override and single block",
         "Run full auto with coolant on",
         "Skip setup sheet review",
         "Assume CAM generated correct code"
@@ -1649,7 +1649,7 @@
       "answers": [
         "Changes part material",
         "Sets each tool's length reference so Z depth is accurate",
-        "Controls feedrate automatically",
+        "Controls the feed rate automatically",
         "Eliminates coolant need"
       ],
       "correct_index": 1,

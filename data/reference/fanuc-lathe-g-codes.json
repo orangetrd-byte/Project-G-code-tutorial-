@@ -16,7 +16,7 @@
       "code": "G01",
       "description": "Linear interpolation (cutting feed)",
       "params": "X Z F",
-      "usage": "Cut a straight line at the programmed feedrate.",
+      "usage": "Cut a straight line at the programmed feed rate.",
       "notes": "Feed meaning depends on active feed mode (G98 per-min / G99 per-rev).",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"

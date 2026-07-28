@@ -31,11 +31,12 @@ The current learning model is similar to Duolingo or Mimo:
 
 ## Current Build State
 
-- App build: `2026.06.12.11`
-- Service worker cache: `pgct-v2.13-expanded-cnc-path`
-- CNC path: 5 units / 14 lessons
-- 3D printing path: 1 unit / 3 lessons
-- Latest pushed commit at handoff time: `cf78faf` - `Expand CNC curriculum path`
+- App version: `MGP v2.58.1`
+- App build: `2026.07.28.01`
+- Service worker cache: `pgct-2026.07.28.01`
+- CNC path: 11 units / 21 lessons
+- 3D printing path: 10 units / 18 lessons
+- Current release scope: beginner-readability proofreading, consistent terminology, clearer question stems, and a modal-context regression guard
 
 ## What Works Well
 
@@ -53,6 +54,12 @@ The current learning model is similar to Duolingo or Mimo:
 
 ## Recent Important Changes
 
+- Reworked beginner-facing curriculum, quiz, reference, retention, and certification copy for clarity and consistent terminology.
+- Replaced the ambiguous coordinate-only “weak beginner code” question with a modal-context question that explains that an earlier motion mode may remain active.
+- Added a regression test that prevents the ambiguous question wording from returning.
+- Added track-specific Today’s Line recall using previously taught material.
+- Expanded both CNC and 3D-printing curricula and added source/dialect audit metadata.
+- Added learned-code filtering, matching questions, mixed review, and stronger mobile/offline regression coverage.
 - Added weak-question retention tracking.
 - Added Home screen Weak Spot Review prompt.
 - Increased lesson practice checks from 3 to 5 questions.

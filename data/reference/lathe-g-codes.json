@@ -15,7 +15,7 @@
       "code": "G01",
       "description": "Linear feed move",
       "params": "X Z F",
-      "usage": "Cut a straight line at the programmed feedrate.",
+      "usage": "Cut a straight line at the programmed feed rate.",
       "notes": "Feed interpretation depends on the active feed mode, units, and machine setup.",
       "source": "Haas G01 documentation",
       "source_url": "https://www.haascnc.com/service/codes-settings.type%3Dgcode.machine%3Dlathe.value%3DG01.html"

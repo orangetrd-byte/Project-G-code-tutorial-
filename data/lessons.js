@@ -17,7 +17,7 @@ const LESSONS = [
     icon: "📋",
     xp: 10,
     theory: `
-      <p>G-code is a set of instructions that the machine reads. One block can combine compatible motion, coordinates, feed, speed, and auxiliary words; the control decides their execution order.</p>
+      <p>G-code is a set of instructions that the machine reads. One block can combine compatible motion, coordinates, feed, speed, and auxiliary words; the control determines their execution order.</p>
       <pre>G00 X2.000 Z0.100 ; example position — clearance is setup-specific</pre>
       <p>The meaning of a semicolon depends on the system. In many 3D-printer files, it starts a comment. In some CNC program formats, it marks the end of a block, like pressing Enter to start the next line.</p>
       <pre>G00 X30.500 Z1.0;
@@ -123,7 +123,7 @@ M0;</pre>
       {
         id: "u1-l2-q1",
         type: "multiple-choice",
-        question: "On a CNC lathe, moving Z in the negative direction means:",
+        question: "On a CNC lathe, what does moving Z in the negative direction mean?",
         options: [
           "Increasing the cut diameter",
           "Moving the tool away from the chuck",
@@ -318,7 +318,7 @@ N110 M30                   ; End program, rewind
     unitName: "Motion Codes",
     lesson: 2,
     title: "G01 — Linear Feed",
-    why: "Feed moves are controlled cutting moves. Understanding how G01 uses feed rate helps you recognize when the tool is meant to cut instead of just travel.",
+    why: "Feed moves are controlled cutting moves. Understanding how G01 uses feed rate helps you recognize when the tool is meant to cut rather than travel at rapid speed.",
     icon: "➡️",
     xp: 15,
     theory: `
@@ -357,7 +357,7 @@ G01 X1.750 Z-1.500 F0.010</pre>
       },
       {
         type: "multiple-choice",
-        question: "At a constant 800 RPM in feed-per-revolution mode, F0.012 gives an actual feed rate of:",
+        question: "At a constant 800 RPM in feed-per-revolution mode, what actual feed rate does F0.012 produce?",
         options: ["0.012 IPM", "9.6 IPM", "12 IPM", "800 IPM"],
         answer: 1,
         explanation: "At constant 800 RPM, IPM = IPR × RPM: 0.012 × 800 = 9.6 inches per minute. Under CSS, RPM and instantaneous IPM can change with diameter."
@@ -553,7 +553,7 @@ G71 P100 Q200 U0.020 W0.005 F0.015</pre>
     title: "Tool Calls & Offsets",
     icon: "🎯",
     xp: 20,
-    why: "The T-word links a physical tool to its measured geometry. Correctly pairing the tool and offset—and keeping tool number matched to offset number—prevents the control from cutting with the wrong geometry or wear values, which is a fast way to crash a tool or scrap a part.",
+    why: "The T-word links a physical tool to its measured geometry. Correctly pairing the tool and offset—and keeping their numbers matched—helps prevent the control from using the wrong geometry or wear values, which could cause a collision or scrap a part.",
     theory: `
       <p>This lesson uses a common Haas/Fanuc-style four-digit T-word convention:</p>
       <pre>T0101   ; Tool 1, Offset 1
@@ -566,7 +566,7 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
         <li><strong>Radius geometry and tip direction</strong> support tool-nose compensation.</li>
         <li><strong>X/Z and radius wear</strong> are intended for minute adjustments as the tool wears.</li>
       </ul>
-      <p>On many Fanuc-style lathes, the turret usually indexes from the <code>T0101</code> call itself.
+      <p>On many Fanuc-style lathes, the <code>T0101</code> call itself indexes the turret.
       <code>M06</code> is common on mills, but is not the normal beginner pattern for this lathe track.</p>
       <p class="callout tip">💡 Keeping the tool and offset numbers matched (T0101, T0202, and so on) helps prevent confusion when troubleshooting offsets.</p>
     `,
@@ -614,7 +614,7 @@ T0100   ; Cancel offset (tool 1, no offset)</pre>
     title: "Work Offsets & G54",
     icon: "📍",
     xp: 20,
-    why: "Programmed positions are measured from part zero, and the work offset tells the control where that zero is located. Selecting the wrong offset — or trusting one that was never verified — can make every move end at the wrong position, so the offset must be chosen and proven before any motion that relies on it.",
+    why: "Programmed positions are measured from part zero, and the work offset tells the control where that zero is located. Selecting the wrong offset—or trusting one that was never verified—can make every move end at the wrong position, so the offset must be chosen and proven before any motion that relies on it.",
     theory: `
       <p>Work offsets define a program's part-zero reference relative to machine coordinates. This Haas lathe example uses G54 through G59 work-offset selections.</p>
       <pre>G54   ; Select work offset 1 in this Haas example
@@ -634,7 +634,7 @@ G56   ; Work offset 3</pre>
     quiz: [
       {
         type: "multiple-choice",
-        question: "If you set Z0 at the finished face of the part, a cut to Z-1.000 means:",
+        question: "If you set Z0 at the finished face of the part, what does a cut to Z-1.000 mean?",
         options: [
           "1.000\" above the face",
           "1.000\" into the part from the face",
@@ -744,7 +744,7 @@ Rapid override reduced</pre>
       { type: "multiple-choice", question: "What does Dry Run do on the referenced Haas control?", options: ["Moves the machine using selected dry-run rates to help check a program", "Measures final part size", "Replaces all offsets", "Turns comments into code"], answer: 0, explanation: "Dry Run changes how rapid and feed motion rates are executed, but it still moves axes and may perform tool changes. It is a check mode, not a guarantee of safety." },
       { type: "fill-blank", question: "Type the control mode: ____ Block ON", answer: "Single", hint: "Runs one line at a time", explanation: "Single Block ON is used for careful prove-out." },
       { type: "multiple-choice", question: "Which move deserves extra attention?", options: ["The first rapid move after a tool change", "A blank comment", "The app build number", "A finished review"], answer: 0, explanation: "After a tool change, the active tool, offset, orientation, and full clearance path must all be verified before rapid motion." },
-      { type: "multiple-choice", question: "A safe prove-out mindset is:", options: ["Assume nothing; verify each move.", "Assume the program is always safe", "Ignore offsets", "Run at 100% rapid immediately"], answer: 0, explanation: "Good operators verify before trusting the program." }
+      { type: "multiple-choice", question: "What is a safe prove-out mindset?", options: ["Assume nothing; verify each move", "Assume the program is always safe", "Ignore offsets", "Run at 100% rapid immediately"], answer: 0, explanation: "Good operators verify before trusting the program." }
     ]
   },
 
@@ -774,7 +774,7 @@ G00 X50.8 Z2.5</pre>
       { type: "multiple-choice", question: "Why set G20 or G21 near the top?", meta: { codes: ["G20", "G21"] }, options: ["So every number is read in the intended units", "To turn coolant on", "To home the machine", "To select a tool"], answer: 0, explanation: "Unit mode affects coordinate and feed values, so it must be known before motion." },
       { type: "fill-blank", question: "Complete inch mode:\n___ ; inch units", answer: "G20", hint: "Inch unit code", explanation: "G20 selects inch units." },
       { type: "fill-blank", question: "Complete metric mode:\n___ ; metric units", answer: "G21", hint: "Metric unit code", explanation: "G21 selects metric units." },
-      { type: "multiple-choice", question: "A program written in inches but run in metric mode will likely:", options: ["Move the wrong distances", "Automatically convert perfectly", "Only change comments", "Disable M03"], answer: 0, explanation: "The control reads numbers in the active unit mode; the wrong units can produce dangerously incorrect moves." },
+      { type: "multiple-choice", question: "What will likely happen if a program written in inches runs in metric mode?", options: ["The machine will move the wrong distances", "The control will convert it perfectly", "Only the comments will change", "M03 will be disabled"], answer: 0, explanation: "The control reads numbers in the active unit mode; the wrong units can produce dangerously incorrect moves." },
       { type: "multiple-choice", question: "Which safety line clearly sets inch mode?", options: ["G20 G40 G54", "G21 G40 G54", "M05 M30", "T0101"], answer: 0, explanation: "G20 is the inch-mode word in that safety line." },
       { type: "multiple-choice", question: "Which value changes meaning between G20 and G21?", meta: { codes: ["G20", "G21"] }, options: ["X2.000", "M30", "Program comments", "Tool name text"], answer: 0, explanation: "Coordinate values are interpreted in the active unit mode." },
       { type: "multiple-choice", question: "Before running an unfamiliar program, what should you check?", options: ["Unit mode", "Phone brightness", "App theme", "File color"], answer: 0, explanation: "Unit mode is a basic safety check before trusting coordinates." },
@@ -802,12 +802,12 @@ G95 F0.012  ; mill feed per revolution</pre>
     visual: "program-structure",
     quiz: [
       { type: "multiple-choice", question: "What does feed mode control?", options: ["What the F value means", "Tool number only", "Comment style", "Program name"], answer: 0, explanation: "Feed mode changes how the control interprets feed rate." },
-      { type: "multiple-choice", question: "On Haas and Fanuc lathes, G99 means:", meta: { codes: ["G99"] }, options: ["Feed per revolution", "Feed per minute", "Metric units", "Rapid motion"], answer: 0, explanation: "G99 is feed per revolution on Haas/Fanuc lathes." },
-      { type: "multiple-choice", question: "On Haas and Fanuc lathes, G98 means:", meta: { codes: ["G98"] }, options: ["Feed per minute", "Feed per revolution", "Spindle stop", "Work offset"], answer: 0, explanation: "G98 is feed per minute on lathes." },
+      { type: "multiple-choice", question: "What does G99 mean on Haas and Fanuc lathes?", meta: { codes: ["G99"] }, options: ["Feed per revolution", "Feed per minute", "Metric units", "Rapid motion"], answer: 0, explanation: "G99 is feed per revolution on Haas/Fanuc lathes." },
+      { type: "multiple-choice", question: "What does G98 mean on Haas and Fanuc lathes?", meta: { codes: ["G98"] }, options: ["Feed per minute", "Feed per revolution", "Spindle stop", "Work offset"], answer: 0, explanation: "G98 is feed per minute on lathes." },
       { type: "fill-blank", question: "Complete lathe feed per revolution:\n___ F0.012", answer: "G99", hint: "Per spindle revolution on a lathe", explanation: "G99 selects feed per revolution on Haas/Fanuc lathes." },
       { type: "fill-blank", question: "Complete lathe feed per minute:\n___ F5.0", answer: "G98", hint: "Per minute on a lathe", explanation: "G98 selects feed per minute on lathes." },
       { type: "multiple-choice", question: "Why is feed per revolution common in turning?", options: ["Chip load follows spindle rotation", "It turns coolant on", "It homes X", "It cancels G54"], answer: 0, explanation: "Feed per revolution keeps chip load related to spindle speed." },
-      { type: "multiple-choice", question: "If the wrong feed mode is active, the machine may:", options: ["Feed too fast or too slow", "Ignore all coordinates", "Delete the program", "Change tool numbers"], answer: 0, explanation: "The same F number can mean very different speeds in different feed modes." },
+      { type: "multiple-choice", question: "What may happen if the wrong feed mode is active?", options: ["The machine may feed too fast or too slow", "The control may ignore all coordinates", "The control may delete the program", "The tool numbers may change"], answer: 0, explanation: "The same F number can mean very different speeds in different feed modes." },
       { type: "multiple-choice", question: "Which line clearly sets lathe feed per revolution?", options: ["G99 F0.010", "M30", "G54", "T0101"], answer: 0, explanation: "G99 sets feed per revolution on a lathe; the F word gives the amount." },
       { type: "multiple-choice", question: "On a mill, which code is feed per revolution?", options: ["G95", "G98", "G99", "M03"], answer: 0, explanation: "Mills use G94 (per minute) and G95 (per revolution); lathes use G98/G99 for the same ideas." },
       { type: "multiple-choice", question: "Which word is affected by feed mode?", options: ["F", "M30", "O number", "Comment text"], answer: 0, explanation: "Feed mode changes how the F word is interpreted." }
@@ -841,7 +841,7 @@ G00 X2.000 Z0.100</pre>
       { type: "multiple-choice", question: "Which code often cancels cutter compensation?", options: ["G40", "G21", "M03", "M30"], answer: 0, explanation: "G40 cancels cutter compensation on many controls." },
       { type: "multiple-choice", question: "What makes hidden modal state dangerous?", options: ["The machine may interpret the next block differently than expected", "It changes the screen color", "It removes all tools", "It deletes comments"], answer: 0, explanation: "An unknown modal state can make a correct-looking block behave incorrectly." },
       { type: "multiple-choice", question: "Which habit improves safety?", options: ["Read the active modes before starting the cycle", "Ignore the position display", "Run first, check later", "Delete setup blocks"], answer: 0, explanation: "Checking the active modes helps identify an incorrect setup before motion." },
-      { type: "multiple-choice", question: "A good setup line should be:", options: ["Clear and intentional", "Random", "Hidden in comments", "Only M30"], answer: 0, explanation: "Setup lines should make the program's assumptions clear." }
+      { type: "multiple-choice", question: "What makes a good setup line?", options: ["Clear and intentional choices", "Random choices", "Instructions hidden in comments", "Only M30"], answer: 0, explanation: "Setup lines should make the program's assumptions clear." }
     ]
   },
 
@@ -887,7 +887,7 @@ M00 ; mandatory stop</pre>
     title: "M98, M99, and Repeated Motion",
     icon: "SUB",
     xp: 25,
-    why: "Repetitive motion belongs in one place. A subprogram lets one tested routine run many times, but a single edit then affects every repeat — so the call, the repeat count, and the return must be unambiguous.",
+    why: "Repetitive motion belongs in one place. A subprogram lets one tested routine run many times, but a single edit affects every repeat. The call, repeat count, and return must therefore be unambiguous.",
     theory: `
       <p>This shows a <strong>Haas/Fanuc-style subprogram example</strong>. Call and return words, P/L word meanings, and where a subprogram may live vary by control; verify the exact manual before use.</p>
       <p>Subprograms keep repeated motion in one place. The main program calls the subprogram; the subprogram runs and returns.</p>
@@ -898,7 +898,7 @@ G01 Z-0.100 F0.006
 M99 ; return</pre>
       <p><strong>Local vs. external subprograms:</strong></p>
       <ul>
-        <li><code>M98 P____</code> calls a subprogram by number. On many Haas/Fanuc-style controls, it usually points to another program (external O-number) held in the control, or to a local routine.</li>
+        <li><code>M98 P____</code> calls a subprogram by number. On many Haas/Fanuc-style controls, it points to another program (an external O-number) held in the control or to a local routine.</li>
         <li><code>M97 P____</code> is the <em>local</em> subprogram call: it jumps to a line or routine <em>inside the same program</em> and returns to the line after the M97. Use M97 when the repeat lives in the current program.</li>
         <li><code>M99</code> returns from a subprogram. In an external subprogram it returns to the caller; in a local routine called by M97 it returns to the block right after the M97.</li>
       </ul>
@@ -911,13 +911,13 @@ M99 ; return</pre>
       { type: "multiple-choice", question: "On a Haas/Fanuc-style control, what is M97 used for?", meta: { codes: ["M97"] }, options: ["A LOCAL subprogram call inside the same program", "An external program call", "Coolant on", "Spindle stop"], answer: 0, explanation: "M97 is the local subprogram call; it jumps to a routine within the current program and returns to the line after the M97." },
       { type: "multiple-choice", question: "How does a local call (M97) differ from an external call (M98)?", options: ["M97 jumps within the same program; M98 calls another program by O-number", "They are identical in every control", "M97 cancels the cycle", "M98 only repeats three times"], answer: 0, explanation: "M97 is local (same program); M98 typically calls an external subprogram held in the control." },
       { type: "multiple-choice", question: "In M98 P2000 L3, what does L3 usually mean?", meta: { codes: ["M98"] }, options: ["Repeat three times", "Use tool 3", "Set line 3", "Move 3 inches"], answer: 0, explanation: "L often gives the repeat count for a subprogram call." },
-      { type: "multiple-choice", question: "In M98 P2000 L3, what does P2000 point to?", meta: { codes: ["M98"] }, options: ["Subprogram O2000", "Feedrate 2000", "Tool 2000", "Coolant pressure"], answer: 0, explanation: "P commonly identifies the subprogram number to call." },
+      { type: "multiple-choice", question: "In M98 P2000 L3, what does P2000 point to?", meta: { codes: ["M98"] }, options: ["Subprogram O2000", "Feed rate 2000", "Tool 2000", "Coolant pressure"], answer: 0, explanation: "P commonly identifies the subprogram number to call." },
       { type: "fill-blank", question: "Complete the subprogram call:\n___ P2000 L2", answer: "M98", hint: "Subprogram call", explanation: "M98 calls a subprogram on many controls." },
       { type: "fill-blank", question: "Complete the return line at the end of a subprogram:\n___", answer: "M99", hint: "Return from subprogram", explanation: "M99 returns from a subprogram on many controls." },
       { type: "multiple-choice", question: "Why use a subprogram?", options: ["To avoid rewriting repeated motion", "To hide unsafe code", "To replace all offsets", "To make G00 slower"], answer: 0, explanation: "Subprograms reduce repeated code when motion patterns repeat." },
       { type: "multiple-choice", question: "What is a risk with subprograms?", options: ["They can be hard to follow without clear documentation", "They remove all modal state", "They prevent tool changes", "They cannot repeat"], answer: 0, explanation: "Subprograms need clear comments and careful review." },
       { type: "multiple-choice", question: "Which line marks a subprogram return?", options: ["M99", "M08", "G54", "T0101"], answer: 0, explanation: "M99 is the return code in many subprogram patterns." },
-      { type: "multiple-choice", question: "Before editing a repeated subprogram, remember:", options: ["One edit can affect every repeat", "Only the first repeat changes", "Comments become motion", "M98 cancels all offsets"], answer: 0, explanation: "Subprogram edits can affect every call and every repeat." }
+      { type: "multiple-choice", question: "What should you remember before editing a repeated subprogram?", options: ["One edit can affect every repeat", "Only the first repeat changes", "Comments become motion", "M98 cancels all offsets"], answer: 0, explanation: "Subprogram edits can affect every call and every repeat." }
     ]
   },
 
@@ -930,7 +930,7 @@ M99 ; return</pre>
     title: "G81, G83, R Plane, and Return",
     icon: "DRL",
     xp: 25,
-    why: "Drilling cycles repeat a safe plunge automatically, but the retract level and peck depth decide whether chips clear and whether the tool returns to the right height. Getting R and the return mode wrong can crash the tool or leave a poor hole.",
+    why: "Drilling cycles repeat a programmed plunge automatically, but the retract level and peck depth determine whether chips clear and whether the tool returns to the right height. Getting R and the return mode wrong can crash the tool or leave a poor hole.",
     theory: `
       <p>This is a <strong>3-axis mill drilling example</strong>. Live-tool lathe syntax, active planes, axes, and supported cycle words differ by machine and controller; do not transfer this block directly to a lathe.</p>
       <pre>G81 X1.000 Y0.500 Z-0.750 R0.100 F5.0 ; drill
@@ -954,7 +954,7 @@ G80 ; cancel cycle</pre>
       { type: "fill-blank", question: "Complete the command that cancels a drilling cycle:\n___", answer: "G80", hint: "Cancel canned cycle", explanation: "G80 cancels canned cycles." },
       { type: "multiple-choice", question: "In G83, what does the Q word usually set?", meta: { codes: ["G83"] }, options: ["Incremental peck depth", "Hole diameter", "Spindle RPM", "Coolant pressure"], answer: 0, explanation: "Q is the incremental peck depth; the tool retracts to R and repeats until reaching Z." },
       { type: "multiple-choice", question: "Why use peck drilling?", options: ["To break chips and clear the hole", "To turn coolant off", "To change app language", "To home all axes"], answer: 0, explanation: "Pecking helps chip evacuation and reduces drilling load." },
-      { type: "multiple-choice", question: "On a mill, G99 return mode sends the tool back to:", meta: { codes: ["G98", "G99"] }, options: ["The R plane after each hole", "The initial start level", "Machine home", "The tool changer"], answer: 0, explanation: "G99 returns to the R plane between holes; G98 returns to the initial level." },
+      { type: "multiple-choice", question: "On a mill, where does G99 return the tool after each hole?", meta: { codes: ["G98", "G99"] }, options: ["The R plane", "The initial start level", "Machine home", "The tool changer"], answer: 0, explanation: "G99 returns to the R plane between holes; G98 returns to the initial level." },
       { type: "multiple-choice", question: "Which value is the hole depth here?\nG81 X1.0 Y0.5 Z-0.750 R0.100 F5.0", meta: { codes: ["G81"] }, options: ["Z-0.750", "R0.100", "F5.0", "X1.0"], answer: 0, explanation: "Z is the drilling depth target in this example." },
       { type: "multiple-choice", question: "Which value is the clearance plane here?\nG81 X1.0 Y0.5 Z-0.750 R0.100 F5.0", meta: { codes: ["G81"] }, options: ["R0.100", "Z-0.750", "F5.0", "G81"], answer: 0, explanation: "R0.100 is the retract/clearance plane." },
       { type: "multiple-choice", question: "Why cancel with G80 before unrelated motion?", meta: { codes: ["G80"] }, options: ["So the control leaves drilling-cycle mode", "So comments run", "So M08 turns off", "So G20 becomes metric"], answer: 0, explanation: "Leaving a canned cycle active can make later motion behave unexpectedly." }
@@ -991,7 +991,7 @@ Controller-approved restart procedure followed</pre>
       { type: "multiple-choice", question: "Which is a safer verification habit?", options: ["Check the active state and the approved restart procedure", "Restart from any line", "Turn rapid to 100 immediately", "Skip tool verification"], answer: 0, explanation: "Displayed state and the controller-approved procedure both help verify what the machine is prepared to do." },
       { type: "multiple-choice", question: "What should be done if you are unsure how to recover?", options: ["Ask an experienced person for help or follow the shop recovery procedure", "Press Cycle Start anyway", "Delete G54", "Change units randomly"], answer: 0, explanation: "A written procedure or help from an experienced person is safer than guessing." },
       { type: "multiple-choice", question: "What determines whether a restart block is acceptable?", options: ["The controller behavior, verified machine state, clear path, and shop procedure", "The shortest-looking line", "The nearest comment", "The highest rapid setting"], answer: 0, explanation: "No block is safe by label alone. The control's restart behavior, current state, path, and approved procedure must agree." },
-      { type: "multiple-choice", question: "A safe approach to recovery should be:", options: ["Slow, verified, and deliberate", "Fast and based on guesses", "Based on luck", "Focused only on XP"], answer: 0, explanation: "Careful recovery protects the machine, tool, part, and operator." }
+      { type: "multiple-choice", question: "What characterizes a safe approach to recovery?", options: ["Slow, verified, and deliberate actions", "Fast actions based on guesses", "Decisions based on luck", "A focus only on XP"], answer: 0, explanation: "Careful recovery protects the machine, tool, part, and operator." }
     ]
   },
 
@@ -1039,7 +1039,7 @@ G76 X0.913 Z-0.85 K0.042 D0.0115 F0.0714</pre>
       },
       {
         type: "multiple-choice",
-        question: "In this Haas G76 format, the F word represents:", meta: { codes: ["G76"] },
+        question: "In this Haas G76 format, what does the F word represent?", meta: { codes: ["G76"] },
         options: [
           "The feed rate in IPR",
           "The thread lead (pitch)",
@@ -1127,7 +1127,7 @@ const PRINTING_LESSONS = [
         pairs: [
           { left: "G1", right: "Controlled move" },
           { left: "E", right: "Extrusion amount" },
-          { left: "F", right: "Feedrate" }
+          { left: "F", right: "Feed rate" }
         ],
         explanation: "Printer moves commonly use G1 for controlled motion, E for extrusion amount, and F for feed rate."
       },
@@ -1261,8 +1261,8 @@ M190 S60  ; wait while heating bed to at least 60 C</pre>
     quiz: [
       { type: "multiple-choice", question: "In this line, what does E0.036 control?\nG1 X82.4 Y104.2 E0.036 F1800", meta: { codes: ["G1"] }, options: ["Extrusion amount", "Bed temperature", "Fan speed", "Home position"], answer: 0, explanation: "E controls extruder movement. Here it tells the printer to push filament while moving." },
       { type: "multiple-choice", question: "Which line is most likely printing plastic?", options: ["G1 X20 Y20 E0.45 F1800", "G1 X20 Y20 F9000", "G28", "M104 S210"], answer: 0, explanation: "A G1 move with E increasing usually extrudes filament." },
-      { type: "multiple-choice", question: "A move with X and Y but no E is usually:", options: ["A travel move", "A bed heat command", "A fan command", "A program end"], answer: 0, explanation: "Travel moves reposition the nozzle without extruding." },
-      { type: "fill-blank", question: "Type the letter that usually controls extrusion amount:", answer: "E", hint: "Extruder axis", explanation: "E is the extruder axis value." },
+      { type: "multiple-choice", question: "What does a move with X and Y but no E usually represent?", options: ["A travel move", "A bed heat command", "A fan command", "A program end"], answer: 0, explanation: "Travel moves reposition the nozzle without extruding." },
+      { type: "fill-blank", question: "Type the letter that usually controls extrusion amount:", answer: "E", hint: "Extruder axis", explanation: "E represents extruder movement in this G-code." },
       { type: "multiple-choice", question: "What happens if too much filament is extruded?", options: ["Over-extrusion", "Bed leveling", "Homing", "Fan off only"], answer: 0, explanation: "Too much extrusion can cause blobs, rough walls, and dimensional errors." },
       { type: "multiple-choice", question: "What happens if too little filament is extruded?", options: ["Under-extrusion", "Automatic leveling", "Hotend waits", "Program rewind"], answer: 0, explanation: "Too little extrusion can leave gaps, weak walls, and poor layer bonding." },
       { type: "multiple-choice", question: "Which command is the normal controlled move used for extrusion?", options: ["G1", "G28", "M190", "M107"], answer: 0, explanation: "G1 is the normal controlled move command in printer G-code." },
@@ -1277,7 +1277,7 @@ M190 S60  ; wait while heating bed to at least 60 C</pre>
     unit: 2,
     unitName: "Extrusion & Motion",
     lesson: 2,
-    title: "Feedrate and Travel Moves",
+    title: "Feed Rate and Travel Moves",
     icon: "F",
     xp: 15,
     theory: `
@@ -1289,12 +1289,12 @@ G1 X40 Y40 E0.4 F1800 ; slower print move</pre>
     `,
     visual: "rapid-path",
     quiz: [
-      { type: "multiple-choice", question: "In most printer G-code, F1800 means:", options: ["1800 mm/min feed rate", "1800 degrees", "1800 grams", "Fan speed 1800"], answer: 0, explanation: "Printer feed rate is commonly expressed in millimeters per minute." },
+      { type: "multiple-choice", question: "In most printer G-code, what does F1800 mean?", options: ["1800 mm/min feed rate", "1800 degrees", "1800 grams", "Fan speed 1800"], answer: 0, explanation: "Printer feed rate is commonly expressed in millimeters per minute." },
       { type: "multiple-choice", question: "Which line is likely a fast travel move?", options: ["G1 X80 Y80 F9000", "G1 X80 Y80 E0.6 F1500", "M190 S60", "G28"], answer: 0, explanation: "A high-F move without E is usually travel." },
       { type: "multiple-choice", question: "Which value sets speed in this line?\nG1 X10 Y10 E0.2 F1200", meta: { codes: ["G1"] }, options: ["F1200", "X10", "Y10", "E0.2"], answer: 0, explanation: "F sets feed rate." },
       { type: "fill-blank", question: "Type the feed rate letter used in printer G-code:", answer: "F", hint: "Speed/feed word", explanation: "F is used for feed rate." },
       { type: "multiple-choice", question: "Why are print moves often slower than travel moves?", options: ["Plastic needs time to lay down cleanly", "G1 cannot move fast", "Fans turn off motion", "Homing is required"], answer: 0, explanation: "Printing too fast can hurt extrusion consistency and layer quality." },
-      { type: "multiple-choice", question: "A line with no E value usually means:", options: ["No extrusion on that move", "Bed heat only", "Fan full speed", "End print"], answer: 0, explanation: "Without E movement, the nozzle is usually just moving position." },
+      { type: "multiple-choice", question: "What does a line with no E value usually mean?", options: ["No extrusion on that move", "Bed heat only", "Fan full speed", "End print"], answer: 0, explanation: "Without E movement, the nozzle is usually changing position without extruding." },
       { type: "multiple-choice", question: "What is missing from this speed command?\nG1 X20 Y20 ___3000", meta: { codes: ["G1"] }, options: ["F", "M", "S", "T"], answer: 0, explanation: "F3000 sets the feed rate." },
       { type: "fill-blank", question: "Complete the fast travel feed rate:\nG1 X100 Y100 F____", meta: { codes: ["G1"] }, answer: "9000", hint: "Common fast travel example from lesson", explanation: "F9000 is the fast travel example used in this lesson." },
       { type: "multiple-choice", question: "If a travel move is too slow, what may increase?", options: ["Print time", "Bed size", "Nozzle diameter", "Firmware version"], answer: 0, explanation: "Slow travel moves can add unnecessary print time." },
@@ -1325,8 +1325,8 @@ M107      ; fan off</pre>
       { type: "multiple-choice", question: "In this Marlin-style M106 S255 example, what does S255 mean?", meta: { codes: ["M106"] }, options: ["Full selected/default fan speed", "Nozzle 255 C", "X position", "Layer number"], answer: 0, explanation: "M106 commonly scales S from 0 to 255 for the selected/default compatible fan. Named or generic fans may use firmware-specific commands." },
       { type: "fill-blank", question: "Type the command that turns the fan off:", answer: "M107", hint: "Fan off command", explanation: "M107 turns off the fan." },
       { type: "multiple-choice", question: "Which command is about half fan speed?", options: ["M106 S128", "M106 S255", "M107", "G28"], answer: 0, explanation: "S128 is roughly half of 255." },
-      { type: "multiple-choice", question: "Cooling is especially useful for:", options: ["Bridges and overhangs", "Changing Wi-Fi", "Homing X", "Ending the print"], answer: 0, explanation: "Cooling helps plastic solidify for bridges, overhangs, and small details." },
-      { type: "multiple-choice", question: "Too much cooling can sometimes cause:", options: ["Poor layer bonding", "Automatic bed leveling", "Nozzle homing", "Program comments"], answer: 0, explanation: "Some materials need heat to bond layers well." },
+      { type: "multiple-choice", question: "When is part cooling especially useful?", options: ["Bridges and overhangs", "Changing Wi-Fi", "Homing X", "Ending the print"], answer: 0, explanation: "Cooling helps plastic solidify for bridges, overhangs, and small details." },
+      { type: "multiple-choice", question: "What can too much part cooling cause?", options: ["Poor layer bonding", "Automatic bed leveling", "Nozzle homing", "Program comments"], answer: 0, explanation: "Some materials need heat to bond layers well." },
       { type: "fill-blank", question: "Complete full fan speed:\nM106 S___", meta: { codes: ["M106"] }, answer: "255", hint: "Maximum 8-bit fan value", explanation: "S255 is commonly full fan speed." },
       { type: "multiple-choice", question: "Which command changes fan speed without moving the nozzle?", options: ["M106 S200", "G1 X10 Y10", "G28", "M190 S60"], answer: 0, explanation: "M106 controls the fan; it does not move the axes." },
       { type: "multiple-choice", question: "What is missing from this fan command?\nM106 ___255", meta: { codes: ["M106"] }, options: ["S", "X", "E", "G"], answer: 0, explanation: "S is the parameter used for fan speed." }
@@ -1361,7 +1361,7 @@ G92 E0    ; reset extruder position</pre>
       { type: "multiple-choice", question: "Which Marlin command waits while the nozzle heats?", options: ["M109", "M104", "M140", "M107"], answer: 0, explanation: "M109 S waits while heating; M109 R also waits while cooling." },
       { type: "multiple-choice", question: "Which Marlin command waits while the bed heats?", options: ["M190", "M140", "M104", "G1"], answer: 0, explanation: "M190 S waits while heating; M190 R also waits while cooling." },
       { type: "fill-blank", question: "Reset extruder position:\nG92 ___0", meta: { codes: ["G92"] }, answer: "E", hint: "Extruder axis", explanation: "G92 E0 resets the extruder position to zero." },
-      { type: "multiple-choice", question: "A start sequence should avoid:", options: ["Moving into the bed before homing", "Waiting for heat", "Homing axes", "Setting temperatures"], answer: 0, explanation: "Motion before known positions can crash into the bed or frame." },
+      { type: "multiple-choice", question: "What should a start sequence avoid?", options: ["Moving into the bed before homing", "Waiting for heat", "Homing axes", "Setting temperatures"], answer: 0, explanation: "Motion before known positions can crash into the bed or frame." },
       { type: "multiple-choice", question: "What can vary between printers?", options: ["Start G-code order and probing commands", "The meaning of X and Y always", "Whether G-code has lines", "Whether comments exist"], answer: 0, explanation: "Printer firmware, probes, and slicer profiles affect the exact start sequence." }
     ]
   },
@@ -1393,7 +1393,7 @@ M84     ; disable motors</pre>
       { type: "multiple-choice", question: "What does M84 usually do?", meta: { codes: ["M84"] }, options: ["Disable motors", "Heat nozzle", "Probe bed", "Set fan speed"], answer: 0, explanation: "M84 disables steppers on Marlin-style printers. The machine can lose trusted position if an axis moves afterward, so re-home before later coordinate motion." },
       { type: "multiple-choice", question: "Which line is a parking move?", options: ["G1 X0 Y220 F3000", "M104 S0", "M107", "M84"], answer: 0, explanation: "G1 with X/Y coordinates moves the nozzle to a park position." },
       { type: "fill-blank", question: "Turn the bed off:\nM140 S___", meta: { codes: ["M140"] }, answer: "0", hint: "Zero target temperature", explanation: "S0 sets the bed target to zero/off." },
-      { type: "multiple-choice", question: "A safe end sequence should turn off:", options: ["Heaters", "The app theme", "Comments", "The slicer name"], answer: 0, explanation: "Heaters should be turned off at the end of a print." },
+      { type: "multiple-choice", question: "What should a safe end sequence turn off?", options: ["Heaters", "The app theme", "Comments", "The slicer name"], answer: 0, explanation: "Heaters should be turned off at the end of a print." },
       { type: "multiple-choice", question: "Which command is fan off, not heater off?", options: ["M107", "M104 S0", "M140 S0", "M190 S60"], answer: 0, explanation: "M107 turns off the fan." }
     ]
   },
@@ -1437,8 +1437,8 @@ G1 X30 Y40 E0.22 F1500
     icon: "Z",
     xp: 20,
     theory: `
-      <p>The first layer decides whether the print has a fair chance. Read the nozzle height,
-      line shape, and bed adhesion before changing random settings.</p>
+      <p>A good first layer gives the rest of the print a fair chance. Check the nozzle height,
+      line shape, and bed adhesion before changing settings at random.</p>
       <pre>G28
 G1 Z0.20 F600
 G1 X60 Y60 E0.8 F1200</pre>
@@ -1449,11 +1449,11 @@ G1 X60 Y60 E0.8 F1200</pre>
     visual: "lathe-axes",
     quiz: [
       { type: "multiple-choice", question: "Model first-layer move:\nG1 Z0.20 F600\nG1 X60 Y60 E0.8 F1200\n\nWhat does Z0.20 set here?", meta: { codes: ["G1"] }, options: ["Nozzle height above the bed", "Nozzle temperature", "Fan speed", "File name"], answer: 0, explanation: "Z controls height. A first layer often starts near 0.20 mm depending on setup." },
-      { type: "multiple-choice", question: "If first-layer lines are round and barely stick, the nozzle is likely:", options: ["Too high", "Too low", "At perfect height", "Printing too much fan only"], answer: 0, explanation: "A high nozzle lays plastic on top of the bed instead of pressing it down." },
-      { type: "multiple-choice", question: "If the nozzle scrapes and plastic barely comes out, the nozzle is likely:", options: ["Too low", "Too high", "Too cold only", "Using comments"], answer: 0, explanation: "A low nozzle can block flow by pressing too close to the bed." },
+      { type: "multiple-choice", question: "If first-layer lines are round and barely stick, what is the most likely problem?", options: ["The nozzle is too high", "The nozzle is too low", "The nozzle is at the correct height", "The fan speed is the only problem"], answer: 0, explanation: "A high nozzle lays plastic on top of the bed instead of pressing it down." },
+      { type: "multiple-choice", question: "If the nozzle scrapes and plastic barely comes out, what is the most likely problem?", options: ["The nozzle is too low", "The nozzle is too high", "The nozzle temperature is the only problem", "The line is a comment"], answer: 0, explanation: "A low nozzle can block flow by pressing too close to the bed." },
       { type: "multiple-choice", question: "Which line homes the printer before first-layer checks?\nG28\nG1 Z0.20 F600", options: ["G28", "G1 Z0.20 F600", "F600", "Z0.20"], answer: 0, explanation: "G28 homes the printer so it starts from known positions." },
       { type: "fill-blank", question: "Complete a safe first-layer height move:\nG1 ___0.20 F600", meta: { codes: ["G1"] }, answer: "Z", hint: "Vertical axis", explanation: "Z controls vertical nozzle height." },
-      { type: "multiple-choice", question: "A good first-layer line should look:", options: ["Slightly flattened and continuous", "Round and loose", "Transparent and scraped away", "Like only a comment"], answer: 0, explanation: "A slightly flattened line usually means the nozzle is close enough to bond." },
+      { type: "multiple-choice", question: "How should a good first-layer line look?", options: ["Slightly flattened and continuous", "Round and loose", "Transparent and scraped away", "Like only a comment"], answer: 0, explanation: "A slightly flattened line usually means the nozzle is close enough to bond." },
       { type: "multiple-choice", question: "What should you adjust first for a bad first layer height?", options: ["Z offset or bed leveling", "App theme", "Comment spelling", "End G-code only"], answer: 0, explanation: "Z offset and bed leveling directly affect first-layer height." },
       { type: "multiple-choice", question: "Which value is extrusion amount in this line?\nG1 X60 Y60 E0.8 F1200", meta: { codes: ["G1"] }, options: ["E0.8", "X60", "Y60", "F1200"], answer: 0, explanation: "E is the extruder amount in most printer G-code." },
       { type: "fill-blank", question: "Type the common command that homes all axes before checking the first layer:", answer: "G28", hint: "Home command", explanation: "G28 homes the printer axes." },
@@ -1485,8 +1485,8 @@ G1 E0.8 F1800 ; prime</pre>
       { type: "multiple-choice", question: "Which line is the travel move in this relative-extrusion pattern?\nM83\nG1 E-0.8 F1800\nG0 X90 Y90 F9000\nG1 E0.8 F1800", options: ["G0 X90 Y90 F9000", "G1 E-0.8 F1800", "G1 E0.8 F1800", "M83"], answer: 0, explanation: "G0 with X/Y moves the nozzle without E movement in this example." },
       { type: "multiple-choice", question: "With M83 relative extrusion active, which line primes after travel?", options: ["G1 E0.8 F1800", "G1 E-0.8 F1800", "G0 X90 Y90", "G28"], answer: 0, explanation: "In relative extrusion mode, a positive E delta pushes filament forward." },
       { type: "fill-blank", question: "With M83 active, complete a retract move:\nG1 E___0.8 F1800", meta: { codes: ["G1", "M83"] }, answer: "-", hint: "Relative pullback uses a negative E delta", explanation: "With M83 relative extrusion active, the minus sign commands E backward by 0.8." },
-      { type: "multiple-choice", question: "If retraction is too low, you may see:", options: ["Thin strings between parts", "Perfectly disabled motors", "Only better bed leveling", "No file comments"], answer: 0, explanation: "Not enough retraction can leave plastic oozing during travel." },
-      { type: "multiple-choice", question: "If retraction is too aggressive, it can cause:", options: ["Gaps or under-extrusion after travel", "Automatic perfect prints", "Comments to execute", "Bed temperature to vanish"], answer: 0, explanation: "Too much retraction can delay or reduce flow when printing resumes." },
+      { type: "multiple-choice", question: "What may happen if retraction is too low?", options: ["Thin strings may form between parts", "The motors may disable correctly", "Bed leveling may improve by itself", "File comments may disappear"], answer: 0, explanation: "Not enough retraction can leave plastic oozing during travel." },
+      { type: "multiple-choice", question: "What can happen if retraction is too aggressive?", options: ["Gaps or under-extrusion may appear after travel", "Every print may become perfect", "Comments may execute", "The bed temperature may disappear"], answer: 0, explanation: "Too much retraction can delay or reduce flow when printing resumes." },
       { type: "multiple-choice", question: "What else can increase stringing besides low retraction?", options: ["Nozzle temperature too high", "App settings tab", "More comments", "M30 only"], answer: 0, explanation: "Hotter plastic flows more easily and can ooze during travel." },
       { type: "fill-blank", question: "Type the axis letter used for extrusion and retraction amount:", answer: "E", hint: "Extruder axis", explanation: "E is the extruder axis in common printer G-code." },
       { type: "multiple-choice", question: "What is the correct sequence?", options: ["Retract, travel, prime", "Prime, home, end", "Fan, comment, M30", "Bed off, print, heat"], answer: 0, explanation: "Retraction pulls back before travel and primes before printing resumes." }
@@ -1548,9 +1548,9 @@ M106 S180 ; part cooling fan</pre>
       { type: "multiple-choice", question: "Which command sets a bed target without waiting?", options: ["M140 S70", "M104 S215", "G1 E1", "M84"], answer: 0, explanation: "M140 sets the bed target and continues." },
       { type: "multiple-choice", question: "Which command changes part cooling fan speed?", options: ["M106 S180", "M104 S215", "G28", "G92 E0"], answer: 0, explanation: "M106 controls fan speed on many printers." },
       { type: "fill-blank", question: "Complete nozzle target 215 C:\nM104 S___", meta: { codes: ["M104"] }, answer: "215", hint: "Temperature target", explanation: "S215 is the target temperature value." },
-      { type: "multiple-choice", question: "PLA often prints best with:", options: ["More part cooling than ABS", "Nozzle always off", "No extrusion", "Only G28"], answer: 0, explanation: "PLA usually benefits from part cooling, though exact settings vary." },
-      { type: "multiple-choice", question: "PETG often needs caution with:", options: ["Too much fan and poor bed adhesion", "M30 only", "No bed heat ever", "Tool offsets"], answer: 0, explanation: "PETG commonly needs controlled cooling and good bed adhesion." },
-      { type: "multiple-choice", question: "ABS commonly benefits from:", options: ["Enclosure and controlled cooling", "Maximum fan always", "Cold bed", "Nozzle off"], answer: 0, explanation: "ABS is sensitive to drafts and shrinkage." },
+      { type: "multiple-choice", question: "Compared with ABS, what does PLA often use more of?", options: ["Part cooling", "Nozzle shutdowns", "Moves without extrusion", "G28 commands"], answer: 0, explanation: "PLA usually benefits from part cooling, though exact settings vary." },
+      { type: "multiple-choice", question: "What should you watch when tuning PETG?", options: ["Too much fan and poor bed adhesion", "M30 commands only", "A bed that never heats", "CNC tool offsets"], answer: 0, explanation: "PETG commonly needs controlled cooling and good bed adhesion." },
+      { type: "multiple-choice", question: "What commonly helps ABS print successfully?", options: ["An enclosure and controlled cooling", "Maximum fan speed at all times", "A cold bed", "A disabled nozzle heater"], answer: 0, explanation: "ABS is sensitive to drafts and shrinkage." },
       { type: "fill-blank", question: "Complete bed target 70 C:\nM140 S___", meta: { codes: ["M140"] }, answer: "70", hint: "Bed target", explanation: "S70 sets the bed target to 70 C." },
       { type: "multiple-choice", question: "Why avoid copying material settings blindly?", options: ["Printer, filament, and environment vary", "All G-code is identical", "Comments set temperature", "G28 changes plastic type"], answer: 0, explanation: "Profiles are starting points and need verification on the actual machine." }
     ]
@@ -1582,8 +1582,8 @@ G1 X70 Y80 E0.18 F900</pre>
       { type: "multiple-choice", question: "Why slow bridge speed?", options: ["To help strands stay controlled across a gap", "To erase comments", "To heat the bed faster", "To disable extrusion"], answer: 0, explanation: "Bridge speed affects sag and strand placement." },
       { type: "multiple-choice", question: "Which command sets the selected/default fan to full speed in this 0-255 example?", options: ["M106 S255", "G1 X70", "G28", "M140 S60"], answer: 0, explanation: "M106 S255 is commonly full speed for the selected/default compatible fan. Named fans may use firmware-specific commands." },
       { type: "fill-blank", question: "Complete a support comment:\n;TYPE:____", answer: "SUPPORT", hint: "Support label", explanation: "Slicers may use ;TYPE:SUPPORT to label support paths." },
-      { type: "multiple-choice", question: "Supports are mainly used for:", options: ["Steep overhangs that cannot print in air", "Changing filament brand", "Ending the print", "Setting the clock"], answer: 0, explanation: "Supports provide temporary material under overhangs." },
-      { type: "multiple-choice", question: "Too much support can cause:", options: ["Hard removal and rough surfaces", "Automatic calibration", "No need for bed heat", "Comments to execute"], answer: 0, explanation: "Support settings affect cleanup and surface quality." },
+      { type: "multiple-choice", question: "What are supports mainly used for?", options: ["Steep overhangs that cannot print in open air", "Changing the filament brand", "Ending the print", "Setting the clock"], answer: 0, explanation: "Supports provide temporary material under overhangs." },
+      { type: "multiple-choice", question: "What can too much support material cause?", options: ["Difficult removal and rough surfaces", "Automatic calibration", "No need for bed heat", "Comments to execute"], answer: 0, explanation: "Support settings affect cleanup and surface quality." },
       { type: "multiple-choice", question: "Which line is still only a comment?", options: [";TYPE:BRIDGE", "G1 X70 Y80 E0.18", "M106 S255", "G28"], answer: 0, explanation: "The semicolon makes it a comment for humans." },
       { type: "fill-blank", question: "Complete full fan speed:\nM106 S___", meta: { codes: ["M106"] }, answer: "255", hint: "Maximum common fan value", explanation: "S255 is commonly full speed for 8-bit fan control." },
       { type: "multiple-choice", question: "What should you inspect when supports fail?", options: ["Overhang angle, cooling, speed, and support distance", "Only app theme", "Only XP", "Only program name"], answer: 0, explanation: "Support success depends on geometry and slicer settings." }
@@ -1613,7 +1613,7 @@ M486 S2   ; object cancel support on some setups</pre>
       { type: "multiple-choice", question: "What does G29 often mean on many Marlin setups?", meta: { codes: ["G29"] }, options: ["Bed leveling/probing", "Fan off", "Disable motors", "Extrude 29 mm"], answer: 0, explanation: "G29 is often used for probing or leveling in Marlin-style workflows." },
       { type: "multiple-choice", question: "What should you check when a command is rejected?", options: ["Printer firmware docs", "App background", "Only slicer logo", "Only XP total"], answer: 0, explanation: "Firmware documentation tells you which commands and macros are supported." },
       { type: "fill-blank", question: "Complete the common Marlin probing command:\n___", answer: "G29", hint: "Bed leveling/probing", explanation: "G29 is commonly bed probing on many Marlin setups." },
-      { type: "multiple-choice", question: "A slicer profile should match:", options: ["The printer firmware flavor", "Only the phone browser", "Only comment color", "Only unit number"], answer: 0, explanation: "The slicer needs to emit commands the printer understands." },
+      { type: "multiple-choice", question: "What should a slicer profile match?", options: ["The printer's firmware flavor", "Only the phone browser", "Only the comment color", "Only the unit number"], answer: 0, explanation: "The slicer needs to emit commands the printer understands." },
       { type: "multiple-choice", question: "Which command is a normal motion command across many flavors?", options: ["G1 X10 Y10", "BED_MESH_CALIBRATE", "Vendor macro only", "Unknown macro"], answer: 0, explanation: "G1 movement is widely supported." },
       { type: "multiple-choice", question: "What is the safe assumption about advanced commands?", options: ["Verify support before using them", "They always work everywhere", "They are only comments", "They never affect motion"], answer: 0, explanation: "Advanced commands may depend on firmware options." },
       { type: "fill-blank", question: "Complete the idea: firmware flavor affects command ____.", answer: "support", hint: "What commands are available", explanation: "Firmware flavor affects command support and behavior." },
@@ -1650,7 +1650,7 @@ M600 ; filament change on many printers</pre>
       { type: "multiple-choice", question: "Which line is a purge move?", options: ["G1 E12 F300", "T0", "M600", "; select tool"], answer: 0, explanation: "A positive E move extrudes/purges material." },
       { type: "multiple-choice", question: "What is a purge tower for?", options: ["Cleaning/priming color changes away from the part", "Bed leveling only", "Cooling the hotend off", "Setting X zero"], answer: 0, explanation: "A purge tower handles material/color transitions." },
       { type: "fill-blank", question: "Complete a common filament change command:\nM___", meta: { codes: ["M600"] }, answer: "600", hint: "Filament change", explanation: "M600 is commonly used for filament change where supported." },
-      { type: "multiple-choice", question: "Before using M600, verify:", meta: { codes: ["M600"] }, options: ["Firmware supports it", "The app is light mode", "The file has no comments", "X is always zero"], answer: 0, explanation: "Unsupported filament-change commands can fail or be ignored." }
+      { type: "multiple-choice", question: "What should you verify before using M600?", meta: { codes: ["M600"] }, options: ["The firmware supports it", "The app uses light mode", "The file has no comments", "X is always zero"], answer: 0, explanation: "Unsupported filament-change commands can fail or be ignored." }
     ]
   },
 
@@ -1716,7 +1716,7 @@ Speed test: tune motion quality</pre>
       { type: "multiple-choice", question: "If stringing improves after changing temperature and retraction together, what is the problem?", options: ["You do not know which change helped", "The print cannot be used", "G-code stopped working", "The bed changed size"], answer: 0, explanation: "Multiple simultaneous changes hide the cause." },
       { type: "multiple-choice", question: "Which test best targets ringing or motion quality?", options: ["Speed/acceleration test", "Filament color test", "Comment test", "M30 test"], answer: 0, explanation: "Motion quality is affected by speed and acceleration." },
       { type: "fill-blank", question: "A retraction tower mainly checks for ____.", answer: "stringing", hint: "Thin plastic hairs", explanation: "Retraction tuning targets stringing and restart artifacts." },
-      { type: "multiple-choice", question: "The goal of slicer tuning is:", options: ["Predictable print quality through measured changes", "Random trial and error forever", "More tabs", "Ignoring material profiles"], answer: 0, explanation: "Good tuning makes results more predictable." }
+      { type: "multiple-choice", question: "What is the goal of slicer tuning?", options: ["Predictable print quality through measured changes", "Random trial and error forever", "More tabs", "Ignoring material profiles"], answer: 0, explanation: "Good tuning makes results more predictable." }
     ]
   }
 ];
@@ -1792,7 +1792,7 @@ const LESSON_QUESTION_EXPANSIONS = {
       type: "fill-blank",
       question: "Type the letter used for feed rate in this block:\nG01 X1.000 Z-0.250 ___0.010",
       answer: "F",
-      hint: "Feedrate word",
+      hint: "Feed rate word",
       explanation: "F is the feed rate word. It tells the machine how fast to make the controlled move."
     },
     {
@@ -1820,7 +1820,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     },
     {
       type: "multiple-choice",
-      question: "On most lathes in diameter mode, X2.000 means:",
+      question: "On most lathes in diameter mode, what does X2.000 mean?",
       options: ["2.000 inch diameter", "2.000 inch radius", "2.000 inches in Z", "2.000 RPM"],
       answer: 0,
       explanation: "Lathe X values commonly represent diameter, not radius."
@@ -1848,7 +1848,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     },
     {
       type: "multiple-choice",
-      question: "On the lathe convention taught here, X and Z positions are measured from:",
+      question: "On the lathe convention taught here, from where are X and Z positions measured?",
       options: ["The previous line", "The active work zero", "The tool number", "The feed override knob"],
       answer: 1,
       explanation: "X and Z are absolute coordinates from the active work zero; U and W are incremental distances."
@@ -1858,7 +1858,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     {
       type: "multiple-choice",
       question: "What does the O-number usually identify?\nO1001",
-      options: ["Program number", "Spindle speed", "Feedrate", "Tool offset"],
+      options: ["Program number", "Spindle speed", "Feed rate", "Tool offset"],
       answer: 0,
       explanation: "The O-number identifies the program."
     },
@@ -1944,7 +1944,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     {
       type: "multiple-choice",
       question: "If G00 is modal, what happens on the next line if no new motion code is given?",
-      options: ["G00 remains active", "The program ends", "The spindle reverses", "Feedrate doubles"],
+      options: ["G00 remains active", "The program ends", "The spindle reverses", "Feed rate doubles"],
       answer: 0,
       explanation: "Modal motion codes remain active until another motion code changes them."
     },
@@ -2083,7 +2083,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     {
       type: "multiple-choice",
       question: "In G96 S400 M03, what does S400 represent?", meta: { codes: ["G96", "M03"] },
-      options: ["Surface speed target", "X position", "Feedrate", "Program number"],
+      options: ["Surface speed target", "X position", "Feed rate", "Program number"],
       answer: 0,
       explanation: "With G96, S is the surface speed target."
     },
@@ -2215,7 +2215,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     {
       type: "multiple-choice",
       question: "In T0101, what does the first pair usually identify?",
-      options: ["Tool station", "Feedrate", "Program number", "Coolant state"],
+      options: ["Tool station", "Feed rate", "Program number", "Coolant state"],
       answer: 0,
       explanation: "The first pair commonly identifies the turret station or tool number."
     },
@@ -2359,7 +2359,7 @@ const LESSON_QUESTION_EXPANSIONS = {
     {
       type: "multiple-choice",
       question: "What does F1800 usually mean in printer G-code?",
-      options: ["Feedrate in mm/min", "Fan at 1800%", "Nozzle at 1800 C", "File number"],
+      options: ["Feed rate in mm/min", "Fan at 1800%", "Nozzle at 1800 C", "File number"],
       answer: 0,
       explanation: "F sets feed rate, usually in millimeters per minute for printer G-code."
     },
@@ -2545,15 +2545,15 @@ Object.entries(LESSON_QUESTION_EXPANSIONS).forEach(([lessonId, additions]) => {
     addQuestion('u1-l1', {
       id: 'u1-l1-q8',
       type: 'multiple-choice',
-      question: 'Correction check:\nX2.000 Z0.100\n\nWhat is missing from this code?', meta: { codes: ["G00", "G01"] },
+      question: 'This block is shown without the lines that come before it:\nX2.000 Z0.100\n\nWhich information is not shown in this block?', meta: { codes: ["G00", "G01"] },
       options: [
-        'It has coordinates but no clear motion word in the block',
-        'It has too many semicolons',
-        'It starts the spindle backwards',
-        'It changes the tool offset'
+        'The active motion mode, such as G00 or G01',
+        'The destination coordinates',
+        'The X position',
+        'The Z position'
       ],
       answer: 0,
-      explanation: 'The line only shows coordinates. A beginner should learn to include or recognize the active motion word, such as G00 for rapid or G01 for feed.'
+      explanation: 'X and Z show the destination, but this block does not show the active motion mode. A control may use a motion mode set on an earlier line, so you must read the surrounding program to know whether this is rapid, feed, or another type of move.'
     });
 
     updateQuestion('u1-l2', 'u1-l2-q3', {

@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.58.0 | Build 2026.07.27.01';
+const APP_BUILD = 'MGP | Version v2.58.1 | Build 2026.07.28.01';
 
 // ─── ACCESS GATE ────────────────────────────────────────────
 const AccessGate = {
@@ -403,7 +403,7 @@ const Visuals = {
             <text x="10" y="72" class="va-label">Line No.</text>
             <text x="60" y="72" class="va-label">Motion</text>
             <text x="110" y="72" class="va-label">Coordinates</text>
-            <text x="248" y="72" class="va-label">Feedrate</text>
+            <text x="248" y="72" class="va-label">Feed rate</text>
             <!-- tick lines -->
             <line x1="22" y1="44" x2="22" y2="60" class="va-line"/>
             <line x1="75" y1="44" x2="75" y2="60" class="va-line"/>
@@ -663,7 +663,7 @@ const PRINTING_REF_DATA = [
     category: "Motion",
     codes: [
       { code: "G0", name: "Rapid Move", body: `<p>Fast positioning move. Printers often treat G0 like G1 depending on firmware.</p><pre>G0 X100 Y100</pre>` },
-      { code: "G1", name: "Controlled Move", body: `<p>Main print move. Coordinates move the nozzle; E controls extrusion; F controls feedrate.</p><pre>G1 X82.4 Y104.2 E0.036 F1800</pre>` },
+      { code: "G1", name: "Controlled Move", body: `<p>Main print move. Coordinates move the nozzle; E controls extrusion; F controls feed rate.</p><pre>G1 X82.4 Y104.2 E0.036 F1800</pre>` },
       { code: "G28", name: "Home Axes", body: `<p>Homes one or more axes to known machine positions.</p><pre>G28 ; home all axes</pre>` },
       { code: "G29", name: "Bed Leveling", body: `<p>Runs bed probing or leveling on many firmware setups. Behavior varies by printer firmware.</p>` },
     ]
@@ -1860,10 +1860,10 @@ const TODAYS_LINE_CATALOG = {
     { lessonId: 'u9-l1', line: 'G81 X1.000 Y0.500 Z-0.750 R0.100 F5.0', prompt: 'Write the taught G81 drilling line at X1.000 Y0.500, Z-0.750, R0.100, and F5.0.', explanation: 'G81 calls the simple drilling cycle with the taught hole location, depth, retract plane, and feed.' }
   ],
   printing: [
-    { lessonId: 'p-u1-l1', line: 'G1 X82.4 Y104.2 E0.036 F1800', prompt: 'Write the taught printer move to X82.4 Y104.2 with E0.036 and F1800.', explanation: 'G1 commands the controlled move; X/Y locate it, E supplies extrusion, and F sets feedrate.' },
+    { lessonId: 'p-u1-l1', line: 'G1 X82.4 Y104.2 E0.036 F1800', prompt: 'Write the taught printer move to X82.4 Y104.2 with E0.036 and F1800.', explanation: 'G1 commands the controlled move; X/Y locate it, E supplies extrusion, and F sets the feed rate.' },
     { lessonId: 'p-u1-l2', line: 'G28', prompt: 'Write the taught command that homes all printer axes.', explanation: 'G28 homes the configured axes so the printer can establish known positions.' },
     { lessonId: 'p-u1-l3', line: 'M104 S210', prompt: 'Write the taught Marlin line that sets the nozzle to 210 C without waiting.', explanation: 'M104 sets the hotend target and continues without waiting for the target temperature.' },
-    { lessonId: 'p-u2-l2', line: 'G1 X40 Y40 F9000', prompt: 'Write the taught fast travel move to X40 Y40 at F9000.', explanation: 'This G1 line moves at the taught travel feedrate without an E extrusion word.' },
+    { lessonId: 'p-u2-l2', line: 'G1 X40 Y40 F9000', prompt: 'Write the taught fast travel move to X40 Y40 at F9000.', explanation: 'This G1 line uses the taught travel feed rate without an E word, so it moves without extruding.' },
     { lessonId: 'p-u2-l3', line: 'M107', prompt: 'Write the taught command that turns the part-cooling fan off.', explanation: 'M107 turns off the part-cooling fan in the Marlin scope used by the lesson.' },
     { lessonId: 'p-u3-l1', line: 'G92 E0', prompt: 'Write the taught start-code line that resets the extruder position to zero.', explanation: 'G92 E0 declares the current extruder position as zero.' },
     { lessonId: 'p-u3-l2', line: 'M104 S0', prompt: 'Write the taught end-code line that sets the hotend target to zero.', explanation: 'M104 S0 turns off the hotend target without waiting.' }
@@ -2687,7 +2687,7 @@ function getMotionDifferenceNote(expected, chosen) {
     return 'G00 is fast positioning without cutting. G01 is a controlled feed move.';
   }
   if ((expected === 'G01' || expected === 'G1') && (chosen === 'G00' || chosen === 'G0')) {
-    return 'G01 requires feedrate and is for cutting. G00 skips feedrate and is for positioning.';
+    return 'G01 uses a feed rate for controlled cutting. G00 does not use the programmed feed rate; it is for positioning.';
   }
   if ((expected === 'G02' || expected === 'G2') && (chosen === 'G03' || chosen === 'G3')) {
     return 'G02 is clockwise arc; G03 is counter-clockwise.';
@@ -3457,7 +3457,7 @@ const ROADMAP = [
 
 const ROADMAP_LANES = [
   { id: 'lane-a', title: 'App earns', body: 'CNC tutorial app is public. Affiliate links to tooling, a cheat-sheet PDF, or ad-free paid version funds Phase 5.' },
-  { id: 'lane-b', title: 'Teach in public', body: 'Post short "what this G-code does" clips. You are a peer-learner, not a guru — other learners trust that.' },
+  { id: 'lane-b', title: 'Teach in public', body: 'Post short clips that explain what each G-code does. You are a fellow learner, not a guru, and that perspective can build trust.' },
   { id: 'lane-c', title: 'Local parts', body: 'Once Phase 5 lands, real parts from a home shop.' },
 ];
 
