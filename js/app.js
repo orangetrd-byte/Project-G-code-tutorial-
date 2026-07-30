@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.58.1 | Build 2026.07.28.01';
+const APP_BUILD = 'MGP | Version v2.58.2 | Build 2026.07.30.01';
 
 // ─── ACCESS GATE ────────────────────────────────────────────
 const AccessGate = {
@@ -1220,7 +1220,7 @@ function initTrackSwitcher() {
 
 function showScreen(id) {
   stopSpeaking();
-  if (!State.setupComplete && id !== 'screen-settings') id = 'screen-settings';
+  if (!State.setupComplete && !['screen-settings', 'screen-legal'].includes(id)) id = 'screen-settings';
   $$('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
   if (el) { el.classList.add('active'); el.scrollTop = 0; }
@@ -1341,6 +1341,14 @@ function initSettings() {
     renderProgress();
     showScreen('screen-home');
     showToast(t('startLearning'), 'success');
+  });
+
+  $('#legal-link-btn')?.addEventListener('click', () => {
+    showScreen('screen-legal');
+  });
+
+  $('#legal-back-btn')?.addEventListener('click', () => {
+    showScreen('screen-settings');
   });
 
   $('#reset-data-btn')?.addEventListener('click', () => {

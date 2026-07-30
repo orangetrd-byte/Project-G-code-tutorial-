@@ -297,6 +297,7 @@ function validateCurriculum(api) {
   const lessonIds = new Set();
   const questionIds = new Set();
   const validTypes = new Set(['multiple-choice', 'true-false', 'fill-blank', 'matching']);
+  const nonDomainDistractor = /\b(?:app|theme|wi-?fi|xp|phone|browser|logo|clock|file name|program name|screen brightness|keyboard|tabs|comment color|comments? (?:execute|run|cut|move|heat|home))\b/i;
 
   Object.entries(api.TRACKS).forEach(([trackId, track]) => {
     track.lessons.forEach(lesson => {
@@ -331,6 +332,13 @@ function validateCurriculum(api) {
           assert.ok(Array.isArray(question.options) && question.options.length >= 2, `${question.id} needs choices`);
           assert.ok(Number.isInteger(question.answer), `${question.id} needs a numeric choice answer`);
           assert.ok(question.answer >= 0 && question.answer < question.options.length, `${question.id} answer is out of range`);
+          assert.match(String(question.question), /\?/, `${question.id} multiple-choice prompt must be a complete question`);
+          const normalizedOptions = question.options.map(option => String(option).trim().toLowerCase());
+          assert.ok(normalizedOptions.every(Boolean), `${question.id} has a blank choice`);
+          assert.equal(new Set(normalizedOptions).size, normalizedOptions.length, `${question.id} has duplicate choices`);
+          question.options.forEach((option, index) => {
+            if (index !== question.answer) assert.doesNotMatch(String(option), nonDomainDistractor, `${question.id} has a non-domain distractor: ${option}`);
+          });
         }
         if (question.type === 'true-false') assert.equal(typeof question.answer, 'boolean', `${question.id} needs a boolean answer`);
         if (question.type === 'fill-blank') assert.equal(typeof question.answer, 'string', `${question.id} needs a text answer`);

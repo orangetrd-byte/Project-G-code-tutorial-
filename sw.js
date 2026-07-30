@@ -4,7 +4,7 @@
 //  Bump CACHE_VERSION when deploying updates.
 // ============================================================
 
-const BUILD_VERSION = '2026.07.28.01';
+const BUILD_VERSION = '2026.07.30.01';
 const CACHE_VERSION = 'pgct-' + BUILD_VERSION;
 const CACHE_NAME = CACHE_VERSION;
 
@@ -25,6 +25,7 @@ const PRECACHE_ASSETS = [
   './data/reference/operation-sheet-symbols.json',
   './data/reference/marlin-3d-printer-g-codes.json',
   './data/reference/marlin-3d-printer-m-codes.json',
+  './LEGAL.md',
   './icons/icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',

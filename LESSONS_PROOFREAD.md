@@ -220,7 +220,7 @@ A setup block makes required modal state explicit before motion. Use the exact b
   - Explanation: Modal codes persist between programs on many controls. A lathe safety block makes the plane, units, feed mode, canned-cycle state, and compensation state explicit before motion starts.
 - Q3 [fill-blank]: Write the M-code that turns the spindle ON clockwise:
   - Correct answer: M03
-  - Hint: Clockwise is conventional for most turning operations.
+  - Hint: M03 commands forward spindle rotation in this example; verify the required direction for the tool, spindle, and setup.
   - Explanation: M03 = spindle on clockwise. M04 = counterclockwise. M05 = spindle off.
 
 ---
@@ -276,7 +276,7 @@ No fixed clearance is universally safe. Establish clearance from the actual stoc
   - The F word
   - Dedicated rapid override
   - Spindle override
-  - The comment text
+  - Feed override
   - Correct answer: 1
   - Explanation: The F word does not set G00 speed. Many controls provide a separate rapid override, but its behavior must be verified in the machine manual.
 - Q3 [fill-blank]: Worked example: Move to X2.500 at the example coordinate Z0.100. (not a universal safe position). Complete the block:
@@ -741,7 +741,7 @@ ___
   - Explanation: Wear offsets are meant for small tool-position corrections.
 - Q5 [multiple-choice]: Why make one correction at a time?
   - So you know what changed the result
-  - Because G-code cannot have comments
+  - Because wear offsets reset after each block
   - Because M03 only works once
   - To avoid using G54
   - Correct answer: 0
@@ -769,7 +769,7 @@ ____ offset
   - Move the boring cut farther from the spindle centerline
   - Lower spindle speed only
   - Cancel M30
-  - Remove all comments
+  - Change the program number
   - Correct answer: 0
   - Explanation: A larger bore requires the cutting edge to machine farther from the spindle centerline. The commanded sign depends on the tool orientation and control.
 - Q10 [multiple-choice]: What should you do after making a wear offset change?
@@ -812,7 +812,7 @@ A wear entry leaves the saved program geometry unchanged but affects subsequent 
   - Program edit
   - Spindle override
   - Coolant off
-  - Comment only
+  - Tool wear offset only
   - Correct answer: 0
   - Explanation: If the geometry or path is wrong, edit the program.
 - Q3 [fill-blank]: If the correction is a small tool-position change, use a ____ offset.
@@ -823,14 +823,14 @@ A wear entry leaves the saved program geometry unchanged but affects subsequent 
   - Program edit
   - Temporary single-block mode
   - Measuring the part
-  - Reading a comment
+  - Changing rapid override
   - Correct answer: 0
   - Explanation: A saved program edit changes future runs.
 - Q5 [multiple-choice]: A chamfer is missing entirely. What kind of fix is needed?
   - Program or toolpath edit
-  - Only X wear
-  - Only spindle override
-  - Only coolant
+  - An X wear adjustment
+  - A spindle-override change
+  - A coolant-state change
   - Correct answer: 0
   - Explanation: Missing geometry requires a toolpath or program edit.
 - Q6 [multiple-choice]: Which is a bad habit?
@@ -846,9 +846,9 @@ A wear entry leaves the saved program geometry unchanged but affects subsequent 
   - Explanation: Program edits change the path the tool follows.
 - Q8 [multiple-choice]: Before editing a proven program, what should you confirm?
   - The measured problem is real
-  - The app theme
-  - The icon size
-  - The operator name only
+  - The active tool number only
+  - The program number only
+  - The previous part count only
   - Correct answer: 0
   - Explanation: Confirm the issue before changing a program that may already be correct.
 - Q9 [multiple-choice]: Which correction is most likely an offset change?
@@ -890,7 +890,7 @@ These controls can support prove-out, but they do not make a path safe. Graphics
 
 - Q1 [multiple-choice]: What does single block do?
   - Runs one block at a time
-  - Deletes comments
+  - Changes the feed mode
   - Turns coolant on
   - Changes G54
   - Correct answer: 0
@@ -915,23 +915,23 @@ These controls can support prove-out, but they do not make a path safe. Graphics
   - Explanation: Single block mode runs one program block at a time.
 - Q5 [multiple-choice]: When should you be most cautious?
   - After a program edit
-  - After reading a comment
-  - After opening settings
-  - After changing app theme
+  - After reviewing an unchanged comment
+  - After recording offsets without changing them
+  - After completing a routine inspection
   - Correct answer: 0
   - Explanation: Edited lines need careful prove-out.
 - Q6 [multiple-choice]: What should you watch during the first move?
   - Clearance and direction
-  - Only the clock
-  - Only the part color
-  - Only the logo
+  - Final surface finish
+  - Program-end position
+  - Part-count display
   - Correct answer: 0
   - Explanation: Verify that the tool moves in the expected direction with safe clearance.
 - Q7 [multiple-choice]: What does Dry Run do on the referenced Haas control?
   - Moves the machine using selected dry-run rates to help check a program
   - Measures final part size
   - Replaces all offsets
-  - Turns comments into code
+  - Guarantees that every move is safe
   - Correct answer: 0
   - Explanation: Dry Run changes how rapid and feed motion rates are executed, but it still moves axes and may perform tool changes. It is a check mode, not a guarantee of safety.
 - Q8 [fill-blank]: Type the control mode: ____ Block ON
@@ -940,9 +940,9 @@ These controls can support prove-out, but they do not make a path safe. Graphics
   - Explanation: Single Block ON is used for careful prove-out.
 - Q9 [multiple-choice]: Which move deserves extra attention?
   - The first rapid move after a tool change
-  - A blank comment
-  - The app build number
-  - A finished review
+  - A repeated feed move already proven
+  - A program-end block
+  - A non-executable comment
   - Correct answer: 0
   - Explanation: After a tool change, the active tool, offset, orientation, and full clearance path must all be verified before rapid motion.
 - Q10 [multiple-choice]: What is a safe prove-out mindset?
@@ -1011,7 +1011,7 @@ ___ ; metric units
 - Q6 [multiple-choice]: What will likely happen if a program written in inches runs in metric mode?
   - The machine will move the wrong distances
   - The control will convert it perfectly
-  - Only the comments will change
+  - Only the feed mode will change
   - M03 will be disabled
   - Correct answer: 0
   - Explanation: The control reads numbers in the active unit mode; the wrong units can produce dangerously incorrect moves.
@@ -1025,15 +1025,15 @@ ___ ; metric units
 - Q8 [multiple-choice]: Which value changes meaning between G20 and G21?
   - X2.000
   - M30
-  - Program comments
-  - Tool name text
+  - M03
+  - T0101
   - Correct answer: 0
   - Explanation: Coordinate values are interpreted in the active unit mode.
-- Q9 [multiple-choice]: Before running an unfamiliar program, what should you check?
+- Q9 [multiple-choice]: Which setting determines how coordinate values are interpreted in an unfamiliar program?
   - Unit mode
-  - Phone brightness
-  - App theme
-  - File color
+  - Optional-stop setting
+  - Spindle direction
+  - Coolant state
   - Correct answer: 0
   - Explanation: Unit mode is a basic safety check before trusting coordinates.
 - Q10 [multiple-choice]: Which pair is correct?
@@ -1070,8 +1070,8 @@ This tutorial's turning examples are lathe-based, so they use `G99` for feed per
 - Q1 [multiple-choice]: What does feed mode control?
   - What the F value means
   - Tool number only
-  - Comment style
-  - Program name
+  - Work-offset selection
+  - Spindle direction
   - Correct answer: 0
   - Explanation: Feed mode changes how the control interprets feed rate.
 - Q2 [multiple-choice]: What does G99 mean on Haas and Fanuc lathes?
@@ -1130,7 +1130,7 @@ ___ F5.0
   - F
   - M30
   - O number
-  - Comment text
+  - T word
   - Correct answer: 0
   - Explanation: Feed mode changes how the F word is interpreted.
 
@@ -1158,16 +1158,16 @@ A safe program does not rely on an unknown state. It declares the modes it needs
 
 - Q1 [multiple-choice]: What is modal state?
   - Codes that stay active until changed
-  - Only comments
-  - Only the current tool name
-  - The app progress screen
+  - Codes that apply to one block only
+  - The current tool geometry value
+  - The sequence-number order
   - Correct answer: 0
   - Explanation: Modal codes remain active until another code changes or cancels them.
 - Q2 [multiple-choice]: Which is a modal setting?
   - G20 or G21 units
-  - A comment only
-  - Program title text
-  - Operator name
+  - An N-word sequence number
+  - An O-number identifier
+  - A tool-description label
   - Correct answer: 0
   - Explanation: Unit mode is modal.
 - Q3 [multiple-choice]: Why use a setup block?
@@ -1190,9 +1190,9 @@ A safe program does not rely on an unknown state. It declares the modes it needs
   - Explanation: Modal codes stay active until changed or canceled.
 - Q6 [multiple-choice]: Before rapid motion, what should be known?
   - Units, offset, and motion state
-  - Only phone battery
-  - Only app theme
-  - Only the comment
+  - Spindle speed alone
+  - Coolant state alone
+  - Program number alone
   - Correct answer: 0
   - Explanation: Motion is only safe when the active modes and offsets are known.
 - Q7 [multiple-choice]: Which code often cancels cutter compensation?
@@ -1204,9 +1204,9 @@ A safe program does not rely on an unknown state. It declares the modes it needs
   - Explanation: G40 cancels cutter compensation on many controls.
 - Q8 [multiple-choice]: What makes hidden modal state dangerous?
   - The machine may interpret the next block differently than expected
-  - It changes the screen color
+  - It changes only the position display
   - It removes all tools
-  - It deletes comments
+  - It resets every offset
   - Correct answer: 0
   - Explanation: An unknown modal state can make a correct-looking block behave incorrectly.
 - Q9 [multiple-choice]: Which habit improves safety?
@@ -1219,7 +1219,7 @@ A safe program does not rely on an unknown state. It declares the modes it needs
 - Q10 [multiple-choice]: What makes a good setup line?
   - Clear and intentional choices
   - Random choices
-  - Instructions hidden in comments
+  - A line that relies on retained modes
   - Only M30
   - Correct answer: 0
   - Explanation: Setup lines should make the program's assumptions clear.
@@ -1288,7 +1288,7 @@ ___ ; coolant off
 - Q7 [multiple-choice]: Why might a program use M01 after a roughing pass?
   - To let the operator inspect before continuing
   - To change inch to metric
-  - To make comments execute
+  - To cancel the active work offset
   - To cancel all tools
   - Correct answer: 0
   - Explanation: Optional stops are useful inspection checkpoints.
@@ -1304,7 +1304,7 @@ G01 Z-1.000 F0.012
 - Q9 [multiple-choice]: Why verify shop-specific M-codes?
   - Some machines customize auxiliary functions
   - All controls ignore M-codes
-  - M-codes only work in apps
+  - Every machine assigns identical auxiliary functions
   - M08 always means spindle off
   - Correct answer: 0
   - Explanation: Auxiliary functions can vary by machine builder and options.
@@ -1434,8 +1434,8 @@ ___
   - Explanation: M99 is the return code in many subprogram patterns.
 - Q12 [multiple-choice]: What should you remember before editing a repeated subprogram?
   - One edit can affect every repeat
-  - Only the first repeat changes
-  - Comments become motion
+  - The edit affects the first repeat
+  - The edit affects the final repeat
   - M98 cancels all offsets
   - Correct answer: 0
   - Explanation: Subprogram edits can affect every call and every repeat.
@@ -1526,7 +1526,7 @@ ___
 - Q8 [multiple-choice]: Why use peck drilling?
   - To break chips and clear the hole
   - To turn coolant off
-  - To change app language
+  - To change the active work offset
   - To home all axes
   - Correct answer: 0
   - Explanation: Pecking helps chip evacuation and reduces drilling load.
@@ -1555,7 +1555,7 @@ G81 X1.0 Y0.5 Z-0.750 R0.100 F5.0
   - Explanation: R0.100 is the retract/clearance plane.
 - Q12 [multiple-choice]: Why cancel with G80 before unrelated motion?
   - So the control leaves drilling-cycle mode
-  - So comments run
+  - So the spindle stops
   - So M08 turns off
   - So G20 becomes metric
   - Correct answer: 0
@@ -1596,7 +1596,7 @@ With Haas Setting 36 enabled, the control scans earlier program blocks for tools
   - Explanation: Use the stop action defined for the situation by the machine manual and shop procedure, then diagnose before resuming.
 - Q2 [multiple-choice]: Why is a mid-program restart risky?
   - The expected tools, offsets, modes, or positions may not be restored
-  - Comments become active
+  - The program always restarts from the beginning
   - The screen turns off
   - G-code cannot restart
   - Correct answer: 0
@@ -1610,9 +1610,9 @@ With Haas Setting 36 enabled, the control scans earlier program blocks for tools
   - Explanation: The documented Haas return does not retrace the jog-away path, so clearance and machine state must be verified.
 - Q4 [multiple-choice]: What should be checked before starting the cycle after an alarm?
   - Tool, offset, mode, spindle, and position
-  - Only the app icon
-  - Only the comment spelling
-  - Only screen brightness
+  - The alarm number by itself
+  - The spindle command by itself
+  - The current line number by itself
   - Correct answer: 0
   - Explanation: Recovery requires checking every machine state that affects motion.
 - Q5 [fill-blank]: A safe restart begins from a known ____.
@@ -1643,15 +1643,15 @@ With Haas Setting 36 enabled, the control scans earlier program blocks for tools
 - Q9 [multiple-choice]: What determines whether a restart block is acceptable?
   - The controller behavior, verified machine state, clear path, and shop procedure
   - The shortest-looking line
-  - The nearest comment
+  - The nearest sequence number
   - The highest rapid setting
   - Correct answer: 0
   - Explanation: No block is safe by label alone. The control's restart behavior, current state, path, and approved procedure must agree.
 - Q10 [multiple-choice]: What characterizes a safe approach to recovery?
   - Slow, verified, and deliberate actions
   - Fast actions based on guesses
-  - Decisions based on luck
-  - A focus only on XP
+  - A restart based only on the alarmed block
+  - A restart at full rapid
   - Correct answer: 0
   - Explanation: Careful recovery protects the machine, tool, part, and operator.
 
@@ -1697,7 +1697,7 @@ G76 X0.913 Z-0.85 K0.042 D0.0115 F0.0714
  
 
  
-Haas recommends programming `G99` feed per revolution before G76. The official example also uses `G97` fixed RPM. Thread dimensions and cutting values must come from the approved print, tooling data, and machine procedure.
+Haas recommends programming `G99` feed per revolution before G76. The official example also uses `G97` for fixed RPM. Thread dimensions and cutting values must come from the approved print, tooling data, and machine procedure.
 
 
 **Quiz:**

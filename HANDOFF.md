@@ -31,12 +31,12 @@ The current learning model is similar to Duolingo or Mimo:
 
 ## Current Build State
 
-- App version: `MGP v2.58.1`
-- App build: `2026.07.28.01`
-- Service worker cache: `pgct-2026.07.28.01`
+- App version: `MGP v2.58.2`
+- App build: `2026.07.30.01`
+- Service worker cache: `pgct-2026.07.30.01`
 - CNC path: 11 units / 21 lessons
 - 3D printing path: 10 units / 18 lessons
-- Current release scope: beginner-readability proofreading, consistent terminology, clearer question stems, and a modal-context regression guard
+- Current release scope: beginner-readable questions, plausible topic-based distractors, visible safety guidance, and semantic question-quality regression guards
 
 ## What Works Well
 
@@ -54,6 +54,9 @@ The current learning model is similar to Duolingo or Mimo:
 
 ## Recent Important Changes
 
+- Replaced app/UI joke answers with plausible topic-related distractors while preserving each question's intended answer.
+- Added regression checks for complete multiple-choice prompts, blank or duplicate choices, and non-domain distractors.
+- Added visible educational-use and machine-safety guidance to setup, licensing, and legal-information screens.
 - Reworked beginner-facing curriculum, quiz, reference, retention, and certification copy for clarity and consistent terminology.
 - Replaced the ambiguous coordinate-only “weak beginner code” question with a modal-context question that explains that an earlier motion mode may remain active.
 - Added a regression test that prevents the ambiguous question wording from returning.

@@ -2632,6 +2632,27 @@ body.theme-light .setup-note {
   background: linear-gradient(135deg, rgba(33, 126, 106, 0.12), rgba(245, 166, 35, 0.12)), #FFFFFF;
   border-color: rgba(33, 126, 106, 0.32);
 }
+.setup-disclaimer {
+  margin: 0 0 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(246, 178, 77, 0.42);
+  border-radius: var(--r-md);
+  background: rgba(246, 178, 77, 0.08);
+  color: var(--c-text-2);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+.setup-disclaimer strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--c-accent);
+  font-family: var(--f-display);
+}
+.setup-disclaimer p { margin: 0; }
+body.theme-light .setup-disclaimer {
+  border-color: rgba(138, 82, 0, 0.35);
+  background: rgba(245, 166, 35, 0.1);
+}
 .settings-group {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
@@ -2832,9 +2853,10 @@ body.setup-required .setup-complete-btn { display: block; }
 .screen-legal { display: none; }
 .screen-access-unlock.active,
 .screen-legal.active { display: block; position: fixed; inset: 0; z-index: 1500; background: var(--c-bg); color: var(--c-text); }
+.screen-access-unlock.active { overflow-y: auto; }
 
 .auth-wrap {
-  height: 100dvh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
   padding: 1rem;
@@ -2888,6 +2910,14 @@ body.theme-light .auth-input { background: #F4F7FA; }
   font-size: 0.8rem;
   margin-top: 0.6rem;
 }
+.auth-note a {
+  color: var(--c-primary-light);
+  font-weight: 700;
+}
+.auth-disclaimer {
+  width: min(94vw, 420px);
+  margin: 0.8rem 0 0;
+}
 
 /* ─── LEGAL SCREEN ───────────────────────────────────────── */
 .legal-scroll {
@@ -2909,6 +2939,9 @@ body.theme-light .auth-input { background: #F4F7FA; }
   font-weight: 800;
   margin-bottom: 0.6rem;
 }
+.legal-back-btn {
+  margin-bottom: 1rem;
+}
 .legal-body {
   font-size: 0.92rem;
   line-height: 1.65;
@@ -2919,6 +2952,13 @@ body.theme-light .auth-input { background: #F4F7FA; }
   margin-top: 0.6rem;
   font-size: 1rem;
   color: var(--c-text);
+}
+.legal-body p {
+  margin: 0.55rem 0;
+}
+.legal-body a {
+  color: var(--c-primary-light);
+  font-weight: 700;
 }
 body.theme-light .bottom-nav .nav-btn.active { color: #8A5200 !important; }
 

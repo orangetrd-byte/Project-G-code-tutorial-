@@ -239,9 +239,15 @@
   <section class="screen" id="screen-legal">
     <div class="legal-scroll">
       <div class="legal-card">
+        <button class="legal-back-btn btn-secondary" id="legal-back-btn" type="button">Back to Settings</button>
         <div class="legal-title">License, Terms, and Acknowledgements</div>
         <div class="legal-body" id="legal-body">
-          <!-- Rendered by JS -->
+          <h2>Educational and Safety Disclaimer</h2>
+          <p>This app provides general educational material only. It does not replace official machine documentation, qualified instruction, employer procedures, or hands-on supervision.</p>
+          <p>G-code, machine behavior, tooling, offsets, workholding, and safety procedures vary by controller and setup. Verify every command against the official manual and your shop's approved process. Never run unfamiliar code on a machine without simulation, a clear setup, and qualified supervision.</p>
+          <p>Machining and machine operation involve serious risks, including injury, death, and equipment damage. You are responsible for using appropriate training, guards, personal protective equipment, and safe operating procedures.</p>
+          <h2>Full Legal Notice</h2>
+          <p><a href="LEGAL.md" target="_blank" rel="noopener">Read the complete license, terms, privacy notice, and acknowledgements.</a></p>
         </div>
       </div>
     </div>
@@ -259,7 +265,11 @@
           <button class="btn-primary auth-submit" id="license-submit" type="submit">Unlock</button>
           <div class="auth-error" id="access-error" aria-live="polite"></div>
         </form>
-        <div class="auth-note">Need a key? Contact support.</div>
+        <div class="setup-disclaimer auth-disclaimer" role="note">
+          <strong>Safety and training disclaimer</strong>
+          <p>Educational use only. This app does not replace official machine documentation, qualified instruction, or shop procedures. Verify every command for the actual controller and setup before running it on a machine.</p>
+        </div>
+        <div class="auth-note">Need a key? Visit the <a href="https://github.com/orangetrd-byte/Project-G-code-tutorial-/" target="_blank" rel="noopener">project repository</a>.</div>
       </div>
     </div>
   </section>
@@ -312,6 +322,11 @@
         <div class="setup-note__eyebrow">Project G-Code Tutorial</div>
         <div class="setup-note__title">Choose Settings To Begin Learning</div>
         <div class="setup-note__body">Pick your language and theme, then press Start Learning.</div>
+      </div>
+
+      <div class="setup-disclaimer" role="note" aria-labelledby="setup-disclaimer-title">
+        <strong id="setup-disclaimer-title">Safety and training disclaimer</strong>
+        <p>Educational use only. This app does not replace official machine documentation, qualified instruction, or shop procedures. Verify every command for the actual controller and setup before running it on a machine.</p>
       </div>
 
       <div class="settings-group">

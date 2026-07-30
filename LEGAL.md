@@ -30,7 +30,7 @@ The App does not collect personal data unless you explicitly create an account, 
 
 ## Copyright Notice
 
-© Publisher. All rights reserved.
+© 2026 Project G-Code Tutorial. All rights reserved.
 
 Third-party trademarks, controller manuals, NIMS content references, and manufacturer names are used for educational identification only and do not imply affiliation or endorsement.
 
@@ -38,6 +38,4 @@ Third-party trademarks, controller manuals, NIMS content references, and manufac
 
 ## Support
 
-Contact: support@publisher.example
-
-Licensing: licenses@publisher.example
+For current support and licensing information, visit the [Project G-Code Tutorial repository](https://github.com/orangetrd-byte/Project-G-code-tutorial-/).
