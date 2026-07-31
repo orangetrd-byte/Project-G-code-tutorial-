@@ -1,6 +1,6 @@
 # Proofread: Project G-Code Lessons
 
-Total lessons: 21
+Total lessons: 39
 
 ## 1. What Is G-Code?
 
@@ -11,13 +11,10 @@ Total lessons: 21
 
 G-code is a set of instructions that the machine reads. One block can combine compatible motion, coordinates, feed, speed, and auxiliary words; the control determines their execution order.
 
- 
 G00 X2.000 Z0.100 ; example position — clearance is setup-specific
 
- 
 The meaning of a semicolon depends on the system. In many 3D-printer files, it starts a comment. In some CNC program formats, it marks the end of a block, like pressing Enter to start the next line.
 
- 
 G00 X30.500 Z1.0;
 X30.478 Z0;
 G01 X-3.00;
@@ -83,34 +80,19 @@ ___ X2.000 Z0.100
 
 On a CNC lathe, position is described with two axes:
 
- 
-
- 
 **Z-axis** — runs along the spindle centerline. 
  In the conventional front-working setup illustrated here, negative Z moves toward the chuck and positive Z moves away. Verify the actual machine orientation.
 
- 
 **X-axis** — controls radial position. Many production lathes program X in diameter units, but diameter/radius behavior is controller- and setting-specific.
 
- 
-
- 
 A common turning convention sets X0 at the spindle centerline and Z0 at the finished face, but Z0 may use another documented datum.
 
- 
 **Absolute vs. incremental positioning in the lathe style taught here:**
 
- 
-
- 
 `X` and `Z` command absolute positions from the active work zero.
 
- 
 `U` and `W` command incremental X and Z distances from the current position.
 
- 
-
- 
 Do not assume that G90/G91 select positioning mode on a lathe. On Haas lathes, G90 is an OD/ID turning cycle. Verify the exact controller dialect before running code.
 
 
@@ -169,7 +151,6 @@ Do not assume that G90/G91 select positioning mode on a lathe. On Haas lathes, G
 
 Many part programs use a recognizable preparation, cutting, and completion structure. The exact blocks and codes depend on the controller, machine options, and approved postprocessor.
 
- 
 % ; Tape start / rewind stop
 O1001 ; Program number
 (PART: SHAFT 001) ; Comment / description
@@ -191,13 +172,10 @@ N100 G28 U0. W0. ; Home
 N110 M30 ; End program, rewind
 %
 
- 
 A setup block makes required modal state explicit before motion. Use the exact block approved for the named machine and controller; no single “safety block” is universal.
 
- 
 `G28 U0. W0.` is controller-specific and performs a reference return. Confirm the intermediate-path behavior and clear the full route before use.
 
- 
 **M-codes** are machine functions: M03 = spindle CW, M05 = spindle off, 
  M30 = end program.
 
@@ -234,32 +212,20 @@ A setup block makes required modal state explicit before motion. Use the exact b
 
 `G00` commands rapid positioning. The actual rate is limited by the machine and may be reduced with a dedicated rapid override; the programmed `F` word does not set G00 speed.
 
- 
 G00 X2.200 Z0.100
 
- 
 **Rules of G00:**
 
- 
-
- 
 Do not rapid into stock, workholding, tooling, or an unverified clearance envelope.
 
- 
 Feed override and rapid override are different controls; verify the machine behavior.
 
- 
 A multi-axis rapid may follow a dogleg or another controller-defined path, not a straight diagonal.
 
- 
 G00 is modal until another motion code replaces it.
 
- 
-
- 
 **Typical uses:** approaching the part, pulling clear after a cut, and moving between features.
 
- 
 No fixed clearance is universally safe. Establish clearance from the actual stock, jaws, tool geometry, offsets, and full rapid path; then prove it with the approved simulation and machine procedure.
 
 
@@ -296,27 +262,17 @@ G00 X___ Z0.100
 
 `G01` commands straight-line cutting moves at a controlled feed rate.
 
- 
 G01 X1.500 Z-1.000 F0.010
 
- 
 The `F` word sets the feed rate:
 
- 
-
- 
 **IPR** (inches per revolution) — common for turning. Example values are not cutting recommendations;
  use tooling-manufacturer data and the approved process for the actual feed.
 
- 
 **IPM** (inches per minute) — commonly used in milling
 
- 
-
- 
 G01 can move in X only, Z only, or both simultaneously (taper cuts).
 
- 
 ; Facing cut (X only)
 G01 X-0.062 F0.008
 
@@ -326,7 +282,6 @@ G01 Z-2.000 F0.012
 ; Taper (both axes at once)
 G01 X1.750 Z-1.500 F0.010
 
- 
 Feed rate is modal: once set, it remains active until it is changed.
 
 
@@ -363,39 +318,25 @@ G01 Z___ F0.010
 
 Arcs are programmed with G02 (clockwise) and G03 (counterclockwise).
 
- 
 There are two ways to define an arc:
 
- 
 Method 1: Radius (R)
 
- 
 G02 X1.500 Z-0.500 R0.250 F0.008
 
- 
 The tool moves to X1.500 Z-0.500 along a clockwise arc with a 0.250" radius.
 
- 
 Method 2: Center Offsets (I and K)
 
- 
 G02 X1.500 Z-0.500 I0.0 K-0.250 F0.008
 
- 
-
- 
 `I` = X-direction center offset under the selected controller's lathe convention
 
- 
 `K` = Z-direction center offset under the selected controller's lathe convention
 
- 
-
- 
 The R method is simpler in most cases. Use I/K when you need a full circle 
  or when R gives an ambiguous result (two possible arcs).
 
- 
 G02/G03 specify direction in the active plane and documented viewing convention. Concave versus convex depends on the contour, quadrant, and tool side—not the G-code number alone.
 
 
@@ -432,36 +373,26 @@ G___ X2.000 Z-0.500 R0.250 F0.008
 
 The lathe spindle can be controlled in two ways:
 
- 
 G96 — Constant Surface Speed (CSS)
 
- 
 G96 S400 M03
 
- 
 The control automatically adjusts RPM so the cutting speed stays at 400 SFM 
  regardless of diameter. As the tool moves to a smaller diameter, RPM increases.
 
- 
 CSS is often useful when cutting diameter changes, but the choice must follow tooling data, workholding limits, machine capability, and the approved process.
 
- 
 On the Haas/Fanuc-style lathe dialect used in this example, set a maximum RPM clamp with `G50 S____`. G50 has different meanings on other controls:
 
- 
 G50 S3000 ; Clamp max at 3000 RPM
 G96 S400 M03 ; CSS at 400 SFM
 
- 
 G97 — Constant RPM
 
- 
 G97 S1200 M03
 
- 
 The spindle runs at a fixed 1200 RPM regardless of diameter.
 
- 
 Constant RPM is commonly used where the controller or process requires stable spindle speed, including many threading procedures. Do not choose the spindle mode based on the operation name alone.
 
 
@@ -496,46 +427,27 @@ G96 S___ M03
 
 This lesson shows a **Fanuc-style two-block G71 example**. G71 formats, allowances, retracts, and profile restrictions vary by controller; verify the exact manual revision before use.
 
- 
 G71 U0.100 R0.050
 G71 P100 Q200 U0.020 W0.005 F0.015
 
- 
 **First line — depth and retract:**
 
- 
-
- 
 `U0.100` — depth of cut per pass, measured on the radius in this example
 
- 
 `R0.050` — retract amount between passes
 
- 
-
- 
 **Second line — profile and stock:**
 
- 
-
- 
 `P100` — block number where profile starts
 
- 
 `Q200` — block number where profile ends
 
- 
 `U0.020` — finish stock to leave on the diameter (0.020" total)
 
- 
 `W0.005` — finish stock to leave on the face (Z direction)
 
- 
 `F0.015` — roughing feed rate
 
- 
-
- 
 After G71, run a `G70 P100 Q200` finish pass with your finishing feed rate 
  to machine the final profile.
 
@@ -575,35 +487,23 @@ After G71, run a `G70 P100 Q200` finish pass with your finishing feed rate
 
 This lesson uses a common Haas/Fanuc-style four-digit T-word convention:
 
- 
 T0101 ; Tool 1, Offset 1
 T0202 ; Tool 2, Offset 2
 T0100 ; Cancel offset (tool 1, no offset)
 
- 
 In this convention, the T-word is `T` + two-digit tool number + two-digit offset number. Other machines format tool and offset calls differently.
 
- 
 On the referenced Haas lathe, tool geometry and tool wear are separate fields with different jobs:
 
- 
-
- 
 **X/Z geometry** stores the measured distance from machine zero to the tool tip.
 
- 
 **Radius geometry and tip direction** support tool-nose compensation.
 
- 
 **X/Z and radius wear** are intended for minute adjustments as the tool wears.
 
- 
-
- 
 On many Fanuc-style lathes, the `T0101` call itself indexes the turret.
  `M06` is common on mills, but is not the normal beginner pattern for this lathe track.
 
- 
 💡 Keeping the tool and offset numbers matched (T0101, T0202, and so on) helps prevent confusion when troubleshooting offsets.
 
 
@@ -640,34 +540,22 @@ T____
 
 Work offsets define a program's part-zero reference relative to machine coordinates. This Haas lathe example uses G54 through G59 work-offset selections.
 
- 
 G54 ; Select work offset 1 in this Haas example
 G55 ; Work offset 2
 G56 ; Work offset 3
 
- 
 On a common two-axis lathe setup, part Z0 is often established at the faced end of the part. The exact X/Z values and setup method depend on the machine, tooling, probe options, and shop procedure.
 
- 
 **Conceptual verification workflow:**
 
- 
-
- 
 Select the intended work-offset register.
 
- 
 Establish part zero with the controller-approved manual or probing method.
 
- 
 Verify the stored axis values and active offset independently.
 
- 
 Prove the resulting coordinates using the machine's approved setup process.
 
- 
-
- 
 Make the required work-coordinate selection explicit before motion that depends on it. Power-up and retained modal behavior are controller-specific.
 
 
@@ -699,15 +587,12 @@ Make the required work-coordinate selection explicit before motion that depends 
 
 After the first part, the job is not done. Measure the part, compare it with the print, and then adjust the program or wear offset as appropriate.
 
- 
 Target OD: 1.0000
 Measured OD: 1.0020
 Correction: remove 0.0020 from diameter
 
- 
 In the Haas/Fanuc coordinate example used here, X wear is entered as a diameter change. For conventional O.D. turning in that documented setup, a -0.0020 X wear entry moves the cut toward a diameter that is 0.0020 smaller. Confirm the active tool, offset field, sign, orientation, and control behavior before changing an offset on the machine.
 
- 
 Make one small correction, rerun, and measure again.
 
 
@@ -791,11 +676,9 @@ ____ offset
 
 When the approved process uses wear offsets, they are intended for minute tool-position corrections. Change the program when the commanded geometry or sequence itself is wrong.
 
- 
 Wear offset: part is 0.0015 oversize
 Program edit: groove is in the wrong Z location
 
- 
 A wear entry leaves the saved program geometry unchanged but affects subsequent motion for the active offset. A saved program edit changes the commanded path for future runs. Both require authorization, documentation, and verification.
 
 
@@ -877,12 +760,10 @@ A wear entry leaves the saved program geometry unchanged but affects subsequent 
 
 Before trusting a new or edited program, prove it with the exact machine's approved process. On the referenced Haas control, Single Block executes one program block each time the operator presses Cycle Start. Dry Run still moves the machine and can execute programmed tool changes, while replacing programmed rapid and feed rates with selected dry-run rates.
 
- 
 Single Block ON
 Feed Hold ready
 Rapid override reduced
 
- 
 These controls can support prove-out, but they do not make a path safe. Graphics or simulation may avoid axis motion, though not every function or motion is necessarily modeled. Follow the machine and shop procedure.
 
 
@@ -964,14 +845,12 @@ These controls can support prove-out, but they do not make a path safe. Graphics
 
 On Haas and Fanuc controls, `G20` selects inch units and `G21` selects metric units. Unit mode changes how the control reads coordinates and feed values.
 
- 
 G20 ; inch mode
 G00 X2.000 Z0.100
 
 G21 ; metric mode
 G00 X50.8 Z2.5
 
- 
 A program should clearly set units near the top. Never assume the control is already in the right mode.
 
 
@@ -1055,13 +934,11 @@ ___ ; metric units
 
 Feed rate mode controls what the `F` value means. On Haas and Fanuc **lathes**, `G99` is feed per revolution and `G98` is feed per minute. On a **mill**, the same ideas use `G94` (per minute) and `G95` (per revolution). The codes depend on the machine type, not the brand.
 
- 
 G98 F5.0 ; lathe feed per minute
 G99 F0.012 ; lathe feed per revolution
 G94 F5.0 ; mill feed per minute
 G95 F0.012 ; mill feed per revolution
 
- 
 This tutorial's turning examples are lathe-based, so they use `G99` for feed per revolution. Turning programs often use feed per revolution so chip load stays tied to spindle rotation. Always verify the active feed mode before cutting.
 
 
@@ -1145,12 +1022,10 @@ ___ F5.0
 
 Modal state is the machine's memory. Motion mode, units, feed mode, offsets, and spindle mode can stay active until changed.
 
- 
 G20 G40 G54 G99 ; Haas/Fanuc lathe feed-per-revolution example
 G97 S800 M03
 G00 X2.000 Z0.100
 
- 
 A safe program does not rely on an unknown state. It declares the modes it needs before motion.
 
 
@@ -1235,13 +1110,11 @@ A safe program does not rely on an unknown state. It declares the modes it needs
 
 On Haas and Fanuc controls, M-codes control coolant, program stops, and spindle actions around the cut. They do not usually define the toolpath. Verify each code in the control manual before running production.
 
- 
 M08 ; coolant on
 M09 ; coolant off
 M01 ; optional stop if enabled
 M00 ; mandatory stop
 
- 
 M-code assignments can vary by machine builder and options, so always verify shop-specific M-codes in your control's manual before running production.
 
 
@@ -1327,33 +1200,22 @@ G01 Z-1.000 F0.012
 
 This shows a **Haas/Fanuc-style subprogram example**. Call and return words, P/L word meanings, and where a subprogram may live vary by control; verify the exact manual before use.
 
- 
 Subprograms keep repeated motion in one place. The main program calls the subprogram; the subprogram runs and returns.
 
- 
 M98 P2000 L3 ; call O2000 three times
 ...
 O2000
 G01 Z-0.100 F0.006
 M99 ; return
 
- 
 **Local vs. external subprograms:**
 
- 
-
- 
 `M98 P____` calls a subprogram by number. On many Haas/Fanuc-style controls, it points to another program (an external O-number) held in the control or to a local routine.
 
- 
 `M97 P____` is the *local* subprogram call: it jumps to a line or routine *inside the same program* and returns to the line after the M97. Use M97 when the repeat lives in the current program.
 
- 
 `M99` returns from a subprogram. In an external subprogram it returns to the caller; in a local routine called by M97 it returns to the block right after the M97.
 
- 
-
- 
 `L` gives the repeat count. Document repeats clearly so the next person understands what repeats and why—and remembers that one edit changes every repeat.
 
 
@@ -1451,28 +1313,18 @@ ___
 
 This is a **3-axis mill drilling example**. Live-tool lathe syntax, active planes, axes, and supported cycle words differ by machine and controller; do not transfer this block directly to a lathe.
 
- 
 G81 X1.000 Y0.500 Z-0.750 R0.100 F5.0 ; drill
 G83 X2.000 Y0.500 Z-1.500 R0.100 Q0.200 F4.0 ; peck drill
 G80 ; cancel cycle
 
- 
 The `R` plane is the clearance height the tool rapid-feeds to before each plunge. `G80` cancels the canned cycle before normal motion resumes.
 
- 
 **Retract (return) mode — set once per cycle group:**
 
- 
-
- 
 `G98` — return to the *initial* level (the position before the cycle started).
 
- 
 `G99` — return to the `R` plane after each hole. On a mill this is the usual choice so the tool stays just above the part between holes.
 
- 
-
- 
 **Peck behavior in G83:** the `Q` word is the *incremental* peck depth. In this controller-specific example, the tool feeds down by Q, retracts to the R plane to clear chips, and then plunges again. This sequence repeats until the tool reaches Z. Use pecking for deeper holes where a single plunge could pack chips or overheat the tool.
 
 
@@ -1572,16 +1424,13 @@ G81 X1.0 Y0.5 Z-0.750 R0.100 F5.0
 
 This lesson uses documented Haas NGC concepts. Feed Hold stops axis motion, but the spindle can continue turning. Use the exact machine and shop stop procedure for the situation.
 
- 
 Stop condition identified
 Tool, offsets, modes, and position verified
 Return path checked for clearance
 Controller-approved restart procedure followed
 
- 
 Haas Run-Stop-Jog-Continue stores the interrupted position. Its return move does not retrace the path used to jog away, and the previous offsets are used for the return position. Haas therefore warns against changing tools or offsets during the interruption.
 
- 
 With Haas Setting 36 enabled, the control scans earlier program blocks for tools, offsets, G/M codes, and axis positions before a mid-program restart. With it disabled, that scan does not occur. A scan is not a substitute for an approved recovery procedure or a clear motion path.
 
 
@@ -1666,7 +1515,6 @@ With Haas Setting 36 enabled, the control scans earlier program blocks for tools
 
 This lesson uses the **one-block Haas lathe G76 format**. Other controls use different G76 formats and address meanings; do not transfer this block to another controller.
 
- 
 G00 G18 G20 G40 G80 G99
 G50 S1000
 G97 S500 M03
@@ -1674,29 +1522,18 @@ G00 G54 X1.2 Z0.3
 
 G76 X0.913 Z-0.85 K0.042 D0.0115 F0.0714
 
- 
 **Documented Haas address meanings:**
 
- 
-
- 
 `X0.913` — absolute X position at full thread depth
 
- 
 `Z-0.85` — absolute Z endpoint
 
- 
 `K0.042` — thread height, measured radially
 
- 
 `D0.0115` — first-pass cutting depth
 
- 
 `F0.0714` — thread lead
 
- 
-
- 
 Haas recommends programming `G99` feed per revolution before G76. The official example also uses `G97` for fixed RPM. Thread dimensions and cutting values must come from the approved print, tooling data, and machine procedure.
 
 
@@ -1721,5 +1558,1499 @@ F___
   - Correct answer: 0.050
   - Hint: 1 ÷ 20 = ?
   - Explanation: For this single-start example, lead = 1 ÷ 20 = 0.050". Verify the exact thread specification and controller format before programming.
+
+---
+
+## 22. What 3D Printer G-Code Does
+
+**Why:** Reading G-code helps you understand what the printer is doing so you can inspect a file and troubleshoot problems more confidently.
+
+
+**Theory:**
+
+3D printer G-code controls motion, temperature, extrusion, fans, and machine setup.
+ A slicer writes most of it, but knowing the blocks helps you tune, debug, and inspect prints.
+
+G1 X82.4 Y104.2 E0.036 F1800
+
+Breaking that down:
+
+`G1` - controlled move
+
+`X82.4 Y104.2` - nozzle position on the bed
+
+`E0.036` - amount of filament to extrude
+
+`F1800` - feed rate in mm/min
+
+Printer G-code is usually metric. Most slicers use millimeters for X, Y, Z, and E values.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: In 3D printer G-code, what does the E value usually control?
+  - Bed temperature
+  - Extrusion amount
+  - Fan speed
+  - Home position
+  - Correct answer: 1
+  - Explanation: The E axis controls extruder movement. More E value means more filament is pushed through the nozzle.
+- Q2 [multiple-choice]: Which axis usually controls nozzle height above the print bed?
+  - X
+  - Y
+  - Z
+  - F
+  - Correct answer: 2
+  - Explanation: Z is the vertical axis. Layer changes and first-layer height are controlled through Z movement.
+- Q3 [fill-blank]: Complete the controlled move command:
+___ X50 Y50 E1.2 F1200
+  - Correct answer: G1
+  - Hint: G1 is the normal printing move
+  - Explanation: G1 is the controlled move used for most print paths. It may move with or without extrusion.
+- Q4 [matching]: Match each printer G-code word to what it controls.
+  - Explanation: Printer moves commonly use G1 for controlled motion, E for extrusion amount, and F for feed rate.
+  - Pairs: G1→Controlled move, E→Extrusion amount, F→Feed rate
+- Q5 [true-false]: In most 3D printer G-code, E controls extrusion amount.
+  - Correct answer: true
+  - Explanation: True. E values control extruder movement, so they affect how much filament is pushed through the nozzle.
+
+---
+
+## 23. Homing and Bed Leveling
+
+**Why:** The printer needs a reliable position and a known bed surface before it can place the first layer correctly.
+
+
+**Theory:**
+
+Before printing, the machine needs to know where its axes are. Homing moves each axis
+ to its endstop or sensor so the printer can establish machine zero.
+
+G28 ; home all axes
+
+Many printers also probe the bed before printing:
+
+G29 ; Marlin configured leveling
+BED_MESH_CALIBRATE ; Klipper command provided by a configured [bed_mesh] section
+
+On Marlin, G29 runs the configured leveling system. In Klipper, BED_MESH_CALIBRATE is available only when [bed_mesh] is configured; G29 is not native Klipper unless a user-defined macro maps it. Always check the active firmware
+ and printer configuration. Not every print needs a fresh mesh; follow the printer's recommended probing interval.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: What does G28 usually do on a 3D printer?
+  - Heat the nozzle
+  - Home the axes
+  - Turn on the fan
+  - Start extrusion
+  - Correct answer: 1
+  - Explanation: G28 homes the axes. It tells the printer to find known machine positions using endstops or sensors.
+- Q2 [multiple-choice]: When the configured workflow requires mesh compensation, what must happen before printing?
+  - Create or load a valid bed mesh
+  - Increase nozzle temperature
+  - Pause the printer
+  - Change filament diameter
+  - Correct answer: 0
+  - Explanation: The configured workflow must create or load a valid mesh before using mesh compensation. A new probing routine is not required before every print.
+
+---
+
+## 24. Hotend and Bed Temperature
+
+**Why:** Correct temperature commands help the printer heat safely and begin each step at the intended temperature.
+
+
+**Theory:**
+
+Temperature commands use M-codes. Some set a target and continue immediately; others wait.
+
+M104 S210 ; set nozzle to 210 C and continue
+M109 S210 ; wait while heating to at least 210 C
+M140 S60 ; set bed to 60 C and continue
+M190 S60 ; wait while heating bed to at least 60 C
+
+In Marlin, the S form waits while heating but does not wait for cooling if already above target; use R when the command must wait for heating or cooling.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: In Marlin, which command sets nozzle temperature and waits while heating?
+  - M104
+  - M109
+  - M140
+  - M190
+  - Correct answer: 1
+  - Explanation: M109 S waits while heating to the target. M109 R waits for either heating or cooling to the target.
+- Q2 [multiple-choice]: In Marlin, which command controls the heated bed and waits while heating?
+  - M104
+  - M109
+  - M140
+  - M190
+  - Correct answer: 3
+  - Explanation: M190 S waits while heating the bed. M190 R waits for either heating or cooling to the target.
+- Q3 [fill-blank]: Set the nozzle to 215 C without waiting:
+M___ S215
+  - Correct answer: 104
+  - Hint: M104 sets hotend temperature and continues
+  - Explanation: M104 sets the hotend target temperature but does not wait for it to finish heating.
+- Q4 [matching]: Match each temperature command to its behavior.
+  - Explanation: M104 sets the hotend without waiting. In Marlin, M109 S and M190 S wait while heating; their R forms also wait while cooling.
+  - Pairs: M104→Set nozzle, keep going, M109→Set nozzle and wait, M190→Set bed and wait
+- Q5 [true-false]: In Marlin, M109 S sets nozzle temperature and waits while heating.
+  - Correct answer: true
+  - Explanation: True. The S form waits while heating; use M109 R if cooling to the target must also block progress.
+
+---
+
+## 25. Extrusion and the E Axis
+
+**Why:** Understanding extrusion helps you tell the difference between a travel move and a move that deposits filament.
+
+
+**Theory:**
+
+The `E` value controls extruder movement. In most slicer output, extrusion moves use
+ `G1` with X/Y position plus an E amount.
+
+G1 X82.4 Y104.2 E0.036 F1800
+
+If the nozzle moves without E, it is usually a travel move. If E increases while X/Y moves,
+ filament is being pushed through the nozzle.
+
+Extrusion can be absolute or relative depending on firmware and slicer settings.
+ Learn to read the pattern before editing E values by hand.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: In this line, what does E0.036 control?
+G1 X82.4 Y104.2 E0.036 F1800
+  - Extrusion amount
+  - Bed temperature
+  - Fan speed
+  - Home position
+  - Correct answer: 0
+  - Explanation: E controls extruder movement. Here it tells the printer to push filament while moving.
+- Q2 [multiple-choice]: Which line is most likely printing plastic?
+  - G1 X20 Y20 E0.45 F1800
+  - G1 X20 Y20 F9000
+  - G28
+  - M104 S210
+  - Correct answer: 0
+  - Explanation: A G1 move with E increasing usually extrudes filament.
+- Q3 [multiple-choice]: What does a move with X and Y but no E usually represent?
+  - A travel move
+  - A bed heat command
+  - A fan command
+  - A program end
+  - Correct answer: 0
+  - Explanation: Travel moves reposition the nozzle without extruding.
+- Q4 [fill-blank]: Type the letter that usually controls extrusion amount:
+  - Correct answer: E
+  - Hint: Extruder axis
+  - Explanation: E represents extruder movement in this G-code.
+- Q5 [multiple-choice]: What happens if too much filament is extruded?
+  - Over-extrusion
+  - Bed leveling
+  - Homing
+  - Fan off only
+  - Correct answer: 0
+  - Explanation: Too much extrusion can cause blobs, rough walls, and dimensional errors.
+- Q6 [multiple-choice]: What happens if too little filament is extruded?
+  - Under-extrusion
+  - Automatic leveling
+  - Hotend waits
+  - Program rewind
+  - Correct answer: 0
+  - Explanation: Too little extrusion can leave gaps, weak walls, and poor layer bonding.
+- Q7 [multiple-choice]: Which command is the normal controlled move used for extrusion?
+  - G1
+  - G28
+  - M190
+  - M107
+  - Correct answer: 0
+  - Explanation: G1 is the normal controlled move command in printer G-code.
+- Q8 [fill-blank]: Complete the printing move:
+G1 X50 Y50 ___1.2 F1200
+  - Correct answer: E
+  - Hint: Extrusion word
+  - Explanation: E1.2 tells the extruder how much filament movement to command.
+- Q9 [multiple-choice]: Why should beginners be careful editing E values?
+  - Extrusion mode may be absolute or relative
+  - E always homes the printer
+  - E only controls the display
+  - E turns on the fan
+  - Correct answer: 0
+  - Explanation: Different slicers and firmware can use absolute or relative extrusion.
+- Q10 [multiple-choice]: Which value is not a motion coordinate in this line?
+G1 X82 Y104 E0.036 F1800
+  - F1800
+  - X82
+  - Y104
+  - E0.036
+  - Correct answer: 0
+  - Explanation: F sets feed rate/speed. X, Y, and E are axis/extrusion values.
+
+---
+
+## 26. Feed Rate and Travel Moves
+
+**Why:** Movement speed affects print quality, travel time, and how accurately the printer can place filament.
+
+
+**Theory:**
+
+The `F` word sets feed rate. In most printer G-code, feed rate is in millimeters per minute.
+
+G1 X40 Y40 F9000 ; fast travel
+G1 X40 Y40 E0.4 F1800 ; slower print move
+
+Travel moves are usually faster because they do not push filament. Print moves are slower so the
+ nozzle can lay down a controlled bead.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: In most printer G-code, what does F1800 mean?
+  - 1800 mm/min feed rate
+  - 1800 degrees
+  - 1800 grams
+  - Fan speed 1800
+  - Correct answer: 0
+  - Explanation: Printer feed rate is commonly expressed in millimeters per minute.
+- Q2 [multiple-choice]: Which line is likely a fast travel move?
+  - G1 X80 Y80 F9000
+  - G1 X80 Y80 E0.6 F1500
+  - M190 S60
+  - G28
+  - Correct answer: 0
+  - Explanation: A high-F move without E is usually travel.
+- Q3 [multiple-choice]: Which value sets speed in this line?
+G1 X10 Y10 E0.2 F1200
+  - F1200
+  - X10
+  - Y10
+  - E0.2
+  - Correct answer: 0
+  - Explanation: F sets feed rate.
+- Q4 [fill-blank]: Type the feed rate letter used in printer G-code:
+  - Correct answer: F
+  - Hint: Speed/feed word
+  - Explanation: F is used for feed rate.
+- Q5 [multiple-choice]: Why are print moves often slower than travel moves?
+  - Plastic needs time to lay down cleanly
+  - G1 cannot move fast
+  - Fans turn off motion
+  - Homing is required
+  - Correct answer: 0
+  - Explanation: Printing too fast can hurt extrusion consistency and layer quality.
+- Q6 [multiple-choice]: What does a line with no E value usually mean?
+  - No extrusion on that move
+  - Bed heat only
+  - Fan full speed
+  - End print
+  - Correct answer: 0
+  - Explanation: Without E movement, the nozzle is usually changing position without extruding.
+- Q7 [multiple-choice]: What is missing from this speed command?
+G1 X20 Y20 ___3000
+  - F
+  - M
+  - S
+  - T
+  - Correct answer: 0
+  - Explanation: F3000 sets the feed rate.
+- Q8 [fill-blank]: Complete the fast travel feed rate:
+G1 X100 Y100 F____
+  - Correct answer: 9000
+  - Hint: Common fast travel example from lesson
+  - Explanation: F9000 is the fast travel example used in this lesson.
+- Q9 [multiple-choice]: If a travel move is too slow, what may increase?
+  - Print time
+  - Bed size
+  - Nozzle diameter
+  - Firmware version
+  - Correct answer: 0
+  - Explanation: Slow travel moves can add unnecessary print time.
+- Q10 [multiple-choice]: If print moves are too fast, what can happen?
+  - Poor extrusion quality
+  - Automatic homing
+  - The bed mesh may be skipped
+  - The bed turns off
+  - Correct answer: 0
+  - Explanation: Too-fast print moves can cause under-extrusion, weak walls, or rough surfaces.
+
+---
+
+## 27. Fans and Cooling
+
+**Why:** Cooling changes how quickly plastic solidifies, which affects bridges, overhangs, and layer bonding.
+
+
+**Theory:**
+
+Part cooling fans are usually controlled with `M106` and `M107`.
+
+M106 S255 ; full selected/default fan under common 0-255 scaling
+M106 S128 ; fan about half speed
+M107 ; fan off
+
+Cooling helps bridges, overhangs, and small layers. Too much cooling can hurt layer bonding on
+ some materials.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: Which command turns the part cooling fan on?
+  - M106
+  - M107
+  - G28
+  - M190
+  - Correct answer: 0
+  - Explanation: M106 controls the fan and can set its speed.
+- Q2 [multiple-choice]: What does M107 usually do?
+  - Fan off
+  - Fan full speed
+  - Home axes
+  - Heat bed
+  - Correct answer: 0
+  - Explanation: M107 turns the part cooling fan off.
+- Q3 [multiple-choice]: In this Marlin-style M106 S255 example, what does S255 mean?
+  - Full selected/default fan speed
+  - Nozzle 255 C
+  - X position
+  - Layer number
+  - Correct answer: 0
+  - Explanation: M106 commonly scales S from 0 to 255 for the selected/default compatible fan. Named or generic fans may use firmware-specific commands.
+- Q4 [fill-blank]: Type the command that turns the fan off:
+  - Correct answer: M107
+  - Hint: Fan off command
+  - Explanation: M107 turns off the fan.
+- Q5 [multiple-choice]: Which command is about half fan speed?
+  - M106 S128
+  - M106 S255
+  - M107
+  - G28
+  - Correct answer: 0
+  - Explanation: S128 is roughly half of 255.
+- Q6 [multiple-choice]: When is part cooling especially useful?
+  - Bridges and overhangs
+  - First-layer adhesion for every material
+  - Homing accuracy
+  - Bed probing
+  - Correct answer: 0
+  - Explanation: Cooling helps plastic solidify for bridges, overhangs, and small details.
+- Q7 [multiple-choice]: What can too much part cooling cause?
+  - Poor layer bonding
+  - The nozzle target to increase
+  - Bed leveling to run
+  - The extrusion mode to change
+  - Correct answer: 0
+  - Explanation: Some materials need heat to bond layers well.
+- Q8 [fill-blank]: Complete full fan speed:
+M106 S___
+  - Correct answer: 255
+  - Hint: Maximum 8-bit fan value
+  - Explanation: S255 is commonly full fan speed.
+- Q9 [multiple-choice]: Which command changes fan speed without moving the nozzle?
+  - M106 S200
+  - G1 X10 Y10
+  - G28
+  - M190 S60
+  - Correct answer: 0
+  - Explanation: M106 controls the fan; it does not move the axes.
+- Q10 [multiple-choice]: What is missing from this fan command?
+M106 ___255
+  - S
+  - X
+  - E
+  - G
+  - Correct answer: 0
+  - Explanation: S is the parameter used for fan speed.
+
+---
+
+## 28. Start G-Code Sequence
+
+**Why:** A clear start sequence prepares the printer in a safe, predictable order before extrusion begins.
+
+
+**Theory:**
+
+Start G-code prepares the printer before the first layer. A common sequence homes axes,
+ heats the machine, optionally probes the bed, then primes the nozzle.
+
+G28 ; home
+M190 S60 ; wait for bed
+M109 S210 ; wait for nozzle
+G92 E0 ; reset extruder position
+
+The exact order depends on printer and slicer, but the goal is always the same: start from a
+ known, safe state.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: What is the main purpose of start G-code?
+  - Prepare the printer before printing
+  - Pause the print
+  - Disable the motors
+  - Park after the print
+  - Correct answer: 0
+  - Explanation: Start G-code sets up homing, temperatures, probing, and priming before printing.
+- Q2 [multiple-choice]: Which command usually belongs early in start G-code?
+  - G28
+  - M84
+  - M107 only
+  - M30
+  - Correct answer: 0
+  - Explanation: G28 homes the printer so it knows its axis positions.
+- Q3 [multiple-choice]: Why should the printer reach its target temperatures before printing begins?
+  - Plastic needs correct melt and bed conditions
+  - The extruder coordinate must reset
+  - The fan must reach full speed
+  - The printer must enter relative mode
+  - Correct answer: 0
+  - Explanation: The nozzle and bed should reach target temperatures before first-layer motion.
+- Q4 [fill-blank]: Type the command that homes all axes:
+  - Correct answer: G28
+  - Hint: Home command
+  - Explanation: G28 homes the axes.
+- Q5 [multiple-choice]: What does G92 E0 often do in start G-code?
+  - Reset extruder position
+  - Home Z
+  - Heat bed
+  - Turn fan off
+  - Correct answer: 0
+  - Explanation: G92 E0 sets the current extruder position to zero.
+- Q6 [multiple-choice]: Which Marlin command waits while the nozzle heats?
+  - M109
+  - M104
+  - M140
+  - M107
+  - Correct answer: 0
+  - Explanation: M109 S waits while heating; M109 R also waits while cooling.
+- Q7 [multiple-choice]: Which Marlin command waits while the bed heats?
+  - M190
+  - M140
+  - M104
+  - G1
+  - Correct answer: 0
+  - Explanation: M190 S waits while heating; M190 R also waits while cooling.
+- Q8 [fill-blank]: Reset extruder position:
+G92 ___0
+  - Correct answer: E
+  - Hint: Extruder axis
+  - Explanation: G92 E0 resets the extruder position to zero.
+- Q9 [multiple-choice]: What should a start sequence avoid?
+  - Moving into the bed before homing
+  - Waiting for heat
+  - Homing axes
+  - Setting temperatures
+  - Correct answer: 0
+  - Explanation: Motion before known positions can crash into the bed or frame.
+- Q10 [multiple-choice]: What can vary between printers?
+  - Start G-code order and probing commands
+  - The meaning of X and Y always
+  - Whether G-code uses numbered values
+  - Whether coordinates describe positions
+  - Correct answer: 0
+  - Explanation: Printer firmware, probes, and slicer profiles affect the exact start sequence.
+
+---
+
+## 29. End G-Code and Safe Shutdown
+
+**Why:** A safe end sequence leaves the printer in a controlled state after the final move.
+
+
+**Theory:**
+
+End G-code parks the nozzle, turns off heaters and fans, and disables motors when safe.
+
+M104 S0 ; hotend off
+M140 S0 ; bed off
+M107 ; fan off
+M84 ; disable motors
+
+A parking move is machine-specific. Verify the coordinate mode, axis limits, and clearance before adding one. After M84 disables steppers, axes may move manually and lose known position; re-home before later coordinate motion if position may have changed.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: What is the purpose of end G-code?
+  - Shut down and park safely
+  - Heat the printer for first layer
+  - Probe the bed
+  - Start extrusion
+  - Correct answer: 0
+  - Explanation: End G-code safely parks and turns things off after printing.
+- Q2 [multiple-choice]: Which command turns the hotend target to zero?
+  - M104 S0
+  - M109 S210
+  - G28
+  - M106 S255
+  - Correct answer: 0
+  - Explanation: M104 S0 sets hotend target temperature to zero.
+- Q3 [multiple-choice]: Which command turns the bed target to zero?
+  - M140 S0
+  - M190 S60
+  - G92 E0
+  - M107
+  - Correct answer: 0
+  - Explanation: M140 S0 turns off the heated bed target.
+- Q4 [fill-blank]: Type the fan off command:
+  - Correct answer: M107
+  - Hint: Part cooling fan off
+  - Explanation: M107 turns the fan off.
+- Q5 [multiple-choice]: Why should you park the nozzle away from the part?
+  - To avoid heat damage or oozing on the print
+  - To home the printer
+  - To turn fan on
+  - To reset E
+  - Correct answer: 0
+  - Explanation: A hot nozzle sitting on the part can mark or melt it.
+- Q6 [multiple-choice]: What does M84 usually do?
+  - Disable motors
+  - Heat nozzle
+  - Probe bed
+  - Set fan speed
+  - Correct answer: 0
+  - Explanation: M84 disables steppers on Marlin-style printers. The machine can lose trusted position if an axis moves afterward, so re-home before later coordinate motion.
+- Q7 [multiple-choice]: Before reusing a parking move from another printer, what must you verify?
+  - Coordinate mode, axis limits, and clearance
+  - Only nozzle and bed temperatures
+  - Only the active tool and fan speed
+  - Only extrusion mode and flow factor
+  - Correct answer: 0
+  - Explanation: Parking coordinates are machine-specific and can be unsafe when the coordinate mode, travel limits, or clearance differ.
+- Q8 [fill-blank]: Turn the bed off:
+M140 S___
+  - Correct answer: 0
+  - Hint: Zero target temperature
+  - Explanation: S0 sets the bed target to zero/off.
+- Q9 [multiple-choice]: What should be turned off to prevent continued heating after a print?
+  - Heaters
+  - The positioning mode
+  - The stored bed mesh
+  - The extrusion coordinate mode
+  - Correct answer: 0
+  - Explanation: Heaters should be turned off at the end of a print.
+- Q10 [multiple-choice]: Which command is fan off, not heater off?
+  - M107
+  - M104 S0
+  - M140 S0
+  - M190 S60
+  - Correct answer: 0
+  - Explanation: M107 turns off the fan.
+
+---
+
+## 30. Reading Slicer Comments
+
+**Why:** Slicer comments help you locate layers and print features without changing how the printer runs the file.
+
+
+**Theory:**
+
+Slicers add comments to organize the file. Comments often start with a semicolon.
+
+;TYPE:WALL-OUTER
+G1 X30 Y40 E0.22 F1500
+;LAYER:12
+
+The printer ignores comments, but they help humans understand features, layers, and toolpath types.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: In printer G-code, what does a semicolon usually start?
+  - A comment
+  - A heater command
+  - A fan command
+  - A home move
+  - Correct answer: 0
+  - Explanation: A semicolon starts a comment in many printer G-code files.
+- Q2 [multiple-choice]: Which line is only a slicer comment?
+  - ;TYPE:WALL-OUTER
+  - G1 X30 Y40 E0.22
+  - M104 S210
+  - G28
+  - Correct answer: 0
+  - Explanation: The semicolon means the line is a comment for humans.
+- Q3 [multiple-choice]: What does ;LAYER:12 help identify?
+  - The current layer
+  - Nozzle temperature
+  - Bed size
+  - Fan speed only
+  - Correct answer: 0
+  - Explanation: Layer comments help locate sections of the print file.
+- Q4 [fill-blank]: Type the symbol that starts many printer comments:
+  - Correct answer: ;
+  - Hint: Comment character
+  - Explanation: A semicolon starts many printer G-code comments.
+- Q5 [multiple-choice]: Does the printer execute the words after a semicolon?
+  - No, they are ignored as comments
+  - Yes, on every line
+  - Yes, after the nozzle heats
+  - Yes, on the first layer
+  - Correct answer: 0
+  - Explanation: Comments are ignored by the firmware.
+- Q6 [multiple-choice]: Why are slicer comments useful?
+  - They help humans understand toolpaths
+  - They heat the bed
+  - They change E values
+  - They home the axes
+  - Correct answer: 0
+  - Explanation: Comments make the file easier to inspect and debug.
+- Q7 [multiple-choice]: Which line is most likely an outer-wall label?
+  - ;TYPE:WALL-OUTER
+  - M190 S60
+  - G28
+  - M107
+  - Correct answer: 0
+  - Explanation: Slicers often label feature types with comments.
+- Q8 [fill-blank]: Complete the layer comment:
+;_____:12
+  - Correct answer: LAYER
+  - Hint: Layer label
+  - Explanation: ;LAYER:12 labels the layer section.
+- Q9 [multiple-choice]: What should you edit carefully?
+  - Motion and temperature lines
+  - Blank lines
+  - Slicer comments
+  - File header labels
+  - Correct answer: 0
+  - Explanation: Changing motion or temperature lines affects the print. Comments do not execute.
+- Q10 [multiple-choice]: Which line will move and extrude?
+  - G1 X30 Y40 E0.22 F1500
+  - ;TYPE:WALL-OUTER
+  - ;LAYER:12
+  - ; generated by slicer
+  - Correct answer: 0
+  - Explanation: G1 with X/Y/E/F is an executable motion/extrusion line.
+
+---
+
+## 31. First Layer Diagnostics
+
+**Why:** First-layer clues help you catch setup and adhesion problems before they affect the rest of the print.
+
+
+**Theory:**
+
+A good first layer gives the rest of the print a fair chance. Check the nozzle height,
+ line shape, and bed adhesion before changing settings at random.
+
+G28
+G1 Z0.20 F600
+G1 X60 Y60 E0.8 F1200
+
+A good first layer is slightly squished, continuous, and stuck to the bed. If the nozzle
+ is too high, lines look round and may not stick. If it is too low, plastic can smear, click,
+ or stop flowing.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: Model first-layer move:
+G1 Z0.20 F600
+G1 X60 Y60 E0.8 F1200
+
+What does Z0.20 set here?
+  - Nozzle height above the bed
+  - Nozzle temperature
+  - Fan speed
+  - Bed temperature
+  - Correct answer: 0
+  - Explanation: Z controls height. A first layer often starts near 0.20 mm depending on setup.
+- Q2 [multiple-choice]: If first-layer lines are round and barely stick, what is the most likely problem?
+  - The nozzle is too high
+  - The nozzle is too low
+  - The nozzle is at the correct height
+  - The fan speed is the only problem
+  - Correct answer: 0
+  - Explanation: A high nozzle lays plastic on top of the bed instead of pressing it down.
+- Q3 [multiple-choice]: If the nozzle scrapes and plastic barely comes out, what is the most likely problem?
+  - The nozzle is too low
+  - The nozzle is too high
+  - The nozzle temperature is the only problem
+  - The nozzle is too far from the bed
+  - Correct answer: 0
+  - Explanation: A low nozzle can block flow by pressing too close to the bed.
+- Q4 [multiple-choice]: Which line homes the printer before first-layer checks?
+G28
+G1 Z0.20 F600
+  - G28
+  - G1 Z0.20 F600
+  - F600
+  - Z0.20
+  - Correct answer: 0
+  - Explanation: G28 homes the printer so it starts from known positions.
+- Q5 [fill-blank]: Complete a safe first-layer height move:
+G1 ___0.20 F600
+  - Correct answer: Z
+  - Hint: Vertical axis
+  - Explanation: Z controls vertical nozzle height.
+- Q6 [multiple-choice]: How should a good first-layer line look?
+  - Slightly flattened and continuous
+  - Round and loose
+  - Transparent and scraped away
+  - Separated by wide gaps
+  - Correct answer: 0
+  - Explanation: A slightly flattened line usually means the nozzle is close enough to bond.
+- Q7 [multiple-choice]: What should you adjust first for a bad first layer height?
+  - Z offset or bed leveling
+  - Flow percentage only
+  - Retraction distance
+  - Travel speed
+  - Correct answer: 0
+  - Explanation: Z offset and bed leveling directly affect first-layer height.
+- Q8 [multiple-choice]: Which value is extrusion amount in this line?
+G1 X60 Y60 E0.8 F1200
+  - E0.8
+  - X60
+  - Y60
+  - F1200
+  - Correct answer: 0
+  - Explanation: E is the extruder amount in most printer G-code.
+- Q9 [fill-blank]: Type the common command that homes all axes before checking the first layer:
+  - Correct answer: G28
+  - Hint: Home command
+  - Explanation: G28 homes the printer axes.
+- Q10 [multiple-choice]: Why should you correct first-layer problems before tuning print speed?
+  - Poor adhesion can ruin the whole print early
+  - Retraction controls bed flatness
+  - Fan speed sets nozzle height
+  - End G-code corrects the first layer
+  - Correct answer: 0
+  - Explanation: If the first layer fails, later layers do not matter.
+
+---
+
+## 32. Retraction and Stringing
+
+**Why:** Retraction settings help control unwanted filament during travel moves without disrupting normal extrusion.
+
+
+**Theory:**
+
+Stringing happens when melted plastic leaks during travel moves. Retraction pulls filament
+ back before travel, then primes it again before printing resumes.
+
+M83 ; relative extrusion mode
+G1 E-0.8 F1800 ; retract
+G0 X90 Y90 F9000 ; travel
+G1 E0.8 F1800 ; prime
+
+This example explicitly uses M83 relative extrusion. Without known extrusion mode, E-0.8 and E0.8 are destinations rather than guaranteed retract/prime amounts. Retraction values depend on printer type, hotend, material, temperature, and slicer settings.
+ The pattern is the important part: retract, travel, prime.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: Relative-extrusion pattern:
+M83
+G1 E-0.8 F1800
+G0 X90 Y90 F9000
+G1 E0.8 F1800
+
+Which line retracts filament?
+  - G1 E-0.8 F1800
+  - G0 X90 Y90 F9000
+  - G1 E0.8 F1800
+  - M83
+  - Correct answer: 0
+  - Explanation: With M83 relative extrusion active, a negative E delta retracts filament.
+- Q2 [multiple-choice]: What problem does retraction mainly fight?
+  - Stringing during travel
+  - Layer shifts
+  - Elephant foot
+  - Warping
+  - Correct answer: 0
+  - Explanation: Retraction reduces oozing while the nozzle travels between printed areas.
+- Q3 [multiple-choice]: Which line is the travel move in this relative-extrusion pattern?
+M83
+G1 E-0.8 F1800
+G0 X90 Y90 F9000
+G1 E0.8 F1800
+  - G0 X90 Y90 F9000
+  - G1 E-0.8 F1800
+  - G1 E0.8 F1800
+  - M83
+  - Correct answer: 0
+  - Explanation: G0 with X/Y moves the nozzle without E movement in this example.
+- Q4 [multiple-choice]: With M83 relative extrusion active, which line primes after travel?
+  - G1 E0.8 F1800
+  - G1 E-0.8 F1800
+  - G0 X90 Y90
+  - G28
+  - Correct answer: 0
+  - Explanation: In relative extrusion mode, a positive E delta pushes filament forward.
+- Q5 [fill-blank]: With M83 active, complete a retract move:
+G1 E___0.8 F1800
+  - Correct answer: -
+  - Hint: Relative pullback uses a negative E delta
+  - Explanation: With M83 relative extrusion active, the minus sign commands E backward by 0.8.
+- Q6 [multiple-choice]: What may happen if retraction is too low?
+  - Thin strings may form between parts
+  - Gaps may appear after travel
+  - The nozzle may scrape the bed
+  - Layers may shift
+  - Correct answer: 0
+  - Explanation: Not enough retraction can leave plastic oozing during travel.
+- Q7 [multiple-choice]: What can happen if retraction is too aggressive?
+  - Gaps or under-extrusion may appear after travel
+  - Stringing may increase from too little pullback
+  - First-layer squish may increase
+  - The bed may warp
+  - Correct answer: 0
+  - Explanation: Too much retraction can delay or reduce flow when printing resumes.
+- Q8 [multiple-choice]: What else can increase stringing besides low retraction?
+  - Nozzle temperature too high
+  - Bed temperature too low
+  - Z offset too close
+  - Part-cooling speed too high
+  - Correct answer: 0
+  - Explanation: Hotter plastic flows more easily and can ooze during travel.
+- Q9 [fill-blank]: Type the axis letter used for extrusion and retraction amount:
+  - Correct answer: E
+  - Hint: Extruder axis
+  - Explanation: E is the extruder axis in common printer G-code.
+- Q10 [multiple-choice]: What is the correct sequence?
+  - Retract, travel, prime
+  - Prime, travel, retract
+  - Travel, prime, retract
+  - Retract, prime, travel
+  - Correct answer: 0
+  - Explanation: Retraction pulls back before travel and primes before printing resumes.
+
+---
+
+## 33. Flow and Extrusion Clues
+
+**Why:** Flow clues help you recognize when the printer is depositing too much or too little material.
+
+
+**Theory:**
+
+Flow problems show up as gaps, thin walls, blobs, heavy seams, or rough top surfaces.
+ G-code movement helps you read what the slicer asked the printer to do.
+
+G1 X100 E5.0 F1200 ; extrude while moving
+M221 S95 ; Marlin flow percentage example
+
+Before changing flow, check basics: nozzle size, filament diameter, temperature, and whether
+ the extruder is slipping. Flow changes should be small and intentional. Marlin documents M221; Klipper also supports M221 with an S percentage.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: Model extrusion move:
+G1 X100 E5.0 F1200
+
+Which value asks for extrusion?
+  - E5.0
+  - X100
+  - F1200
+  - G1
+  - Correct answer: 0
+  - Explanation: E5.0 is the extrusion amount in this move.
+- Q2 [multiple-choice]: What can under-extrusion look like?
+  - Gaps and thin lines
+  - Blobs and heavy seams
+  - Warped corners
+  - Layer shifts
+  - Correct answer: 0
+  - Explanation: Under-extrusion often leaves gaps, weak walls, or missing top-surface material.
+- Q3 [multiple-choice]: What can over-extrusion look like?
+  - Blobs, heavy seams, rough top surfaces
+  - Gaps and thin walls
+  - Layer shifts without excess material
+  - No extrusion after travel
+  - Correct answer: 0
+  - Explanation: Too much plastic can build up as blobs or rough, crowded lines.
+- Q4 [multiple-choice]: In Marlin, what does M221 S95 adjust?
+  - Flow percentage to 95 percent
+  - Bed temperature to 95 C always
+  - Fan off
+  - Home all axes
+  - Correct answer: 0
+  - Explanation: Marlin and Klipper support M221 S95 as a 95 percent extrusion-factor override.
+- Q5 [fill-blank]: Complete this Marlin flow command:
+M221 S___
+  - Correct answer: 95
+  - Hint: 95 percent flow
+  - Explanation: M221 S95 sets Marlin flow to 95 percent. Other firmware may use a different command.
+- Q6 [multiple-choice]: Before changing flow, what should you check?
+  - Nozzle size and filament diameter
+  - Retraction distance only
+  - Bed mesh only
+  - Travel acceleration only
+  - Correct answer: 0
+  - Explanation: Wrong hardware or filament settings can look like a flow problem.
+- Q7 [multiple-choice]: Which line both moves and extrudes?
+  - G1 X100 E5.0 F1200
+  - M221 S95
+  - ; set flow
+  - G28
+  - Correct answer: 0
+  - Explanation: G1 with X and E moves while extruding.
+- Q8 [fill-blank]: Type the command word in this move:
+___ X100 E5.0 F1200
+  - Correct answer: G1
+  - Hint: Controlled move
+  - Explanation: G1 is the controlled movement command used for many print paths.
+- Q9 [multiple-choice]: Why should flow adjustments remain small?
+  - Large changes can create new print defects
+  - Flow changes only travel speed
+  - Flow resets the home position
+  - Flow affects only the first layer
+  - Correct answer: 0
+  - Explanation: Flow affects every extrusion path, so big changes can create new problems.
+- Q10 [multiple-choice]: What should you do if the extruder clicks or slips?
+  - Check mechanical feed and nozzle restrictions
+  - Increase flow without testing
+  - Raise travel speed
+  - Disable retraction without diagnosing the cause
+  - Correct answer: 0
+  - Explanation: Skipping or slipping can come from a clog, pressure, temperature, or extruder tension issue.
+
+---
+
+## 34. PLA, PETG, ABS, and Profile Clues
+
+**Why:** Different materials need different conditions, so reading the active profile helps you avoid preventable print problems.
+
+
+**Theory:**
+
+Material profiles tell the slicer how hot, fast, and cool a print should run. The G-code
+ shows those choices through temperature, fan, and speed commands.
+
+M104 S215 ; nozzle target
+M140 S70 ; bed target
+M106 S180 ; part cooling fan
+
+PLA often likes more cooling. PETG often needs less cooling and more bed heat. ABS often
+ needs an enclosure and controlled cooling. Prusa warns that ABS can release potentially harmful fumes. Print it in a well-ventilated room while preventing drafts around the print, and follow the filament maker's safety instructions.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: What does a material profile mainly control?
+  - Temperature, speed, cooling, and related settings
+  - The tool-change script
+  - Bed dimensions
+  - The file format
+  - Correct answer: 0
+  - Explanation: Material profiles group settings that match the filament.
+- Q2 [multiple-choice]: Which command sets a nozzle target without waiting?
+  - M104 S215
+  - M140 S70
+  - G28
+  - M107
+  - Correct answer: 0
+  - Explanation: M104 sets hotend target and continues.
+- Q3 [multiple-choice]: Which command sets a bed target without waiting?
+  - M140 S70
+  - M104 S215
+  - G1 E1
+  - M84
+  - Correct answer: 0
+  - Explanation: M140 sets the bed target and continues.
+- Q4 [multiple-choice]: Which command changes part cooling fan speed?
+  - M106 S180
+  - M104 S215
+  - G28
+  - G92 E0
+  - Correct answer: 0
+  - Explanation: M106 controls fan speed on many printers.
+- Q5 [fill-blank]: Complete nozzle target 215 C:
+M104 S___
+  - Correct answer: 215
+  - Hint: Temperature target
+  - Explanation: S215 is the target temperature value.
+- Q6 [multiple-choice]: Compared with ABS, what does PLA often use more of?
+  - Part cooling
+  - Nozzle shutdowns
+  - Moves without extrusion
+  - G28 commands
+  - Correct answer: 0
+  - Explanation: PLA usually benefits from part cooling, though exact settings vary.
+- Q7 [multiple-choice]: According to this lesson, which settings often distinguish PETG from PLA?
+  - Less cooling and more bed heat
+  - More cooling and less bed heat
+  - No bed heat and maximum fan speed
+  - Identical cooling and bed heat
+  - Correct answer: 0
+  - Explanation: PETG often uses less cooling and more bed heat than PLA, but the exact settings depend on the filament and printer.
+- Q8 [multiple-choice]: What commonly helps ABS print successfully?
+  - An enclosure and controlled cooling
+  - Maximum fan speed at all times
+  - A cold bed
+  - A disabled nozzle heater
+  - Correct answer: 0
+  - Explanation: ABS is sensitive to drafts and shrinkage.
+- Q9 [fill-blank]: Complete bed target 70 C:
+M140 S___
+  - Correct answer: 70
+  - Hint: Bed target
+  - Explanation: S70 sets the bed target to 70 C.
+- Q10 [multiple-choice]: Why should you verify material settings instead of copying them without review?
+  - Printer, filament, and environment vary
+  - All G-code is identical
+  - One profile fits every nozzle size
+  - Material brand never affects settings
+  - Correct answer: 0
+  - Explanation: Profiles are starting points and need verification on the actual machine.
+
+---
+
+## 35. Supports, Bridges, and Cooling Decisions
+
+**Why:** Understanding supports, bridges, and cooling helps you decide how the printer should handle difficult features.
+
+
+**Theory:**
+
+Supports and bridges are slicer decisions that show up as different toolpath comments,
+ fan behavior, and slower motion.
+
+;TYPE:SUPPORT
+G1 X40 Y80 E0.24 F1400
+;TYPE:BRIDGE
+M106 S255
+G1 X70 Y80 E0.18 F900
+
+Supports hold steep overhangs. Bridges span gaps. Cooling and speed matter because plastic
+ needs time to hold its shape.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: What does ;TYPE:SUPPORT label?
+  - Support toolpath
+  - Nozzle heat command
+  - Bed probing
+  - Home command
+  - Correct answer: 0
+  - Explanation: Slicers often label support paths with comments.
+- Q2 [multiple-choice]: What does a bridge do?
+  - Spans a gap between supported areas
+  - Supports every vertical wall
+  - Homes all axes
+  - Retracts filament
+  - Correct answer: 0
+  - Explanation: A bridge prints across open space between supports or walls.
+- Q3 [multiple-choice]: Why should you reduce the bridge speed?
+  - To help strands stay controlled across a gap
+  - To increase bed temperature
+  - To disable extrusion
+  - To run bed leveling
+  - Correct answer: 0
+  - Explanation: Bridge speed affects sag and strand placement.
+- Q4 [multiple-choice]: Which command sets the selected/default fan to full speed in this 0-255 example?
+  - M106 S255
+  - G1 X70
+  - G28
+  - M140 S60
+  - Correct answer: 0
+  - Explanation: M106 S255 is commonly full speed for the selected/default compatible fan. Named fans may use firmware-specific commands.
+- Q5 [fill-blank]: Complete a support comment:
+;TYPE:____
+  - Correct answer: SUPPORT
+  - Hint: Support label
+  - Explanation: Slicers may use ;TYPE:SUPPORT to label support paths.
+- Q6 [multiple-choice]: What are supports mainly used for?
+  - Steep overhangs that cannot print in open air
+  - Vertical walls
+  - Solid infill
+  - Travel moves
+  - Correct answer: 0
+  - Explanation: Supports provide temporary material under overhangs.
+- Q7 [multiple-choice]: What can too much support material cause?
+  - Difficult removal and rough surfaces
+  - Stronger layer bonding
+  - Faster printing
+  - Lower material use
+  - Correct answer: 0
+  - Explanation: Support settings affect cleanup and surface quality.
+- Q8 [multiple-choice]: Which line is still only a comment?
+  - ;TYPE:BRIDGE
+  - G1 X70 Y80 E0.18
+  - M106 S255
+  - G28
+  - Correct answer: 0
+  - Explanation: The semicolon makes it a comment for humans.
+- Q9 [fill-blank]: Complete full fan speed:
+M106 S___
+  - Correct answer: 255
+  - Hint: Maximum common fan value
+  - Explanation: S255 is commonly full speed for 8-bit fan control.
+- Q10 [multiple-choice]: What should you inspect when supports fail?
+  - Overhang angle, cooling, speed, and support distance
+  - Nozzle temperature only
+  - Retraction only
+  - Bed size only
+  - Correct answer: 0
+  - Explanation: Support success depends on geometry and slicer settings.
+
+---
+
+## 36. Marlin, Klipper, and Flavor Differences
+
+**Why:** Firmware can interpret commands differently, so identifying the firmware helps you avoid using the wrong command or syntax.
+
+
+**Theory:**
+
+Printer G-code is not perfectly universal. Marlin, Klipper, RepRapFirmware, and vendor
+ firmware may handle commands, macros, and comments differently.
+
+G29 ; bed leveling on many Marlin setups
+BED_MESH_CALIBRATE ; Klipper command provided by a configured [bed_mesh] section
+M486 S2 ; object cancel support on some setups
+
+When a command seems right but fails, check the firmware flavor, enabled configuration sections, and printer documentation.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: Why can the same command behave differently on two printers?
+  - Firmware flavor can differ
+  - Every printer uses an identical configuration
+  - The slicer overrides all firmware behavior
+  - Filament color changes command meaning
+  - Correct answer: 0
+  - Explanation: Firmware implementations and enabled features vary.
+- Q2 [multiple-choice]: Which Klipper bed-mesh command is shown in the configured example?
+  - BED_MESH_CALIBRATE
+  - G29
+  - M104 S210
+  - G1 X10
+  - Correct answer: 0
+  - Explanation: BED_MESH_CALIBRATE is provided when Klipper's [bed_mesh] section is configured.
+- Q3 [multiple-choice]: What does G29 often mean on many Marlin setups?
+  - Bed leveling/probing
+  - Fan off
+  - Disable motors
+  - Extrude 29 mm
+  - Correct answer: 0
+  - Explanation: G29 is often used for probing or leveling in Marlin-style workflows.
+- Q4 [multiple-choice]: Which source defines the commands supported by the printer?
+  - Printer firmware documentation
+  - Filament profile
+  - Bed-mesh result
+  - Print-preview colors
+  - Correct answer: 0
+  - Explanation: Firmware documentation tells you which commands and macros are supported.
+- Q5 [fill-blank]: Complete the common Marlin probing command:
+___
+  - Correct answer: G29
+  - Hint: Bed leveling/probing
+  - Explanation: G29 is commonly bed probing on many Marlin setups.
+- Q6 [multiple-choice]: Which setting must match so the slicer emits compatible command syntax?
+  - The printer's firmware flavor
+  - Layer height
+  - Infill density
+  - Print orientation
+  - Correct answer: 0
+  - Explanation: The slicer needs to emit commands the printer understands.
+- Q7 [multiple-choice]: Which command is a normal motion command across many flavors?
+  - G1 X10 Y10
+  - BED_MESH_CALIBRATE
+  - Vendor macro only
+  - Unknown macro
+  - Correct answer: 0
+  - Explanation: G1 movement is widely supported.
+- Q8 [multiple-choice]: Which assumption is safest when using advanced commands?
+  - The firmware must support the command before you use it
+  - The command works on every firmware
+  - The command is universal across firmware flavors
+  - A rejected command can be ignored safely
+  - Correct answer: 0
+  - Explanation: Advanced commands may depend on firmware options.
+- Q9 [fill-blank]: Complete the idea: firmware flavor affects command ____.
+  - Correct answer: support
+  - Hint: What commands are available
+  - Explanation: Firmware flavor affects command support and behavior.
+- Q10 [multiple-choice]: Why should learners verify commands against the printer's firmware documentation?
+  - You learn the pattern and then verify machine-specific details
+  - You can ignore printer documentation
+  - Every printer is identical
+  - All slicers emit identical commands
+  - Correct answer: 0
+  - Explanation: The concept transfers, but the exact command set must be verified.
+
+---
+
+## 37. T Commands, Filament Changes, and Purging
+
+**Why:** Tool and filament changes must control selection, movement, and purging so the print can continue cleanly.
+
+
+**Theory:**
+
+Multi-material printing adds tool changes, filament changes, purge moves, and sometimes
+ wipe towers. The G-code must manage which extruder or filament is active.
+
+This isolated Marlin example assumes that the surrounding file uses absolute extrusion mode:
+
+T0 ; select tool 0
+M83 ; temporarily use relative extrusion
+G1 E12 F300 ; example purge amount
+M82 ; restore the surrounding file's absolute extrusion mode
+T1 ; select tool 1
+M600 ; Marlin filament change with Advanced Pause enabled
+
+Tool-change behavior is printer-specific. Some printers use multiple nozzles, some use one
+ nozzle with filament switching, and some use slicer-managed purge systems.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: What does T0 commonly select?
+  - Tool or extruder 0
+  - Temperature zero
+  - Travel speed
+  - Layer zero
+  - Correct answer: 0
+  - Explanation: T commands commonly select tools or extruders.
+- Q2 [multiple-choice]: What does T1 commonly select?
+  - Tool or extruder 1
+  - Fan speed 1
+  - Bed heater 1
+  - Layer 1
+  - Correct answer: 0
+  - Explanation: T1 commonly selects the second tool/extruder.
+- Q3 [multiple-choice]: What is purging used for after a tool or filament change?
+  - Push old material/color out
+  - Home the axes
+  - Turn off the bed
+  - Reset the bed mesh
+  - Correct answer: 0
+  - Explanation: Purging clears old material and primes the nozzle.
+- Q4 [multiple-choice]: On Marlin with Advanced Pause enabled, what procedure does M600 start?
+  - Filament change
+  - Fan full speed
+  - Disable motors
+  - Metric mode
+  - Correct answer: 0
+  - Explanation: M600 starts Marlin's configured filament-change procedure when Advanced Pause is enabled.
+- Q5 [fill-blank]: Select tool 1:
+___
+  - Correct answer: T1
+  - Hint: Tool command
+  - Explanation: T1 selects tool/extruder 1 on many setups.
+- Q6 [multiple-choice]: Why can tool-change G-code vary a lot?
+  - Printer hardware and firmware differ
+  - All systems use the same tool count
+  - Filament color selects the syntax
+  - T commands are ignored
+  - Correct answer: 0
+  - Explanation: Multi-material systems use different hardware and firmware logic.
+- Q7 [multiple-choice]: In the lesson's declared M83 example, which line commands the purge?
+  - G1 E12 F300
+  - T0
+  - M600
+  - ; select tool
+  - Correct answer: 0
+  - Explanation: With M83 active, positive E12 commands 12 units of relative extruder movement for this example. M82 then restores the surrounding file's absolute extrusion mode.
+- Q8 [multiple-choice]: What is a purge tower used for?
+  - Cleaning and priming during color changes away from the part
+  - Leveling the bed
+  - Cooling the hotend
+  - Setting X zero
+  - Correct answer: 0
+  - Explanation: A purge tower handles material/color transitions.
+- Q9 [fill-blank]: Complete the Marlin filament-change command used when Advanced Pause is enabled:
+M___
+  - Correct answer: 600
+  - Hint: Filament change
+  - Explanation: M600 starts the configured Marlin filament-change procedure when Advanced Pause is enabled.
+- Q10 [multiple-choice]: What should you verify before using M600?
+  - The firmware and required feature support it
+  - The slicer uses relative extrusion
+  - The printer has a probe
+  - X is always zero
+  - Correct answer: 0
+  - Explanation: M600 requires firmware support and, on Marlin, the configured Advanced Pause feature.
+
+---
+
+## 38. Pauses, Runout, and Safe Resume
+
+**Why:** A safe pause and resume process protects the print from unexpected movement, extrusion, or temperature changes.
+
+
+**Theory:**
+
+Print recovery is about pausing safely, keeping heat controlled, and resuming without
+ crashing into the part or leaving blobs.
+
+M0 ; Marlin pause where supported
+M25 ; Marlin pause an SD-card print
+
+Pause behavior is firmware-specific. Use the printer's documented pause and resume flow. Do not assume that a bare Z move creates a relative lift or that a bare E move creates a relative prime; both depend on the active modes and current positions.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: What is the purpose of a print pause?
+  - Stop temporarily for service or inspection
+  - Finish and shut down the print
+  - Home all axes
+  - Reset the firmware
+  - Correct answer: 0
+  - Explanation: Pauses let you inspect, change filament, or handle an issue.
+- Q2 [multiple-choice]: What can M0 mean on some printers?
+  - Pause
+  - Fan off
+  - Home X
+  - Set bed temp
+  - Correct answer: 0
+  - Explanation: M0 is a pause/stop command on some systems.
+- Q3 [multiple-choice]: What can M25 mean for some SD-card prints?
+  - Pause SD print
+  - Nozzle heat
+  - Fan full
+  - Tool select
+  - Correct answer: 0
+  - Explanation: M25 is used by some firmware for SD print pause.
+- Q4 [multiple-choice]: Why must a pause routine verify its Z-clearance move?
+  - Its result depends on positioning mode, current position, and machine limits
+  - Every Z move is a 10 mm lift
+  - Z moves always re-home the printer
+  - Pause commands disable Z motion
+  - Correct answer: 0
+  - Explanation: Under absolute positioning, Z10 requests position Z10; under relative positioning, it requests a 10-unit move. A documented routine must account for the active state and limits.
+- Q5 [multiple-choice]: Why can G1 Z10 not be assumed to mean a 10 mm lift?
+  - Its meaning depends on G90 or G91 and the current Z position
+  - Z values always control temperature
+  - G1 always homes Z first
+  - Z10 disables the motors
+  - Correct answer: 0
+  - Explanation: G90 makes Z10 an absolute destination, while G91 makes it a relative move. The active mode must be known.
+- Q6 [multiple-choice]: What should you check before resuming a paused print?
+  - Position, heat, prime, and clearance
+  - Remaining print time only
+  - File size only
+  - Layer number only
+  - Correct answer: 0
+  - Explanation: Safe resume needs the printer ready to continue without a blob or crash.
+- Q7 [multiple-choice]: Why should you prime the nozzle before resuming a paused print?
+  - To restore filament flow
+  - To home the bed
+  - To turn off motors
+  - To delete strings
+  - Correct answer: 0
+  - Explanation: Pauses can leave the nozzle under-primed.
+- Q8 [multiple-choice]: Why can G1 E3 not be assumed to command a 3 mm prime?
+  - Its result depends on M82 or M83 and the current E position
+  - E values always set fan speed
+  - G1 disables extrusion
+  - M25 changes E to relative mode
+  - Correct answer: 0
+  - Explanation: With M83, E3 is a relative extruder move. With M82, it is an absolute E destination, so the current state must be known.
+- Q9 [fill-blank]: Type one common pause command:
+  - Correct answer: M0
+  - Hint: Pause/stop on some printers
+  - Explanation: M0 is a common pause command, but support varies.
+- Q10 [multiple-choice]: Why should you verify the firmware's pause behavior?
+  - Pause commands are not identical everywhere
+  - All pauses preserve the same machine state
+  - All pauses home the axes
+  - M0 and M25 are universal
+  - Correct answer: 0
+  - Explanation: Different printer firmware handles pause and resume differently.
+
+---
+
+## 39. One-Change-at-a-Time Tuning
+
+**Why:** Changing one setting at a time makes it easier to connect each adjustment to the result you observe.
+
+
+**Theory:**
+
+Good tuning is controlled. Change one setting, print a known test, read the result, and
+ record what changed.
+
+Temp tower: tune temperature
+Retraction tower: tune strings
+Flow cube: tune wall thickness
+Speed test: tune motion quality
+
+If you change temperature, speed, fan, flow, and retraction all at once, you will not know
+ which setting fixed or caused the result.
+
+
+**Quiz:**
+
+- Q1 [multiple-choice]: What is the best tuning habit?
+  - Change one variable at a time
+  - Change every variable at once
+  - Change settings without recording them
+  - Use one profile for every material
+  - Correct answer: 0
+  - Explanation: One change at a time lets you connect cause and effect.
+- Q2 [multiple-choice]: What does a temperature tower help tune?
+  - Nozzle temperature
+  - Bed leveling
+  - Retraction distance
+  - Flow percentage only
+  - Correct answer: 0
+  - Explanation: A temperature tower compares print quality at different temperatures.
+- Q3 [multiple-choice]: What does a retraction tower help tune?
+  - Stringing and travel cleanup
+  - Bed size
+  - Z homing only
+  - Program end
+  - Correct answer: 0
+  - Explanation: Retraction tests reveal stringing and restart quality.
+- Q4 [multiple-choice]: What does a flow cube often help check?
+  - Wall thickness and extrusion flow
+  - Nozzle temperature
+  - Retraction distance
+  - Fan speed
+  - Correct answer: 0
+  - Explanation: Flow tests help evaluate extrusion amount.
+- Q5 [fill-blank]: Complete the habit: change one ____ at a time.
+  - Correct answer: variable
+  - Hint: One setting
+  - Explanation: One variable at a time keeps tuning readable.
+- Q6 [multiple-choice]: Why should you record tuning changes?
+  - To repeat or undo the changes
+  - To increase print speed automatically
+  - To reset the firmware
+  - To change the filament profile
+  - Correct answer: 0
+  - Explanation: Records make tuning decisions traceable.
+- Q7 [multiple-choice]: If stringing improves after changing temperature and retraction together, what is the problem?
+  - You do not know which change helped
+  - The print cannot be used
+  - G-code stopped working
+  - The bed changed size
+  - Correct answer: 0
+  - Explanation: Multiple simultaneous changes hide the cause.
+- Q8 [multiple-choice]: Which test best targets ringing or motion quality?
+  - Speed/acceleration test
+  - Temperature tower
+  - Flow cube
+  - Retraction tower
+  - Correct answer: 0
+  - Explanation: Motion quality is affected by speed and acceleration.
+- Q9 [fill-blank]: A retraction tower mainly checks for ____.
+  - Correct answer: stringing
+  - Hint: Thin plastic hairs
+  - Explanation: Retraction tuning targets stringing and restart artifacts.
+- Q10 [multiple-choice]: What is the goal of slicer tuning?
+  - Predictable print quality through measured changes
+  - Maximum speed regardless of quality
+  - Several simultaneous variable changes
+  - One profile for every material
+  - Correct answer: 0
+  - Explanation: Good tuning makes results more predictable.
 
 ---
