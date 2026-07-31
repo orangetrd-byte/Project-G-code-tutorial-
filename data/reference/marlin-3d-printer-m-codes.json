@@ -43,6 +43,13 @@
       "source_url": "https://marlinfw.org/docs/gcode/M106.html"
     },
     {
+      "code": "M0",
+      "description": "Stop and wait for continuation",
+      "notes": "Requests an unconditional stop. How the user continues can depend on the printer's configured display or host interface.",
+      "source": "Marlin M0 and M1 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M000-M001.html"
+    },
+    {
       "code": "M25",
       "description": "Pause an SD-card print",
       "notes": "Pauses a print that Marlin is running from an SD card. Pause behavior can depend on firmware configuration and enabled features.",

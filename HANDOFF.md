@@ -31,12 +31,12 @@ The current learning model is similar to Duolingo or Mimo:
 
 ## Current Build State
 
-- App version: `MGP v2.58.8`
-- App build: `2026.07.31.05`
-- Service worker cache: `pgct-2026.07.31.05`
+- App version: `MGP v2.58.9`
+- App build: `2026.07.31.06`
+- Service worker cache: `pgct-2026.07.31.06`
 - CNC path: 11 units / 21 lessons
 - 3D printing path: 10 units / 18 lessons
-- Current release scope: official Marlin Code Bank coverage for core G-, M-, and T-code lessons
+- Current release scope: official Marlin reference coverage for every learnable printing code
 
 ## What Works Well
 

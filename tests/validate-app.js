@@ -278,7 +278,7 @@ function validateReferences() {
   const requiredGCodes = ['G00', 'G01', 'G02', 'G03', 'G20', 'G21', 'G28', 'G40', 'G54'];
   const gCodeItems = ['mill-g-codes.json', 'lathe-g-codes.json']
     .flatMap(file => readJson(`data/reference/${file}`).items);
-  const requiredPrintingCodes = ['G0/G1', 'G28', 'G29', 'G90', 'G91', 'G92', 'M25', 'M82', 'M83', 'M84', 'M104', 'M106', 'M107', 'M109', 'M140', 'M190', 'M221', 'M486', 'M600', 'T0', 'T1'];
+  const requiredPrintingCodes = ['G0/G1', 'G28', 'G29', 'G90', 'G91', 'G92', 'M0', 'M25', 'M82', 'M83', 'M84', 'M104', 'M106', 'M107', 'M109', 'M140', 'M190', 'M221', 'M486', 'M600', 'T0', 'T1'];
   const printingCodeItems = ['marlin-3d-printer-g-codes.json', 'marlin-3d-printer-m-codes.json', 'marlin-3d-printer-t-codes.json']
     .flatMap(file => readJson(`data/reference/${file}`).items);
   index.files
@@ -361,6 +361,16 @@ function validateCurriculum(api) {
     assert.ok(String(lesson.why || '').trim(), `${lesson.id} must explain why the concept matters before teaching syntax`);
   });
   assert.match(read('js/app.js'), /\$\{whyBlock\}\s*<div class="theory-body">/, 'Why-this-matters content must render before lesson theory');
+  const printingReferenceCodes = new Set(
+    ['marlin-3d-printer-g-codes.json', 'marlin-3d-printer-m-codes.json', 'marlin-3d-printer-t-codes.json']
+      .flatMap(file => readJson(`data/reference/${file}`).items)
+      .flatMap(item => String(item.code).match(/\b(?:G|M|T)\d+\b/g) || [])
+  );
+  const learnablePrintingCodes = new Set(api.TRACKS.printing.lessons
+    .flatMap(lesson => lesson.quiz)
+    .flatMap(question => api.queueCodesFromQuestion(question)));
+  assert.ok(learnablePrintingCodes.size > 0, 'Printing curriculum must expose learnable codes');
+  learnablePrintingCodes.forEach(code => assert.ok(printingReferenceCodes.has(code), `Printing Code Bank is missing learnable code ${code}`));
 
   const lessonIds = new Set();
   const questionIds = new Set();
