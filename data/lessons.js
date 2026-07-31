@@ -1086,15 +1086,15 @@ const PRINTING_LESSONS = [
     icon: "3D",
     xp: 10,
     theory: `
-      <p>3D printer G-code controls motion, temperature, extrusion, fans, and machine setup.
-      A slicer writes most of it, but knowing the blocks helps you tune, debug, and inspect prints.</p>
+      <p>3D printer G-code controls motion, temperature, filament movement, fans, and machine setup.
+      A slicer is software that converts a 3D model into layer-by-layer printer instructions. It writes most G-code, but learning to read these lines helps you inspect a file and find problems.</p>
       <pre>G1 X82.4 Y104.2 E0.036 F1800</pre>
       <p>Breaking that down:</p>
       <ul>
         <li><code>G1</code> - controlled move</li>
         <li><code>X82.4 Y104.2</code> - nozzle position on the bed</li>
-        <li><code>E0.036</code> - amount of filament to extrude</li>
-        <li><code>F1800</code> - feed rate in mm/min</li>
+        <li><code>E0.036</code> - extruder position or movement, depending on the active extrusion mode</li>
+        <li><code>F1800</code> - movement speed in millimeters per minute</li>
       </ul>
       <p>Printer G-code is usually metric. Most slicers use millimeters for X, Y, Z, and E values.</p>
     `,
@@ -1103,9 +1103,9 @@ const PRINTING_LESSONS = [
       {
         type: "multiple-choice",
         question: "In 3D printer G-code, what does the E value usually control?",
-        options: ["Bed temperature", "Extrusion amount", "Fan speed", "Home position"],
+        options: ["Bed temperature", "Extruder movement", "Fan speed", "Home position"],
         answer: 1,
-        explanation: "The E axis controls extruder movement. More E value means more filament is pushed through the nozzle."
+        explanation: "The E value controls extruder position or movement. Its exact effect depends on whether extrusion is in absolute or relative mode."
       },
       {
         type: "multiple-choice",
@@ -1127,17 +1127,17 @@ const PRINTING_LESSONS = [
         question: "Match each printer G-code word to what it controls.",
         pairs: [
           { left: "G1", right: "Controlled move" },
-          { left: "E", right: "Extrusion amount" },
+          { left: "E", right: "Extruder movement" },
           { left: "F", right: "Feed rate" }
         ],
-        explanation: "Printer moves commonly use G1 for controlled motion, E for extrusion amount, and F for feed rate."
+        explanation: "Printer moves commonly use G1 for controlled motion, E for extruder movement, and F for movement speed."
       },
       {
         id: "p-u1-l1-q5",
         type: "true-false",
-        question: "In most 3D printer G-code, E controls extrusion amount.",
+        question: "In most 3D printer G-code, E controls extruder movement.",
         answer: true,
-        explanation: "True. E values control extruder movement, so they affect how much filament is pushed through the nozzle."
+        explanation: "True. E controls the extruder, while the active absolute or relative extrusion mode determines how each value is interpreted."
       }
     ]
   },
@@ -1151,10 +1151,10 @@ const PRINTING_LESSONS = [
     icon: "XY",
     xp: 10,
     theory: `
-      <p>Before printing, the machine needs to know where its axes are. Homing moves each axis
-      to its endstop or sensor so the printer can establish machine zero.</p>
+      <p>Before printing, the machine needs to know where its axes are. An endstop is a switch or sensor that marks a known reference point. Homing moves each axis to its endstop or sensor so the printer can establish machine zero.</p>
       <pre>G28 ; home all axes</pre>
-      <p>Many printers also probe the bed before printing:</p>
+      <p>A bed mesh is a map of small height differences across the print surface. A configured printer can use this map to adjust nozzle height during a print.</p>
+      <p>Many printers can probe the bed to create a mesh:</p>
       <pre>G29 ; Marlin configured leveling
 BED_MESH_CALIBRATE ; Klipper command provided by a configured [bed_mesh] section</pre>
       <p>On Marlin, G29 runs the configured leveling system. In Klipper, BED_MESH_CALIBRATE is available only when [bed_mesh] is configured; G29 is not native Klipper unless a user-defined macro maps it. Always check the active firmware
@@ -1193,6 +1193,7 @@ BED_MESH_CALIBRATE ; Klipper command provided by a configured [bed_mesh] section
     icon: "TEMP",
     xp: 15,
     theory: `
+      <p>The hotend is the heated assembly that melts filament. The heated bed warms the surface that supports the print.</p>
       <p>Temperature commands use M-codes. Some set a target and continue immediately; others wait.</p>
       <pre>M104 S210 ; set nozzle to 210 C and continue
 M109 S210 ; wait while heating to at least 210 C
@@ -2662,7 +2663,9 @@ const LESSON_AUDIT_REVIEWED = {
   "u9-l1": "2026-07-16",
   "u10-l1": "2026-07-20",
   "u11-l1": "2026-07-20",
+  "p-u1-l1": "2026-07-31",
   "p-u1-l2": "2026-07-31",
+  "p-u1-l3": "2026-07-31",
   "p-u3-l2": "2026-07-31",
   "p-u4-l3": "2026-07-31",
   "p-u5-l1": "2026-07-31",

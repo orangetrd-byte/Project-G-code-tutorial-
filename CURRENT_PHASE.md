@@ -8,9 +8,9 @@ Phase 6: Retention Polish
 
 - Last updated: 2026-07-31.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest application-content release: precise Marlin M0 and M25 pause instruction for beginners.
-- Current app build: MGP | Version v2.58.10 | Build 2026.07.31.07.
-- Current service-worker cache: pgct-2026.07.31.07.
+- Latest application-content release: beginner definitions and mode-safe extrusion wording in printing foundations.
+- Current app build: MGP | Version v2.58.11 | Build 2026.07.31.08.
+- Current service-worker cache: pgct-2026.07.31.08.
 - Local `main` is aligned with `origin/main`.
 
 ## Phase 5 Completion Summary

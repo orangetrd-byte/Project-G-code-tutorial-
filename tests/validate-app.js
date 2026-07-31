@@ -375,6 +375,13 @@ function validateCurriculum(api) {
   const printingPauseCopy = `${printingPauseLesson?.theory || ''} ${(printingPauseLesson?.quiz || []).map(question => `${question.question} ${question.explanation}`).join(' ')}`;
   assert.match(printingPauseCopy, /M0 requests an unconditional stop/, 'The Marlin M0 lesson must teach its documented stop behavior');
   assert.doesNotMatch(printingPauseCopy, /M0 mean on some printers|common pause command, but support varies/, 'Vague M0 wording must not return');
+  const printingFoundations = api.TRACKS.printing.lessons.slice(0, 3).map(lesson => lesson.theory).join(' ');
+  assert.match(printingFoundations, /A slicer is software that converts a 3D model/, 'Printing foundations must define slicer');
+  assert.match(printingFoundations, /An endstop is a switch or sensor/, 'Printing foundations must define endstop');
+  assert.match(printingFoundations, /A bed mesh is a map of small height differences/, 'Printing foundations must define bed mesh');
+  assert.match(printingFoundations, /The hotend is the heated assembly that melts filament/, 'Printing foundations must define hotend');
+  assert.doesNotMatch(printingFoundations, /knowing the blocks/, 'Printing foundations must use beginner-friendly wording');
+  assert.doesNotMatch(JSON.stringify(api.TRACKS.printing.lessons[0].quiz), /More E value means/, 'Extrusion guidance must respect absolute and relative modes');
 
   const lessonIds = new Set();
   const questionIds = new Set();
@@ -389,7 +396,7 @@ function validateCurriculum(api) {
       assert.ok(lesson.id && !lessonIds.has(lessonKey), `Duplicate lesson ${lessonKey}`);
       lessonIds.add(lessonKey);
       assert.ok(Array.isArray(lesson.quiz) && lesson.quiz.length, `${lesson.id} needs quiz questions`);
-      const expectedReviewDate = ['p-u1-l2', 'p-u3-l2', 'p-u4-l3', 'p-u5-l1', 'p-u7-l1', 'p-u8-l1', 'p-u9-l1'].includes(lesson.id)
+      const expectedReviewDate = ['p-u1-l1', 'p-u1-l2', 'p-u1-l3', 'p-u3-l2', 'p-u4-l3', 'p-u5-l1', 'p-u7-l1', 'p-u8-l1', 'p-u9-l1'].includes(lesson.id)
         ? '2026-07-31'
         : ['u10-l1', 'u11-l1'].includes(lesson.id)
           ? '2026-07-20'

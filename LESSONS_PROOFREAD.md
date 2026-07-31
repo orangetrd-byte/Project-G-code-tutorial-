@@ -1568,8 +1568,8 @@ F___
 
 **Theory:**
 
-3D printer G-code controls motion, temperature, extrusion, fans, and machine setup.
- A slicer writes most of it, but knowing the blocks helps you tune, debug, and inspect prints.
+3D printer G-code controls motion, temperature, filament movement, fans, and machine setup.
+ A slicer is software that converts a 3D model into layer-by-layer printer instructions. It writes most G-code, but learning to read these lines helps you inspect a file and find problems.
 
 G1 X82.4 Y104.2 E0.036 F1800
 
@@ -1579,9 +1579,9 @@ Breaking that down:
 
 `X82.4 Y104.2` - nozzle position on the bed
 
-`E0.036` - amount of filament to extrude
+`E0.036` - extruder position or movement, depending on the active extrusion mode
 
-`F1800` - feed rate in mm/min
+`F1800` - movement speed in millimeters per minute
 
 Printer G-code is usually metric. Most slicers use millimeters for X, Y, Z, and E values.
 
@@ -1590,11 +1590,11 @@ Printer G-code is usually metric. Most slicers use millimeters for X, Y, Z, and 
 
 - Q1 [multiple-choice]: In 3D printer G-code, what does the E value usually control?
   - Bed temperature
-  - Extrusion amount
+  - Extruder movement
   - Fan speed
   - Home position
   - Correct answer: 1
-  - Explanation: The E axis controls extruder movement. More E value means more filament is pushed through the nozzle.
+  - Explanation: The E value controls extruder position or movement. Its exact effect depends on whether extrusion is in absolute or relative mode.
 - Q2 [multiple-choice]: Which axis usually controls nozzle height above the print bed?
   - X
   - Y
@@ -1608,11 +1608,11 @@ ___ X50 Y50 E1.2 F1200
   - Hint: G1 is the normal printing move
   - Explanation: G1 is the controlled move used for most print paths. It may move with or without extrusion.
 - Q4 [matching]: Match each printer G-code word to what it controls.
-  - Explanation: Printer moves commonly use G1 for controlled motion, E for extrusion amount, and F for feed rate.
-  - Pairs: G1→Controlled move, E→Extrusion amount, F→Feed rate
-- Q5 [true-false]: In most 3D printer G-code, E controls extrusion amount.
+  - Explanation: Printer moves commonly use G1 for controlled motion, E for extruder movement, and F for movement speed.
+  - Pairs: G1→Controlled move, E→Extruder movement, F→Feed rate
+- Q5 [true-false]: In most 3D printer G-code, E controls extruder movement.
   - Correct answer: true
-  - Explanation: True. E values control extruder movement, so they affect how much filament is pushed through the nozzle.
+  - Explanation: True. E controls the extruder, while the active absolute or relative extrusion mode determines how each value is interpreted.
 
 ---
 
@@ -1623,12 +1623,13 @@ ___ X50 Y50 E1.2 F1200
 
 **Theory:**
 
-Before printing, the machine needs to know where its axes are. Homing moves each axis
- to its endstop or sensor so the printer can establish machine zero.
+Before printing, the machine needs to know where its axes are. An endstop is a switch or sensor that marks a known reference point. Homing moves each axis to its endstop or sensor so the printer can establish machine zero.
 
 G28 ; home all axes
 
-Many printers also probe the bed before printing:
+A bed mesh is a map of small height differences across the print surface. A configured printer can use this map to adjust nozzle height during a print.
+
+Many printers can probe the bed to create a mesh:
 
 G29 ; Marlin configured leveling
 BED_MESH_CALIBRATE ; Klipper command provided by a configured [bed_mesh] section
@@ -1662,6 +1663,8 @@ On Marlin, G29 runs the configured leveling system. In Klipper, BED_MESH_CALIBRA
 
 
 **Theory:**
+
+The hotend is the heated assembly that melts filament. The heated bed warms the surface that supports the print.
 
 Temperature commands use M-codes. Some set a target and continue immediately; others wait.
 
