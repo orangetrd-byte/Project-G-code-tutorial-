@@ -1082,6 +1082,7 @@ const PRINTING_LESSONS = [
     unitName: "Printer Foundations",
     lesson: 1,
     title: "What 3D Printer G-Code Does",
+    why: "Reading G-code helps you understand what the printer is doing so you can inspect a file and troubleshoot problems more confidently.",
     icon: "3D",
     xp: 10,
     theory: `
@@ -1146,6 +1147,7 @@ const PRINTING_LESSONS = [
     unitName: "Printer Foundations",
     lesson: 2,
     title: "Homing and Bed Leveling",
+    why: "The printer needs a reliable position and a known bed surface before it can place the first layer correctly.",
     icon: "XY",
     xp: 10,
     theory: `
@@ -1187,6 +1189,7 @@ BED_MESH_CALIBRATE ; Klipper command provided by a configured [bed_mesh] section
     unitName: "Printer Foundations",
     lesson: 3,
     title: "Hotend and Bed Temperature",
+    why: "Correct temperature commands help the printer heat safely and begin each step at the intended temperature.",
     icon: "TEMP",
     xp: 15,
     theory: `
@@ -1247,6 +1250,7 @@ M190 S60  ; wait while heating bed to at least 60 C</pre>
     unitName: "Extrusion & Motion",
     lesson: 1,
     title: "Extrusion and the E Axis",
+    why: "Understanding extrusion helps you tell the difference between a travel move and a move that deposits filament.",
     icon: "E",
     xp: 15,
     theory: `
@@ -1279,6 +1283,7 @@ M190 S60  ; wait while heating bed to at least 60 C</pre>
     unitName: "Extrusion & Motion",
     lesson: 2,
     title: "Feed Rate and Travel Moves",
+    why: "Movement speed affects print quality, travel time, and how accurately the printer can place filament.",
     icon: "F",
     xp: 15,
     theory: `
@@ -1309,6 +1314,7 @@ G1 X40 Y40 E0.4 F1800 ; slower print move</pre>
     unitName: "Extrusion & Motion",
     lesson: 3,
     title: "Fans and Cooling",
+    why: "Cooling changes how quickly plastic solidifies, which affects bridges, overhangs, and layer bonding.",
     icon: "FAN",
     xp: 15,
     theory: `
@@ -1340,6 +1346,7 @@ M107      ; fan off</pre>
     unitName: "Start & End G-Code",
     lesson: 1,
     title: "Start G-Code Sequence",
+    why: "A clear start sequence prepares the printer in a safe, predictable order before extrusion begins.",
     icon: "ST",
     xp: 20,
     theory: `
@@ -1373,6 +1380,7 @@ G92 E0    ; reset extruder position</pre>
     unitName: "Start & End G-Code",
     lesson: 2,
     title: "End G-Code and Safe Shutdown",
+    why: "A safe end sequence leaves the printer in a controlled state after the final move.",
     icon: "END",
     xp: 20,
     theory: `
@@ -1404,6 +1412,7 @@ M84     ; disable motors</pre>
     unitName: "Start & End G-Code",
     lesson: 3,
     title: "Reading Slicer Comments",
+    why: "Slicer comments help you locate layers and print features without changing how the printer runs the file.",
     icon: ";",
     xp: 20,
     theory: `
