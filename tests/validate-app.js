@@ -315,7 +315,7 @@ function validateCurriculum(api) {
   api.TRACKS.cnc.lessons.slice(0, 9).forEach(lesson => {
     assert.ok(String(lesson.why || '').trim(), `${lesson.id} must explain why the concept matters before teaching syntax`);
   });
-  api.TRACKS.printing.lessons.slice(0, 9).forEach(lesson => {
+  api.TRACKS.printing.lessons.forEach(lesson => {
     assert.ok(String(lesson.why || '').trim(), `${lesson.id} must explain why the concept matters before teaching syntax`);
   });
   assert.match(read('js/app.js'), /\$\{whyBlock\}\s*<div class="theory-body">/, 'Why-this-matters content must render before lesson theory');

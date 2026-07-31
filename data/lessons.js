@@ -1443,6 +1443,7 @@ G1 X30 Y40 E0.22 F1500
     unitName: "Print Troubleshooting",
     lesson: 1,
     title: "First Layer Diagnostics",
+    why: "First-layer clues help you catch setup and adhesion problems before they affect the rest of the print.",
     icon: "Z",
     xp: 20,
     theory: `
@@ -1476,6 +1477,7 @@ G1 X60 Y60 E0.8 F1200</pre>
     unitName: "Print Troubleshooting",
     lesson: 2,
     title: "Retraction and Stringing",
+    why: "Retraction settings help control unwanted filament during travel moves without disrupting normal extrusion.",
     icon: "RET",
     xp: 20,
     theory: `
@@ -1508,6 +1510,7 @@ G1 E0.8 F1800 ; prime</pre>
     unitName: "Print Troubleshooting",
     lesson: 3,
     title: "Flow and Extrusion Clues",
+    why: "Flow clues help you recognize when the printer is depositing too much or too little material.",
     icon: "FLOW",
     xp: 20,
     theory: `
@@ -1539,6 +1542,7 @@ M221 S95           ; Marlin flow percentage example</pre>
     unitName: "Material Profiles",
     lesson: 1,
     title: "PLA, PETG, ABS, and Profile Clues",
+    why: "Different materials need different conditions, so reading the active profile helps you avoid preventable print problems.",
     icon: "MAT",
     xp: 20,
     theory: `
@@ -1571,6 +1575,7 @@ M106 S180 ; part cooling fan</pre>
     unitName: "Supports & Overhangs",
     lesson: 1,
     title: "Supports, Bridges, and Cooling Decisions",
+    why: "Understanding supports, bridges, and cooling helps you decide how the printer should handle difficult features.",
     icon: "SUP",
     xp: 20,
     theory: `
@@ -1605,6 +1610,7 @@ G1 X70 Y80 E0.18 F900</pre>
     unitName: "Firmware Flavors",
     lesson: 1,
     title: "Marlin, Klipper, and Flavor Differences",
+    why: "Firmware can interpret commands differently, so identifying the firmware helps you avoid using the wrong command or syntax.",
     icon: "FW",
     xp: 25,
     theory: `
@@ -1636,6 +1642,7 @@ M486 S2   ; object cancel support on some setups</pre>
     unitName: "Multi-Material & Tool Changes",
     lesson: 1,
     title: "T Commands, Filament Changes, and Purging",
+    why: "Tool and filament changes must control selection, movement, and purging so the print can continue cleanly.",
     icon: "T0",
     xp: 25,
     theory: `
@@ -1672,6 +1679,7 @@ M600 ; Marlin filament change with Advanced Pause enabled</pre>
     unitName: "Print Recovery & Pauses",
     lesson: 1,
     title: "Pauses, Runout, and Safe Resume",
+    why: "A safe pause and resume process protects the print from unexpected movement, extrusion, or temperature changes.",
     icon: "PAU",
     xp: 25,
     theory: `
@@ -1702,6 +1710,7 @@ M25 ; Marlin pause an SD-card print</pre>
     unitName: "Slicer Tuning Workflow",
     lesson: 1,
     title: "One-Change-at-a-Time Tuning",
+    why: "Changing one setting at a time makes it easier to connect each adjustment to the result you observe.",
     icon: "TUNE",
     xp: 25,
     theory: `
