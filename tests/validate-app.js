@@ -140,6 +140,40 @@ function validateLessonAndReviewBuilders(api) {
   assert.ok(matchingQuestion?.pairs.length >= 2, 'Matching review must retain complete pairs');
   assert.equal(new Set(matchingQuestion.pairs.map(pair => pair.left)).size, matchingQuestion.pairs.length, 'Matching left-side prompts must stay distinct');
   api.State.resetAllData();
+
+  api.State.resetAllData();
+  api.State.trackId = 'printing';
+  const printingLesson = api.TRACKS.printing.lessons[0];
+  const printingLessonQuestions = api.pickLessonQuestions(printingLesson, 5);
+  assert.equal(printingLessonQuestions.length, Math.min(5, printingLesson.quiz.length), 'Printing lesson practice must retain its five-question cap');
+  assert.ok(printingLessonQuestions.every(question => printingLesson.quiz.some(source => source.id === question.originalQuestionId || source.id === question.id)), 'Printing lesson practice must use its own lesson bank');
+
+  const printingUnitQuestions = api.buildUnitReviewQuestions(printingLesson.unit);
+  assert.ok(printingUnitQuestions.length > 0 && printingUnitQuestions.length <= 10, 'Printing unit review must remain bounded');
+  assert.ok(printingUnitQuestions.every(question => question.sourceUnit === printingLesson.unit), 'Printing unit review must stay inside its unit');
+  assert.ok(printingUnitQuestions.every(question => String(question.sourceLessonId).startsWith('p-')), 'Printing unit review must not include CNC questions');
+
+  api.State.completedLessons = [printingLesson.id];
+  const printingDailyQuestions = api.buildDailyMissionQuestions();
+  assert.ok(printingDailyQuestions.length > 0 && printingDailyQuestions.length <= 5, 'Printing daily review must remain short');
+  assert.ok(printingDailyQuestions.every(question => question.sourceLessonId === printingLesson.id), 'Printing daily review must use completed printing lessons only');
+
+  const printingWeakQuestion = printingLesson.quiz[0];
+  api.State.trackWeakQuestion(printingWeakQuestion, printingLesson);
+  assert.equal(api.State.weakQuestions.length, 1, 'Printing weak review must retain a missed question');
+  assert.equal(api.State.weakQuestions[0].question.sourceLessonId, printingLesson.id, 'Printing weak review must retain printing lesson context');
+
+  api.State.completedLessons = api.TRACKS.printing.lessons.map(lesson => lesson.id);
+  const printingMixedQuestions = api.buildTrackReviewQuestions();
+  assert.equal(printingMixedQuestions.length, 12, 'Printing mixed review must retain its 12-question cap');
+  assert.ok(printingMixedQuestions.every(question => String(question.sourceLessonId).startsWith('p-')), 'Printing mixed review must not include CNC questions');
+  assert.ok(new Set(printingMixedQuestions.map(question => question.sourceUnit)).size > 1, 'Printing mixed review must span multiple units');
+
+  const printingMatchingQuestion = api.TRACKS.printing.lessons
+    .flatMap(lesson => lesson.quiz)
+    .find(question => question.type === 'matching');
+  assert.ok(printingMatchingQuestion?.pairs.length >= 2, 'Printing matching review must retain complete pairs');
+  assert.equal(new Set(printingMatchingQuestion.pairs.map(pair => pair.left)).size, printingMatchingQuestion.pairs.length, 'Printing matching prompts must stay distinct');
 }
 
 function validateRegressionSurfaces() {
