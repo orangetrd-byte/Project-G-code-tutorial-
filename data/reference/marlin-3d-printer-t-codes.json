@@ -1,0 +1,8 @@
+{
+  "category": "3d_printing_marlin",
+  "type": "t_codes",
+  "items": [
+    { "code": "T0", "description": "Select tool 0", "notes": "Selects the configured tool or extruder numbered 0. Tool availability and tool-change behavior depend on the printer configuration.", "source": "Marlin T-code documentation", "source_url": "https://marlinfw.org/docs/gcode/T.html" },
+    { "code": "T1", "description": "Select tool 1", "notes": "Selects the configured tool or extruder numbered 1. Tool availability and tool-change behavior depend on the printer configuration.", "source": "Marlin T-code documentation", "source_url": "https://marlinfw.org/docs/gcode/T.html" }
+  ]
+}

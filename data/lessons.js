@@ -1660,8 +1660,8 @@ M600 ; Marlin filament change with Advanced Pause enabled</pre>
     `,
     visual: "block-anatomy",
     quiz: [
-      { type: "multiple-choice", question: "What does T0 commonly select?", options: ["Tool or extruder 0", "Temperature zero", "Travel speed", "Layer zero"], answer: 0, explanation: "T commands commonly select tools or extruders." },
-      { type: "multiple-choice", question: "What does T1 commonly select?", options: ["Tool or extruder 1", "Fan speed 1", "Bed heater 1", "Layer 1"], answer: 0, explanation: "T1 commonly selects the second tool/extruder." },
+      { type: "multiple-choice", question: "What does T0 commonly select?", meta: { codes: ["T0"] }, options: ["Tool or extruder 0", "Temperature zero", "Travel speed", "Layer zero"], answer: 0, explanation: "T commands commonly select tools or extruders." },
+      { type: "multiple-choice", question: "What does T1 commonly select?", meta: { codes: ["T1"] }, options: ["Tool or extruder 1", "Fan speed 1", "Bed heater 1", "Layer 1"], answer: 0, explanation: "T1 commonly selects the second tool/extruder." },
       { type: "multiple-choice", question: "What is purging used for after a tool or filament change?", options: ["Push old material/color out", "Home the axes", "Turn off the bed", "Reset the bed mesh"], answer: 0, explanation: "Purging clears old material and primes the nozzle." },
       { type: "multiple-choice", question: "On Marlin with Advanced Pause enabled, what procedure does M600 start?", meta: { codes: ["M600"] }, options: ["Filament change", "Fan full speed", "Disable motors", "Metric mode"], answer: 0, explanation: "M600 starts Marlin's configured filament-change procedure when Advanced Pause is enabled." },
       { type: "fill-blank", question: "Select tool 1:\n___", answer: "T1", hint: "Tool command", explanation: "T1 selects tool/extruder 1 on many setups." },

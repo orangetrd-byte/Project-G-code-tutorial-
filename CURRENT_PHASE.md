@@ -8,9 +8,9 @@ Phase 6: Retention Polish
 
 - Last updated: 2026-07-31.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest application-content release: expanded Marlin Code Bank coverage for core commands taught in the printing curriculum.
-- Current app build: MGP | Version v2.58.7 | Build 2026.07.31.04.
-- Current service-worker cache: pgct-2026.07.31.04.
+- Latest application-content release: completed core Marlin Code Bank coverage with track-specific T0 and T1 cards.
+- Current app build: MGP | Version v2.58.8 | Build 2026.07.31.05.
+- Current service-worker cache: pgct-2026.07.31.05.
 - Local `main` is aligned with `origin/main`.
 
 ## Phase 5 Completion Summary

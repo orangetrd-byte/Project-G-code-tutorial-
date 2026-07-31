@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.58.7 | Build 2026.07.31.04';
+const APP_BUILD = 'MGP | Version v2.58.8 | Build 2026.07.31.05';
 
 // ─── ACCESS GATE ────────────────────────────────────────────
 const AccessGate = {
@@ -719,7 +719,7 @@ function toggleLearnedCode(code, trackId = State.trackId) {
 }
 
 
-const CODE_TOKEN_RE = /\b(G|M)\d{1,3}\b/gi;
+const CODE_TOKEN_RE = /\b(G|M|T)\d{1,3}\b/gi;
 function extractCodeTokens(text) {
   if (!text) return [];
   const m = String(text).match(CODE_TOKEN_RE);

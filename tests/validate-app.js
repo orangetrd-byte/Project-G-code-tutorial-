@@ -278,11 +278,11 @@ function validateReferences() {
   const requiredGCodes = ['G00', 'G01', 'G02', 'G03', 'G20', 'G21', 'G28', 'G40', 'G54'];
   const gCodeItems = ['mill-g-codes.json', 'lathe-g-codes.json']
     .flatMap(file => readJson(`data/reference/${file}`).items);
-  const requiredPrintingCodes = ['G0/G1', 'G28', 'G29', 'G90', 'G91', 'G92', 'M25', 'M82', 'M83', 'M84', 'M104', 'M106', 'M107', 'M109', 'M140', 'M190', 'M221', 'M486', 'M600'];
-  const printingCodeItems = ['marlin-3d-printer-g-codes.json', 'marlin-3d-printer-m-codes.json']
+  const requiredPrintingCodes = ['G0/G1', 'G28', 'G29', 'G90', 'G91', 'G92', 'M25', 'M82', 'M83', 'M84', 'M104', 'M106', 'M107', 'M109', 'M140', 'M190', 'M221', 'M486', 'M600', 'T0', 'T1'];
+  const printingCodeItems = ['marlin-3d-printer-g-codes.json', 'marlin-3d-printer-m-codes.json', 'marlin-3d-printer-t-codes.json']
     .flatMap(file => readJson(`data/reference/${file}`).items);
   index.files
-    .filter(entry => ['g_codes', 'm_codes'].includes(entry.type))
+    .filter(entry => ['g_codes', 'm_codes', 't_codes'].includes(entry.type))
     .forEach(entry => {
       const data = readJson(`data/reference/${entry.file}`);
       data.items.forEach(item => {
@@ -468,7 +468,7 @@ function isCodeLearned(api, code, trackId = api.State.trackId) {
 
 function validateLearnedCodeAutoUnlock(api) {
   api.initConceptPools();
-  const codeRe = /\b(G|M)\d{1,3}\b/i;
+  const codeRe = /\b(G|M|T)\d{1,3}\b/i;
   let covered = 0;
   let gaps = 0;
   Object.entries(api.TRACKS).forEach(([trackId, track]) => {

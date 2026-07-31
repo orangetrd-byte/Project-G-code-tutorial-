@@ -1,6 +1,6 @@
 {
   "title": "Project G-Code Reference Index",
-  "version": "1.3",
+  "version": "1.4",
   "files": [
     {
       "file": "metadata.json",
@@ -79,6 +79,12 @@
       "category": "3d_printing_marlin",
       "type": "m_codes",
       "count": 13
+    },
+    {
+      "file": "marlin-3d-printer-t-codes.json",
+      "category": "3d_printing_marlin",
+      "type": "t_codes",
+      "count": 2
     }
   ]
 }
