@@ -35,6 +35,7 @@ function loadAppRuntime() {
     getLearnedCodeCount,
     toggleLearnedCode,
     escapeLearnedCodeKey,
+    isReferenceCodeLearned,
     queueCodesFromQuestion,
     pickLessonQuestions,
     buildUnitReviewQuestions,
@@ -277,6 +278,9 @@ function validateReferences() {
   const requiredGCodes = ['G00', 'G01', 'G02', 'G03', 'G20', 'G21', 'G28', 'G40', 'G54'];
   const gCodeItems = ['mill-g-codes.json', 'lathe-g-codes.json']
     .flatMap(file => readJson(`data/reference/${file}`).items);
+  const requiredPrintingCodes = ['G0/G1', 'G28', 'G29', 'G90', 'G91', 'G92', 'M25', 'M82', 'M83', 'M84', 'M104', 'M106', 'M107', 'M109', 'M140', 'M190', 'M221', 'M486', 'M600'];
+  const printingCodeItems = ['marlin-3d-printer-g-codes.json', 'marlin-3d-printer-m-codes.json']
+    .flatMap(file => readJson(`data/reference/${file}`).items);
   index.files
     .filter(entry => ['g_codes', 'm_codes'].includes(entry.type))
     .forEach(entry => {
@@ -299,7 +303,7 @@ function validateReferences() {
     });
 
   const metadata = readJson('data/reference/metadata.json');
-  assert.equal(metadata.reviewed, '2026-07-14', 'Reference package needs a current source-audit date');
+  assert.equal(metadata.reviewed, '2026-07-31', 'Reference package needs a current source-audit date');
   const blueprintSymbols = readJson('data/reference/blueprint-gdt-symbols.json').items;
   assert.ok(blueprintSymbols.some(item => item.symbol === '▱' && /Flatness/.test(item.meaning)), 'Flatness needs the parallelogram GD&T symbol');
   assert.ok(!blueprintSymbols.some(item => item.symbol === '⏤' && /Flatness/.test(item.meaning)), 'Straightness must not be labeled as flatness');
@@ -328,6 +332,10 @@ function validateReferences() {
     const matches = gCodeItems.filter(item => item.code === code);
     assert.ok(matches.length, `Missing beginner reference ${code}`);
     matches.forEach(item => assert.match(item.source_url || '', /^https:\/\//, `${code} needs an official source`));
+  });
+  requiredPrintingCodes.forEach(code => {
+    const match = printingCodeItems.find(item => item.code === code);
+    assert.match(match?.source_url || '', /^https:\/\/marlinfw\.org\//, `Missing official Marlin reference ${code}`);
   });
 
   const m30 = readJson('data/reference/mill-m-codes.json').items.find(item => item.code === 'M30');
@@ -502,6 +510,7 @@ function validateLearnedCodeLifecycle(api, storage) {
   assert.ok(!isCodeLearned(api, 'G54'), 'CNC G54 must not be learned under the printing track');
   api.toggleLearnedCode('G1');
   assert.ok(isCodeLearned(api, 'G1'), 'Manually marked printing code should be learned');
+  assert.ok(api.isReferenceCodeLearned('G0/G1', 'printing'), 'Learning G1 must reveal the combined G0/G1 reference card');
   assert.ok(api.State.learnedCodeCodes.includes('printing::G1'), 'Printing learned code must be stored track-scoped');
   assert.equal(api.getLearnedCodeCount('cnc'), 1, 'CNC count must remain unchanged after printing edit');
   assert.equal(api.getLearnedCodeCount('printing'), 1, 'Printing learned-code count should be 1');

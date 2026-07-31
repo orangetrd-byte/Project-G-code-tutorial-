@@ -8,9 +8,9 @@ Phase 6: Retention Polish
 
 - Last updated: 2026-07-31.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest application-content release: Batch C why-before-how teaching for all remaining 3D-printing lessons.
-- Current app build: MGP | Version v2.58.6 | Build 2026.07.31.03.
-- Current service-worker cache: pgct-2026.07.31.03.
+- Latest application-content release: expanded Marlin Code Bank coverage for core commands taught in the printing curriculum.
+- Current app build: MGP | Version v2.58.7 | Build 2026.07.31.04.
+- Current service-worker cache: pgct-2026.07.31.04.
 - Local `main` is aligned with `origin/main`.
 
 ## Phase 5 Completion Summary

@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.58.6 | Build 2026.07.31.03';
+const APP_BUILD = 'MGP | Version v2.58.7 | Build 2026.07.31.04';
 
 // ─── ACCESS GATE ────────────────────────────────────────────
 const AccessGate = {
@@ -718,15 +718,18 @@ function toggleLearnedCode(code, trackId = State.trackId) {
   State.save();
 }
 
-function escapeLearnedCodeKey(code, trackId) {
-  return `${trackId || State.trackId}::${String(code || '').trim().toUpperCase()}`;
-}
 
 const CODE_TOKEN_RE = /\b(G|M)\d{1,3}\b/gi;
 function extractCodeTokens(text) {
   if (!text) return [];
   const m = String(text).match(CODE_TOKEN_RE);
   return m ? m.map(c => c.toUpperCase()) : [];
+}
+
+function isReferenceCodeLearned(code, trackId = State.trackId) {
+  const keys = [String(code || '').trim().toUpperCase(), ...extractCodeTokens(code)];
+  return [...new Set(keys)].some(token =>
+    State.learnedCodeCodes.includes(escapeLearnedCodeKey(token, trackId)));
 }
 
 function queueCodesFromQuestion(question = {}) {
@@ -3251,7 +3254,7 @@ function renderReference() {
   container.innerHTML = '';
 
   const showLearnedOnly = Boolean($('#ref-learned-toggle')?.checked);
-  const isCodeLearned = code => State.learnedCodeCodes.includes(escapeLearnedCodeKey(code, State.trackId));
+  const isCodeLearned = code => isReferenceCodeLearned(code, State.trackId);
 
   getRefData().forEach(cat => {
     const visibleCodes = showLearnedOnly

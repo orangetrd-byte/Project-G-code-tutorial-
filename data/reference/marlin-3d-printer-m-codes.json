@@ -41,6 +41,66 @@
       "notes": "Controls a selected fan. S commonly ranges from 0 to 255, while fan selection and extra parameters depend on configuration.",
       "source": "Marlin M106 documentation",
       "source_url": "https://marlinfw.org/docs/gcode/M106.html"
+    },
+    {
+      "code": "M25",
+      "description": "Pause an SD-card print",
+      "notes": "Pauses a print that Marlin is running from an SD card. Pause behavior can depend on firmware configuration and enabled features.",
+      "source": "Marlin M25 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M025.html"
+    },
+    {
+      "code": "M82",
+      "description": "Use absolute extrusion",
+      "notes": "Makes E values absolute, independently of the positioning mode used for the motion axes.",
+      "source": "Marlin M82 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M082.html"
+    },
+    {
+      "code": "M83",
+      "description": "Use relative extrusion",
+      "notes": "Makes each E value a relative extruder movement, independently of the positioning mode used for the motion axes.",
+      "source": "Marlin M83 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M083.html"
+    },
+    {
+      "code": "M84",
+      "description": "Disable stepper motors",
+      "params": "S X Y Z E",
+      "notes": "Disables one or more stepper motors or sets an inactivity timeout. Position can be lost if an axis moves after its motor is disabled.",
+      "source": "Marlin M18 and M84 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M018.html"
+    },
+    {
+      "code": "M107",
+      "description": "Turn off a fan",
+      "params": "P",
+      "notes": "Turns off the selected fan. Fan selection and availability depend on the printer configuration.",
+      "source": "Marlin M107 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M107.html"
+    },
+    {
+      "code": "M221",
+      "description": "Set flow percentage",
+      "params": "S T",
+      "notes": "Sets the extrusion flow percentage for the selected extruder. Make small, intentional adjustments and confirm the active extruder.",
+      "source": "Marlin M221 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M221.html"
+    },
+    {
+      "code": "M486",
+      "description": "Cancel or identify print objects",
+      "params": "C P S T U",
+      "notes": "Supports object identification and cancellation when the required Marlin feature is enabled and the file supplies object information.",
+      "source": "Marlin M486 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M486.html"
+    },
+    {
+      "code": "M600",
+      "description": "Start a filament change",
+      "notes": "Starts Marlin's filament-change procedure when Advanced Pause is enabled and configured for the printer.",
+      "source": "Marlin M600 documentation",
+      "source_url": "https://marlinfw.org/docs/gcode/M600.html"
     }
   ]
 }

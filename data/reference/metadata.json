@@ -1,13 +1,13 @@
 {
   "title": "CNC and 3D Printing Reference Package",
-  "version": "1.1",
+  "version": "1.2",
   "brands": [
     "Fanuc",
     "Haas",
     "Marlin"
   ],
   "notes": "This summarized learning reference uses Haas and Marlin documentation for the linked code cards and includes clearly labeled controller-specific concepts. Consult the exact machine, controller, firmware, and shop documentation before use.",
-  "reviewed": "2026-07-14",
+  "reviewed": "2026-07-31",
   "official_source_domains": [
     "haascnc.com",
     "marlinfw.org"
