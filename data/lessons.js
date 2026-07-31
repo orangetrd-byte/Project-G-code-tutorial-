@@ -1153,9 +1153,10 @@ const PRINTING_LESSONS = [
       to its endstop or sensor so the printer can establish machine zero.</p>
       <pre>G28 ; home all axes</pre>
       <p>Many printers also probe the bed before printing:</p>
-      <pre>G29 ; Marlin configured leveling<br>BED_MESH_CALIBRATE ; native Klipper bed mesh</pre>
-      <p>On Marlin, G29 runs the configured leveling system. Klipper natively uses <code>BED_MESH_CALIBRATE</code>; G29 works there only when a user macro defines it. Always check the active firmware
-      and printer configuration.</p>
+      <pre>G29 ; Marlin configured leveling
+BED_MESH_CALIBRATE ; Klipper command provided by a configured [bed_mesh] section</pre>
+      <p>On Marlin, G29 runs the configured leveling system. In Klipper, BED_MESH_CALIBRATE is available only when [bed_mesh] is configured; G29 is not native Klipper unless a user-defined macro maps it. Always check the active firmware
+      and printer configuration. Not every print needs a fresh mesh; follow the printer's recommended probing interval.</p>
     `,
     visual: "",
     quiz: [
@@ -1168,15 +1169,15 @@ const PRINTING_LESSONS = [
       },
       {
         type: "multiple-choice",
-        question: "Why should you run a bed-leveling command before printing?",
+        question: "When the configured workflow requires mesh compensation, what must happen before printing?",
         options: [
-          "To measure bed shape and compensate for tilt or unevenness",
-          "To increase nozzle temperature",
-          "To pause the printer",
-          "To change filament diameter"
+          "Create or load a valid bed mesh",
+          "Increase nozzle temperature",
+          "Pause the printer",
+          "Change filament diameter"
         ],
         answer: 0,
-        explanation: "A probing routine measures the bed so the printer can compensate during the first layers."
+        explanation: "The configured workflow must create or load a valid mesh before using mesh compensation. A new probing routine is not required before every print."
       }
     ]
   },
@@ -1379,9 +1380,8 @@ G92 E0    ; reset extruder position</pre>
       <pre>M104 S0 ; hotend off
 M140 S0 ; bed off
 M107    ; fan off
-G1 X0 Y220 F3000 ; park
 M84     ; disable motors</pre>
-      <p>Good end G-code keeps the hot nozzle away from the finished part. After M84 disables steppers, axes may move manually and lose known position; re-home before later coordinate motion if position may have changed.</p>
+      <p>A parking move is machine-specific. Verify the coordinate mode, axis limits, and clearance before adding one. After M84 disables steppers, axes may move manually and lose known position; re-home before later coordinate motion if position may have changed.</p>
     `,
     visual: "program-structure",
     quiz: [
@@ -1391,7 +1391,7 @@ M84     ; disable motors</pre>
       { type: "fill-blank", question: "Type the fan off command:", answer: "M107", hint: "Part cooling fan off", explanation: "M107 turns the fan off." },
       { type: "multiple-choice", question: "Why should you park the nozzle away from the part?", options: ["To avoid heat damage or oozing on the print", "To home the printer", "To turn fan on", "To reset E"], answer: 0, explanation: "A hot nozzle sitting on the part can mark or melt it." },
       { type: "multiple-choice", question: "What does M84 usually do?", meta: { codes: ["M84"] }, options: ["Disable motors", "Heat nozzle", "Probe bed", "Set fan speed"], answer: 0, explanation: "M84 disables steppers on Marlin-style printers. The machine can lose trusted position if an axis moves afterward, so re-home before later coordinate motion." },
-      { type: "multiple-choice", question: "Which line is a parking move?", options: ["G1 X0 Y220 F3000", "M104 S0", "M107", "M84"], answer: 0, explanation: "G1 with X/Y coordinates moves the nozzle to a park position." },
+      { type: "multiple-choice", question: "Before reusing a parking move from another printer, what must you verify?", options: ["Coordinate mode, axis limits, and clearance", "Only nozzle and bed temperatures", "Only the active tool and fan speed", "Only extrusion mode and flow factor"], answer: 0, explanation: "Parking coordinates are machine-specific and can be unsafe when the coordinate mode, travel limits, or clearance differ." },
       { type: "fill-blank", question: "Turn the bed off:\nM140 S___", meta: { codes: ["M140"] }, answer: "0", hint: "Zero target temperature", explanation: "S0 sets the bed target to zero/off." },
       { type: "multiple-choice", question: "What should be turned off to prevent continued heating after a print?", options: ["Heaters", "The positioning mode", "The stored bed mesh", "The extrusion coordinate mode"], answer: 0, explanation: "Heaters should be turned off at the end of a print." },
       { type: "multiple-choice", question: "Which command is fan off, not heater off?", options: ["M107", "M104 S0", "M140 S0", "M190 S60"], answer: 0, explanation: "M107 turns off the fan." }
@@ -1507,14 +1507,14 @@ G1 E0.8 F1800 ; prime</pre>
       <pre>G1 X100 E5.0 F1200 ; extrude while moving
 M221 S95           ; Marlin flow percentage example</pre>
       <p>Before changing flow, check basics: nozzle size, filament diameter, temperature, and whether
-      the extruder is slipping. Flow changes should be small and intentional. Marlin documents M221; Klipper natively uses SET_EXTRUDE_FACTOR.</p>
+      the extruder is slipping. Flow changes should be small and intentional. Marlin documents M221; Klipper also supports M221 with an S percentage.</p>
     `,
     visual: "block-anatomy",
     quiz: [
       { type: "multiple-choice", question: "Model extrusion move:\nG1 X100 E5.0 F1200\n\nWhich value asks for extrusion?", meta: { codes: ["G1"] }, options: ["E5.0", "X100", "F1200", "G1"], answer: 0, explanation: "E5.0 is the extrusion amount in this move." },
       { type: "multiple-choice", question: "What can under-extrusion look like?", options: ["Gaps and thin lines", "Blobs and heavy seams", "Warped corners", "Layer shifts"], answer: 0, explanation: "Under-extrusion often leaves gaps, weak walls, or missing top-surface material." },
       { type: "multiple-choice", question: "What can over-extrusion look like?", options: ["Blobs, heavy seams, rough top surfaces", "Gaps and thin walls", "Layer shifts without excess material", "No extrusion after travel"], answer: 0, explanation: "Too much plastic can build up as blobs or rough, crowded lines." },
-      { type: "multiple-choice", question: "In Marlin, what does M221 S95 adjust?", meta: { codes: ["M221"] }, options: ["Flow percentage to 95 percent", "Bed temperature to 95 C always", "Fan off", "Home all axes"], answer: 0, explanation: "Marlin M221 sets flow percentage. Klipper's native equivalent is SET_EXTRUDE_FACTOR." },
+      { type: "multiple-choice", question: "In Marlin, what does M221 S95 adjust?", meta: { codes: ["M221"] }, options: ["Flow percentage to 95 percent", "Bed temperature to 95 C always", "Fan off", "Home all axes"], answer: 0, explanation: "Marlin and Klipper support M221 S95 as a 95 percent extrusion-factor override." },
       { type: "fill-blank", question: "Complete this Marlin flow command:\nM221 S___", meta: { codes: ["M221"] }, answer: "95", hint: "95 percent flow", explanation: "M221 S95 sets Marlin flow to 95 percent. Other firmware may use a different command." },
       { type: "multiple-choice", question: "Before changing flow, what should you check?", options: ["Nozzle size and filament diameter", "Retraction distance only", "Bed mesh only", "Travel acceleration only"], answer: 0, explanation: "Wrong hardware or filament settings can look like a flow problem." },
       { type: "multiple-choice", question: "Which line both moves and extrudes?", options: ["G1 X100 E5.0 F1200", "M221 S95", "; set flow", "G28"], answer: 0, explanation: "G1 with X and E moves while extruding." },
@@ -1539,7 +1539,7 @@ M221 S95           ; Marlin flow percentage example</pre>
 M140 S70  ; bed target
 M106 S180 ; part cooling fan</pre>
       <p>PLA often likes more cooling. PETG often needs less cooling and more bed heat. ABS often
-      needs an enclosure and controlled cooling. Always follow the filament maker and printer limits.</p>
+      needs an enclosure and controlled cooling. Prusa warns that ABS can release potentially harmful fumes. Print it in a well-ventilated room while preventing drafts around the print, and follow the filament maker's safety instructions.</p>
     `,
     visual: "program-structure",
     quiz: [
@@ -1602,14 +1602,14 @@ G1 X70 Y80 E0.18 F900</pre>
       <p>Printer G-code is not perfectly universal. Marlin, Klipper, RepRapFirmware, and vendor
       firmware may handle commands, macros, and comments differently.</p>
       <pre>G29       ; bed leveling on many Marlin setups
-BED_MESH_CALIBRATE ; Klipper macro-style command
+BED_MESH_CALIBRATE ; Klipper command provided by a configured [bed_mesh] section
 M486 S2   ; object cancel support on some setups</pre>
-      <p>When a command seems right but fails, check the firmware flavor and printer documentation.</p>
+      <p>When a command seems right but fails, check the firmware flavor, enabled configuration sections, and printer documentation.</p>
     `,
     visual: "program-structure",
     quiz: [
       { type: "multiple-choice", question: "Why can the same command behave differently on two printers?", options: ["Firmware flavor can differ", "Every printer uses an identical configuration", "The slicer overrides all firmware behavior", "Filament color changes command meaning"], answer: 0, explanation: "Firmware implementations and enabled features vary." },
-      { type: "multiple-choice", question: "Which line is the Klipper-style macro command shown in the example?", options: ["BED_MESH_CALIBRATE", "G29", "M104 S210", "G1 X10"], answer: 0, explanation: "Klipper commonly uses readable macro commands like BED_MESH_CALIBRATE." },
+      { type: "multiple-choice", question: "Which Klipper bed-mesh command is shown in the configured example?", options: ["BED_MESH_CALIBRATE", "G29", "M104 S210", "G1 X10"], answer: 0, explanation: "BED_MESH_CALIBRATE is provided when Klipper's [bed_mesh] section is configured." },
       { type: "multiple-choice", question: "What does G29 often mean on many Marlin setups?", meta: { codes: ["G29"] }, options: ["Bed leveling/probing", "Fan off", "Disable motors", "Extrude 29 mm"], answer: 0, explanation: "G29 is often used for probing or leveling in Marlin-style workflows." },
       { type: "multiple-choice", question: "Which source defines the commands supported by the printer?", options: ["Printer firmware documentation", "Filament profile", "Bed-mesh result", "Print-preview colors"], answer: 0, explanation: "Firmware documentation tells you which commands and macros are supported." },
       { type: "fill-blank", question: "Complete the common Marlin probing command:\n___", answer: "G29", hint: "Bed leveling/probing", explanation: "G29 is commonly bed probing on many Marlin setups." },
@@ -1632,10 +1632,13 @@ M486 S2   ; object cancel support on some setups</pre>
     theory: `
       <p>Multi-material printing adds tool changes, filament changes, purge moves, and sometimes
       wipe towers. The G-code must manage which extruder or filament is active.</p>
+      <p>This isolated Marlin example assumes that the surrounding file uses absolute extrusion mode:</p>
       <pre>T0 ; select tool 0
-G1 E12 F300 ; purge
+M83 ; temporarily use relative extrusion
+G1 E12 F300 ; example purge amount
+M82 ; restore the surrounding file's absolute extrusion mode
 T1 ; select tool 1
-M600 ; filament change on many printers</pre>
+M600 ; Marlin filament change with Advanced Pause enabled</pre>
       <p>Tool-change behavior is printer-specific. Some printers use multiple nozzles, some use one
       nozzle with filament switching, and some use slicer-managed purge systems.</p>
     `,
@@ -1644,13 +1647,13 @@ M600 ; filament change on many printers</pre>
       { type: "multiple-choice", question: "What does T0 commonly select?", options: ["Tool or extruder 0", "Temperature zero", "Travel speed", "Layer zero"], answer: 0, explanation: "T commands commonly select tools or extruders." },
       { type: "multiple-choice", question: "What does T1 commonly select?", options: ["Tool or extruder 1", "Fan speed 1", "Bed heater 1", "Layer 1"], answer: 0, explanation: "T1 commonly selects the second tool/extruder." },
       { type: "multiple-choice", question: "What is purging used for after a tool or filament change?", options: ["Push old material/color out", "Home the axes", "Turn off the bed", "Reset the bed mesh"], answer: 0, explanation: "Purging clears old material and primes the nozzle." },
-      { type: "multiple-choice", question: "What does M600 commonly mean on many printers?", meta: { codes: ["M600"] }, options: ["Filament change", "Fan full speed", "Disable motors", "Metric mode"], answer: 0, explanation: "M600 is commonly used for filament change, but firmware support varies." },
+      { type: "multiple-choice", question: "On Marlin with Advanced Pause enabled, what procedure does M600 start?", meta: { codes: ["M600"] }, options: ["Filament change", "Fan full speed", "Disable motors", "Metric mode"], answer: 0, explanation: "M600 starts Marlin's configured filament-change procedure when Advanced Pause is enabled." },
       { type: "fill-blank", question: "Select tool 1:\n___", answer: "T1", hint: "Tool command", explanation: "T1 selects tool/extruder 1 on many setups." },
       { type: "multiple-choice", question: "Why can tool-change G-code vary a lot?", options: ["Printer hardware and firmware differ", "All systems use the same tool count", "Filament color selects the syntax", "T commands are ignored"], answer: 0, explanation: "Multi-material systems use different hardware and firmware logic." },
-      { type: "multiple-choice", question: "Which line is a purge move?", options: ["G1 E12 F300", "T0", "M600", "; select tool"], answer: 0, explanation: "A positive E move extrudes/purges material." },
+      { type: "multiple-choice", question: "In the lesson's declared M83 example, which line commands the purge?", options: ["G1 E12 F300", "T0", "M600", "; select tool"], answer: 0, explanation: "With M83 active, positive E12 commands 12 units of relative extruder movement for this example. M82 then restores the surrounding file's absolute extrusion mode." },
       { type: "multiple-choice", question: "What is a purge tower used for?", options: ["Cleaning and priming during color changes away from the part", "Leveling the bed", "Cooling the hotend", "Setting X zero"], answer: 0, explanation: "A purge tower handles material/color transitions." },
-      { type: "fill-blank", question: "Complete a common filament change command:\nM___", meta: { codes: ["M600"] }, answer: "600", hint: "Filament change", explanation: "M600 is commonly used for filament change where supported." },
-      { type: "multiple-choice", question: "What should you verify before using M600?", meta: { codes: ["M600"] }, options: ["The firmware supports it", "The slicer uses relative extrusion", "The printer has a probe", "X is always zero"], answer: 0, explanation: "Unsupported filament-change commands can fail or be ignored." }
+      { type: "fill-blank", question: "Complete the Marlin filament-change command used when Advanced Pause is enabled:\nM___", meta: { codes: ["M600"] }, answer: "600", hint: "Filament change", explanation: "M600 starts the configured Marlin filament-change procedure when Advanced Pause is enabled." },
+      { type: "multiple-choice", question: "What should you verify before using M600?", meta: { codes: ["M600"] }, options: ["The firmware and required feature support it", "The slicer uses relative extrusion", "The printer has a probe", "X is always zero"], answer: 0, explanation: "M600 requires firmware support and, on Marlin, the configured Advanced Pause feature." }
     ]
   },
 
@@ -1665,23 +1668,20 @@ M600 ; filament change on many printers</pre>
     theory: `
       <p>Print recovery is about pausing safely, keeping heat controlled, and resuming without
       crashing into the part or leaving blobs.</p>
-      <pre>M0 ; pause on some printers
-M25 ; pause SD print on some printers
-G1 Z10 F600 ; lift before service
-G1 E3 F300 ; prime before resume</pre>
-      <p>Pause behavior is firmware-specific. A safe resume confirms position, nozzle temperature,
-      extrusion prime, and clearance.</p>
+      <pre>M0  ; Marlin pause where supported
+M25 ; Marlin pause an SD-card print</pre>
+      <p>Pause behavior is firmware-specific. Use the printer's documented pause and resume flow. Do not assume that a bare Z move creates a relative lift or that a bare E move creates a relative prime; both depend on the active modes and current positions.</p>
     `,
     visual: "rapid-path",
     quiz: [
       { type: "multiple-choice", question: "What is the purpose of a print pause?", options: ["Stop temporarily for service or inspection", "Finish and shut down the print", "Home all axes", "Reset the firmware"], answer: 0, explanation: "Pauses let you inspect, change filament, or handle an issue." },
       { type: "multiple-choice", question: "What can M0 mean on some printers?", meta: { codes: ["M0"] }, options: ["Pause", "Fan off", "Home X", "Set bed temp"], answer: 0, explanation: "M0 is a pause/stop command on some systems." },
       { type: "multiple-choice", question: "What can M25 mean for some SD-card prints?", meta: { codes: ["M25"] }, options: ["Pause SD print", "Nozzle heat", "Fan full", "Tool select"], answer: 0, explanation: "M25 is used by some firmware for SD print pause." },
-      { type: "multiple-choice", question: "Why should you lift Z before servicing a paused print?", options: ["To create clearance from the part", "To re-home Z", "To cool the bed", "To reset extrusion"], answer: 0, explanation: "Lifting helps avoid dragging or melting the part." },
-      { type: "fill-blank", question: "Complete a 10 mm lift:\nG1 ___10 F600", meta: { codes: ["G1"] }, answer: "Z", hint: "Vertical axis", explanation: "Z lifts the nozzle away from the print." },
+      { type: "multiple-choice", question: "Why must a pause routine verify its Z-clearance move?", options: ["Its result depends on positioning mode, current position, and machine limits", "Every Z move is a 10 mm lift", "Z moves always re-home the printer", "Pause commands disable Z motion"], answer: 0, explanation: "Under absolute positioning, Z10 requests position Z10; under relative positioning, it requests a 10-unit move. A documented routine must account for the active state and limits." },
+      { type: "multiple-choice", question: "Why can G1 Z10 not be assumed to mean a 10 mm lift?", options: ["Its meaning depends on G90 or G91 and the current Z position", "Z values always control temperature", "G1 always homes Z first", "Z10 disables the motors"], answer: 0, explanation: "G90 makes Z10 an absolute destination, while G91 makes it a relative move. The active mode must be known." },
       { type: "multiple-choice", question: "What should you check before resuming a paused print?", options: ["Position, heat, prime, and clearance", "Remaining print time only", "File size only", "Layer number only"], answer: 0, explanation: "Safe resume needs the printer ready to continue without a blob or crash." },
       { type: "multiple-choice", question: "Why should you prime the nozzle before resuming a paused print?", options: ["To restore filament flow", "To home the bed", "To turn off motors", "To delete strings"], answer: 0, explanation: "Pauses can leave the nozzle under-primed." },
-      { type: "multiple-choice", question: "Which line primes filament?", options: ["G1 E3 F300", "M25", "G1 Z10", "M0"], answer: 0, explanation: "Positive E extrusion primes the nozzle." },
+      { type: "multiple-choice", question: "Why can G1 E3 not be assumed to command a 3 mm prime?", options: ["Its result depends on M82 or M83 and the current E position", "E values always set fan speed", "G1 disables extrusion", "M25 changes E to relative mode"], answer: 0, explanation: "With M83, E3 is a relative extruder move. With M82, it is an absolute E destination, so the current state must be known." },
       { type: "fill-blank", question: "Type one common pause command:", answer: "M0", hint: "Pause/stop on some printers", explanation: "M0 is a common pause command, but support varies." },
       { type: "multiple-choice", question: "Why should you verify the firmware's pause behavior?", options: ["Pause commands are not identical everywhere", "All pauses preserve the same machine state", "All pauses home the axes", "M0 and M25 are universal"], answer: 0, explanation: "Different printer firmware handles pause and resume differently." }
     ]
@@ -2643,7 +2643,14 @@ const LESSON_AUDIT_REVIEWED = {
   "u8-l1": "2026-07-16",
   "u9-l1": "2026-07-16",
   "u10-l1": "2026-07-20",
-  "u11-l1": "2026-07-20"
+  "u11-l1": "2026-07-20",
+  "p-u1-l2": "2026-07-31",
+  "p-u3-l2": "2026-07-31",
+  "p-u4-l3": "2026-07-31",
+  "p-u5-l1": "2026-07-31",
+  "p-u7-l1": "2026-07-31",
+  "p-u8-l1": "2026-07-31",
+  "p-u9-l1": "2026-07-31"
 };
 
 [...LESSONS, ...PRINTING_LESSONS].forEach(lesson => {

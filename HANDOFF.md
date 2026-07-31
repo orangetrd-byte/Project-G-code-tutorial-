@@ -31,12 +31,12 @@ The current learning model is similar to Duolingo or Mimo:
 
 ## Current Build State
 
-- App version: `MGP v2.58.3`
-- App build: `2026.07.30.02`
-- Service worker cache: `pgct-2026.07.30.02`
+- App version: `MGP v2.58.4`
+- App build: `2026.07.31.01`
+- Service worker cache: `pgct-2026.07.31.01`
 - CNC path: 11 units / 21 lessons
 - 3D printing path: 10 units / 18 lessons
-- Current release scope: complete question and UI sentence structure, parallel answer choices, and corrected Spanish localization
+- Current release scope: source-backed 3D-printing safety, firmware-scope, and recovery corrections
 
 ## What Works Well
 
@@ -53,6 +53,9 @@ The current learning model is similar to Duolingo or Mimo:
 - Numeric fill-in answers request numeric or decimal keyboards on mobile.
 
 ## Recent Important Changes
+
+- Corrected printing lessons that treated Klipper flow and bed-mesh behavior, parking coordinates, extrusion modes, pause moves, and Marlin M600 support too broadly.
+- Added regression guards for printing firmware scope, mode-dependent movement, purge-mode restoration, and ABS ventilation guidance.
 
 - Replaced vague and elliptical question stems with explicit nouns, complete questions, parallel answer choices, polished UI and roadmap feedback, and corrected Spanish accents.
 - Replaced app/UI joke answers with plausible topic-related distractors while preserving each question's intended answer.

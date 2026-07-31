@@ -8,9 +8,9 @@ Phase 6: Retention Polish
 
 - Last updated: 2026-07-31.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest application-content commit: fa56fe4 (`Polish beginner curriculum and reference copy`).
-- Current app build: MGP | Version v2.58.3 | Build 2026.07.30.02.
-- Current service-worker cache: pgct-2026.07.30.02.
+- Latest application-content release: Batch A printing safety and firmware corrections.
+- Current app build: MGP | Version v2.58.4 | Build 2026.07.31.01.
+- Current service-worker cache: pgct-2026.07.31.01.
 - Local `main` is aligned with `origin/main`.
 
 ## Phase 5 Completion Summary
@@ -32,6 +32,9 @@ Phase 6: Retention Polish
 - Maintain safe educational language and clear CNC / 3D printing track separation.
 
 ## Completed In This Pass
+
+- Accuracy: corrected printing firmware scope, machine-specific parking guidance, extrusion-mode handling, pause recovery examples, and ABS ventilation guidance.
+- Regression: added guards that prevent the corrected printing claims and unsafe unscoped examples from returning.
 
 - PWA: removed cross-origin Google Fonts from service-worker precache to prevent offline install failures.
 - PWA: cache version now rotates automatically with a daily+timestamp stamp.

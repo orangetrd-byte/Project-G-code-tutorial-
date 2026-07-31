@@ -178,6 +178,12 @@ function validateFactCheckContent() {
   const curriculum = read('data/lessons.js');
   const app = read('js/app.js');
   assert.doesNotMatch(curriculum, /G90 = absolute mode/, 'Lathe G90 must not be taught as a universal absolute mode');
+  assert.doesNotMatch(curriculum, /SET_EXTRUDE_FACTOR/, 'Printing lessons must retain the documented M221 flow command');
+  assert.doesNotMatch(curriculum, /native Klipper bed mesh|Klipper macro-style command/, 'Klipper bed-mesh commands must retain configuration scope');
+  assert.match(curriculum, /BED_MESH_CALIBRATE is available only when \[bed_mesh\] is configured/, 'Klipper bed-mesh guidance must name the required configuration section');
+  assert.doesNotMatch(curriculum, /G1 X0 Y220|Complete a 10 mm lift|Which line primes filament/, 'Printing lessons must not teach machine- or mode-dependent moves as universal');
+  assert.match(curriculum, /M83 ; temporarily use relative extrusion[\s\S]*M82 ; restore the surrounding file's absolute extrusion mode/, 'The purge example must establish and restore extrusion mode');
+  assert.match(curriculum, /well-ventilated room while preventing drafts around the print/, 'ABS guidance must retain ventilation and draft safety');
   assert.doesNotMatch(curriculum, /Haas lathes use G98 and G99 for those modes/, 'Lathe feed modes must not be framed as a Haas-only brand split; mills use G94/G95');
   assert.match(curriculum, /G99 is feed per revolution on Haas\/Fanuc lathes/, 'Lathe feed-per-revolution must be taught as G99 (not a Fanuc-vs-Haas split)');
   assert.doesNotMatch(curriculum, /G00 ignores feedrate override/, 'Rapid override behavior must remain controller-specific');
@@ -324,8 +330,10 @@ function validateCurriculum(api) {
       assert.ok(lesson.id && !lessonIds.has(lessonKey), `Duplicate lesson ${lessonKey}`);
       lessonIds.add(lessonKey);
       assert.ok(Array.isArray(lesson.quiz) && lesson.quiz.length, `${lesson.id} needs quiz questions`);
-      const expectedReviewDate = ['u10-l1', 'u11-l1'].includes(lesson.id)
-        ? '2026-07-20'
+      const expectedReviewDate = ['p-u1-l2', 'p-u3-l2', 'p-u4-l3', 'p-u5-l1', 'p-u7-l1', 'p-u8-l1', 'p-u9-l1'].includes(lesson.id)
+        ? '2026-07-31'
+        : ['u10-l1', 'u11-l1'].includes(lesson.id)
+          ? '2026-07-20'
         : ['u4-l1', 'u4-l2', 'u5-l1', 'u5-l2', 'u5-l3', 'u6-l1', 'u6-l2', 'u6-l3', 'u7-l1', 'u8-l1', 'u9-l1'].includes(lesson.id)
           ? '2026-07-16'
           : '2026-07-13';
