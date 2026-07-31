@@ -1251,24 +1251,23 @@ M190 S60  ; wait while heating bed to at least 60 C</pre>
     unitName: "Extrusion & Motion",
     lesson: 1,
     title: "Extrusion and the E Axis",
-    why: "Understanding extrusion helps you tell the difference between a travel move and a move that deposits filament.",
+    why: "Understanding extrusion helps you tell when the nozzle is depositing filament and when it is only changing position.",
     icon: "E",
     xp: 15,
     theory: `
-      <p>The <code>E</code> value controls extruder movement. In most slicer output, extrusion moves use
-      <code>G1</code> with X/Y position plus an E amount.</p>
+      <p>Extrusion means pushing filament through the nozzle. The <code>E</code> value controls extruder position or movement. In most slicer output, printing moves use
+      <code>G1</code> with X/Y position plus an E value.</p>
       <pre>G1 X82.4 Y104.2 E0.036 F1800</pre>
-      <p>If the nozzle moves without E, it is usually a travel move. If E increases while X/Y moves,
-      filament is being pushed through the nozzle.</p>
-      <p class="callout tip">Extrusion can be absolute or relative depending on firmware and slicer settings.
-      Learn to read the pattern before editing E values by hand.</p>
+      <p>A travel move changes the nozzle's position without intentionally depositing filament. A printing move combines nozzle movement with extruder movement.</p>
+      <p class="callout tip">Extrusion mode tells the printer how to interpret E values. In absolute mode, E is a position. In relative mode, E is a change from the current position.
+      Identify the active mode before editing E values by hand.</p>
     `,
     visual: "block-anatomy",
     quiz: [
-      { type: "multiple-choice", question: "In this line, what does E0.036 control?\nG1 X82.4 Y104.2 E0.036 F1800", meta: { codes: ["G1"] }, options: ["Extrusion amount", "Bed temperature", "Fan speed", "Home position"], answer: 0, explanation: "E controls extruder movement. Here it tells the printer to push filament while moving." },
+      { type: "multiple-choice", question: "In this line, what does E0.036 control?\nG1 X82.4 Y104.2 E0.036 F1800", meta: { codes: ["G1"] }, options: ["Extruder position or movement", "Bed temperature", "Fan speed", "Home position"], answer: 0, explanation: "E controls extruder position or movement. The active extrusion mode determines how E0.036 is interpreted." },
       { type: "multiple-choice", question: "Which line is most likely printing plastic?", options: ["G1 X20 Y20 E0.45 F1800", "G1 X20 Y20 F9000", "G28", "M104 S210"], answer: 0, explanation: "A G1 move with E increasing usually extrudes filament." },
       { type: "multiple-choice", question: "What does a move with X and Y but no E usually represent?", options: ["A travel move", "A bed heat command", "A fan command", "A program end"], answer: 0, explanation: "Travel moves reposition the nozzle without extruding." },
-      { type: "fill-blank", question: "Type the letter that usually controls extrusion amount:", answer: "E", hint: "Extruder axis", explanation: "E represents extruder movement in this G-code." },
+      { type: "fill-blank", question: "Type the letter that controls extruder movement:", answer: "E", hint: "Extruder word", explanation: "E represents extruder position or movement in printer G-code." },
       { type: "multiple-choice", question: "What happens if too much filament is extruded?", options: ["Over-extrusion", "Bed leveling", "Homing", "Fan off only"], answer: 0, explanation: "Too much extrusion can cause blobs, rough walls, and dimensional errors." },
       { type: "multiple-choice", question: "What happens if too little filament is extruded?", options: ["Under-extrusion", "Automatic leveling", "Hotend waits", "Program rewind"], answer: 0, explanation: "Too little extrusion can leave gaps, weak walls, and poor layer bonding." },
       { type: "multiple-choice", question: "Which command is the normal controlled move used for extrusion?", options: ["G1", "G28", "M190", "M107"], answer: 0, explanation: "G1 is the normal controlled move command in printer G-code." },
@@ -1292,7 +1291,7 @@ M190 S60  ; wait while heating bed to at least 60 C</pre>
       <pre>G1 X40 Y40 F9000  ; fast travel
 G1 X40 Y40 E0.4 F1800 ; slower print move</pre>
       <p>Travel moves are usually faster because they do not push filament. Print moves are slower so the
-      nozzle can lay down a controlled bead.</p>
+      nozzle can place a controlled line of melted filament.</p>
     `,
     visual: "rapid-path",
     quiz: [
@@ -1323,7 +1322,7 @@ G1 X40 Y40 E0.4 F1800 ; slower print move</pre>
       <pre>M106 S255 ; full selected/default fan under common 0-255 scaling
 M106 S128 ; fan about half speed
 M107      ; fan off</pre>
-      <p>Cooling helps bridges, overhangs, and small layers. Too much cooling can hurt layer bonding on
+      <p>A bridge spans an open gap. An overhang extends outward with limited support underneath. Cooling helps these features and small layers solidify, but too much cooling can weaken layer bonding on
       some materials.</p>
     `,
     visual: "",
@@ -2666,6 +2665,9 @@ const LESSON_AUDIT_REVIEWED = {
   "p-u1-l1": "2026-07-31",
   "p-u1-l2": "2026-07-31",
   "p-u1-l3": "2026-07-31",
+  "p-u2-l1": "2026-07-31",
+  "p-u2-l2": "2026-07-31",
+  "p-u2-l3": "2026-07-31",
   "p-u3-l2": "2026-07-31",
   "p-u4-l3": "2026-07-31",
   "p-u5-l1": "2026-07-31",

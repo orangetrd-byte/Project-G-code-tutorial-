@@ -1708,33 +1708,32 @@ M___ S215
 
 ## 25. Extrusion and the E Axis
 
-**Why:** Understanding extrusion helps you tell the difference between a travel move and a move that deposits filament.
+**Why:** Understanding extrusion helps you tell when the nozzle is depositing filament and when it is only changing position.
 
 
 **Theory:**
 
-The `E` value controls extruder movement. In most slicer output, extrusion moves use
- `G1` with X/Y position plus an E amount.
+Extrusion means pushing filament through the nozzle. The `E` value controls extruder position or movement. In most slicer output, printing moves use
+ `G1` with X/Y position plus an E value.
 
 G1 X82.4 Y104.2 E0.036 F1800
 
-If the nozzle moves without E, it is usually a travel move. If E increases while X/Y moves,
- filament is being pushed through the nozzle.
+A travel move changes the nozzle's position without intentionally depositing filament. A printing move combines nozzle movement with extruder movement.
 
-Extrusion can be absolute or relative depending on firmware and slicer settings.
- Learn to read the pattern before editing E values by hand.
+Extrusion mode tells the printer how to interpret E values. In absolute mode, E is a position. In relative mode, E is a change from the current position.
+ Identify the active mode before editing E values by hand.
 
 
 **Quiz:**
 
 - Q1 [multiple-choice]: In this line, what does E0.036 control?
 G1 X82.4 Y104.2 E0.036 F1800
-  - Extrusion amount
+  - Extruder position or movement
   - Bed temperature
   - Fan speed
   - Home position
   - Correct answer: 0
-  - Explanation: E controls extruder movement. Here it tells the printer to push filament while moving.
+  - Explanation: E controls extruder position or movement. The active extrusion mode determines how E0.036 is interpreted.
 - Q2 [multiple-choice]: Which line is most likely printing plastic?
   - G1 X20 Y20 E0.45 F1800
   - G1 X20 Y20 F9000
@@ -1749,10 +1748,10 @@ G1 X82.4 Y104.2 E0.036 F1800
   - A program end
   - Correct answer: 0
   - Explanation: Travel moves reposition the nozzle without extruding.
-- Q4 [fill-blank]: Type the letter that usually controls extrusion amount:
+- Q4 [fill-blank]: Type the letter that controls extruder movement:
   - Correct answer: E
-  - Hint: Extruder axis
-  - Explanation: E represents extruder movement in this G-code.
+  - Hint: Extruder word
+  - Explanation: E represents extruder position or movement in printer G-code.
 - Q5 [multiple-choice]: What happens if too much filament is extruded?
   - Over-extrusion
   - Bed leveling
@@ -1810,7 +1809,7 @@ G1 X40 Y40 F9000 ; fast travel
 G1 X40 Y40 E0.4 F1800 ; slower print move
 
 Travel moves are usually faster because they do not push filament. Print moves are slower so the
- nozzle can lay down a controlled bead.
+ nozzle can place a controlled line of melted filament.
 
 
 **Quiz:**
@@ -1898,7 +1897,7 @@ M106 S255 ; full selected/default fan under common 0-255 scaling
 M106 S128 ; fan about half speed
 M107 ; fan off
 
-Cooling helps bridges, overhangs, and small layers. Too much cooling can hurt layer bonding on
+A bridge spans an open gap. An overhang extends outward with limited support underneath. Cooling helps these features and small layers solidify, but too much cooling can weaken layer bonding on
  some materials.
 
 

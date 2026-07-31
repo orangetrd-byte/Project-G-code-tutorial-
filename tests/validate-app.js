@@ -382,6 +382,11 @@ function validateCurriculum(api) {
   assert.match(printingFoundations, /The hotend is the heated assembly that melts filament/, 'Printing foundations must define hotend');
   assert.doesNotMatch(printingFoundations, /knowing the blocks/, 'Printing foundations must use beginner-friendly wording');
   assert.doesNotMatch(JSON.stringify(api.TRACKS.printing.lessons[0].quiz), /More E value means/, 'Extrusion guidance must respect absolute and relative modes');
+  const printingMotionTheory = api.TRACKS.printing.lessons.filter(lesson => lesson.unit === 2).map(lesson => lesson.theory).join(' ');
+  assert.match(printingMotionTheory, /Extrusion means pushing filament through the nozzle/, 'Printing motion must define extrusion');
+  assert.match(printingMotionTheory, /A travel move changes the nozzle's position without intentionally depositing filament/, 'Printing motion must define travel move');
+  assert.match(printingMotionTheory, /Extrusion mode tells the printer how to interpret E values/, 'Printing motion must define extrusion mode');
+  assert.match(printingMotionTheory, /A bridge spans an open gap.*An overhang extends outward/s, 'Printing cooling must define bridges and overhangs');
 
   const lessonIds = new Set();
   const questionIds = new Set();
@@ -396,7 +401,7 @@ function validateCurriculum(api) {
       assert.ok(lesson.id && !lessonIds.has(lessonKey), `Duplicate lesson ${lessonKey}`);
       lessonIds.add(lessonKey);
       assert.ok(Array.isArray(lesson.quiz) && lesson.quiz.length, `${lesson.id} needs quiz questions`);
-      const expectedReviewDate = ['p-u1-l1', 'p-u1-l2', 'p-u1-l3', 'p-u3-l2', 'p-u4-l3', 'p-u5-l1', 'p-u7-l1', 'p-u8-l1', 'p-u9-l1'].includes(lesson.id)
+      const expectedReviewDate = ['p-u1-l1', 'p-u1-l2', 'p-u1-l3', 'p-u2-l1', 'p-u2-l2', 'p-u2-l3', 'p-u3-l2', 'p-u4-l3', 'p-u5-l1', 'p-u7-l1', 'p-u8-l1', 'p-u9-l1'].includes(lesson.id)
         ? '2026-07-31'
         : ['u10-l1', 'u11-l1'].includes(lesson.id)
           ? '2026-07-20'
