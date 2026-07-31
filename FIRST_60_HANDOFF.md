@@ -30,7 +30,7 @@ That’s it. No history, no motivation paragraph, no “why this matters” essa
   - Green feedback bar
   - The correct answer in the accent color
   - The explanation
-- When wrong, show the same explanation immediately
+- When the answer is incorrect, show the same explanation immediately.
 - No “too bad, try again” shame
 
 ### 4. Complete Screen Must Show Unlock
@@ -41,8 +41,8 @@ That’s it. No history, no motivation paragraph, no “why this matters” essa
 - That visual unlock creates the pull to return
 
 ### 5. No Rewards Before First Correct Answer
-- Don’t show XP or streak effects until after the first correct answer
-- That way the reward feels earned, not cosmetic
+- Do not show XP or streak effects until after the first correct answer.
+- This timing makes the reward feel earned rather than cosmetic.
 
 ---
 
@@ -60,4 +60,4 @@ That’s it. No history, no motivation paragraph, no “why this matters” essa
 A brand-new user can open the app, complete Lesson 1, see XP awarded, and see the next lesson available—all in under 90 seconds, without confusion or friction.
 
 ---
-Write a complete, copy-paste-ready patch set that implements exactly this, targeting only `data/lessons.js`, `js/app.js`, and `css/style.css`. Do not use placeholders like "// TODO" in production code; validate syntax before finalizing.
+Write a complete, copy-paste-ready patch set that implements these changes exactly and modifies only `data/lessons.js`, `js/app.js`, and `css/style.css`. Do not use placeholders like "// TODO" in production code; validate syntax before finalizing.

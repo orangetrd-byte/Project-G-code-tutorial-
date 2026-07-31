@@ -4,7 +4,7 @@
 - Repo: `C:\Users\Dad\Documents\GitHub\Project-G-code-tutorial-`
 - Current weak-spot retry shows the **exact same missed question** again.
 - Remote already has concept pooling (`ConceptPools`) and a `getRetakeQuestion()` helper.
-- Goal: use concept variants for weak-spot retries so users can’t win by memorizing the last answer.
+- Goal: use concept variants for weak-spot retries so learners cannot succeed by memorizing the previous answer.
 
 ## What Exists Now (remote)
 - `js/app.js` has `ConceptPools`, `getQuestionConcept()`, `getRetakeQuestion()`, `getRetakeQuestions()`
@@ -13,8 +13,8 @@
 
 ## What’s Missing / Needs Tightening
 1. `startWeakReview()` builds its retry quiz from `State.weakQuestions` but may still replay the exact same item instead of a concept variant.
-2. Fallback notice when a concept pool has only one variant.
-3. Stable IDs/concept tagging needs to cover all lessons consistently.
+2. A fallback notice is needed when a concept pool has only one variant.
+3. Stable IDs and concept tags must cover all lessons consistently.
 
 ## Implementation Steps
 
@@ -47,7 +47,7 @@ if (hasFallback) {
 ```
 
 ### Step 3 — Tag remaining lessons consistently
-In `data/lessons.js`, ensure every quiz item has:
+In `data/lessons.js`, ensure that every quiz item has:
 - `id` (string, unique within the lesson)
 - `concept` (string, same value for items that test the same idea)
 
@@ -64,20 +64,20 @@ Use existing lesson ids as concept groups when needed:
 ### Step 4 — Add a second variant per concept
 For each concept you want to retry, add at least **one alternate question** in the same or a different lesson.
 
-| Concept | Existing | Add minimum |
+| Concept | Existing | Minimum addition |
 |---------|----------|-------------|
 | modal-codes | ? | 1 more |
 | g00-g01 | ? | 1 more |
 | g02-g03 | ? | 1 more |
 | work-offsets | ? | 1 more |
 
-Check the repo’s existing `LESSONS` array and fill gaps.
+Check the repository’s existing `LESSONS` array and fill any gaps.
 
 ## Verification Checklist
 - [ ] Weak spots screen still opens the retry flow
 - [ ] Retry quiz shows a **different question** when a concept has multiple variants
 - [ ] When only one variant exists, it replays with the fallback notice
-- [ ] No console errors in `initConceptPools()` / `getRetakeQuestion()`
+- [ ] No console errors from `initConceptPools()` or `getRetakeQuestion()`
 - [ ] Stable IDs do not break saving/loading of `weakQuestions`
 
 ## Risk Notes

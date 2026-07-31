@@ -28,7 +28,7 @@ Project G-Code Tutorial teaches CNC and 3D-printer G-code to beginners through i
 - Teaching over points: XP and streaks support habit, but understanding is the product.
 - Keep MGP visible in version/build information.
 
-## Rule Of Thumb
+## Rule of Thumb
 
 If a feature teaches what G-code means or what a machine would do, it belongs here.
 If a feature turns the app into machine operation, production programming, or shop management, it belongs somewhere else.

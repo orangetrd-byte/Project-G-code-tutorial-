@@ -34,7 +34,7 @@ Core scope:
 - live machine control
 - production-ready G-code generation
 
-Those belong in CNC Cell Planner, CNC Work Helper, Green Hat, or Helper depending on the feature.
+Depending on the feature, those capabilities belong in CNC Cell Planner, CNC Work Helper, Green Hat, or Helper.
 
 ## Development Philosophy
 

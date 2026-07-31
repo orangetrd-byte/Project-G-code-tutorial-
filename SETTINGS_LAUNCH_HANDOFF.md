@@ -7,7 +7,7 @@
 
 ## Context
 - Repo: `C:\Users\Dad\Documents\GitHub\Project-G-code-tutorial-`
-- App is a vanilla JS SPA toggling screens via `showScreen(id)` which adds/removes `active` class
+- The app is a vanilla JavaScript SPA that toggles screens through `showScreen(id)`, which adds or removes the `active` class.
 - State key: `State.setupComplete` controls whether setup/settings should show
 - Bottom nav likely triggers `showScreen()` on click
 
@@ -25,15 +25,15 @@
 
 ## Likely Fix Pattern
 If the issue is “first render misses the active toggle,” the fix is usually:
-- Calling `showScreen('screen-settings')` *after* `State.load()` during boot
-- Or ensuring the nav render loop runs on initial load, not just on click
+- Call `showScreen('screen-settings')` *after* `State.load()` during boot.
+- Alternatively, ensure that the navigation-rendering loop runs during the initial load rather than only after a click.
 
 Do NOT rewrite routing. Add the missing boot call or fix the DOMContentLoaded order.
 
 ## Deliverables
-- 2–3 sentence explanation of root cause
+- A two- or three-sentence explanation of the root cause
 - Exact code change (file + function + lines)
-- Brief rationale why the tab-switch workaround masked it
+- A brief explanation of why switching tabs masked the problem
 
 ## Boundaries
 - Do NOT change unrelated screens

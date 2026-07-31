@@ -13,7 +13,7 @@ The current learning model is similar to Duolingo or Mimo:
 
 - Short lesson theory
 - Practice questions
-- Immediate right/wrong feedback
+- Immediate correct-or-incorrect feedback
 - Explanations after answers
 - XP and streak tracking
 - Locked progression
@@ -84,13 +84,13 @@ The current learning model is similar to Duolingo or Mimo:
 
 ## Current Gaps
 
-- 3D printing track is still much shorter than CNC.
+- The 3D printing track is still much shorter than the CNC track.
 - Lesson screen and completion screen polish need another pass.
-- Quiz types are still limited to multiple choice and fill-in.
+- Quiz types still need broader use of the formats that the app supports.
 - Reference tab should be expanded into a stronger shop cheat sheet.
 - Progress screen should eventually show weak areas and mastery.
 - Some older text/emoji encoding artifacts are visible in source and may need cleanup later.
-- No native Android/iPhone wrapper yet.
+- No native Android or iPhone wrapper exists yet.
 
 ## Recommended Next Priorities
 
@@ -105,7 +105,7 @@ The current learning model is similar to Duolingo or Mimo:
 4. Expand Reference with more G-codes, M-codes, tooling, offset, and printer code entries.
 5. Improve Progress to show weak spots, review due, unit mastery, and track-specific stats.
 6. Clean source encoding artifacts when there is time for a careful content pass.
-7. Once browser app feels polished, wrap natively for Android/iPhone.
+7. After the browser app feels polished, consider native wrappers for Android and iPhone.
 
 ## Review Notes For Others
 

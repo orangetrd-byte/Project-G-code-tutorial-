@@ -6,12 +6,12 @@ Phase 6: Retention Polish
 
 ## Handoff Status
 
-- Last updated: 2026-07-21.
+- Last updated: 2026-07-31.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest pushed commit before this pass: 23a8480 fix: correct Fanuc and Haas feed-mode comparison.
-- Current app build: MGP | Version v2.58.0 | Build 2026.07.21.01.
-- Current service-worker cache: pgct-2026.07.21.01.
-- Local main was aligned with origin/main before this audit pass.
+- Latest application-content commit: fa56fe4 (`Polish beginner curriculum and reference copy`).
+- Current app build: MGP | Version v2.58.3 | Build 2026.07.30.02.
+- Current service-worker cache: pgct-2026.07.30.02.
+- Local `main` is aligned with `origin/main`.
 
 ## Phase 5 Completion Summary
 

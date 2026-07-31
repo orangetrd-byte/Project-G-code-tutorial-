@@ -1,10 +1,10 @@
 # Concept-Retry System — Extension Handoff
 
 ## Problem
-Retaking the exact same wrong question teaches memorization, not understanding. User clicks "A" because "that's what it was last time."
+Retaking the same missed question teaches memorization rather than understanding. The learner may click "A" only because that was the correct choice last time.
 
 ## Solution
-Group questions by **concept**, then retake with a **different question from the same concept pool.**
+Group questions by **concept**, then present a **different question from the same concept pool** during the retry.
 
 ---
 
@@ -39,7 +39,7 @@ const CONCEPT_POOLS = {
 };
 ```
 
-**Rule:** Each concept has **at least 2 questions** in the pool. If a concept only has 1 question today, mark it as `needs-more-questions` and log it.
+**Rule:** Each concept must have **at least two questions** in its pool. If a concept currently has only one question, mark it as `needs-more-questions` and log it.
 
 ---
 
@@ -131,9 +131,9 @@ state.activeRetake = {
 
 | Situation | Behavior |
 |-----------|----------|
-| Only 1 question in concept pool | Show original question, display notice: "More practice variants coming" |
-| User misses retake question too | Add to weaknesses again, suggest review of lesson theory card |
-| User passes retake | Remove from weaknesses, update streak/XP if desired |
+| Only one question in the concept pool | Show the original question and display this notice: "More practice variants are coming." |
+| Learner also misses the retry question | Add the concept to the weaknesses again and suggest reviewing the lesson theory card |
+| Learner passes the retry | Remove the concept from the weaknesses and update the streak or XP if desired |
 | All retake pools exhausted | Fall back to lesson review mode (re-read theory, then quiz) |
 
 ---
@@ -146,7 +146,7 @@ state.activeRetake = {
 4. **Replace end-of-lesson retake UI** — show concept areas instead of question list
 5. **Wire retake logic** — `getRetakeQuestion()` with pool filtering
 6. **Add pool-notice fallback** — graceful behavior when pool is thin
-7. **Polish** — animation, count display, " mastered " feedback when weakness cleared
+7. **Polish** — add animation, a count display, and "mastered" feedback when the weakness is cleared
 
 ---
 
@@ -163,7 +163,7 @@ state.activeRetake = {
 
 ## Questions to Resolve During Build
 
-1. Should retake count toward daily streak? (Recommend: yes, small XP — it's genuine practice)
+1. Should retake count toward daily streak? (Recommendation: yes, award a small amount of XP because it is genuine practice)
 2. Should there be a "review theory first" option before retake? (Nice to have)
-3. Should mastery threshold be 1 correct retake, or 2 in a row? (Recommend: 1 for speed, flag if they miss again later)
-4. Should weakness data persist across sessions? (Recommend: yes — localStorage, cleared only when concept is mastered)
+3. Should mastery threshold be 1 correct retake, or 2 in a row? (Recommendation: one for speed; flag the concept if the learner misses it again later)
+4. Should weakness data persist across sessions? (Recommendation: yes; store it in `localStorage` and clear it only when the concept is mastered)

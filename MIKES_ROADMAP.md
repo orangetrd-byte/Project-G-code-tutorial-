@@ -1,96 +1,88 @@
-# Mike's Machinist Roadmap — "From last-choice to 'Yeah, I can make that'"
+# Mike's Machinist Roadmap — "From Last Choice to 'Yes, I Can Make That'"
 
-Personal progression. Not shipped in the app. Built 2026-07-16.
-Goal: become the machinist who can pick the right tool/insert, program G-code for
-angled cuts, and run a small side income from a home benchtop mill.
-Constraint: no capital yet. The benchtop mill is a MILESTONE, not the start.
-The app (this repo) earns the cash for the machine OR teaches you in public.
+This personal progression plan is not shipped in the app. It was created on 2026-07-16.
 
-How to use: do phases in order. Each phase = read the linked lesson(s) + hit the
-milestone. Milestones are things you can DO, not just read. Tick them off as you go.
+Goal: Become a machinist who can select the right tool and insert, program G-code for angled cuts, and earn supplemental income with a home benchtop mill.
+
+Constraint: There is no available capital yet. The benchtop mill is a milestone rather than the starting point. This app can either earn money toward the machine or support public learning.
+
+How to use this roadmap: Complete the phases in order. For each phase, read the linked lessons and complete the milestones. Milestones demonstrate skills rather than reading progress. Mark each milestone as you complete it.
 
 ------------------------------------------------------------------------------
-PHASE 1 — Close the gap you were cut off at (lathe confidence)
+PHASE 1 — Close the Training Gap (Lathe Confidence)
 ------------------------------------------------------------------------------
-Why: your training stopped right after the Johnford HT 60CX-2D dual-turret lathe.
-That machine is advanced — but the *basics* underneath it are what make you
-the go-to guy. Lock those first.
+Why: Your training stopped after your work with the Johnford HT 60CX-2D dual-turret lathe. That machine is advanced, but mastering its underlying fundamentals will help you become a dependable machinist. Strengthen those fundamentals first.
 
 Read:
   - CNC Unit 1 (Foundations): What Is G-Code?, Coordinate System, Program Structure
   - CNC Unit 2 (Motion): G00, G01, G02/G03
   - CNC Unit 3 (Turning Ops): G96/G97, G71, G76
 Milestones (prove it):
-  [ ] Can explain G00 vs G01 to a coworker without notes
-  [ ] Can read a turning program block and name every code in it
-  [ ] Can hand-write a simple G01 turning pass (coordinates + feed) on paper
-  [ ] Understands what G96 (constant surface speed) protects against on the lathe
+  [ ] Explain the difference between G00 and G01 to a coworker without notes
+  [ ] Read a turning-program block and identify every code in it
+  [ ] Handwrite a simple G01 turning pass, including coordinates and feed, on paper
+  [ ] Explain why G96 constant surface speed requires careful spindle-speed control on a lathe
 
 ------------------------------------------------------------------------------
-PHASE 2 — Offsets & setup (the "last choice" fix)
+PHASE 2 — Offsets and Setup (Building Trust)
 ------------------------------------------------------------------------------
-Why: setup/offsets are where shops decide who they trust. Own this and you move
-up the list.
+Why: Setup and offset skills help a shop determine which machinists can be trusted with additional responsibility. Practice these skills deliberately.
 
 Read:
   - CNC Unit 4 (Tooling & Offsets): Tool Calls & Offsets, Work Offsets & G54
   - CNC Unit 5 (Measure/Adjust): Measure Compare Adjust, Wear vs Program Edits,
     Single Block & Dry Run
 Milestones:
-  [ ] Can set G54 work offset from a known part zero, by hand
-  [ ] Can use wear offsets to fix a 0.002" oversize without editing the program
-  [ ] Can run a new program in Single Block + Dry Run and spot a crash before it happens
-  [ ] Can explain to a rookie why Dry Run still moves the machine
+  [ ] Set a G54 work offset manually from a known part zero
+  [ ] Use a wear offset to correct a 0.002-inch oversize condition without editing the program
+  [ ] Use Single Block and Dry Run to identify a potential collision before running a new program
+  [ ] Explain to a beginner why Dry Run can still move the machine
 
 ------------------------------------------------------------------------------
-PHASE 3 — Fixtures & tooling (your stated strength, sharpen it)
+PHASE 3 — Fixtures and Tooling (Strengthen an Existing Skill)
 ------------------------------------------------------------------------------
-Why: you can already make fixtures. Make it deliberate — know WHY a fixture works
-and which insert to grab. This is the most sellable hands-on skill you have.
+Why: You can already make fixtures. Strengthen this skill by understanding why each fixture works and how to select an appropriate insert. This is one of your most marketable hands-on skills.
 
 Read:
   - CNC Unit 6 (Modal/Safe): Units G20/G21, Feed Modes G98/G99, Modal State Checklist
   - CNC Unit 7 (Coolant/Stops): Coolant, Stops, Operator Control
-Do (no machine needed yet — study + sketch):
-  [ ] Can sketch a 3-step fixture plan for a simple block (locate, clamp, support)
-  [ ] Knows the difference between roughing and finishing inserts (geometry/radius)
-  [ ] Can name the insert type for: aluminum finish, steel rough, deep groove
-  [ ] Understands feed-per-rev (G99) vs feed-per-min (G98) and when each matters
+Practice without a machine by studying and sketching:
+  [ ] Sketch a three-step fixture plan for a simple block: locate, clamp, and support
+  [ ] Explain the differences between roughing and finishing inserts, including geometry and nose radius
+  [ ] Select an insert type for finishing aluminum, roughing steel, and cutting a deep groove
+  [ ] Explain the difference between feed per revolution (G99) and feed per minute (G98) and when each mode matters
 
 ------------------------------------------------------------------------------
-PHASE 4 — Angled cuts & drilling (the "code G-code for angles" goal)
+PHASE 4 — Angled Cuts and Drilling (Programming Angles)
 ------------------------------------------------------------------------------
-Why: this is the literal thing you said you want — program angles, not just straight.
+Why: This phase addresses your goal of programming angled moves rather than only straight-axis moves.
 
 Read:
   - CNC Unit 8 (Subprograms): M98/M99, Repeated Motion
   - CNC Unit 9 (Drilling): G81, G83, R Plane, Return
 Study (trig, on paper):
-  [ ] Can compute X/Z move for a 30° chamfer from a known start point
-  [ ] Understands G01 with both axes moving = an angle (not just G00)
-  [ ] Can write a G83 peck drill cycle for a blind hole
-  [ ] Knows why G80 cancels a cycle before the next operation
+  [ ] Calculate the X and Z movements for a 30-degree chamfer from a known starting point
+  [ ] Explain how a G01 move with both axes changing can create an angled path
+  [ ] Write an educational G83 peck-drilling example for a blind hole
+  [ ] Explain why G80 cancels a canned cycle before the next operation
 
 ------------------------------------------------------------------------------
-PHASE 5 — The home benchtop mill (milestone, not the start)
+PHASE 5 — The Home Benchtop Mill (A Milestone, Not the Starting Point)
 ------------------------------------------------------------------------------
-Why: only buy this once the app earns it OR you've banked side cash. Then it becomes
-the real side shop.
+Why: Purchase the mill only after the app earns enough money or you save sufficient supplemental income. The mill can then become the foundation of a small home shop.
 
-Pre-req: Phases 1-4 done (knowledge) + some earned cash.
+Prerequisites: Complete Phases 1–4 and save enough money for the purchase and setup.
 Do:
-  [ ] Pick a benchtop mill (research: Tormach 440-class vs import — log pros/cons)
-  [ ] Set it up, indicate the vise, prove G54 on the mill
-  [ ] First paid part: make a simple fixture or plate for someone (even a friend)
-  [ ] List a small service locally (fixtures, simple plates, prototypes)
+  [ ] Select a benchtop mill after comparing a Tormach 440-class machine with an imported alternative and recording the advantages and disadvantages
+  [ ] Set up the mill, indicate the vise, and verify G54
+  [ ] Complete a first paid part, such as a simple fixture or plate
+  [ ] Advertise a small local service for fixtures, simple plates, or prototypes
 
 ------------------------------------------------------------------------------
-SIDE-INCOME LANES (run alongside any phase)
+SUPPLEMENTAL-INCOME PATHS (Use Alongside Any Phase)
 ------------------------------------------------------------------------------
-A) App earns: the CNC tutorial app is already public. Options: affiliate links to
-   tooling, a "cheat sheet" PDF, or ad-free paid version. This funds Phase 5.
-B) Teach in public: post short "what this G-code does" clips. You're a learner,
-   not a guru — that's the angle. Other learners trust a peer.
-C) Local: once Phase 5 lands, real parts from a home shop.
+A) App income: The CNC tutorial app is already public. Possible income sources include tooling affiliate links, a reference-sheet PDF, or an advertisement-free paid version. This income can help fund Phase 5.
+B) Public learning: Post short videos that explain what individual G-codes do. Present yourself honestly as a learner sharing progress rather than as an expert.
+C) Local work: After completing Phase 5, offer appropriate small-part services from the home shop.
 
-Next action (today, free): complete Phase 1 milestones using the app. Tick boxes.
+Next action: Complete the Phase 1 milestones with the app and mark each completed item.

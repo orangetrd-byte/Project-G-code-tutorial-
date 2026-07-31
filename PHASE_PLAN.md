@@ -1,6 +1,6 @@
 # G-Code Tutorial Phase Plan
 
-Last updated: 2026-07-16
+Last updated: 2026-07-31
 
 ## Summary
 
@@ -9,22 +9,22 @@ G-Code Tutorial is the structured learning app for CNC and related machine-code 
 Default constraints:
 
 - Keep the app static and offline-capable on GitHub Pages.
-- Keep zero backend and no build toolchain.
+- Keep the app free of backend services and a build toolchain.
 - Keep curriculum content in data files and app behavior in JavaScript.
-- Keep learning flow separate from CNC Work Helper's advanced utilities.
+- Keep the learning flow separate from CNC Work Helper's advanced utilities.
 
 ## Phase 1: Curriculum Reliability
 
 - Clean up lesson copy, encoding artifacts, and visual consistency.
 - Keep lesson flow reliable: theory, quiz, feedback, XP, unlock next lesson.
-- Keep state persistence stable in localStorage.
+- Keep state persistence stable in `localStorage`.
 - Ensure reference search and progress screens remain fast and mobile-friendly.
 - Maintain source-backed reference coverage and controller/firmware scope for learner-facing definitions.
 
 ## Phase 2: Curriculum Expansion
 
 - Add more lathe-focused Fanuc-compatible lessons in a clear progression.
-- Improve multiple choice, fill-in-the-blank, hints, and explanations.
+- Improve multiple-choice and fill-in-the-blank questions, hints, and explanations.
 - Keep lessons short enough for mobile use.
 - Add visuals only when they directly support the lesson objective.
 
@@ -36,7 +36,7 @@ Default constraints:
 - Keep Reference definitions track-specific and source-backed, especially where CNC controls and printer firmware use similar codes differently.
 - Avoid mixing unrelated concepts inside the same lesson unit.
 
-## Phase 4: Retention And Practice
+## Phase 4: Retention and Practice
 
 - Maintain review mode, daily practice, weak-topic practice, and mixed review.
 - Track missed questions as weak spots until the learner clears them in focused review or daily practice.
@@ -45,7 +45,7 @@ Default constraints:
 - Polish matching as a game-like review mode with clear states in dark and light themes.
 - Polish streaks, XP, progress summaries, and next-action momentum.
 - Explore reward/rank moments only when they reinforce practice and do not add clutter.
-- Add optional printable completion summary only after core learning and review flow remains solid.
+- Add an optional printable completion summary only after the core learning and review flows remain solid.
 
 ## Acceptance Rules
 

@@ -1,6 +1,6 @@
 # Project G-Code Tutorial — Backlog
 
-Last updated: 2026-07-21
+Last updated: 2026-07-31
 
 ---
 
@@ -13,16 +13,16 @@ These define what Project G-Code can do better than a PDF, video playlist, or ge
    Acceptance: learner can see why the wrong answer would move or behave differently.
 
 2. Educational crash/alarm preview
-   Add 4-6 dangerous beginner mistake patterns with consequence feedback.
+   Add four to six dangerous beginner mistake patterns with consequence feedback.
    Acceptance: learner sees what the code could do to the part, tool, coordinate system, or print job without turning the app into a machine panel.
 
 3. Workpiece/state panel
-   Show simple educational state: active tool/nozzle, position, units, feed, spindle/temp, and active mode where relevant.
+   Show a simple educational state: the active tool or nozzle, position, units, feed rate, spindle speed or temperature, and active mode where relevant.
    Acceptance: state changes reflect the learner's selected code block.
 
 4. Mistake bank with lesson link-back
    Every missed concept links back to the source lesson or explanation.
-   Acceptance: user can jump from a weak spot to the exact concept in one tap.
+   Acceptance: the learner can jump from a weak spot to the exact concept in one tap.
 
 5. Correction rewrite after a miss
    Status: completed. Wrong answers now require an active correction before progression.
@@ -43,7 +43,7 @@ These reduce guessing and improve retention.
 
 3. Weak-spot retry queue
    First miss of the day should surface in practice before normal review.
-   Acceptance: streak/gamification cannot hide unresolved weak spots.
+   Acceptance: streaks and other rewards cannot hide unresolved weak spots.
 
 4. Today's line
    Status: completed with one track-specific free-recall line drawn only from completed lessons.
@@ -51,19 +51,19 @@ These reduce guessing and improve retention.
    Acceptance: the line is short, track-specific, and recall-focused.
 
 5. Question variety without answer leakage
-   Keep mixing multiple choice, fill blank, matching, true/false, select-code, and order-the-block prompts.
-   Acceptance: examples help understanding but do not directly reveal the answer before attempt.
+   Keep mixing multiple-choice, fill-in-the-blank, matching, true-or-false, select-the-code, and order-the-block prompts.
+   Acceptance: examples support understanding but do not reveal the answer before the learner attempts the question.
 
 ---
 
-## P3 — Fluency & Polish
+## P3 — Fluency and Polish
 
-Reliability and mobile usability once P1/P2 are stable.
+Improve reliability and mobile usability after P1 and P2 are stable.
 
 1. Mobile safe-area handling for bottom nav, lesson footer, and practice cards.
 2. Light theme contrast fixes for theory blocks, disabled text, and code panels.
-3. Code Bank / Reference collection: learned-code filters, important codes, exact-match search, and lesson link-back.
+3. Code Bank and Reference collection: learned-code filters, important codes, exact-match search, and lesson link-back.
    Status: learned filtering, automatic unlocks, persistence, progress counts, and track separation are complete.
 4. Practice hub polish: daily drill, mistake repair, code bank, mixed review, and clear locked/ready states.
-5. Lightweight rewards/ranks: milestone moments that reinforce recall without becoming noisy gamification.
+5. Lightweight rewards and ranks: milestone moments that reinforce recall without becoming noisy gamification.
 6. Startup/loading screen cleanup: keep the accepted boot-rig style and remove unused legacy loading CSS when safe.

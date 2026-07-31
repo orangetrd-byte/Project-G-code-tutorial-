@@ -4,9 +4,9 @@
 Add an optional 10-question placement test that determines the user's starting lesson based on their G-code knowledge.
 
 ## Why
-- Reduces friction for users who already know basics
-- Creates a "test my skills" entry point for seasoned machinists
-- Personalizes the learning path without adding complexity
+- It reduces friction for users who already know the basics.
+- It creates a "test my skills" entry point for experienced machinists.
+- It personalizes the learning path without adding complexity.
 
 ---
 
@@ -14,20 +14,20 @@ Add an optional 10-question placement test that determines the user's starting l
 
 ### Flow A: New User (No placement test data)
 1. User opens app → Home screen
-2. Two CTAs visible:
+2. Two calls to action are visible:
    - Primary: "Take 2-minute placement test" (recommended)
    - Secondary: "Start from beginning" (text link)
 3. User selects one
-4. If test: answer 10 questions → see result → land on assigned lesson
-5. If skip: start at Unit 1, Lesson 1
+4. If the learner takes the test: answer 10 questions → see the result → open the assigned lesson
+5. If the learner skips the test: start at Unit 1, Lesson 1
 
 ### Flow B: Returning User (Has placement result saved)
-- Skip placement screen entirely
-- Go directly to their current lesson/progress
+- Skip the placement screen entirely.
+- Go directly to the current lesson or progress screen.
 
 ### Flow C: Retest
-- From Progress screen, small link: "Retake placement test"
-- Resets placement data, runs test again
+- On the Progress screen, show a small "Retake placement test" link.
+- Reset the placement data and run the test again.
 
 ---
 
@@ -62,7 +62,7 @@ placementResult: {
 
 ## 10 Sample Questions
 
-Keep format: multiple choice, 1 correct answer, ~10-20 words per option.
+Use multiple-choice questions with one correct answer and approximately 10–20 words per option.
 
 1. **G00 vs G01**
    - "What does G00 do?"
@@ -88,9 +88,9 @@ Keep format: multiple choice, 1 correct answer, ~10-20 words per option.
 4. **G02/G03**
    - "What does G02 do?"
    - A) Clockwise arc (correct)
-   - B) Counter-clockwise arc
+   - B) Counterclockwise arc
    - C) Rapid move
-   - D) Cancel tool radius comp
+   - D) Cancel tool-radius compensation
 
 5. **G90 vs G91**
    - "In G90 mode, coordinates are:"
@@ -111,7 +111,7 @@ Keep format: multiple choice, 1 correct answer, ~10-20 words per option.
    - A) Metric units (correct)
    - B) Inch units
    - C) Inches per minute
-   - D) Millimeters per rev
+   - D) Millimeters per revolution
 
 8. **Modal codes**
    - "A modal G-code:"
@@ -121,14 +121,14 @@ Keep format: multiple choice, 1 correct answer, ~10-20 words per option.
    - D) Only works with M codes
 
 9. **Feed rate**
-   - "Default feed mode on Fanuc lathe (no G94/G95):"
-   - A) G98 – inches/rev or mm/rev (correct)
-   - B) G94 – inches/min
-   - C) G95 – mm/min
-   - D) F is always required
+   - "On a Fanuc lathe, which code selects feed per revolution?"
+   - A) G99 (correct)
+   - B) G98
+   - C) G94
+   - D) G95
 
 10. **Program end**
-    - "What ends a program and returns to home position?"
+    - "Which code commonly ends a program and returns the program cursor to the beginning?"
     - A) M30 (correct)
     - B) M05
     - C) G28
@@ -170,7 +170,7 @@ Simple full-screen quiz:
 ## Data Model Changes
 
 ### `data/lessons.js`
-No changes required. Placement maps to existing `UNITS` array indices.
+No changes are required. Placement maps to the existing `UNITS` array indices.
 
 ### `js/app.js` additions
 
@@ -237,7 +237,7 @@ function retakePlacement() { ... }
 - [ ] User can take test and land on appropriate lesson
 - [ ] Result persists across sessions (localStorage)
 - [ ] Retake option available from Progress screen
-- [ ] Test is ~2 minutes to complete
+- [ ] The test takes approximately two minutes to complete.
 - [ ] No build step or dependency changes required
 
 ---
@@ -246,7 +246,7 @@ function retakePlacement() { ... }
 
 - Adaptive difficulty during the test itself (static 10 questions)
 - Time-based scoring
-- Account sync (localStorage only, like rest of app)
+- Account synchronization (`localStorage` only, as in the rest of the app)
 
 ---
 

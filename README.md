@@ -33,7 +33,7 @@ Project G-Code Tutorial teaches CNC G-code (lathe-focused, Fanuc-compatible) usi
 Theory card → Quiz questions → Instant feedback → XP reward → Unlock next lesson
 ```
 
-Everything runs in the browser with zero dependencies, zero build step, and zero backend. State is persisted in `localStorage`. The app installs as a PWA on any Android or iOS device.
+Everything runs in the browser without dependencies, a build step, or a backend. The app stores state in `localStorage` and can be installed as a PWA on supported Android and iOS devices.
 
 ---
 
@@ -42,7 +42,7 @@ Everything runs in the browser with zero dependencies, zero build step, and zero
 | Feature | Description |
 |---|---|
 | **Lesson cards** | Theory + SVG visual aid for each concept |
-| **Multiple choice quiz** | Tap an option, get immediate right/wrong feedback |
+| **Multiple-choice quiz** | Tap an option to receive immediate correct-or-incorrect feedback |
 | **Fill-in-the-blank** | Type a G-code value, press Enter or Check |
 | **Explanations** | Every quiz answer reveals a plain-language explanation |
 | **XP system** | XP awarded per lesson, scaled by accuracy |
@@ -125,7 +125,7 @@ function showScreen(id) {
 }
 ```
 
-No router library needed. Navigation history is not tracked (back button returns to Home, not browser history). This is intentional for the Duolingo-style single-flow UX.
+The app does not need a router library. It does not track navigation history; the back button returns to Home instead of moving through browser history. This behavior supports the app's single-flow learning experience.
 
 ---
 
@@ -205,7 +205,7 @@ const State = {
 |---|---|
 | `State.load()` | Reads `localStorage` at boot |
 | `State.save()` | Writes to `localStorage` (called after lesson completion) |
-| `State.isLessonDone(id)` | Returns bool |
+| `State.isLessonDone(id)` | Returns a Boolean value |
 | `State.isLessonUnlocked(lesson)` | Checks prerequisite chain |
 | `State.completeLesson(id, correct, total)` | Awards XP, updates streak, saves |
 | `State.getUnitProgress(unitId)` | Returns `{ done, total }` |
@@ -259,7 +259,7 @@ finishLesson()
 
 ### Quiz Answer Validation
 
-- **Multiple choice:** compare clicked index to `q.answer` (integer)
+- **Multiple-choice questions:** compare the clicked index with `q.answer` (an integer)
 - **Fill-blank:** case-insensitive string comparison after trimming whitespace. Accepts with or without leading `G`/`M` (the input normalizes to uppercase)
 
 ---
@@ -279,7 +279,7 @@ Inline SVG diagrams are rendered by `Visuals.render(type)` in `app.js`. Each vis
 | `g71-cycle` | Multi-pass rough turning profile sketch |
 | `threading` | Thread form with lead annotation |
 
-All SVGs use the design token colors from `:root` CSS variables (hardcoded in the SVG strings since SVGs can't inherit CSS vars easily). When adding a new visual, match the existing color values:
+All SVGs use the design-token colors from the `:root` CSS variables. The colors are hardcoded in the SVG strings because those strings cannot easily inherit CSS variables. When adding a new visual, match these existing color values:
 
 - Background fills: `#1E2D3D`
 - Primary strokes: `#1A6B5C`
@@ -291,7 +291,7 @@ All SVGs use the design token colors from `:root` CSS variables (hardcoded in th
 
 ## Design Tokens
 
-All design decisions live in `:root` in `style.css`. Change here to retheme the whole app.
+All design decisions live in `:root` in `style.css`. Change these variables to apply a new theme throughout the app.
 
 ```css
 :root {
@@ -334,7 +334,7 @@ All design decisions live in `:root` in `style.css`. Change here to retheme the 
 `sw.js` implements **network-first with cache fallback**:
 
 1. On install: pre-cache local app files; Google Fonts are no longer precached to avoid cross-origin failures.
-2. On fetch: serve from cache → fall back to network → cache the response.
+2. On fetch: serve a cached response when available; otherwise, request and cache the network response.
 3. On activate: delete caches from old `CACHE_VERSION`.
 
 `CACHE_VERSION` rotates automatically by date/timestamp, so repeated deploys don’t stick with stale cache entries.
@@ -352,7 +352,7 @@ const CACHE_VERSION = 'pgct-v1.0';  // ← legacy static form; actual version is
 
 ### Install Prompt
 
-The browser handles the native "Add to Home Screen" prompt automatically. No custom install UI is included (keeps the app simple).
+The browser handles the native "Add to Home Screen" prompt. The app does not include a custom installation interface, which keeps the experience simple.
 
 ---
 
@@ -388,7 +388,7 @@ No terminal, no build step required.
 
 Every new lesson should explain why the concept matters before showing syntax or asking quiz questions. Use the `why` field for the short reason, then use `theory` for the how-to details.
 
-Good why statements should answer:
+Effective `why` statements should answer:
 
 - What machine behavior does this concept control?
 - What mistake does this help prevent?
