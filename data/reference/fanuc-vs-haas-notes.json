@@ -1,19 +1,19 @@
 {
   "category": "cnc_turning_notes",
   "type": "fanuc_vs_haas_notes",
-  "brand": "Fanuc vs Haas",
+  "brand": "Fanuc and Haas",
   "items": [
     {
       "symbol": "G98 / G99",
       "meaning": "Feed-mode assignment matches on the documented Fanuc-style and Haas lathes.",
-      "notes": "Both use G98 = feed per MINUTE and G99 = feed per REVOLUTION in the lathe context documented here. Mill meanings differ, and control options can vary, so verify the exact machine manual before porting code.",
+      "notes": "Both use G98 for feed per minute and G99 for feed per revolution in the lathe context documented here. The meanings differ on mills, and control options can vary, so verify the exact machine manual before transferring code.",
       "source": "Haas Lathe G-Code List",
       "source_url": "https://www.haascnc.com/service/service-content/guide-procedures/lathe---g-codes.html"
     },
     {
       "symbol": "G20 / G21",
-      "meaning": "Inch vs metric input — same on both, but confirm Setting 9 on Haas.",
-      "notes": "Both brands use G20=inch, G21=metric. On Haas, G20/G21 check Setting 9 (Inch/Metric) rather than converting stored coordinates; other controls may differ. Verify the active unit mode, don't assume.",
+      "meaning": "Inch and metric input work the same on both, but Haas users must confirm Setting 9.",
+      "notes": "Both brands use G20 for inch input and G21 for metric input. On Haas controls, G20 and G21 check Setting 9 (Inch/Metric) rather than converting stored coordinates. Other controls may differ, so verify the active unit mode.",
       "source": "CNC Cookbook — Lathe G/M reference",
       "source_url": "https://www.cnccookbook.com/cnc-lathe-gcode-mcode-reference-list-turning/"
     },
@@ -26,22 +26,22 @@
     },
     {
       "symbol": "G70 / G71 / G72 / G76",
-      "meaning": "Canned-cycle PARAMETER FORMAT varies by control generation.",
-      "notes": "The letter order and whether the cycle is one-line or two-line differs between Fanuc generations and other brands (incl. Haas). Copying a cycle block verbatim across brands will likely be misread. Match the exact format in your control's programming manual.",
+      "meaning": "Canned-cycle parameter formats vary by control generation.",
+      "notes": "The letter order and the use of a one-line or two-line format differ among Fanuc generations and other brands, including Haas. A control may misread a cycle block copied verbatim from another brand. Match the exact format in your control's programming manual.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
     {
       "symbol": "M41 / M42 / M23 / M24",
-      "meaning": "Gear-range and chuck codes are BUILDER-DEFINED, not universal.",
-      "notes": "M41/M42 (gear range) and M23/M24 (chuck open/close) exist on some machines but are NOT standard Fanuc codes — they are set by the machine builder (e.g. your Johnford HT 60CX-2D). Do not assume these work; check the builder's manual. M00–M30 are the near-universal set.",
+      "meaning": "Gear-range and chuck codes are builder-defined rather than universal.",
+      "notes": "M41 and M42 for gear ranges and M23 and M24 for chuck control exist on some machines, but they are not standard Fanuc codes. The machine builder assigns them. For example, they may appear on a Johnford HT 60CX-2D. Do not assume that these codes will work; check the builder's manual. M00 through M30 are the nearly universal set.",
       "source": "FanucWorld — Fanuc M-code list",
       "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
     },
     {
       "symbol": "Always",
-      "meaning": "Verify against YOUR machine's manual — not a generic list.",
-      "notes": "Fanuc publishes per-model manuals (e.g. 0i-T, 18i-T); Haas publishes per-model code pages. Builder options, parameter settings, and ladder logic remap codes. The lists here are a learning aid — the machine manual and a dry run / single-block prove-out are the real authority.",
+      "meaning": "Verify each code against your machine's manual rather than relying on a generic list.",
+      "notes": "Fanuc publishes manuals for individual models, such as the 0i-T and 18i-T, while Haas publishes model-specific code pages. Builder options, parameter settings, and ladder logic can remap codes. These lists are learning aids. The machine manual and a dry run or single-block prove-out are the final authorities.",
       "source": "Project G-Code reference caveat",
       "source_url": "https://www.haascnc.com/service/codes-settings.html"
     }

@@ -208,13 +208,20 @@ function validateGrammar() {
   assert.doesNotMatch(app, /G90", name: "Absolute Mode"/, 'Lathe fallback must not teach G90 as universal absolute mode');
   assert.doesNotMatch(app, /Required for threading, drilling, boring/, 'Constant RPM must remain process-specific');
   assert.doesNotMatch(app, /Always call before tool changes/, 'Spindle-stop procedure must remain machine-specific');
+  assert.doesNotMatch(app, /Choose Settings To Begin Learning|Sharpen the shop skills|Wrap it again anytime|Nice run\. Keep the setup moving|Not quite — see explanation|Correction locked in|Confidence saved/, 'Awkward or incomplete UI copy must not return');
+  assert.doesNotMatch(app, /\$\{State\.streak\} day<\/strong>/, 'Streak labels need singular/plural agreement');
+  assert.match(app, /Práctica/, 'Spanish navigation needs correct accents');
+  assert.match(app, /Español/, 'Spanish language labels need correct accents');
+  assert.match(app, /¿Quieres restablecer todos los datos\?/, 'Spanish confirmation questions need opening punctuation');
+  assert.doesNotMatch(app, /Own this and you stop being the last choice|Your stated strength\. Make it deliberate|The literal \"code angles\" goal|MILESTONE, not the start|Once Phase 5 lands, real parts/, 'Roadmap fragments and discouraging copy must not return');
+  assert.doesNotMatch(app, /milestones complete<\/div>|codes marked learned<\/div>|lessons complete<\/div>/, 'Progress summaries need complete sentence structure');
 }
 
 function validateReferences() {
   const directory = path.join(ROOT, 'data', 'reference');
   const fanucHaasNotes = read('data/reference/fanuc-vs-haas-notes.json');
   assert.doesNotMatch(fanucHaasNotes, /assignment is OPPOSITE|Haas lathes: G98 = feed per REVOLUTION/, 'Reference cards must not reverse Haas lathe G98/G99 meanings');
-  assert.match(fanucHaasNotes, /Both use G98 = feed per MINUTE and G99 = feed per REVOLUTION/, 'Fanuc/Haas lathe feed-mode comparison must match the audited curriculum');
+  assert.match(fanucHaasNotes, /Both use G98 for feed per minute and G99 for feed per revolution/, 'Fanuc/Haas lathe feed-mode comparison must match the audited curriculum');
   fs.readdirSync(directory)
     .filter(file => file.endsWith('.json'))
     .forEach(file => JSON.parse(fs.readFileSync(path.join(directory, file), 'utf8')));
@@ -265,7 +272,17 @@ function validateReferences() {
 
   readJson('data/reference/operation-sheet-symbols.json').items.forEach(item => {
     assert.match(item.notes || '', /Project example only/, `${item.symbol} must be labeled as a shop-defined example`);
+    assert.match(item.usage || '', /[.!?]$/, `${item.symbol} usage guidance must be a complete sentence`);
   });
+
+  const referenceProse = index.files
+    .filter(entry => entry.file !== 'metadata.json')
+    .flatMap(entry => readJson(`data/reference/${entry.file}`).items || [])
+    .flatMap(item => [item.usage, item.notes].filter(Boolean));
+  referenceProse.forEach(text => {
+    assert.doesNotMatch(text, /\b(?:per-min|per-rev|incl\.)\b|axis\(es\)|before\/while|offset\s*\/\s*parameter/i, `Reference prose contains avoidable shorthand: ${text}`);
+  });
+  assert.doesNotMatch(fanucHaasNotes, /\b(?:YOUR|NOT|BUILDER-DEFINED|PARAMETER FORMAT|MINUTE|REVOLUTION)\b/, 'Comparison notes must not use all caps for emphasis');
 
   requiredGCodes.forEach(code => {
     const matches = gCodeItems.filter(item => item.code === code);
@@ -298,6 +315,8 @@ function validateCurriculum(api) {
   const questionIds = new Set();
   const validTypes = new Set(['multiple-choice', 'true-false', 'fill-blank', 'matching']);
   const nonDomainDistractor = /\b(?:app|theme|wi-?fi|xp|phone|browser|logo|clock|file name|program name|screen brightness|keyboard|tabs|comment color|comments? (?:execute|run|cut|move|heat|home))\b/i;
+  const ambiguousQuestionStem = /^(?:Which is\b|Why does this matter\b)/i;
+  const ellipticalWhyStem = /^Why\s+(?!(?:is|are|was|were|do|does|did|can|could|will|would|should|must|might|has|have|had)\b)/i;
 
   Object.entries(api.TRACKS).forEach(([trackId, track]) => {
     track.lessons.forEach(lesson => {
@@ -333,6 +352,15 @@ function validateCurriculum(api) {
           assert.ok(Number.isInteger(question.answer), `${question.id} needs a numeric choice answer`);
           assert.ok(question.answer >= 0 && question.answer < question.options.length, `${question.id} answer is out of range`);
           assert.match(String(question.question), /\?/, `${question.id} multiple-choice prompt must be a complete question`);
+          assert.doesNotMatch(String(question.question).trim(), ambiguousQuestionStem, `${question.id} has an ambiguous question stem`);
+          assert.doesNotMatch(String(question.question).trim(), ellipticalWhyStem, `${question.id} has an elliptical Why question`);
+          const reasonStarters = question.options
+            .map(option => String(option).match(/^(To|So|Because)\b/i)?.[1]?.toLowerCase())
+            .filter(Boolean);
+          if (reasonStarters.length) {
+            assert.equal(reasonStarters.length, question.options.length, `${question.id} mixes reason phrases with other option structures`);
+            assert.equal(new Set(reasonStarters).size, 1, `${question.id} uses inconsistent reason-phrase starters`);
+          }
           const normalizedOptions = question.options.map(option => String(option).trim().toLowerCase());
           assert.ok(normalizedOptions.every(Boolean), `${question.id} has a blank choice`);
           assert.equal(new Set(normalizedOptions).size, normalizedOptions.length, `${question.id} has duplicate choices`);

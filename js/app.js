@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.58.2 | Build 2026.07.30.01';
+const APP_BUILD = 'MGP | Version v2.58.3 | Build 2026.07.30.02';
 
 // ─── ACCESS GATE ────────────────────────────────────────────
 const AccessGate = {
@@ -1024,8 +1024,8 @@ const UI_TEXT = {
     settingsSubtitle: 'App preferences',
     setupSubtitle: 'Choose language and theme before you start.',
     setupAppName: 'Project G-Code Tutorial',
-    setupTitle: 'Choose Settings To Begin Learning',
-    setupBody: 'Pick your language and theme, then press Start Learning.',
+    setupTitle: 'Choose Your Settings to Begin Learning',
+    setupBody: 'Choose your language and theme, then select Start Learning.',
     startLearning: 'Start Learning',
     language: 'Language',
     languageHelp: 'Choose the app interface language.',
@@ -1040,44 +1040,44 @@ const UI_TEXT = {
     resetDataHelp: 'Clear progress, XP, streaks, reviews, weak spots, language, and theme on this device.',
     resetDataButton: 'Reset',
     resetConfirm: 'Reset all app data? This clears progress, XP, streaks, reviews, weak spots, language, and theme on this device.',
-    resetDone: 'App data cleared. Fresh start ready.',
+    resetDone: 'App data cleared. You can start fresh.',
     path: 'Your learning path',
     curriculum: 'Curriculum',
     unitProgress: 'Unit Progress',
     totalXp: 'Total XP Earned',
-    dayStreak: 'Day Streak',
+    dayStreak: 'Current Streak',
   },
   es: {
     learn: 'Aprender',
     reference: 'Referencia',
-    practice: 'Practica',
+    practice: 'Práctica',
     progress: 'Progreso',
     settings: 'Ajustes',
-    settingsSubtitle: 'Preferencias de la app',
-    setupSubtitle: 'Elige idioma y tema antes de empezar.',
+    settingsSubtitle: 'Preferencias de la aplicación',
+    setupSubtitle: 'Elige el idioma y el tema antes de comenzar.',
     setupAppName: 'Project G-Code Tutorial',
-    setupTitle: 'Elige ajustes para empezar',
-    setupBody: 'Elige idioma y tema, luego presiona Empezar.',
+    setupTitle: 'Elige tus ajustes para comenzar a aprender',
+    setupBody: 'Elige el idioma y el tema; luego, selecciona «Empezar».',
     startLearning: 'Empezar',
     language: 'Idioma',
-    languageHelp: 'Elige el idioma de la interfaz.',
-    english: 'Ingles',
-    spanish: 'Espanol',
+    languageHelp: 'Elige el idioma de la interfaz de la aplicación.',
+    english: 'Inglés',
+    spanish: 'Español',
     theme: 'Tema',
-    themeHelp: 'Elige modo claro u oscuro.',
+    themeHelp: 'Elige el modo claro u oscuro.',
     dark: 'Oscuro',
     light: 'Claro',
-    build: 'Version',
+    build: 'Versión',
     resetData: 'Restablecer datos',
-    resetDataHelp: 'Borra progreso, XP, racha, repasos, puntos debiles, idioma y tema en este dispositivo.',
+    resetDataHelp: 'Borra el progreso, los XP, la racha, los repasos, los puntos débiles, el idioma y el tema de este dispositivo.',
     resetDataButton: 'Restablecer',
-    resetConfirm: 'Restablecer todos los datos? Esto borra progreso, XP, racha, repasos, puntos debiles, idioma y tema en este dispositivo.',
-    resetDone: 'Datos borrados. Inicio limpio listo.',
+    resetConfirm: '¿Quieres restablecer todos los datos? Esta acción borra el progreso, los XP, la racha, los repasos, los puntos débiles, el idioma y el tema de este dispositivo.',
+    resetDone: 'Los datos de la aplicación se borraron. Ya puedes comenzar de nuevo.',
     path: 'Tu ruta de aprendizaje',
-    curriculum: 'Curriculo',
+    curriculum: 'Currículo',
     unitProgress: 'Progreso por unidad',
     totalXp: 'XP total ganado',
-    dayStreak: 'Racha de dias',
+    dayStreak: 'Racha actual',
   }
 };
 
@@ -1213,7 +1213,7 @@ function initTrackSwitcher() {
       renderReference();
       renderProgress();
       showScreen('screen-home');
-      showToast(`${getTrack().name} track selected`);
+      showToast(`${getTrack().name} track selected.`);
     });
   });
 }
@@ -1368,7 +1368,7 @@ function showBootFallback(error) {
   const message = document.createElement('div');
   message.setAttribute('role', 'alert');
   message.style.cssText = 'position:absolute;left:1rem;right:1rem;bottom:1rem;z-index:5;padding:0.85rem 1rem;border:1px solid rgba(255,122,122,0.55);border-radius:14px;background:rgba(80,18,26,0.92);color:#FFE8E8;font:700 0.82rem JetBrains Mono,monospace;box-shadow:0 16px 40px rgba(0,0,0,0.35);';
-  message.textContent = 'Startup recovered. If the app looks wrong, refresh once.';
+  message.textContent = 'Startup completed after recovery. If the app looks incorrect, refresh the page once.';
   splash.appendChild(message);
   console.error('Project G-Code startup recovered after init error:', error);
 }
@@ -1543,11 +1543,11 @@ function renderHome() {
   const dailyPillDetail = $('#daily-pill-detail');
   if (dailyPillDetail && !dailyDone && dailyQuestions > 0) {
     const dq = Math.min(dailyQuestions, 5);
-    dailyPillDetail.textContent = `${dq} question${dq === 1 ? '' : 's'} waiting`;
+    dailyPillDetail.textContent = `${dq} question${dq === 1 ? '' : 's'} ready.`;
   } else if (dailyPillDetail && dailyDone) {
-    dailyPillDetail.textContent = 'Wrap it again anytime.';
+    dailyPillDetail.textContent = 'Repeat this drill anytime.';
   } else if (dailyPillDetail && !dailyDone && dailyQuestions === 0) {
-    dailyPillDetail.textContent = 'Finish one lesson to unlock.';
+    dailyPillDetail.textContent = 'Finish one lesson to unlock this drill.';
   }
   updateTrackSwitcher();
   renderMotivation();
@@ -1568,7 +1568,7 @@ function renderHome() {
         <div class="unit-card__icon">${unit.icon}</div>
         <div class="unit-card__meta">
           <div class="unit-card__name">Unit ${unit.id}: ${unit.name}</div>
-          <div class="unit-card__progress">${uDone}/${unit.lessons} lessons complete</div>
+          <div class="unit-card__progress">${uDone} of ${unit.lessons} lessons are complete.</div>
           ${previewWhy ? `<div class="unit-card__why">${previewWhy}</div>` : ''}
         </div>
         <div class="unit-card__badge ${locked ? 'locked' : ''}">${locked ? '🔒' : uDone === unit.lessons ? '✅' : 'Open'}</div>
@@ -1627,11 +1627,11 @@ function renderMotivation() {
   const phaseNow = total > 0 ? Math.min(done + 1, total) : 0;
   const nextTitle = nextLesson ? nextLesson.title : 'Path mastered';
   const nextMeta = nextLesson
-    ? `Unit ${nextLesson.unit} - Lesson ${nextLesson.lesson} - learning phase`
+    ? `Unit ${nextLesson.unit} · Lesson ${nextLesson.lesson} · Learning phase`
     : 'Run a mixed review to keep the codes fresh.';
   const badges = [
     { icon: 'OK', name: 'First Lesson', unlocked: done >= 1 },
-    { icon: '3x', name: '3 Day Streak', unlocked: State.streak >= 3 },
+    { icon: '3x', name: '3-Day Streak', unlocked: State.streak >= 3 },
     { icon: 'XP', name: '100 XP', unlocked: State.xp >= 100 }
   ];
 
@@ -1639,8 +1639,8 @@ function renderMotivation() {
     <div class="motivation-row">
       <button class="motivation-card daily-mission-card ${dailyDone ? 'complete' : ''}" type="button" id="daily-mission-btn" ${hasDailyPractice ? '' : 'disabled'}>
         <div class="motivation-kicker">Daily Goal</div>
-        <div class="motivation-title">${dailyDone ? 'Daily practice done' : '5-question practice'}</div>
-        <div class="motivation-sub">${hasDailyPractice ? (dailyDone ? 'Run it again anytime to stay sharp.' : 'Mistakes and older lessons come back first.') : 'Complete one lesson to unlock this.'}</div>
+        <div class="motivation-title">${dailyDone ? 'Daily practice is complete' : 'Five-question practice'}</div>
+        <div class="motivation-sub">${hasDailyPractice ? (dailyDone ? 'Run it again anytime to stay sharp.' : 'Missed questions and older lessons appear first.') : 'Complete one lesson to unlock this.'}</div>
       </button>
       <div class="motivation-card next-card">
         <div class="motivation-kicker">Phase ${phaseNow}/${total}</div>
@@ -1684,10 +1684,10 @@ function renderMilestoneReward() {
   const { done, total } = State.getTotalProgress();
   const milestones = [
     { id: 'first-lesson', xp: 1, badge: 'First Lesson', message: 'You started the path.' },
-    { id: 'unit-1', xp: 5, badge: 'Unit 1 Complete', message: 'Foundations are in.' },
-    { id: 'three-day-streak', xp: 5, badge: '3 Day Streak', message: 'Retention is momentum.' },
-    { id: 'halfway', xp: 10, badge: 'Halfway There', message: 'More than half done.' },
-    { id: 'track-complete', xp: 15, badge: 'Path Complete', message: 'Full track unlocked for mixed review.' }
+    { id: 'unit-1', xp: 5, badge: 'Unit 1 Complete', message: 'You completed the foundation lessons.' },
+    { id: 'three-day-streak', xp: 5, badge: '3-Day Streak', message: 'You built a three-day learning streak.' },
+    { id: 'halfway', xp: 10, badge: 'Halfway There', message: 'You completed more than half of the path.' },
+    { id: 'track-complete', xp: 15, badge: 'Path Complete', message: 'You unlocked mixed review for the full track.' }
   ];
 
   const earned = milestones.filter(m => {
@@ -1983,7 +1983,7 @@ function startTrackReview(questions = null) {
   }
   const reviewQuestions = questions || buildTrackReviewQuestions();
   if (reviewQuestions.length === 0) {
-    showToast('No review questions available yet.', 'error');
+    showToast('No review questions are available yet.', 'error');
     return;
   }
 
@@ -2016,7 +2016,7 @@ function startTrackReview(questions = null) {
 
 function startWeakReview() {
   if (State.weakQuestions.length === 0) {
-    showToast('No weak spots yet.', 'success');
+    showToast('No weak spots are ready yet.', 'success');
     return;
   }
   const prioritized = shuffleCopy(State.weakQuestions)
@@ -2102,7 +2102,7 @@ function renderLessonStep() {
     content.innerHTML = State.currentMode === 'weak-review'
       ? renderWeakReviewIntro(activeQuestions)
       : renderTheoryStep(lesson);
-    $('#lesson-action-btn').textContent = State.currentMode === 'weak-review' ? 'Retake Weak Spots ->' : 'Start Practice ->';
+    $('#lesson-action-btn').textContent = State.currentMode === 'weak-review' ? 'Retake Weak Spots →' : 'Start Practice →';
     $('#lesson-action-btn').disabled = false;
     $('#lesson-action-btn').className = 'btn-primary';
     State.currentQuizAnswered = true;
@@ -2242,7 +2242,7 @@ function renderQuiz(container, q, idx) {
         showExplanation(q.explanation, q, correct);
         if (correct) setAnsweredAction(true);
         else requireCorrectionAction('Tap the correct answer');
-        showToast(correct ? '✅ Correct!' : '❌ Not quite — see explanation', correct ? 'success' : 'error');
+        showToast(correct ? '✅ Correct!' : '❌ Not quite. Review the explanation.', correct ? 'success' : 'error');
       });
     });
 
@@ -2295,7 +2295,7 @@ function renderQuiz(container, q, idx) {
         showExplanation(q.explanation, q, correct);
         if (correct) setAnsweredAction(true);
         else requireCorrectionAction('Tap the correct answer');
-        showToast(correct ? '✅ Correct!' : '❌ Not quite — see explanation', correct ? 'success' : 'error');
+        showToast(correct ? '✅ Correct!' : '❌ Not quite. Review the explanation.', correct ? 'success' : 'error');
       });
     });
   } else if (q.type === 'fill-blank') {
@@ -2438,7 +2438,7 @@ function initMatchingCards() {
     const count = $('[data-matching-count]');
     const help = $('[data-matching-help]');
     if (count) count.textContent = `${matched}/${total}`;
-    if (help) help.textContent = matched === total ? 'All pairs matched. Check your run.' : 'Pick a card from each side.';
+    if (help) help.textContent = matched === total ? 'All pairs are matched. Check your answers.' : 'Pick one card from each side.';
     if (actionBtn) actionBtn.disabled = matched < total;
   };
 
@@ -2568,7 +2568,7 @@ function setAnsweredAction(correct) {
   if (!btn) return;
   btn.disabled = false;
   if (State.currentMode === 'todays-line') {
-    btn.textContent = 'Finish Line';
+    btn.textContent = 'Finish Today’s Line';
     btn.className = 'btn-primary accent-btn';
     return;
   }
@@ -2594,7 +2594,7 @@ function completeCorrection(q) {
   State.currentQuizAnswered = true;
   AudioFeedback.play(true);
   setAnsweredAction(false);
-  showToast('✅ Correction locked in', 'success');
+  showToast('✅ Your correction was saved.', 'success');
 }
 
 function getCorrectAnswerText(q) {
@@ -2826,8 +2826,8 @@ function finishLesson() {
   content.innerHTML = `
     <div class="complete-screen lesson-complete-screen">
       <div class="complete-icon">✓</div>
-      <div class="complete-title">Nice run. Keep the setup moving.</div>
-      <div class="complete-subtitle">${lesson.title} is locked in with a clean ${State.sessionCorrect}/${State.sessionTotal}.</div>
+      <div class="complete-title">Lesson complete. Keep building your skills.</div>
+      <div class="complete-subtitle">You answered ${State.sessionCorrect} of ${State.sessionTotal} questions correctly in ${lesson.title}.</div>
       <div class="completion-score-card">
         <div>
           <span>Earned</span>
@@ -2835,14 +2835,14 @@ function finishLesson() {
         </div>
         <div>
           <span>Streak</span>
-          <strong>${State.streak} day</strong>
+          <strong>${State.streak} day${State.streak === 1 ? '' : 's'}</strong>
         </div>
       </div>
       ${unlockedNextLesson ? `
         <div class="next-mission-card">
-          <span>Next 2-minute drill</span>
+          <span>Next lesson</span>
           <strong>${unlockedNextLesson.title}</strong>
-          <em>New skill unlocked. Start while this one is fresh.</em>
+          <em>A new skill is unlocked. Start it while this lesson is still fresh.</em>
         </div>` : ''}
       ${renderLessonRecap(lesson)}
       ${renderConfidencePrompt(lesson)}
@@ -2899,7 +2899,7 @@ function renderConfidencePrompt(lesson) {
   const saved = State.confidenceRatings[lesson.id]?.rating || '';
   return `
     <div class="confidence-panel" data-confidence-lesson="${lesson.id}">
-      <div class="confidence-panel__label">How solid does this feel?</div>
+      <div class="confidence-panel__label">How confident do you feel about this lesson?</div>
       <div class="confidence-panel__actions">
         <button class="confidence-btn ${saved === 'easy' ? 'selected' : ''}" type="button" data-confidence="easy">Easy</button>
         <button class="confidence-btn ${saved === 'ok' ? 'selected' : ''}" type="button" data-confidence="ok">Okay</button>
@@ -2914,7 +2914,7 @@ function showLessonPracticeRetry() {
   content.innerHTML = `
     <div class="complete-screen review-retry-screen">
       <div class="complete-icon">↻</div>
-      <div class="complete-title">Practice Needs Another Pass</div>
+      <div class="complete-title">Practice Needs Another Attempt</div>
       <div class="complete-subtitle">${missed} question${missed === 1 ? '' : 's'} must be corrected before the next lesson unlocks.</div>
       <div class="xp-badge">${State.sessionCorrect}/${State.sessionTotal} correct</div>
     </div>`;
@@ -2933,8 +2933,8 @@ function finishDailyReview() {
     content.innerHTML = `
       <div class="complete-screen review-retry-screen">
         <div class="complete-icon">↻</div>
-        <div class="complete-title">Repair Today's Misses</div>
-        <div class="complete-subtitle">${missed} question${missed === 1 ? '' : 's'} saved for another pass.</div>
+        <div class="complete-title">Review Today’s Missed Questions</div>
+        <div class="complete-subtitle">${missed} missed question${missed === 1 ? ' was' : 's were'} saved for another attempt.</div>
         <div class="xp-badge">${State.sessionCorrect}/${State.sessionTotal} correct so far</div>
       </div>`;
     $('#lesson-progress-fill').style.width = '100%';
@@ -2951,7 +2951,7 @@ function finishDailyReview() {
     <div class="complete-screen">
       <div class="complete-icon">✓</div>
       <div class="complete-title">Daily Practice Complete</div>
-      <div class="complete-subtitle">${xpEarned > 0 ? 'Mistakes cleared today. Older material will keep rotating back.' : 'Extra run complete. Daily XP was already claimed today.'}</div>
+      <div class="complete-subtitle">${xpEarned > 0 ? 'You corrected today’s mistakes. Older material will continue to return for review.' : 'Extra run complete. Daily XP was already claimed today.'}</div>
       <div class="xp-badge">${xpEarned > 0 ? `+${xpEarned} XP earned` : 'Daily XP claimed'}</div>
       <div class="stat-row">
         <div class="stat-chip">
@@ -3276,7 +3276,7 @@ function renderReference() {
         <button class="ref-card__toggle" type="button" data-ref-code="${escapeHtmlAttr(item.code)}">
           <span class="ref-code">${item.code}</span>
           <span class="ref-name">${item.name}</span>
-          ${learned ? '<span class="ref-badge ref-badge--learned">learned</span>' : ''}
+          ${learned ? '<span class="ref-badge ref-badge--learned">Learned</span>' : ''}
           <span class="ref-chevron">▶</span>
         </button>
         <div class="ref-card__preview">${previewText ? escapeHtmlAttr(previewText) : 'No quick preview available.'}</div>
@@ -3284,7 +3284,7 @@ function renderReference() {
           ${item.body}
           <div class="ref-card__actions">
             <button class="ref-action ref-action--learned" type="button" data-ref-code="${escapeHtmlAttr(item.code)}" aria-pressed="${learned}">
-              ${learned ? 'Marked learned' : 'Mark learned'}
+              ${learned ? 'Marked as Learned' : 'Mark as Learned'}
             </button>
           </div>
         </div>`;
@@ -3302,7 +3302,7 @@ function renderReference() {
   });
 
   if (!container.children.length && showLearnedOnly) {
-    container.innerHTML = '<div class="mistake-bank-empty">No learned codes yet. Complete lessons to mark codes learned.</div>';
+    container.innerHTML = '<div class="mistake-bank-empty">No codes are marked as learned yet. Complete a lesson to mark a code as learned.</div>';
   }
 
   const learnedToggle = $('#ref-learned-toggle');
@@ -3340,7 +3340,7 @@ function renderPractice() {
     {
       id: 'todays-line',
       title: 'Today’s Line',
-      subtitle: todaysLine ? (todaysLineDone ? 'Recalled today · run it again anytime' : `One line from ${todaysLine.sourceTitle}`) : 'Complete one lesson to unlock',
+      subtitle: todaysLine ? (todaysLineDone ? 'Recalled today. Repeat it anytime.' : `Recall one line from ${todaysLine.sourceTitle}.`) : 'Complete one lesson to unlock this exercise.',
       icon: '1L',
       badge: todaysLineDone ? 'Done' : 'Recall',
       disabled: !todaysLine
@@ -3348,7 +3348,7 @@ function renderPractice() {
     {
       id: 'daily',
       title: 'Daily Drill',
-      subtitle: dailyQuestions ? `${Math.min(dailyQuestions, 5)} recall questions ready` : 'Complete one lesson to unlock',
+      subtitle: dailyQuestions ? `${Math.min(dailyQuestions, 5)} recall question${Math.min(dailyQuestions, 5) === 1 ? '' : 's'} ${Math.min(dailyQuestions, 5) === 1 ? 'is' : 'are'} ready.` : 'Complete one lesson to unlock this exercise.',
       icon: '⚡',
       badge: '+12 XP',
       disabled: dailyQuestions === 0
@@ -3356,7 +3356,7 @@ function renderPractice() {
     {
       id: 'mistakes',
       title: 'Mistake Repair',
-      subtitle: weakCount ? `${weakCount} saved miss${weakCount === 1 ? '' : 'es'} to clear` : 'Missed questions collect here',
+      subtitle: weakCount ? `${weakCount} missed question${weakCount === 1 ? ' is' : 's are'} ready for review.` : 'Missed questions appear here.',
       icon: '↻',
       badge: weakCount ? `${weakCount}` : '',
       disabled: weakCount === 0
@@ -3364,7 +3364,7 @@ function renderPractice() {
     {
       id: 'codes',
       title: 'Code Bank',
-      subtitle: `${codeCount} reference cards for ${getTrack().name}`,
+      subtitle: `${codeCount} reference cards are available for ${getTrack().name}.`,
       icon: 'Aa',
       badge: getLearnedCodeCount() ? `${getLearnedCodeCount()} learned` : 'Study',
       disabled: false
@@ -3372,7 +3372,7 @@ function renderPractice() {
     {
       id: 'mixed',
       title: 'Mixed Review',
-      subtitle: trackComplete ? 'Full-track review unlocked' : `${done}/${total} lessons complete`,
+      subtitle: trackComplete ? 'The full-track review is unlocked.' : `${done} of ${total} lessons are complete.`,
       icon: '∞',
       badge: '+20 XP',
       disabled: !trackComplete
@@ -3412,61 +3412,61 @@ function renderPractice() {
 // Static content. Milestone completion state lives in State.activeProfile().roadmap.
 const ROADMAP = [
   {
-    id: 'p1', name: 'Phase 1 — Close the lathe gap',
-    note: 'Your training stopped after the Johnford HT 60CX-2D. Lock the basics underneath it.',
+    id: 'p1', name: 'Phase 1 — Close the Lathe Gap',
+    note: 'Your training stopped after the Johnford HT 60CX-2D, so strengthen the foundational skills that support that experience.',
     milestones: [
-      { id: 'p1-a', text: 'Explain G00 vs G01 to a coworker without notes' },
-      { id: 'p1-b', text: 'Read a turning block and name every code in it' },
-      { id: 'p1-c', text: 'Hand-write a simple G01 turning pass on paper' },
-      { id: 'p1-d', text: 'Explain what G96 (constant surface speed) protects against' },
+      { id: 'p1-a', text: 'Explain the difference between G00 and G01 to a coworker without using notes.' },
+      { id: 'p1-b', text: 'Read a turning block and identify every code in it.' },
+      { id: 'p1-c', text: 'Write a simple G01 turning pass by hand.' },
+      { id: 'p1-d', text: 'Explain why a verified spindle-speed limit is paired with G96 constant surface speed.' },
     ],
   },
   {
-    id: 'p2', name: 'Phase 2 — Offsets & setup',
-    note: 'Own this and you stop being the last choice.',
+    id: 'p2', name: 'Phase 2 — Offsets and Setup',
+    note: 'Master these setup skills so that you can become a more dependable operator.',
     milestones: [
-      { id: 'p2-a', text: 'Set G54 work offset from a known part zero, by hand' },
-      { id: 'p2-b', text: 'Fix a 0.002" oversize with wear offsets (no program edit)' },
-      { id: 'p2-c', text: 'Run a new program in Single Block + Dry Run, spot the crash first' },
-      { id: 'p2-d', text: 'Explain to a rookie why Dry Run still moves the machine' },
+      { id: 'p2-a', text: 'Set the G54 work offset from a known part zero by hand.' },
+      { id: 'p2-b', text: 'Correct a 0.002-inch oversized diameter with a verified wear-offset adjustment instead of a program edit.' },
+      { id: 'p2-c', text: 'Use Single Block and Dry Run to prove a new program, and identify potential collisions before full-speed operation.' },
+      { id: 'p2-d', text: 'Explain to a beginner why Dry Run still moves the machine on the referenced Haas control.' },
     ],
   },
   {
-    id: 'p3', name: 'Phase 3 — Fixtures & tooling',
-    note: 'Your stated strength. Make it deliberate.',
+    id: 'p3', name: 'Phase 3 — Fixtures and Tooling',
+    note: 'Fixtures and tooling are your stated strengths, so develop them deliberately.',
     milestones: [
-      { id: 'p3-a', text: 'Sketch a 3-step fixture plan for a simple block' },
-      { id: 'p3-b', text: 'Name the difference between roughing and finishing inserts' },
-      { id: 'p3-c', text: 'Pick the insert for: aluminum finish, steel rough, deep groove' },
-      { id: 'p3-d', text: 'Explain feed-per-rev (G99) vs feed-per-min (G98)' },
+      { id: 'p3-a', text: 'Sketch a three-step fixture plan for a simple block.' },
+      { id: 'p3-b', text: 'Explain the difference between roughing and finishing inserts.' },
+      { id: 'p3-c', text: 'Select an insert for an aluminum finishing cut, a steel roughing cut, and a deep groove.' },
+      { id: 'p3-d', text: 'Explain the difference between G99 feed per revolution and G98 feed per minute on the Haas/Fanuc lathe convention taught in the app.' },
     ],
   },
   {
-    id: 'p4', name: 'Phase 4 — Angled cuts & drilling',
-    note: 'The literal "code angles" goal.',
+    id: 'p4', name: 'Phase 4 — Angled Cuts and Drilling',
+    note: 'This phase develops your stated goal of understanding angled toolpaths.',
     milestones: [
-      { id: 'p4-a', text: 'Compute X/Z move for a 30° chamfer from a known start' },
-      { id: 'p4-b', text: 'Explain G01 with both axes moving = an angle' },
-      { id: 'p4-c', text: 'Write a G83 peck drill cycle for a blind hole' },
-      { id: 'p4-d', text: 'Know why G80 cancels a cycle before the next op' },
+      { id: 'p4-a', text: 'Calculate the X and Z movements for a 30-degree chamfer from a known starting point.' },
+      { id: 'p4-b', text: 'Explain how a G01 block that moves both axes creates an angled path.' },
+      { id: 'p4-c', text: 'Write a G83 peck-drilling cycle for a blind hole.' },
+      { id: 'p4-d', text: 'Explain why G80 should cancel a canned cycle before the next unrelated operation.' },
     ],
   },
   {
-    id: 'p5', name: 'Phase 5 — Home benchtop mill',
-    note: 'MILESTONE, not the start. Funded by the app or side cash.',
+    id: 'p5', name: 'Phase 5 — Home Benchtop Mill',
+    note: 'Treat the home benchtop mill as a milestone rather than the starting point, and fund it through app revenue or other income.',
     milestones: [
-      { id: 'p5-a', text: 'Research benchtop mills (Tormach 440-class vs import)' },
-      { id: 'p5-b', text: 'Set up the mill, indicate the vise, prove G54' },
-      { id: 'p5-c', text: 'First paid part: a simple fixture or plate' },
-      { id: 'p5-d', text: 'List a small local service (fixtures, plates, prototypes)' },
+      { id: 'p5-a', text: 'Compare Tormach 440-class benchtop mills with suitable imported alternatives.' },
+      { id: 'p5-b', text: 'Set up the mill, indicate the vise, and verify G54.' },
+      { id: 'p5-c', text: 'Produce the first paid part, such as a simple fixture or plate.' },
+      { id: 'p5-d', text: 'Define a small local service that offers fixtures, plates, or prototypes.' },
     ],
   },
 ];
 
 const ROADMAP_LANES = [
-  { id: 'lane-a', title: 'App earns', body: 'CNC tutorial app is public. Affiliate links to tooling, a cheat-sheet PDF, or ad-free paid version funds Phase 5.' },
-  { id: 'lane-b', title: 'Teach in public', body: 'Post short clips that explain what each G-code does. You are a fellow learner, not a guru, and that perspective can build trust.' },
-  { id: 'lane-c', title: 'Local parts', body: 'Once Phase 5 lands, real parts from a home shop.' },
+  { id: 'lane-a', title: 'App Revenue', body: 'The public CNC tutorial can fund Phase 5 through tooling affiliate links, a cheat-sheet PDF, or an ad-free paid version.' },
+  { id: 'lane-b', title: 'Public Teaching', body: 'Post short clips that explain what each G-code does. Your perspective as a fellow learner can build trust without presenting you as an expert.' },
+  { id: 'lane-c', title: 'Local Parts', body: 'After Phase 5 begins, produce real parts in a home shop.' },
 ];
 
 function renderRoadmap() {
@@ -3484,7 +3484,7 @@ function renderRoadmap() {
         <span class="prog-pct">${pct}%</span>
       </div>
       <div class="prog-bar"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
-      <div class="prog-lessons-done">${done} of ${total} milestones complete</div>
+      <div class="prog-lessons-done">${done} of ${total} milestones are complete.</div>
     </div>
     ${ROADMAP.map(ph => {
       const phDone = ph.milestones.filter(m => profile.roadmap[m.id]).length;
@@ -3513,7 +3513,7 @@ function renderRoadmap() {
   const lanes = $('#roadmap-lanes');
   if (lanes) {
     lanes.innerHTML = `
-      <div class="roadmap-lanes__head">Side-income lanes</div>
+      <div class="roadmap-lanes__head">Side-Income Paths</div>
       ${ROADMAP_LANES.map(l => `
         <div class="roadmap-lane">
           <div class="roadmap-lane__title">${l.title}</div>
@@ -3541,7 +3541,7 @@ function renderProgress() {
         <span class="prog-pct">${learnedTotal ? Math.round((learned / learnedTotal) * 100) : 0}%</span>
       </div>
       <div class="prog-bar"><div class="prog-bar-fill" style="width:${learnedTotal ? Math.round((learned / learnedTotal) * 100) : 0}%"></div></div>
-      <div class="prog-lessons-done">${learned} of ${learnedTotal} codes marked learned</div>
+      <div class="prog-lessons-done">${learned} of ${learnedTotal} codes are marked as learned.</div>
     </div>` : '';
 
   units.forEach(unit => {
@@ -3555,7 +3555,7 @@ function renderProgress() {
         <span class="prog-pct">${pct}%</span>
       </div>
       <div class="prog-bar"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
-      <div class="prog-lessons-done">${done} of ${total} lessons complete</div>`;
+      <div class="prog-lessons-done">${done} of ${total} lessons are complete.</div>`;
     container.appendChild(el);
   });
 }
@@ -3569,7 +3569,7 @@ function renderMistakeBank() {
       <div class="mistake-bank-card__header">
         <div>
           <div class="mistake-bank-card__kicker">Review Queue</div>
-          <div class="mistake-bank-card__title">${State.weakQuestions.length} mistake${State.weakQuestions.length === 1 ? '' : 's'} saved</div>
+          <div class="mistake-bank-card__title">${State.weakQuestions.length} missed question${State.weakQuestions.length === 1 ? ' is' : 's are'} saved.</div>
         </div>
         <button class="mistake-bank-card__btn" type="button" id="mistake-bank-review-btn" ${State.weakQuestions.length ? '' : 'disabled'}>Review</button>
       </div>
@@ -3577,8 +3577,8 @@ function renderMistakeBank() {
         ${items.length ? items.map(item => `
           <div class="mistake-bank-item">
             <strong>${item.question?.sourceTitle || 'Practice'}</strong>
-            <span>Missed ${item.misses} time${item.misses === 1 ? '' : 's'}</span>
-          </div>`).join('') : '<div class="mistake-bank-empty">Missed questions will collect here for repair practice.</div>'}
+            <span>Missed ${item.misses} time${item.misses === 1 ? '' : 's'}.</span>
+          </div>`).join('') : '<div class="mistake-bank-empty">Missed questions will appear here for review.</div>'}
       </div>
     </div>`;
   $('#mistake-bank-review-btn')?.addEventListener('click', startWeakReview);
@@ -3610,7 +3610,7 @@ function initNav() {
       const panel = confidenceButton.closest('[data-confidence-lesson]');
       State.setConfidence(panel?.dataset.confidenceLesson, confidenceButton.dataset.confidence);
       panel.querySelectorAll('.confidence-btn').forEach(btn => btn.classList.toggle('selected', btn === confidenceButton));
-      showToast('Confidence saved', 'success');
+      showToast('Your confidence rating was saved.', 'success');
       return;
     }
     const button = event.target.closest('.btn-audio');

@@ -7,8 +7,8 @@
       "code": "G00",
       "description": "Rapid traverse (positioning)",
       "params": "X Z",
-      "usage": "Move to clearance or approach position at rapid rate without cutting.",
-      "notes": "Axes move independently at their own rapid rates, so the path may not be a straight line. Verify clearance. Fanuc lathe default plane is XZ (G18).",
+      "usage": "Move to a clearance or approach position at a rapid rate without cutting.",
+      "notes": "Axes move independently at their own rapid rates, so the path may not be a straight line. Verify clearance. The default plane on a Fanuc lathe is XZ (G18).",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -17,7 +17,7 @@
       "description": "Linear interpolation (cutting feed)",
       "params": "X Z F",
       "usage": "Cut a straight line at the programmed feed rate.",
-      "notes": "Feed meaning depends on active feed mode (G98 per-min / G99 per-rev).",
+      "notes": "The feed value depends on the active feed mode: G98 for feed per minute or G99 for feed per revolution.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -26,7 +26,7 @@
       "description": "Circular interpolation CW (or helical CW)",
       "params": "X Z I K or R",
       "usage": "Cut a clockwise arc in the active turning plane.",
-      "notes": "Arc direction viewed in the active plane. I/K (incremental from start) or R radius; full-circle support varies by control.",
+      "notes": "Arc direction is viewed in the active plane. Use incremental I and K values from the starting point or use an R value for the radius. Full-circle support varies by control.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -35,7 +35,7 @@
       "description": "Circular interpolation CCW (or helical CCW)",
       "params": "X Z I K or R",
       "usage": "Cut a counterclockwise arc in the active turning plane.",
-      "notes": "Companion to G02; same I/K/R rules.",
+      "notes": "G03 is the counterclockwise companion to G02 and follows the same I, K, and R rules.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -43,7 +43,7 @@
       "code": "G04",
       "description": "Dwell",
       "params": "P (ms) or X (sec)",
-      "usage": "Pause the program for a set time (e.g. for chamfer breaking or threading exit).",
+      "usage": "Pause the program for a set time, such as when breaking a chamfer or exiting a thread.",
       "notes": "P is milliseconds on Fanuc; X is seconds. Check your control's unit.",
       "source": "CNC Cookbook — Lathe G/M reference",
       "source_url": "https://www.cnccookbook.com/cnc-lathe-gcode-mcode-reference-list-turning/"
@@ -52,7 +52,7 @@
       "code": "G10",
       "description": "Programmable data input",
       "params": "P L R or control-specific",
-      "usage": "Write offset / parameter data from the program (tool or work offset sets).",
+      "usage": "Write offset or parameter data from the program, such as tool-offset or work-offset values.",
       "notes": "Format is control- and option-specific. Verify before use.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
@@ -61,8 +61,8 @@
       "code": "G18",
       "description": "Select Z-X plane",
       "params": "",
-      "usage": "Sets the normal turning plane for arcs and canned cycles.",
-      "notes": "Default plane on a standard two-axis Fanuc lathe.",
+      "usage": "Set the normal turning plane for arcs and canned cycles.",
+      "notes": "This is the default plane on a standard two-axis Fanuc lathe.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -88,8 +88,8 @@
       "code": "G28",
       "description": "Return to reference position",
       "params": "U W or X Z (intermediate point)",
-      "usage": "Return axis(es) to machine reference, passing through the programmed intermediate point.",
-      "notes": "Coordinates on the G28 block create an intermediate move. Not automatically a safe retract — verify path.",
+      "usage": "Return one or more axes to the machine reference position by passing through the programmed intermediate point.",
+      "notes": "Coordinates on the G28 block create an intermediate move. G28 is not automatically a safe retract, so verify the path.",
       "source": "CNC Cookbook — Lathe G/M reference",
       "source_url": "https://www.cnccookbook.com/cnc-lathe-gcode-mcode-reference-list-turning/"
     },
@@ -97,8 +97,8 @@
       "code": "G32",
       "description": "Constant-lead threading",
       "params": "X Z F (F = lead)",
-      "usage": "Single-pass thread cut synchronized to spindle (like G01 with spindle sync).",
-      "notes": "Basic threading; G76 is the usual multi-pass cycle. Spindle must be in CSS or fixed RPM with sync enabled.",
+      "usage": "Make a single-pass thread cut that is synchronized with the spindle, similar to a G01 move with spindle synchronization.",
+      "notes": "G32 performs basic threading, while G76 is the usual multiple-pass cycle. The spindle must be in CSS or fixed-RPM mode with synchronization enabled.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -107,7 +107,7 @@
       "description": "Tool nose radius compensation cancel",
       "params": "",
       "usage": "Cancel active tool-nose radius compensation before a safe exit or tool change.",
-      "notes": "Use a deliberate lead-out clear of the part before/while canceling.",
+      "notes": "Use a deliberate lead-out that is clear of the part before or while canceling compensation.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -116,7 +116,7 @@
       "description": "Tool nose radius compensation left",
       "params": "",
       "usage": "Offset the tool to the left of the programmed path by the nose radius.",
-      "notes": "Requires a tool-nose-radius / orientation (TNR) setting in the offset page.",
+      "notes": "This command requires tool-nose-radius and orientation settings on the offset page.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -125,13 +125,13 @@
       "description": "Tool nose radius compensation right",
       "params": "",
       "usage": "Offset the tool to the right of the programmed path by the nose radius.",
-      "notes": "Requires a tool-nose-radius / orientation (TNR) setting in the offset page.",
+      "notes": "This command requires tool-nose-radius and orientation settings on the offset page.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
     {
       "code": "G50",
-      "description": "Max spindle speed clamp / coordinate set (control-dependent)",
+      "description": "Maximum spindle-speed clamp or coordinate setting (control-dependent)",
       "params": "S or axis words",
       "usage": "Commonly clamps maximum RPM when using constant surface speed (G96).",
       "notes": "G50 meaning varies by control (some use it for coordinate system setting). Verify the machine manual.",
@@ -142,7 +142,7 @@
       "code": "G54",
       "description": "Work coordinate system 1",
       "params": "",
-      "usage": "Select stored G54 work offset as programmed part-zero.",
+      "usage": "Select the stored G54 work offset as the programmed part-zero reference.",
       "notes": "G54–G59 are the six standard work offsets. Each selects stored values; none measure or set part zero.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
@@ -152,7 +152,7 @@
       "description": "Work coordinate system 2",
       "params": "",
       "usage": "Select stored G55 work offset.",
-      "notes": "Second of the G54–G59 work offsets.",
+      "notes": "This is the second of the G54–G59 work offsets.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -161,7 +161,7 @@
       "description": "Work coordinate system 3",
       "params": "",
       "usage": "Select stored G56 work offset.",
-      "notes": "Third of the G54–G59 work offsets.",
+      "notes": "This is the third of the G54–G59 work offsets.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -170,7 +170,7 @@
       "description": "Work coordinate system 4",
       "params": "",
       "usage": "Select stored G57 work offset.",
-      "notes": "Fourth of the G54–G59 work offsets.",
+      "notes": "This is the fourth of the G54–G59 work offsets.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -179,7 +179,7 @@
       "description": "Work coordinate system 5",
       "params": "",
       "usage": "Select stored G58 work offset.",
-      "notes": "Fifth of the G54–G59 work offsets.",
+      "notes": "This is the fifth of the G54–G59 work offsets.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -188,7 +188,7 @@
       "description": "Work coordinate system 6",
       "params": "",
       "usage": "Select stored G59 work offset.",
-      "notes": "Sixth of the G54–G59 work offsets.",
+      "notes": "This is the sixth of the G54–G59 work offsets.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -197,7 +197,7 @@
       "description": "Finishing cycle",
       "params": "P Q",
       "usage": "Finish a profile previously defined by sequence blocks (after G71/G72/G73).",
-      "notes": "P/Q mark the start/end sequence numbers of the profile definition.",
+      "notes": "P and Q mark the starting and ending sequence numbers of the profile definition.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -223,7 +223,7 @@
       "code": "G73",
       "description": "Pattern repeating (stock removal along shape)",
       "params": "U W R P Q (format varies)",
-      "usage": "Roughing that follows an existing shape (e.g. castings/forgings) rather than straight stock.",
+      "usage": "Rough a part by following an existing shape, such as a casting or forging, rather than starting with straight stock.",
       "notes": "Removes material in a repeating pattern offset from the finished profile.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
@@ -233,7 +233,7 @@
       "description": "End-face peck drilling cycle",
       "params": "R Z Q F (format varies)",
       "usage": "Peck drilling axially from the face; also used for face grooving on some controls.",
-      "notes": "Especially control-specific. Verify the manual before use.",
+      "notes": "This cycle is especially control-specific. Verify the manual before use.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -241,7 +241,7 @@
       "code": "G75",
       "description": "OD/ID grooving or pecking cycle",
       "params": "R X Z P Q F (format varies)",
-      "usage": "Grooving with repeated pecks on OD or ID.",
+      "usage": "Cut an OD or ID groove with repeated pecks.",
       "notes": "Cycle meaning and parameter format vary by control.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
@@ -260,7 +260,7 @@
       "description": "OD/ID cutting cycle (single cut)",
       "params": "X Z F (or control format)",
       "usage": "Simple straight cutting cycle for OD or ID.",
-      "notes": "On some controls G90 is absolute programming; on lathe canned-cycle use it is the cutting cycle. Control-dependent.",
+      "notes": "On some controls, G90 selects absolute programming. When used as a lathe canned cycle, it performs the cutting cycle. Its meaning is control-dependent.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -269,7 +269,7 @@
       "description": "Thread cutting cycle",
       "params": "X Z F (F = lead)",
       "usage": "Cut a thread in repeated passes to a defined end point.",
-      "notes": "On some controls G92 is coordinate setting; on lathe canned-cycle use it is the thread cycle. Control-dependent.",
+      "notes": "On some controls, G92 sets the coordinate system. When used as a lathe canned cycle, it performs the threading cycle. Its meaning is control-dependent.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -278,7 +278,7 @@
       "description": "End-face turning cycle",
       "params": "X Z F (or control format)",
       "usage": "Simple facing cycle cutting perpendicular to the spindle axis.",
-      "notes": "On some controls G94 is feed-per-minute; on lathe canned-cycle use it is the facing cycle. Control-dependent.",
+      "notes": "On some controls, G94 selects feed per minute. When used as a lathe canned cycle, it performs the facing cycle. Its meaning is control-dependent.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -286,7 +286,7 @@
       "code": "G96",
       "description": "Constant surface speed (CSS) control",
       "params": "S",
-      "usage": "Spindle RPM auto-adjusts to keep a constant cutting speed as diameter changes.",
+      "usage": "Automatically adjust the spindle speed to maintain a constant cutting speed as the diameter changes.",
       "notes": "Pair with a max-RPM clamp (often G50 S...) so RPM cannot run away at small diameters.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
@@ -304,8 +304,8 @@
       "code": "G98",
       "description": "Feed per minute",
       "params": "",
-      "usage": "Set feed mode to inches/mm per minute.",
-      "notes": "On Fanuc lathes G98 = per-minute, G99 = per-revolution. (Some other controls swap these — verify.)",
+      "usage": "Set the feed mode to inches or millimeters per minute.",
+      "notes": "On Fanuc lathes, G98 selects feed per minute, while G99 selects feed per revolution. Other controls may assign these modes differently, so verify the manual.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     },
@@ -313,8 +313,8 @@
       "code": "G99",
       "description": "Feed per revolution",
       "params": "",
-      "usage": "Set feed mode to inches/mm per spindle revolution.",
-      "notes": "On Fanuc lathes G99 = per-revolution (the common lathe default). Verify your control.",
+      "usage": "Set the feed mode to inches or millimeters per spindle revolution.",
+      "notes": "On Fanuc lathes, G99 selects feed per revolution and is the common default feed mode. Verify your control.",
       "source": "Helman CNC — Fanuc G-code list",
       "source_url": "https://www.helmancnc.com/g-code/"
     }

@@ -273,10 +273,10 @@ No fixed clearance is universally safe. Establish clearance from the actual stoc
   - Correct answer: 2
   - Explanation: No fixed number is universally safe. Clearance must account for stock, jaws, tool geometry, offsets, and the controller's complete rapid path.
 - Q2 [multiple-choice]: What can reduce G00 speed on a control that provides it?
-  - The F word
-  - Dedicated rapid override
-  - Spindle override
-  - Feed override
+  - The programmed F word
+  - A dedicated rapid override
+  - A spindle override
+  - A feed override
   - Correct answer: 1
   - Explanation: The F word does not set G00 speed. Many controls provide a separate rapid override, but its behavior must be verified in the machine manual.
 - Q3 [fill-blank]: Worked example: Move to X2.500 at the example coordinate Z0.100. (not a universal safe position). Complete the block:
@@ -713,7 +713,7 @@ Make one small correction, rerun, and measure again.
 
 **Quiz:**
 
-- Q1 [multiple-choice]: Target OD is 1.0000 and measured OD is 1.0020. What is the part?
+- Q1 [multiple-choice]: The target OD is 1.0000, and the measured OD is 1.0020. How does the measured OD compare with the target?
   - 0.0020 oversized
   - 0.0020 undersized
   - Perfect size
@@ -739,11 +739,11 @@ ___
   - Coolant switch
   - Correct answer: 0
   - Explanation: Wear offsets are meant for small tool-position corrections.
-- Q5 [multiple-choice]: Why make one correction at a time?
-  - So you know what changed the result
-  - Because wear offsets reset after each block
-  - Because M03 only works once
-  - To avoid using G54
+- Q5 [multiple-choice]: Why should you make one correction at a time?
+  - It helps identify which correction changed the result
+  - It resets wear offsets after each block
+  - It allows M03 to run only once
+  - It prevents G54 from being used
   - Correct answer: 0
   - Explanation: One change at a time makes troubleshooting clear.
 - Q6 [fill-blank]: Type the common offset type used for small corrections:
@@ -819,7 +819,7 @@ A wear entry leaves the saved program geometry unchanged but affects subsequent 
   - Correct answer: wear
   - Hint: Small correction offset
   - Explanation: Wear offsets are used for small tool-position corrections.
-- Q4 [multiple-choice]: Which change affects every future run of that program?
+- Q4 [multiple-choice]: Which type of change affects every future run of the saved program?
   - Program edit
   - Temporary single-block mode
   - Measuring the part
@@ -833,14 +833,14 @@ A wear entry leaves the saved program geometry unchanged but affects subsequent 
   - A coolant-state change
   - Correct answer: 0
   - Explanation: Missing geometry requires a toolpath or program edit.
-- Q6 [multiple-choice]: Which is a bad habit?
+- Q6 [multiple-choice]: Which offset-editing habit makes troubleshooting harder?
   - Changing offsets without recording the reason
   - Measuring after a correction
   - Making one change at a time
   - Checking the tool number
   - Correct answer: 0
   - Explanation: Unrecorded changes make troubleshooting hard.
-- Q7 [fill-blank]: Program edits change the tool____.
+- Q7 [fill-blank]: Program edits change the tool ____.
   - Correct answer: path
   - Hint: Where the tool moves
   - Explanation: Program edits change the path the tool follows.
@@ -895,7 +895,7 @@ These controls can support prove-out, but they do not make a path safe. Graphics
   - Changes G54
   - Correct answer: 0
   - Explanation: Single block pauses after each block so you can verify the next move.
-- Q2 [multiple-choice]: Why reduce rapid override during prove-out?
+- Q2 [multiple-choice]: Why should you reduce rapid override during prove-out?
   - To give time to react
   - To improve surface finish
   - To change units
@@ -920,7 +920,7 @@ These controls can support prove-out, but they do not make a path safe. Graphics
   - After completing a routine inspection
   - Correct answer: 0
   - Explanation: Edited lines need careful prove-out.
-- Q6 [multiple-choice]: What should you watch during the first move?
+- Q6 [multiple-choice]: Which two conditions should you monitor during the first move?
   - Clearance and direction
   - Final surface finish
   - Program-end position
@@ -991,8 +991,8 @@ A program should clearly set units near the top. Never assume the control is alr
   - Program end
   - Correct answer: 0
   - Explanation: G21 puts the control in metric mode.
-- Q3 [multiple-choice]: Why set G20 or G21 near the top?
-  - So every number is read in the intended units
+- Q3 [multiple-choice]: Why should a program set G20 or G21 near the beginning?
+  - To ensure that every number is read in the intended units
   - To turn coolant on
   - To home the machine
   - To select a tool
@@ -1067,11 +1067,11 @@ This tutorial's turning examples are lathe-based, so they use `G99` for feed per
 
 **Quiz:**
 
-- Q1 [multiple-choice]: What does feed mode control?
-  - What the F value means
-  - Tool number only
-  - Work-offset selection
-  - Spindle direction
+- Q1 [multiple-choice]: What does feed mode determine?
+  - The meaning of the F value
+  - The tool number
+  - The work-offset selection
+  - The spindle direction
   - Correct answer: 0
   - Explanation: Feed mode changes how the control interprets feed rate.
 - Q2 [multiple-choice]: What does G99 mean on Haas and Fanuc lathes?
@@ -1156,21 +1156,21 @@ A safe program does not rely on an unknown state. It declares the modes it needs
 
 **Quiz:**
 
-- Q1 [multiple-choice]: What is modal state?
-  - Codes that stay active until changed
-  - Codes that apply to one block only
+- Q1 [multiple-choice]: What does modal state mean?
+  - A code that remains active until changed
+  - A code that applies to one block only
   - The current tool geometry value
   - The sequence-number order
   - Correct answer: 0
   - Explanation: Modal codes remain active until another code changes or cancels them.
-- Q2 [multiple-choice]: Which is a modal setting?
+- Q2 [multiple-choice]: Which option describes a modal setting?
   - G20 or G21 units
   - An N-word sequence number
   - An O-number identifier
   - A tool-description label
   - Correct answer: 0
   - Explanation: Unit mode is modal.
-- Q3 [multiple-choice]: Why use a setup block?
+- Q3 [multiple-choice]: Why should a program include a setup block?
   - To declare needed modes before motion
   - To make the file longer
   - To hide feed rate
@@ -1217,10 +1217,10 @@ A safe program does not rely on an unknown state. It declares the modes it needs
   - Correct answer: 0
   - Explanation: Checking the active modes helps identify an incorrect setup before motion.
 - Q10 [multiple-choice]: What makes a good setup line?
-  - Clear and intentional choices
-  - Random choices
-  - A line that relies on retained modes
-  - Only M30
+  - Clear and intentional mode selections
+  - Random mode selections
+  - Dependence on retained modes
+  - A single M30 command
   - Correct answer: 0
   - Explanation: Setup lines should make the program's assumptions clear.
 
@@ -1301,7 +1301,7 @@ G01 Z-1.000 F0.012
   - Z-1.000
   - Correct answer: 0
   - Explanation: M08 is the machine-function line that starts coolant.
-- Q9 [multiple-choice]: Why verify shop-specific M-codes?
+- Q9 [multiple-choice]: Why should you verify shop-specific M-codes?
   - Some machines customize auxiliary functions
   - All controls ignore M-codes
   - Every machine assigns identical auxiliary functions
@@ -1411,7 +1411,7 @@ ___
   - Correct answer: M99
   - Hint: Return from subprogram
   - Explanation: M99 returns from a subprogram on many controls.
-- Q9 [multiple-choice]: Why use a subprogram?
+- Q9 [multiple-choice]: Why should you use a subprogram?
   - To avoid rewriting repeated motion
   - To hide unsafe code
   - To replace all offsets
@@ -1523,7 +1523,7 @@ ___
   - Coolant pressure
   - Correct answer: 0
   - Explanation: Q is the incremental peck depth; the tool retracts to R and repeats until reaching Z.
-- Q8 [multiple-choice]: Why use peck drilling?
+- Q8 [multiple-choice]: Why should you use peck drilling?
   - To break chips and clear the hole
   - To turn coolant off
   - To change the active work offset
@@ -1553,7 +1553,7 @@ G81 X1.0 Y0.5 Z-0.750 R0.100 F5.0
   - G81
   - Correct answer: 0
   - Explanation: R0.100 is the retract/clearance plane.
-- Q12 [multiple-choice]: Why cancel with G80 before unrelated motion?
+- Q12 [multiple-choice]: Why should you cancel the drilling cycle with G80 before commanding unrelated motion?
   - So the control leaves drilling-cycle mode
   - So the spindle stops
   - So M08 turns off
@@ -1619,14 +1619,14 @@ With Haas Setting 36 enabled, the control scans earlier program blocks for tools
   - Correct answer: state
   - Hint: Known condition
   - Explanation: A known state means that the modes, offsets, tool, and position are understood.
-- Q6 [multiple-choice]: Why avoid guessing after an alarm?
+- Q6 [multiple-choice]: Why should you avoid guessing after an alarm?
   - Wrong assumptions can cause a crash
   - Guessing improves accuracy
   - Alarms erase all danger
   - Offsets stop mattering
   - Correct answer: 0
   - Explanation: A wrong recovery move can be more dangerous than the original alarm.
-- Q7 [multiple-choice]: Which is a safer verification habit?
+- Q7 [multiple-choice]: Which verification habit is safer during alarm recovery?
   - Check the active state and the approved restart procedure
   - Restart from any line
   - Turn rapid to 100 immediately
@@ -1702,7 +1702,7 @@ Haas recommends programming `G99` feed per revolution before G76. The official e
 
 **Quiz:**
 
-- Q1 [multiple-choice]: Why does this documented Haas G76 example specify G97?
+- Q1 [multiple-choice]: Why does the documented Haas G76 example specify G97?
   - CSS uses too much power
   - The documented example turns CSS off and commands a fixed spindle speed
   - G96 doesn't work with G76

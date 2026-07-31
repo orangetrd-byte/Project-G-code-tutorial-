@@ -6,7 +6,7 @@
     {
       "code": "M00",
       "description": "Program stop",
-      "notes": "Halts the program; press cycle start to resume. No reset of modal state.",
+      "notes": "This code pauses the program. Press Cycle Start to resume. The modal state does not reset.",
       "source": "CNC Cookbook — Lathe G/M reference",
       "source_url": "https://www.cnccookbook.com/cnc-lathe-gcode-mcode-reference-list-turning/"
     },
@@ -27,70 +27,70 @@
     {
       "code": "M03",
       "description": "Spindle on, clockwise",
-      "notes": "Rotation direction follows the machine manual's viewing convention. Pair with S word and G96/G97.",
+      "notes": "The rotation direction follows the machine manual's viewing convention. Pair this code with an S word and either G96 or G97.",
       "source": "G-Code Tutor — M-codes",
       "source_url": "https://gcodetutor.com/gcode-tutorial/cnc-m-codes.html"
     },
     {
       "code": "M04",
       "description": "Spindle on, counterclockwise",
-      "notes": "Use for left-hand threads / reversed direction per verified setup.",
+      "notes": "Use this code for left-hand threads or reverse rotation when required by the verified setup.",
       "source": "G-Code Tutor — M-codes",
       "source_url": "https://gcodetutor.com/gcode-tutorial/cnc-m-codes.html"
     },
     {
       "code": "M05",
       "description": "Spindle stop",
-      "notes": "Stops spindle rotation. Issued before retracts/changes as required by procedure.",
+      "notes": "This code stops spindle rotation. Issue it before retractions or changes when the procedure requires it.",
       "source": "G-Code Tutor — M-codes",
       "source_url": "https://gcodetutor.com/gcode-tutorial/cnc-m-codes.html"
     },
     {
       "code": "M08",
       "description": "Coolant on (flood)",
-      "notes": "Turns on flood coolant. Some controls use M08/M09 or separate codes for thru-spindle/mist.",
+      "notes": "This code turns on flood coolant. Some controls use M08 and M09 or separate codes for through-spindle coolant and mist.",
       "source": "Machining Concepts — M-code cheat sheet",
       "source_url": "https://machiningconceptserie.com/m-code-cheat-sheet/"
     },
     {
       "code": "M09",
       "description": "Coolant off",
-      "notes": "Turns off coolant. Often issued at program end.",
+      "notes": "This code turns off the coolant and is often issued at the end of a program.",
       "source": "FanucWorld — Fanuc M-code list",
       "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
     },
     {
       "code": "M30",
       "description": "Program end and reset",
-      "notes": "Ends the program and rewinds to the start. Standard end-of-program code.",
+      "notes": "This standard end-of-program code ends the program and returns the cursor to the beginning.",
       "source": "Machining Concepts — M-code cheat sheet",
       "source_url": "https://machiningconceptserie.com/m-code-cheat-sheet/"
     },
     {
       "code": "M41",
       "description": "Low gear range (geared spindle)",
-      "notes": "Builder-specific. Only meaningful on machines with a geared headstock. Verify your Johnford manual — may be unused.",
+      "notes": "This builder-specific code applies only to machines with a geared headstock. Verify the Johnford manual because the code may be unused.",
       "source": "FanucWorld — Fanuc M-code list",
       "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
     },
     {
       "code": "M42",
       "description": "High gear range (geared spindle)",
-      "notes": "Builder-specific. Verify your Johnford manual — may be unused or remapped.",
+      "notes": "This code is builder-specific. Verify the Johnford manual because the code may be unused or remapped.",
       "source": "FanucWorld — Fanuc M-code list",
       "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
     },
     {
       "code": "M23",
       "description": "Chuck open (often builder-defined)",
-      "notes": "Builder-specific on many lathes (not a universal Fanuc code). Verify your Johnford manual before relying on it.",
+      "notes": "This code is builder-specific on many lathes and is not a universal Fanuc code. Verify the Johnford manual before relying on it.",
       "source": "FanucWorld — Fanuc M-code list",
       "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
     },
     {
       "code": "M24",
       "description": "Chuck close (often builder-defined)",
-      "notes": "Builder-specific on many lathes (not a universal Fanuc code). Verify your Johnford manual before relying on it.",
+      "notes": "This code is builder-specific on many lathes and is not a universal Fanuc code. Verify the Johnford manual before relying on it.",
       "source": "FanucWorld — Fanuc M-code list",
       "source_url": "https://content.fanucworld.com/m-code-g-code-list/"
     }
