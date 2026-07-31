@@ -4,3 +4,7 @@ data/lessons.js.bak
 js/app.js.validate.backup
 .hermes/
 scripts/
+
+# Local agent handoff artifacts
+/CODEX_HANDOFF.md
+/PR_CHECKLIST.md
