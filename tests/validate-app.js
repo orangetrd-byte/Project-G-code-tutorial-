@@ -371,6 +371,10 @@ function validateCurriculum(api) {
     .flatMap(question => api.queueCodesFromQuestion(question)));
   assert.ok(learnablePrintingCodes.size > 0, 'Printing curriculum must expose learnable codes');
   learnablePrintingCodes.forEach(code => assert.ok(printingReferenceCodes.has(code), `Printing Code Bank is missing learnable code ${code}`));
+  const printingPauseLesson = api.TRACKS.printing.lessons.find(lesson => lesson.id === 'p-u9-l1');
+  const printingPauseCopy = `${printingPauseLesson?.theory || ''} ${(printingPauseLesson?.quiz || []).map(question => `${question.question} ${question.explanation}`).join(' ')}`;
+  assert.match(printingPauseCopy, /M0 requests an unconditional stop/, 'The Marlin M0 lesson must teach its documented stop behavior');
+  assert.doesNotMatch(printingPauseCopy, /M0 mean on some printers|common pause command, but support varies/, 'Vague M0 wording must not return');
 
   const lessonIds = new Set();
   const questionIds = new Set();

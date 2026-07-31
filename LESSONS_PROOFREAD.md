@@ -2889,7 +2889,7 @@ M___
 Print recovery is about pausing safely, keeping heat controlled, and resuming without
  crashing into the part or leaving blobs.
 
-M0 ; Marlin pause where supported
+M0 ; Marlin unconditional stop
 M25 ; Marlin pause an SD-card print
 
 Pause behavior is firmware-specific. Use the printer's documented pause and resume flow. Do not assume that a bare Z move creates a relative lift or that a bare E move creates a relative prime; both depend on the active modes and current positions.
@@ -2904,20 +2904,20 @@ Pause behavior is firmware-specific. Use the printer's documented pause and resu
   - Reset the firmware
   - Correct answer: 0
   - Explanation: Pauses let you inspect, change filament, or handle an issue.
-- Q2 [multiple-choice]: What can M0 mean on some printers?
-  - Pause
-  - Fan off
-  - Home X
-  - Set bed temp
+- Q2 [multiple-choice]: In Marlin, what does M0 request?
+  - An unconditional stop
+  - The fan to turn off
+  - The X-axis to home
+  - The bed temperature to change
   - Correct answer: 0
-  - Explanation: M0 is a pause/stop command on some systems.
-- Q3 [multiple-choice]: What can M25 mean for some SD-card prints?
-  - Pause SD print
-  - Nozzle heat
-  - Fan full
-  - Tool select
+  - Explanation: In Marlin, M0 requests an unconditional stop. How the user continues depends on the configured interface.
+- Q3 [multiple-choice]: In Marlin, what does M25 do during an SD-card print?
+  - Pauses the SD-card print
+  - Heats the nozzle
+  - Runs the fan at full speed
+  - Selects a tool
   - Correct answer: 0
-  - Explanation: M25 is used by some firmware for SD print pause.
+  - Explanation: In Marlin, M25 pauses an SD-card print.
 - Q4 [multiple-choice]: Why must a pause routine verify its Z-clearance move?
   - Its result depends on positioning mode, current position, and machine limits
   - Every Z move is a 10 mm lift
@@ -2953,10 +2953,10 @@ Pause behavior is firmware-specific. Use the printer's documented pause and resu
   - M25 changes E to relative mode
   - Correct answer: 0
   - Explanation: With M83, E3 is a relative extruder move. With M82, it is an absolute E destination, so the current state must be known.
-- Q9 [fill-blank]: Type one common pause command:
+- Q9 [fill-blank]: Type Marlin's unconditional-stop command:
   - Correct answer: M0
-  - Hint: Pause/stop on some printers
-  - Explanation: M0 is a common pause command, but support varies.
+  - Hint: Unconditional stop
+  - Explanation: In Marlin, M0 requests an unconditional stop.
 - Q10 [multiple-choice]: Why should you verify the firmware's pause behavior?
   - Pause commands are not identical everywhere
   - All pauses preserve the same machine state

@@ -1685,21 +1685,21 @@ M600 ; Marlin filament change with Advanced Pause enabled</pre>
     theory: `
       <p>Print recovery is about pausing safely, keeping heat controlled, and resuming without
       crashing into the part or leaving blobs.</p>
-      <pre>M0  ; Marlin pause where supported
+      <pre>M0  ; Marlin unconditional stop
 M25 ; Marlin pause an SD-card print</pre>
       <p>Pause behavior is firmware-specific. Use the printer's documented pause and resume flow. Do not assume that a bare Z move creates a relative lift or that a bare E move creates a relative prime; both depend on the active modes and current positions.</p>
     `,
     visual: "rapid-path",
     quiz: [
       { type: "multiple-choice", question: "What is the purpose of a print pause?", options: ["Stop temporarily for service or inspection", "Finish and shut down the print", "Home all axes", "Reset the firmware"], answer: 0, explanation: "Pauses let you inspect, change filament, or handle an issue." },
-      { type: "multiple-choice", question: "What can M0 mean on some printers?", meta: { codes: ["M0"] }, options: ["Pause", "Fan off", "Home X", "Set bed temp"], answer: 0, explanation: "M0 is a pause/stop command on some systems." },
-      { type: "multiple-choice", question: "What can M25 mean for some SD-card prints?", meta: { codes: ["M25"] }, options: ["Pause SD print", "Nozzle heat", "Fan full", "Tool select"], answer: 0, explanation: "M25 is used by some firmware for SD print pause." },
+      { type: "multiple-choice", question: "In Marlin, what does M0 request?", meta: { codes: ["M0"] }, options: ["An unconditional stop", "The fan to turn off", "The X-axis to home", "The bed temperature to change"], answer: 0, explanation: "In Marlin, M0 requests an unconditional stop. How the user continues depends on the configured interface." },
+      { type: "multiple-choice", question: "In Marlin, what does M25 do during an SD-card print?", meta: { codes: ["M25"] }, options: ["Pauses the SD-card print", "Heats the nozzle", "Runs the fan at full speed", "Selects a tool"], answer: 0, explanation: "In Marlin, M25 pauses an SD-card print." },
       { type: "multiple-choice", question: "Why must a pause routine verify its Z-clearance move?", options: ["Its result depends on positioning mode, current position, and machine limits", "Every Z move is a 10 mm lift", "Z moves always re-home the printer", "Pause commands disable Z motion"], answer: 0, explanation: "Under absolute positioning, Z10 requests position Z10; under relative positioning, it requests a 10-unit move. A documented routine must account for the active state and limits." },
       { type: "multiple-choice", question: "Why can G1 Z10 not be assumed to mean a 10 mm lift?", options: ["Its meaning depends on G90 or G91 and the current Z position", "Z values always control temperature", "G1 always homes Z first", "Z10 disables the motors"], answer: 0, explanation: "G90 makes Z10 an absolute destination, while G91 makes it a relative move. The active mode must be known." },
       { type: "multiple-choice", question: "What should you check before resuming a paused print?", options: ["Position, heat, prime, and clearance", "Remaining print time only", "File size only", "Layer number only"], answer: 0, explanation: "Safe resume needs the printer ready to continue without a blob or crash." },
       { type: "multiple-choice", question: "Why should you prime the nozzle before resuming a paused print?", options: ["To restore filament flow", "To home the bed", "To turn off motors", "To delete strings"], answer: 0, explanation: "Pauses can leave the nozzle under-primed." },
       { type: "multiple-choice", question: "Why can G1 E3 not be assumed to command a 3 mm prime?", options: ["Its result depends on M82 or M83 and the current E position", "E values always set fan speed", "G1 disables extrusion", "M25 changes E to relative mode"], answer: 0, explanation: "With M83, E3 is a relative extruder move. With M82, it is an absolute E destination, so the current state must be known." },
-      { type: "fill-blank", question: "Type one common pause command:", answer: "M0", hint: "Pause/stop on some printers", explanation: "M0 is a common pause command, but support varies." },
+      { type: "fill-blank", question: "Type Marlin's unconditional-stop command:", answer: "M0", hint: "Unconditional stop", explanation: "In Marlin, M0 requests an unconditional stop." },
       { type: "multiple-choice", question: "Why should you verify the firmware's pause behavior?", options: ["Pause commands are not identical everywhere", "All pauses preserve the same machine state", "All pauses home the axes", "M0 and M25 are universal"], answer: 0, explanation: "Different printer firmware handles pause and resume differently." }
     ]
   },
