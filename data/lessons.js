@@ -1346,29 +1346,34 @@ M107      ; fan off</pre>
     unitName: "Start & End G-Code",
     lesson: 1,
     title: "Start G-Code Sequence",
-    why: "A clear start sequence prepares the printer in a safe, predictable order before extrusion begins.",
+    why: "A clear start sequence prepares the printer in a safe, predictable order before the first layer begins.",
     icon: "ST",
     xp: 20,
     theory: `
-      <p>Start G-code prepares the printer before the first layer. A common sequence homes axes,
-      heats the machine, optionally probes the bed, then primes the nozzle.</p>
-      <pre>G28       ; home
-M190 S60  ; wait for bed
-M109 S210 ; wait for nozzle
-G92 E0    ; reset extruder position</pre>
-      <p>The exact order depends on printer and slicer, but the goal is always the same: start from a
-      known, safe state.</p>
+      <p>Start G-code is the group of commands that runs before the first layer. The slicer—the
+      software that turns a 3D model into printer commands—usually adds it to the print file.</p>
+      <p>Homing means moving the axes to their reference sensors so the printer knows their positions.
+      Probing means measuring the bed at one or more points. Priming means pushing a small amount of
+      filament through the nozzle so it is ready to print. A start sequence may home, heat, probe when
+      the configured workflow requires it, and prime in an order chosen for that printer.</p>
+      <pre>G28       ; home all axes
+M190 S60  ; set bed target to 60 C and wait while heating
+M109 S210 ; set nozzle target to 210 C and wait while heating
+G92 E0    ; set the current extruder coordinate to zero</pre>
+      <p>This is a simplified Marlin-style example. A target temperature is the temperature the printer
+      is trying to reach and hold. The example does not include a probing or priming move because those
+      commands and safe locations depend on the printer, firmware configuration, and slicer profile.</p>
     `,
     visual: "program-structure",
     quiz: [
-      { type: "multiple-choice", question: "What is the main purpose of start G-code?", options: ["Prepare the printer before printing", "Pause the print", "Disable the motors", "Park after the print"], answer: 0, explanation: "Start G-code sets up homing, temperatures, probing, and priming before printing." },
+      { type: "multiple-choice", question: "What is the main purpose of start G-code?", options: ["Prepare the printer before printing", "Pause the print", "Disable the motors", "Park after the print"], answer: 0, explanation: "Start G-code prepares the printer before the first layer. Its exact homing, heating, probing, and priming steps depend on the printer and profile." },
       { type: "multiple-choice", question: "Which command usually belongs early in start G-code?", options: ["G28", "M84", "M107 only", "M30"], answer: 0, explanation: "G28 homes the printer so it knows its axis positions." },
-      { type: "multiple-choice", question: "Why should the printer reach its target temperatures before printing begins?", options: ["Plastic needs correct melt and bed conditions", "The extruder coordinate must reset", "The fan must reach full speed", "The printer must enter relative mode"], answer: 0, explanation: "The nozzle and bed should reach target temperatures before first-layer motion." },
+      { type: "multiple-choice", question: "Why should the printer reach its target temperatures before printing begins?", options: ["Plastic needs correct melt and bed conditions", "The extruder coordinate must reset", "The fan must reach full speed", "The printer must enter relative mode"], answer: 0, explanation: "A target temperature is the set temperature the printer tries to reach and hold. The nozzle and bed should reach their required targets before first-layer printing." },
       { type: "fill-blank", question: "Type the command that homes all axes:", answer: "G28", hint: "Home command", explanation: "G28 homes the axes." },
-      { type: "multiple-choice", question: "What does G92 E0 often do in start G-code?", meta: { codes: ["G92"] }, options: ["Reset extruder position", "Home Z", "Heat bed", "Turn fan off"], answer: 0, explanation: "G92 E0 sets the current extruder position to zero." },
+      { type: "multiple-choice", question: "What does G92 E0 do in this Marlin-style start sequence?", meta: { codes: ["G92"] }, options: ["Set the current extruder coordinate to zero", "Home Z", "Heat the bed", "Turn the fan off"], answer: 0, explanation: "G92 E0 labels the current extruder coordinate as zero; it does not move or prime the extruder." },
       { type: "multiple-choice", question: "Which Marlin command waits while the nozzle heats?", options: ["M109", "M104", "M140", "M107"], answer: 0, explanation: "M109 S waits while heating; M109 R also waits while cooling." },
       { type: "multiple-choice", question: "Which Marlin command waits while the bed heats?", options: ["M190", "M140", "M104", "G1"], answer: 0, explanation: "M190 S waits while heating; M190 R also waits while cooling." },
-      { type: "fill-blank", question: "Reset extruder position:\nG92 ___0", meta: { codes: ["G92"] }, answer: "E", hint: "Extruder axis", explanation: "G92 E0 resets the extruder position to zero." },
+      { type: "fill-blank", question: "Set the current extruder coordinate to zero:\nG92 ___0", meta: { codes: ["G92"] }, answer: "E", hint: "Extruder axis", explanation: "In Marlin, G92 E0 sets the current extruder coordinate to zero without moving the extruder." },
       { type: "multiple-choice", question: "What should a start sequence avoid?", options: ["Moving into the bed before homing", "Waiting for heat", "Homing axes", "Setting temperatures"], answer: 0, explanation: "Motion before known positions can crash into the bed or frame." },
       { type: "multiple-choice", question: "What can vary between printers?", options: ["Start G-code order and probing commands", "The meaning of X and Y always", "Whether G-code uses numbered values", "Whether coordinates describe positions"], answer: 0, explanation: "Printer firmware, probes, and slicer profiles affect the exact start sequence." }
     ]
@@ -1384,12 +1389,20 @@ G92 E0    ; reset extruder position</pre>
     icon: "END",
     xp: 20,
     theory: `
-      <p>End G-code parks the nozzle, turns off heaters and fans, and disables motors when safe.</p>
-      <pre>M104 S0 ; hotend off
-M140 S0 ; bed off
-M107    ; fan off
-M84     ; disable motors</pre>
-      <p>A parking move is machine-specific. Verify the coordinate mode, axis limits, and clearance before adding one. After M84 disables steppers, axes may move manually and lose known position; re-home before later coordinate motion if position may have changed.</p>
+      <p>End G-code is the group of commands that runs after the final print move. It commonly turns
+      off heaters and the part-cooling fan, moves the nozzle away from the part, and releases the motors
+      when it is safe to do so. Moving the nozzle to a chosen resting location is called parking.</p>
+      <pre>M104 S0 ; set hotend target to 0 C
+M140 S0 ; set bed target to 0 C
+M107    ; turn off the default fan
+M84     ; disable all stepper motors</pre>
+      <p>This is a Marlin-style shutdown example. Stepper motors move and hold the printer's axes.
+      After <code>M84</code> disables them, an axis can move by hand and the printer can lose its known
+      position.</p>
+      <p>A parking move is machine-specific. Coordinate mode tells the printer whether movement values
+      are positions or distances. Axis limits are the machine's allowed travel boundaries, and clearance
+      is open space that lets the nozzle move without hitting the print or printer. Verify all three before
+      adding a parking move. Re-home before later coordinate motion if an axis may have moved.</p>
     `,
     visual: "program-structure",
     quiz: [
@@ -1398,7 +1411,7 @@ M84     ; disable motors</pre>
       { type: "multiple-choice", question: "Which command turns the bed target to zero?", options: ["M140 S0", "M190 S60", "G92 E0", "M107"], answer: 0, explanation: "M140 S0 turns off the heated bed target." },
       { type: "fill-blank", question: "Type the fan off command:", answer: "M107", hint: "Part cooling fan off", explanation: "M107 turns the fan off." },
       { type: "multiple-choice", question: "Why should you park the nozzle away from the part?", options: ["To avoid heat damage or oozing on the print", "To home the printer", "To turn fan on", "To reset E"], answer: 0, explanation: "A hot nozzle sitting on the part can mark or melt it." },
-      { type: "multiple-choice", question: "What does M84 usually do?", meta: { codes: ["M84"] }, options: ["Disable motors", "Heat nozzle", "Probe bed", "Set fan speed"], answer: 0, explanation: "M84 disables steppers on Marlin-style printers. The machine can lose trusted position if an axis moves afterward, so re-home before later coordinate motion." },
+      { type: "multiple-choice", question: "In Marlin, what does M84 with no axis letters do?", meta: { codes: ["M84"] }, options: ["Disable all stepper motors", "Heat the nozzle", "Probe the bed", "Set the fan speed"], answer: 0, explanation: "Stepper motors move and hold the axes. M84 with no axis letters disables all of them, so the printer can lose its known position if an axis moves afterward." },
       { type: "multiple-choice", question: "Before reusing a parking move from another printer, what must you verify?", options: ["Coordinate mode, axis limits, and clearance", "Only nozzle and bed temperatures", "Only the active tool and fan speed", "Only extrusion mode and flow factor"], answer: 0, explanation: "Parking coordinates are machine-specific and can be unsafe when the coordinate mode, travel limits, or clearance differ." },
       { type: "fill-blank", question: "Turn the bed off:\nM140 S___", meta: { codes: ["M140"] }, answer: "0", hint: "Zero target temperature", explanation: "S0 sets the bed target to zero/off." },
       { type: "multiple-choice", question: "What should be turned off to prevent continued heating after a print?", options: ["Heaters", "The positioning mode", "The stored bed mesh", "The extrusion coordinate mode"], answer: 0, explanation: "Heaters should be turned off at the end of a print." },
@@ -1416,11 +1429,14 @@ M84     ; disable motors</pre>
     icon: ";",
     xp: 20,
     theory: `
-      <p>Slicers add comments to organize the file. Comments often start with a semicolon.</p>
+      <p>A slicer is software that turns a 3D model into printer commands. A toolpath is the route the
+      slicer plans for the nozzle. Slicers often add comments—notes for people reading the file—to label
+      layers and toolpath features. In common Marlin-style files, a semicolon starts a comment.</p>
       <pre>;TYPE:WALL-OUTER
 G1 X30 Y40 E0.22 F1500
 ;LAYER:12</pre>
-      <p>The printer ignores comments, but they help humans understand features, layers, and toolpath types.</p>
+      <p>Marlin does not execute the text after the semicolon. Labels such as <code>;TYPE:WALL-OUTER</code>
+      and <code>;LAYER:12</code> help people inspect the file, but their exact wording varies by slicer.</p>
     `,
     visual: "",
     quiz: [
@@ -1428,12 +1444,12 @@ G1 X30 Y40 E0.22 F1500
       { type: "multiple-choice", question: "Which line is only a slicer comment?", options: [";TYPE:WALL-OUTER", "G1 X30 Y40 E0.22", "M104 S210", "G28"], answer: 0, explanation: "The semicolon means the line is a comment for humans." },
       { type: "multiple-choice", question: "What does ;LAYER:12 help identify?", options: ["The current layer", "Nozzle temperature", "Bed size", "Fan speed only"], answer: 0, explanation: "Layer comments help locate sections of the print file." },
       { type: "fill-blank", question: "Type the symbol that starts many printer comments:", answer: ";", hint: "Comment character", explanation: "A semicolon starts many printer G-code comments." },
-      { type: "multiple-choice", question: "Does the printer execute the words after a semicolon?", options: ["No, they are ignored as comments", "Yes, on every line", "Yes, after the nozzle heats", "Yes, on the first layer"], answer: 0, explanation: "Comments are ignored by the firmware." },
+      { type: "multiple-choice", question: "In a Marlin-style file, does Marlin execute the text after a semicolon?", options: ["No, it treats the text as a comment", "Yes, on every line", "Yes, after the nozzle heats", "Yes, on the first layer"], answer: 0, explanation: "A comment is a note for people reading the file. Marlin does not execute the text after the semicolon." },
       { type: "multiple-choice", question: "Why are slicer comments useful?", options: ["They help humans understand toolpaths", "They heat the bed", "They change E values", "They home the axes"], answer: 0, explanation: "Comments make the file easier to inspect and debug." },
       { type: "multiple-choice", question: "Which line is most likely an outer-wall label?", options: [";TYPE:WALL-OUTER", "M190 S60", "G28", "M107"], answer: 0, explanation: "Slicers often label feature types with comments." },
       { type: "fill-blank", question: "Complete the layer comment:\n;_____:12", answer: "LAYER", hint: "Layer label", explanation: ";LAYER:12 labels the layer section." },
       { type: "multiple-choice", question: "What should you edit carefully?", options: ["Motion and temperature lines", "Blank lines", "Slicer comments", "File header labels"], answer: 0, explanation: "Changing motion or temperature lines affects the print. Comments do not execute." },
-      { type: "multiple-choice", question: "Which line will move and extrude?", options: ["G1 X30 Y40 E0.22 F1500", ";TYPE:WALL-OUTER", ";LAYER:12", "; generated by slicer"], answer: 0, explanation: "G1 with X/Y/E/F is an executable motion/extrusion line." }
+      { type: "multiple-choice", question: "Which line is an executable coordinated-motion command?", options: ["G1 X30 Y40 E0.22 F1500", ";TYPE:WALL-OUTER", ";LAYER:12", "; generated by slicer"], answer: 0, explanation: "G1 requests coordinated motion. Whether its E value deposits filament depends on the active extrusion mode and current E position." }
     ]
   },
 

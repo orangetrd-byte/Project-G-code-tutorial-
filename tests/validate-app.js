@@ -387,6 +387,19 @@ function validateCurriculum(api) {
   assert.match(printingMotionTheory, /A travel move changes the nozzle's position without intentionally depositing filament/, 'Printing motion must define travel move');
   assert.match(printingMotionTheory, /Extrusion mode tells the printer how to interpret E values/, 'Printing motion must define extrusion mode');
   assert.match(printingMotionTheory, /A bridge spans an open gap.*An overhang extends outward/s, 'Printing cooling must define bridges and overhangs');
+  const printingUnitThree = api.TRACKS.printing.lessons.filter(lesson => lesson.unit === 3);
+  const printingUnitThreeTheory = printingUnitThree.map(lesson => lesson.theory).join(' ');
+  const printingUnitThreeCopy = printingUnitThree.map(lesson => lesson.theory + ' ' + lesson.quiz.map(question => question.question + ' ' + question.explanation).join(' ')).join(' ');
+  assert.match(printingUnitThreeTheory, /Start G-code is the group of commands/, 'Printing Unit 3 must define start G-code');
+  assert.match(printingUnitThreeTheory, /Priming means pushing a small amount of\s+filament/, 'Printing Unit 3 must define priming');
+  assert.match(printingUnitThreeTheory, /A target temperature is the temperature/, 'Printing Unit 3 must define target temperature');
+  assert.match(printingUnitThreeTheory, /End G-code is the group of commands/, 'Printing Unit 3 must define end G-code');
+  assert.match(printingUnitThreeTheory, /Stepper motors move and hold/, 'Printing Unit 3 must define stepper motors');
+  assert.match(printingUnitThreeTheory, /Coordinate mode tells the printer/, 'Printing Unit 3 must define coordinate mode');
+  assert.match(printingUnitThreeTheory, /A toolpath is the route/, 'Printing Unit 3 must define toolpath');
+  assert.match(printingUnitThreeTheory, /comments—notes for people reading the file/, 'Printing Unit 3 must define comments');
+  assert.match(printingUnitThreeCopy, /Whether its E value deposits filament depends on the active extrusion mode and current E position/, 'Printing Unit 3 must keep executable motion separate from mode-dependent extrusion');
+  assert.doesNotMatch(printingUnitThreeCopy, /G1 with X\/Y\/E\/F is an executable motion\/extrusion line/, 'Printing Unit 3 must not treat every E word as universal extrusion');
 
   const lessonIds = new Set();
   const questionIds = new Set();

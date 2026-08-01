@@ -6,11 +6,11 @@ Phase 6: Retention Polish
 
 ## Handoff Status
 
-- Last updated: 2026-07-31.
+- Last updated: 2026-08-01.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest application-content release: beginner definitions for printing motion and cooling terms.
-- Current app build: MGP | Version v2.58.12 | Build 2026.07.31.09.
-- Current service-worker cache: pgct-2026.07.31.09.
+- Latest application-content release: beginner definitions and firmware-scoped wording for Printing Unit 3.
+- Current app build: MGP | Version v2.58.13 | Build 2026.08.01.01.
+- Current service-worker cache: pgct-2026.08.01.01.
 - Local `main` is aligned with `origin/main`.
 
 ## Phase 5 Completion Summary
@@ -32,6 +32,9 @@ Phase 6: Retention Polish
 - Maintain safe educational language and clear CNC / 3D printing track separation.
 
 ## Completed In This Pass
+
+- Beginner language: defined start/end G-code, probing, priming, target temperatures, parking, stepper motors, coordinate mode, axis limits, clearance, comments, and toolpaths before use in Printing Unit 3.
+- Accuracy: scoped Unit 3 examples to Marlin and removed the assumption that every coordinated move containing an E value deposits filament.
 
 - Accuracy: corrected printing firmware scope, machine-specific parking guidance, extrusion-mode handling, pause recovery examples, and ABS ventilation guidance.
 - Regression: added guards that prevent the corrected printing claims and unsafe unscoped examples from returning.

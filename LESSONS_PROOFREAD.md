@@ -1974,21 +1974,27 @@ M106 ___255
 
 ## 28. Start G-Code Sequence
 
-**Why:** A clear start sequence prepares the printer in a safe, predictable order before extrusion begins.
+**Why:** A clear start sequence prepares the printer in a safe, predictable order before the first layer begins.
 
 
 **Theory:**
 
-Start G-code prepares the printer before the first layer. A common sequence homes axes,
- heats the machine, optionally probes the bed, then primes the nozzle.
+Start G-code is the group of commands that runs before the first layer. The slicer—the
+ software that turns a 3D model into printer commands—usually adds it to the print file.
 
-G28 ; home
-M190 S60 ; wait for bed
-M109 S210 ; wait for nozzle
-G92 E0 ; reset extruder position
+Homing means moving the axes to their reference sensors so the printer knows their positions.
+ Probing means measuring the bed at one or more points. Priming means pushing a small amount of
+ filament through the nozzle so it is ready to print. A start sequence may home, heat, probe when
+ the configured workflow requires it, and prime in an order chosen for that printer.
 
-The exact order depends on printer and slicer, but the goal is always the same: start from a
- known, safe state.
+G28 ; home all axes
+M190 S60 ; set bed target to 60 C and wait while heating
+M109 S210 ; set nozzle target to 210 C and wait while heating
+G92 E0 ; set the current extruder coordinate to zero
+
+This is a simplified Marlin-style example. A target temperature is the temperature the printer
+ is trying to reach and hold. The example does not include a probing or priming move because those
+ commands and safe locations depend on the printer, firmware configuration, and slicer profile.
 
 
 **Quiz:**
@@ -1999,7 +2005,7 @@ The exact order depends on printer and slicer, but the goal is always the same: 
   - Disable the motors
   - Park after the print
   - Correct answer: 0
-  - Explanation: Start G-code sets up homing, temperatures, probing, and priming before printing.
+  - Explanation: Start G-code prepares the printer before the first layer. Its exact homing, heating, probing, and priming steps depend on the printer and profile.
 - Q2 [multiple-choice]: Which command usually belongs early in start G-code?
   - G28
   - M84
@@ -2013,18 +2019,18 @@ The exact order depends on printer and slicer, but the goal is always the same: 
   - The fan must reach full speed
   - The printer must enter relative mode
   - Correct answer: 0
-  - Explanation: The nozzle and bed should reach target temperatures before first-layer motion.
+  - Explanation: A target temperature is the set temperature the printer tries to reach and hold. The nozzle and bed should reach their required targets before first-layer printing.
 - Q4 [fill-blank]: Type the command that homes all axes:
   - Correct answer: G28
   - Hint: Home command
   - Explanation: G28 homes the axes.
-- Q5 [multiple-choice]: What does G92 E0 often do in start G-code?
-  - Reset extruder position
+- Q5 [multiple-choice]: What does G92 E0 do in this Marlin-style start sequence?
+  - Set the current extruder coordinate to zero
   - Home Z
-  - Heat bed
-  - Turn fan off
+  - Heat the bed
+  - Turn the fan off
   - Correct answer: 0
-  - Explanation: G92 E0 sets the current extruder position to zero.
+  - Explanation: G92 E0 labels the current extruder coordinate as zero; it does not move or prime the extruder.
 - Q6 [multiple-choice]: Which Marlin command waits while the nozzle heats?
   - M109
   - M104
@@ -2039,11 +2045,11 @@ The exact order depends on printer and slicer, but the goal is always the same: 
   - G1
   - Correct answer: 0
   - Explanation: M190 S waits while heating; M190 R also waits while cooling.
-- Q8 [fill-blank]: Reset extruder position:
+- Q8 [fill-blank]: Set the current extruder coordinate to zero:
 G92 ___0
   - Correct answer: E
   - Hint: Extruder axis
-  - Explanation: G92 E0 resets the extruder position to zero.
+  - Explanation: In Marlin, G92 E0 sets the current extruder coordinate to zero without moving the extruder.
 - Q9 [multiple-choice]: What should a start sequence avoid?
   - Moving into the bed before homing
   - Waiting for heat
@@ -2068,14 +2074,23 @@ G92 ___0
 
 **Theory:**
 
-End G-code parks the nozzle, turns off heaters and fans, and disables motors when safe.
+End G-code is the group of commands that runs after the final print move. It commonly turns
+ off heaters and the part-cooling fan, moves the nozzle away from the part, and releases the motors
+ when it is safe to do so. Moving the nozzle to a chosen resting location is called parking.
 
-M104 S0 ; hotend off
-M140 S0 ; bed off
-M107 ; fan off
-M84 ; disable motors
+M104 S0 ; set hotend target to 0 C
+M140 S0 ; set bed target to 0 C
+M107 ; turn off the default fan
+M84 ; disable all stepper motors
 
-A parking move is machine-specific. Verify the coordinate mode, axis limits, and clearance before adding one. After M84 disables steppers, axes may move manually and lose known position; re-home before later coordinate motion if position may have changed.
+This is a Marlin-style shutdown example. Stepper motors move and hold the printer's axes.
+ After `M84` disables them, an axis can move by hand and the printer can lose its known
+ position.
+
+A parking move is machine-specific. Coordinate mode tells the printer whether movement values
+ are positions or distances. Axis limits are the machine's allowed travel boundaries, and clearance
+ is open space that lets the nozzle move without hitting the print or printer. Verify all three before
+ adding a parking move. Re-home before later coordinate motion if an axis may have moved.
 
 
 **Quiz:**
@@ -2112,13 +2127,13 @@ A parking move is machine-specific. Verify the coordinate mode, axis limits, and
   - To reset E
   - Correct answer: 0
   - Explanation: A hot nozzle sitting on the part can mark or melt it.
-- Q6 [multiple-choice]: What does M84 usually do?
-  - Disable motors
-  - Heat nozzle
-  - Probe bed
-  - Set fan speed
+- Q6 [multiple-choice]: In Marlin, what does M84 with no axis letters do?
+  - Disable all stepper motors
+  - Heat the nozzle
+  - Probe the bed
+  - Set the fan speed
   - Correct answer: 0
-  - Explanation: M84 disables steppers on Marlin-style printers. The machine can lose trusted position if an axis moves afterward, so re-home before later coordinate motion.
+  - Explanation: Stepper motors move and hold the axes. M84 with no axis letters disables all of them, so the printer can lose its known position if an axis moves afterward.
 - Q7 [multiple-choice]: Before reusing a parking move from another printer, what must you verify?
   - Coordinate mode, axis limits, and clearance
   - Only nozzle and bed temperatures
@@ -2155,13 +2170,16 @@ M140 S___
 
 **Theory:**
 
-Slicers add comments to organize the file. Comments often start with a semicolon.
+A slicer is software that turns a 3D model into printer commands. A toolpath is the route the
+ slicer plans for the nozzle. Slicers often add comments—notes for people reading the file—to label
+ layers and toolpath features. In common Marlin-style files, a semicolon starts a comment.
 
 ;TYPE:WALL-OUTER
 G1 X30 Y40 E0.22 F1500
 ;LAYER:12
 
-The printer ignores comments, but they help humans understand features, layers, and toolpath types.
+Marlin does not execute the text after the semicolon. Labels such as `;TYPE:WALL-OUTER`
+ and `;LAYER:12` help people inspect the file, but their exact wording varies by slicer.
 
 
 **Quiz:**
@@ -2191,13 +2209,13 @@ The printer ignores comments, but they help humans understand features, layers, 
   - Correct answer: ;
   - Hint: Comment character
   - Explanation: A semicolon starts many printer G-code comments.
-- Q5 [multiple-choice]: Does the printer execute the words after a semicolon?
-  - No, they are ignored as comments
+- Q5 [multiple-choice]: In a Marlin-style file, does Marlin execute the text after a semicolon?
+  - No, it treats the text as a comment
   - Yes, on every line
   - Yes, after the nozzle heats
   - Yes, on the first layer
   - Correct answer: 0
-  - Explanation: Comments are ignored by the firmware.
+  - Explanation: A comment is a note for people reading the file. Marlin does not execute the text after the semicolon.
 - Q6 [multiple-choice]: Why are slicer comments useful?
   - They help humans understand toolpaths
   - They heat the bed
@@ -2224,13 +2242,13 @@ The printer ignores comments, but they help humans understand features, layers, 
   - File header labels
   - Correct answer: 0
   - Explanation: Changing motion or temperature lines affects the print. Comments do not execute.
-- Q10 [multiple-choice]: Which line will move and extrude?
+- Q10 [multiple-choice]: Which line is an executable coordinated-motion command?
   - G1 X30 Y40 E0.22 F1500
   - ;TYPE:WALL-OUTER
   - ;LAYER:12
   - ; generated by slicer
   - Correct answer: 0
-  - Explanation: G1 with X/Y/E/F is an executable motion/extrusion line.
+  - Explanation: G1 requests coordinated motion. Whether its E value deposits filament depends on the active extrusion mode and current E position.
 
 ---
 
