@@ -8,9 +8,9 @@ Phase 6: Retention Polish
 
 - Last updated: 2026-08-01.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest application-content release: beginner definitions and material-specific guidance for Printing Unit 5.
-- Current app build: MGP | Version v2.58.15 | Build 2026.08.01.03.
-- Current service-worker cache: pgct-2026.08.01.03.
+- Latest application-content release: beginner definitions and scoped examples for Printing Unit 6.
+- Current app build: MGP | Version v2.58.16 | Build 2026.08.01.04.
+- Current service-worker cache: pgct-2026.08.01.04.
 - Local `main` is aligned with `origin/main`.
 
 ## Phase 5 Completion Summary
@@ -32,6 +32,9 @@ Phase 6: Retention Polish
 - Maintain safe educational language and clear CNC / 3D printing track separation.
 
 ## Completed In This Pass
+
+- Beginner language: defined overhang, support, bridge, and support distance in Printing Unit 6.
+- Accuracy: declared relative extrusion, scoped the fan example, and removed universal bridge-speed advice.
 
 - Beginner language: defined material profile, active profile, part cooling, and enclosure in Printing Unit 5.
 - Accuracy: scoped the fan example to Marlin and replaced broad PETG cooling advice with filament-specific profile guidance.

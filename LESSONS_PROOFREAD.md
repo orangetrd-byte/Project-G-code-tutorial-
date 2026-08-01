@@ -2648,17 +2648,21 @@ M140 S___
 
 **Theory:**
 
-Supports and bridges are slicer decisions that show up as different toolpath comments,
- fan behavior, and slower motion.
+An overhang extends outward with limited material beneath it. Support is temporary printed
+ material placed under features that need help. A bridge is a strand printed across an open gap.
 
+Support distance is the planned gap between support and the part. Slicers may label these
+ toolpaths with comments, but label wording varies.
+
+M83 ; relative extrusion mode
 ;TYPE:SUPPORT
 G1 X40 Y80 E0.24 F1400
 ;TYPE:BRIDGE
 M106 S255
 G1 X70 Y80 E0.18 F900
 
-Supports hold steep overhangs. Bridges span gaps. Cooling and speed matter because plastic
- needs time to hold its shape.
+This modeled Marlin-style example declares relative extrusion and uses the common 0–255 fan
+ scale. Bridge speed and cooling are profile choices that depend on material, geometry, and printer.
 
 
 **Quiz:**
@@ -2677,13 +2681,13 @@ Supports hold steep overhangs. Bridges span gaps. Cooling and speed matter becau
   - Retracts filament
   - Correct answer: 0
   - Explanation: A bridge prints across open space between supports or walls.
-- Q3 [multiple-choice]: Why should you reduce the bridge speed?
+- Q3 [multiple-choice]: Why might a profile use a slower bridge speed?
   - To help strands stay controlled across a gap
   - To increase bed temperature
   - To disable extrusion
   - To run bed leveling
   - Correct answer: 0
-  - Explanation: Bridge speed affects sag and strand placement.
+  - Explanation: Bridge speed affects sag and strand placement, but the best value depends on material, geometry, and printer.
 - Q4 [multiple-choice]: Which command sets the selected/default fan to full speed in this 0-255 example?
   - M106 S255
   - G1 X70
@@ -2697,12 +2701,12 @@ Supports hold steep overhangs. Bridges span gaps. Cooling and speed matter becau
   - Hint: Support label
   - Explanation: Slicers may use ;TYPE:SUPPORT to label support paths.
 - Q6 [multiple-choice]: What are supports mainly used for?
-  - Steep overhangs that cannot print in open air
-  - Vertical walls
-  - Solid infill
+  - Features that need temporary material underneath
+  - Ordinary vertical walls
+  - Solid infill inside every part
   - Travel moves
   - Correct answer: 0
-  - Explanation: Supports provide temporary material under overhangs.
+  - Explanation: Supports provide temporary material beneath features that exceed the setup's unsupported-printing capability.
 - Q7 [multiple-choice]: What can too much support material cause?
   - Difficult removal and rough surfaces
   - Stronger layer bonding
@@ -2728,7 +2732,7 @@ M106 S___
   - Retraction only
   - Bed size only
   - Correct answer: 0
-  - Explanation: Support success depends on geometry and slicer settings.
+  - Explanation: Overhang angle describes how far a feature leans outward, and support distance is the planned gap between support and part. Geometry, material, and slicer settings all matter.
 
 ---
 

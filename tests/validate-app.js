@@ -416,6 +416,13 @@ function validateCurriculum(api) {
   assert.match(printingUnitFiveCopy, /An enclosure is a cabinet or cover/, 'Printing Unit 5 must define enclosure');
   assert.match(printingUnitFiveCopy, /This Marlin-style example uses the common 0–255 fan scale/, 'Printing Unit 5 must scope its fan example');
   assert.doesNotMatch(printingUnitFiveCopy, /PETG often needs less cooling and more bed heat/, 'Printing Unit 5 must not overgeneralize PETG cooling');
+  const printingUnitSix = api.TRACKS.printing.lessons.find(lesson => lesson.unit === 6);
+  const printingUnitSixCopy = (printingUnitSix?.theory || '') + ' ' + (printingUnitSix?.quiz.map(question => question.question + ' ' + question.explanation).join(' ') || '');
+  assert.match(printingUnitSixCopy, /An overhang extends outward with limited material beneath it/, 'Printing Unit 6 must define overhang');
+  assert.match(printingUnitSixCopy, /Support is temporary printed\s+material/, 'Printing Unit 6 must define support');
+  assert.match(printingUnitSixCopy, /Support distance is the planned gap/, 'Printing Unit 6 must define support distance');
+  assert.match(printingUnitSixCopy, /M83 ; relative extrusion mode/, 'Printing Unit 6 must declare extrusion mode');
+  assert.doesNotMatch(printingUnitSixCopy, /Why should you reduce the bridge speed/, 'Printing Unit 6 must not prescribe one universal bridge speed');
 
   const lessonIds = new Set();
   const questionIds = new Set();

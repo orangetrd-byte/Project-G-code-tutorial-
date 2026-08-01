@@ -1609,28 +1609,31 @@ M106 S180 ; set the print-cooling fan speed</pre>
     icon: "SUP",
     xp: 20,
     theory: `
-      <p>Supports and bridges are slicer decisions that show up as different toolpath comments,
-      fan behavior, and slower motion.</p>
-      <pre>;TYPE:SUPPORT
+      <p>An overhang extends outward with limited material beneath it. Support is temporary printed
+      material placed under features that need help. A bridge is a strand printed across an open gap.</p>
+      <p>Support distance is the planned gap between support and the part. Slicers may label these
+      toolpaths with comments, but label wording varies.</p>
+      <pre>M83 ; relative extrusion mode
+;TYPE:SUPPORT
 G1 X40 Y80 E0.24 F1400
 ;TYPE:BRIDGE
 M106 S255
 G1 X70 Y80 E0.18 F900</pre>
-      <p>Supports hold steep overhangs. Bridges span gaps. Cooling and speed matter because plastic
-      needs time to hold its shape.</p>
+      <p>This modeled Marlin-style example declares relative extrusion and uses the common 0–255 fan
+      scale. Bridge speed and cooling are profile choices that depend on material, geometry, and printer.</p>
     `,
     visual: "rapid-path",
     quiz: [
       { type: "multiple-choice", question: "What does ;TYPE:SUPPORT label?", options: ["Support toolpath", "Nozzle heat command", "Bed probing", "Home command"], answer: 0, explanation: "Slicers often label support paths with comments." },
       { type: "multiple-choice", question: "What does a bridge do?", options: ["Spans a gap between supported areas", "Supports every vertical wall", "Homes all axes", "Retracts filament"], answer: 0, explanation: "A bridge prints across open space between supports or walls." },
-      { type: "multiple-choice", question: "Why should you reduce the bridge speed?", options: ["To help strands stay controlled across a gap", "To increase bed temperature", "To disable extrusion", "To run bed leveling"], answer: 0, explanation: "Bridge speed affects sag and strand placement." },
+      { type: "multiple-choice", question: "Why might a profile use a slower bridge speed?", options: ["To help strands stay controlled across a gap", "To increase bed temperature", "To disable extrusion", "To run bed leveling"], answer: 0, explanation: "Bridge speed affects sag and strand placement, but the best value depends on material, geometry, and printer." },
       { type: "multiple-choice", question: "Which command sets the selected/default fan to full speed in this 0-255 example?", options: ["M106 S255", "G1 X70", "G28", "M140 S60"], answer: 0, explanation: "M106 S255 is commonly full speed for the selected/default compatible fan. Named fans may use firmware-specific commands." },
       { type: "fill-blank", question: "Complete a support comment:\n;TYPE:____", answer: "SUPPORT", hint: "Support label", explanation: "Slicers may use ;TYPE:SUPPORT to label support paths." },
-      { type: "multiple-choice", question: "What are supports mainly used for?", options: ["Steep overhangs that cannot print in open air", "Vertical walls", "Solid infill", "Travel moves"], answer: 0, explanation: "Supports provide temporary material under overhangs." },
+      { type: "multiple-choice", question: "What are supports mainly used for?", options: ["Features that need temporary material underneath", "Ordinary vertical walls", "Solid infill inside every part", "Travel moves"], answer: 0, explanation: "Supports provide temporary material beneath features that exceed the setup's unsupported-printing capability." },
       { type: "multiple-choice", question: "What can too much support material cause?", options: ["Difficult removal and rough surfaces", "Stronger layer bonding", "Faster printing", "Lower material use"], answer: 0, explanation: "Support settings affect cleanup and surface quality." },
       { type: "multiple-choice", question: "Which line is still only a comment?", options: [";TYPE:BRIDGE", "G1 X70 Y80 E0.18", "M106 S255", "G28"], answer: 0, explanation: "The semicolon makes it a comment for humans." },
       { type: "fill-blank", question: "Complete full fan speed:\nM106 S___", meta: { codes: ["M106"] }, answer: "255", hint: "Maximum common fan value", explanation: "S255 is commonly full speed for 8-bit fan control." },
-      { type: "multiple-choice", question: "What should you inspect when supports fail?", options: ["Overhang angle, cooling, speed, and support distance", "Nozzle temperature only", "Retraction only", "Bed size only"], answer: 0, explanation: "Support success depends on geometry and slicer settings." }
+      { type: "multiple-choice", question: "What should you inspect when supports fail?", options: ["Overhang angle, cooling, speed, and support distance", "Nozzle temperature only", "Retraction only", "Bed size only"], answer: 0, explanation: "Overhang angle describes how far a feature leans outward, and support distance is the planned gap between support and part. Geometry, material, and slicer settings all matter." }
     ]
   },
 
