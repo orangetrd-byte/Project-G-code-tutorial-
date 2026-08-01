@@ -409,6 +409,13 @@ function validateCurriculum(api) {
   assert.match(printingUnitFourTheory, /An extrusion-factor override scales commanded E movement/, 'Printing Unit 4 must define extrusion-factor override');
   assert.match(printingUnitFourTheory, /M83[\s\S]*G1 X100 E0\.5/, 'Printing Unit 4 flow example must declare relative extrusion mode');
   assert.doesNotMatch(printingUnitFourCopy, /Complete a safe first-layer height move|G1 X100 E5\.0/, 'Printing Unit 4 must not teach unscoped first-layer or extrusion moves');
+  const printingUnitFive = api.TRACKS.printing.lessons.find(lesson => lesson.unit === 5);
+  const printingUnitFiveCopy = (printingUnitFive?.theory || '') + ' ' + (printingUnitFive?.quiz.map(question => question.question + ' ' + question.explanation).join(' ') || '');
+  assert.match(printingUnitFiveCopy, /A material profile is a saved group/, 'Printing Unit 5 must define material profile');
+  assert.match(printingUnitFiveCopy, /Part cooling is airflow aimed at newly deposited plastic/, 'Printing Unit 5 must define part cooling');
+  assert.match(printingUnitFiveCopy, /An enclosure is a cabinet or cover/, 'Printing Unit 5 must define enclosure');
+  assert.match(printingUnitFiveCopy, /This Marlin-style example uses the common 0–255 fan scale/, 'Printing Unit 5 must scope its fan example');
+  assert.doesNotMatch(printingUnitFiveCopy, /PETG often needs less cooling and more bed heat/, 'Printing Unit 5 must not overgeneralize PETG cooling');
 
   const lessonIds = new Set();
   const questionIds = new Set();

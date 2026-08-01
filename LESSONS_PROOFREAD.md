@@ -2552,15 +2552,22 @@ ___ X100 E0.5 F1200
 
 **Theory:**
 
-Material profiles tell the slicer how hot, fast, and cool a print should run. The G-code
- shows those choices through temperature, fan, and speed commands.
+A material profile is a saved group of slicer settings for a filament and printer setup.
+ The active profile is the group currently selected. Its temperature, speed, and fan choices
+ appear in the generated G-code.
 
-M104 S215 ; nozzle target
-M140 S70 ; bed target
-M106 S180 ; part cooling fan
+Part cooling is airflow aimed at newly deposited plastic. An enclosure is a cabinet or cover
+ around the printer that helps keep the air near the print stable.
 
-PLA often likes more cooling. PETG often needs less cooling and more bed heat. ABS often
- needs an enclosure and controlled cooling. Prusa warns that ABS can release potentially harmful fumes. Print it in a well-ventilated room while preventing drafts around the print, and follow the filament maker's safety instructions.
+M104 S215 ; set nozzle target without waiting
+M140 S70 ; set bed target without waiting
+M106 S180 ; set the print-cooling fan speed
+
+This Marlin-style example uses the common 0–255 fan scale. PLA, PETG, and ABS require
+ material-specific nozzle, bed, and fan settings; use the filament maker's profile as a starting
+ point. ABS commonly benefits from an enclosure and limited drafts. It can release potentially
+ harmful fumes, so use a well-ventilated room while preventing drafts around the print, and
+ follow the printer, enclosure, and filament makers' safety instructions.
 
 
 **Quiz:**
@@ -2586,13 +2593,13 @@ PLA often likes more cooling. PETG often needs less cooling and more bed heat. A
   - M84
   - Correct answer: 0
   - Explanation: M140 sets the bed target and continues.
-- Q4 [multiple-choice]: Which command changes part cooling fan speed?
+- Q4 [multiple-choice]: In this Marlin-style example, which command changes the print-cooling fan speed?
   - M106 S180
   - M104 S215
   - G28
   - G92 E0
   - Correct answer: 0
-  - Explanation: M106 controls fan speed on many printers.
+  - Explanation: M106 sets the selected fan speed in Marlin. This example uses the common 0–255 scale.
 - Q5 [fill-blank]: Complete nozzle target 215 C:
 M104 S___
   - Correct answer: 215
@@ -2605,20 +2612,20 @@ M104 S___
   - G28 commands
   - Correct answer: 0
   - Explanation: PLA usually benefits from part cooling, though exact settings vary.
-- Q7 [multiple-choice]: According to this lesson, which settings often distinguish PETG from PLA?
-  - Less cooling and more bed heat
-  - More cooling and less bed heat
-  - No bed heat and maximum fan speed
-  - Identical cooling and bed heat
+- Q7 [multiple-choice]: Which settings should you verify separately for PETG and PLA?
+  - Nozzle, bed, and fan settings
+  - Only nozzle temperature
+  - Only bed temperature
+  - Only fan speed
   - Correct answer: 0
-  - Explanation: PETG often uses less cooling and more bed heat than PLA, but the exact settings depend on the filament and printer.
+  - Explanation: PETG and PLA profiles can use different nozzle, bed, and fan settings. Follow the filament maker's guidance and verify the actual setup.
 - Q8 [multiple-choice]: What commonly helps ABS print successfully?
-  - An enclosure and controlled cooling
+  - An enclosure and limited drafts
   - Maximum fan speed at all times
   - A cold bed
   - A disabled nozzle heater
   - Correct answer: 0
-  - Explanation: ABS is sensitive to drafts and shrinkage.
+  - Explanation: An enclosure helps keep the air near the ABS print stable, but ventilation and manufacturer safety guidance still apply.
 - Q9 [fill-blank]: Complete bed target 70 C:
 M140 S___
   - Correct answer: 70

@@ -1570,24 +1570,30 @@ M221 S95           ; set extrusion factor to 95 percent</pre>
     icon: "MAT",
     xp: 20,
     theory: `
-      <p>Material profiles tell the slicer how hot, fast, and cool a print should run. The G-code
-      shows those choices through temperature, fan, and speed commands.</p>
-      <pre>M104 S215 ; nozzle target
-M140 S70  ; bed target
-M106 S180 ; part cooling fan</pre>
-      <p>PLA often likes more cooling. PETG often needs less cooling and more bed heat. ABS often
-      needs an enclosure and controlled cooling. Prusa warns that ABS can release potentially harmful fumes. Print it in a well-ventilated room while preventing drafts around the print, and follow the filament maker's safety instructions.</p>
+      <p>A material profile is a saved group of slicer settings for a filament and printer setup.
+      The active profile is the group currently selected. Its temperature, speed, and fan choices
+      appear in the generated G-code.</p>
+      <p>Part cooling is airflow aimed at newly deposited plastic. An enclosure is a cabinet or cover
+      around the printer that helps keep the air near the print stable.</p>
+      <pre>M104 S215 ; set nozzle target without waiting
+M140 S70  ; set bed target without waiting
+M106 S180 ; set the print-cooling fan speed</pre>
+      <p>This Marlin-style example uses the common 0–255 fan scale. PLA, PETG, and ABS require
+      material-specific nozzle, bed, and fan settings; use the filament maker's profile as a starting
+      point. ABS commonly benefits from an enclosure and limited drafts. It can release potentially
+      harmful fumes, so use a well-ventilated room while preventing drafts around the print, and
+      follow the printer, enclosure, and filament makers' safety instructions.</p>
     `,
     visual: "program-structure",
     quiz: [
       { type: "multiple-choice", question: "What does a material profile mainly control?", options: ["Temperature, speed, cooling, and related settings", "The tool-change script", "Bed dimensions", "The file format"], answer: 0, explanation: "Material profiles group settings that match the filament." },
       { type: "multiple-choice", question: "Which command sets a nozzle target without waiting?", options: ["M104 S215", "M140 S70", "G28", "M107"], answer: 0, explanation: "M104 sets hotend target and continues." },
       { type: "multiple-choice", question: "Which command sets a bed target without waiting?", options: ["M140 S70", "M104 S215", "G1 E1", "M84"], answer: 0, explanation: "M140 sets the bed target and continues." },
-      { type: "multiple-choice", question: "Which command changes part cooling fan speed?", options: ["M106 S180", "M104 S215", "G28", "G92 E0"], answer: 0, explanation: "M106 controls fan speed on many printers." },
+      { type: "multiple-choice", question: "In this Marlin-style example, which command changes the print-cooling fan speed?", options: ["M106 S180", "M104 S215", "G28", "G92 E0"], answer: 0, explanation: "M106 sets the selected fan speed in Marlin. This example uses the common 0–255 scale." },
       { type: "fill-blank", question: "Complete nozzle target 215 C:\nM104 S___", meta: { codes: ["M104"] }, answer: "215", hint: "Temperature target", explanation: "S215 is the target temperature value." },
       { type: "multiple-choice", question: "Compared with ABS, what does PLA often use more of?", options: ["Part cooling", "Nozzle shutdowns", "Moves without extrusion", "G28 commands"], answer: 0, explanation: "PLA usually benefits from part cooling, though exact settings vary." },
-      { type: "multiple-choice", question: "According to this lesson, which settings often distinguish PETG from PLA?", options: ["Less cooling and more bed heat", "More cooling and less bed heat", "No bed heat and maximum fan speed", "Identical cooling and bed heat"], answer: 0, explanation: "PETG often uses less cooling and more bed heat than PLA, but the exact settings depend on the filament and printer." },
-      { type: "multiple-choice", question: "What commonly helps ABS print successfully?", options: ["An enclosure and controlled cooling", "Maximum fan speed at all times", "A cold bed", "A disabled nozzle heater"], answer: 0, explanation: "ABS is sensitive to drafts and shrinkage." },
+      { type: "multiple-choice", question: "Which settings should you verify separately for PETG and PLA?", options: ["Nozzle, bed, and fan settings", "Only nozzle temperature", "Only bed temperature", "Only fan speed"], answer: 0, explanation: "PETG and PLA profiles can use different nozzle, bed, and fan settings. Follow the filament maker's guidance and verify the actual setup." },
+      { type: "multiple-choice", question: "What commonly helps ABS print successfully?", options: ["An enclosure and limited drafts", "Maximum fan speed at all times", "A cold bed", "A disabled nozzle heater"], answer: 0, explanation: "An enclosure helps keep the air near the ABS print stable, but ventilation and manufacturer safety guidance still apply." },
       { type: "fill-blank", question: "Complete bed target 70 C:\nM140 S___", meta: { codes: ["M140"] }, answer: "70", hint: "Bed target", explanation: "S70 sets the bed target to 70 C." },
       { type: "multiple-choice", question: "Why should you verify material settings instead of copying them without review?", options: ["Printer, filament, and environment vary", "All G-code is identical", "One profile fits every nozzle size", "Material brand never affects settings"], answer: 0, explanation: "Profiles are starting points and need verification on the actual machine." }
     ]
