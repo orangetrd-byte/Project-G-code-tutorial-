@@ -443,6 +443,15 @@ function validateCurriculum(api) {
   assert.match(printingUnitNineCopy, /Priming means pushing filament/, 'Printing Unit 9 must define priming');
   assert.match(printingUnitNineCopy, /Clearance is open space/, 'Printing Unit 9 must define clearance');
   assert.doesNotMatch(printingUnitNineCopy, /Why should you prime the nozzle before resuming/, 'Printing Unit 9 must not prescribe priming for every pause');
+  const printingUnitTen = api.TRACKS.printing.lessons.find(lesson => lesson.unit === 10);
+  const printingUnitTenCopy = (printingUnitTen?.theory || '') + ' ' + (printingUnitTen?.quiz.map(question => question.question + ' ' + question.explanation).join(' ') || '');
+  assert.match(printingUnitTenCopy, /Slicer tuning is the process of adjusting/, 'Printing Unit 10 must define slicer tuning');
+  assert.match(printingUnitTenCopy, /A variable is the one setting/, 'Printing Unit 10 must define variable');
+  assert.match(printingUnitTenCopy, /Retraction is a short filament pullback/, 'Printing Unit 10 must define retraction');
+  assert.match(printingUnitTenCopy, /stringing, which means thin\s+strands/, 'Printing Unit 10 must define stringing');
+  assert.match(printingUnitTenCopy, /Ringing is a repeating ripple/, 'Printing Unit 10 must define ringing');
+  assert.match(printingUnitTenCopy, /Follow the slicer's documented calibration method/, 'Printing Unit 10 must scope flow calibration');
+  assert.doesNotMatch(printingUnitTenCopy, /Flow cube: tune wall thickness|Speed\/acceleration test/, 'Printing Unit 10 must not combine variables or oversimplify flow tuning');
 
   const lessonIds = new Set();
   const questionIds = new Set();

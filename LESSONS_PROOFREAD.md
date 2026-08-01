@@ -3030,16 +3030,27 @@ Use the printer's documented pause and resume flow. Do not assume that a bare Z 
 
 **Theory:**
 
-Good tuning is controlled. Change one setting, print a known test, read the result, and
- record what changed.
+Slicer tuning is the process of adjusting the settings that a slicer uses to create a print
+ job. A setting is a saved choice, such as nozzle temperature. A variable is the one setting
+ deliberately changed during a test.
 
-Temp tower: tune temperature
-Retraction tower: tune strings
-Flow cube: tune wall thickness
-Speed test: tune motion quality
+A known test is a repeatable model printed under recorded conditions. A temperature tower
+ has sections printed at different nozzle temperatures; it is useful only when the print job
+ actually commands those changes. Retraction is a short filament pullback before a travel move.
+ A retraction test compares controlled settings that can affect stringing, which means thin
+ strands left between separated parts of a print.
 
-If you change temperature, speed, fan, flow, and retraction all at once, you will not know
- which setting fixed or caused the result.
+Temperature tower: compare commanded temperatures
+Retraction test: compare one retraction setting
+Calibration cube: inspect dimensions and wall consistency
+Motion test: compare one speed or acceleration setting
+
+Flow, also called extrusion multiplier in some slicers, scales the requested extrusion
+ amount. Follow the slicer's documented calibration method instead of changing flow from one
+ wall measurement alone. Ringing is a repeating ripple that can appear after a direction change.
+
+Change one variable, print the same test, read the result, and record the printer, filament,
+ nozzle, profile, and changed value. Results apply to those conditions; they are not universal.
 
 
 **Quiz:**
@@ -3065,13 +3076,13 @@ If you change temperature, speed, fan, flow, and retraction all at once, you wil
   - Program end
   - Correct answer: 0
   - Explanation: Retraction tests reveal stringing and restart quality.
-- Q4 [multiple-choice]: What does a flow cube often help check?
-  - Wall thickness and extrusion flow
-  - Nozzle temperature
-  - Retraction distance
-  - Fan speed
+- Q4 [multiple-choice]: What can a calibration cube help you inspect?
+  - Dimensions and wall consistency
+  - Nozzle temperature changes
+  - Retraction distance only
+  - Firmware pause behavior
   - Correct answer: 0
-  - Explanation: Flow tests help evaluate extrusion amount.
+  - Explanation: A cube can reveal dimensional or wall differences, but flow should be adjusted with the slicer's documented method rather than one wall measurement alone.
 - Q5 [fill-blank]: Complete the habit: change one ____ at a time.
   - Correct answer: variable
   - Hint: One setting
@@ -3091,12 +3102,12 @@ If you change temperature, speed, fan, flow, and retraction all at once, you wil
   - Correct answer: 0
   - Explanation: Multiple simultaneous changes hide the cause.
 - Q8 [multiple-choice]: Which test best targets ringing or motion quality?
-  - Speed/acceleration test
-  - Temperature tower
-  - Flow cube
-  - Retraction tower
+  - A controlled motion test
+  - A temperature tower
+  - A flow cube
+  - A retraction tower
   - Correct answer: 0
-  - Explanation: Motion quality is affected by speed and acceleration.
+  - Explanation: Use a controlled motion test and change one speed or acceleration setting at a time.
 - Q9 [fill-blank]: A retraction tower mainly checks for ____.
   - Correct answer: stringing
   - Hint: Thin plastic hairs

@@ -1762,25 +1762,34 @@ M25 ; Marlin pause an SD-card print</pre>
     icon: "TUNE",
     xp: 25,
     theory: `
-      <p>Good tuning is controlled. Change one setting, print a known test, read the result, and
-      record what changed.</p>
-      <pre>Temp tower: tune temperature
-Retraction tower: tune strings
-Flow cube: tune wall thickness
-Speed test: tune motion quality</pre>
-      <p>If you change temperature, speed, fan, flow, and retraction all at once, you will not know
-      which setting fixed or caused the result.</p>
+      <p>Slicer tuning is the process of adjusting the settings that a slicer uses to create a print
+      job. A setting is a saved choice, such as nozzle temperature. A variable is the one setting
+      deliberately changed during a test.</p>
+      <p>A known test is a repeatable model printed under recorded conditions. A temperature tower
+      has sections printed at different nozzle temperatures; it is useful only when the print job
+      actually commands those changes. Retraction is a short filament pullback before a travel move.
+      A retraction test compares controlled settings that can affect stringing, which means thin
+      strands left between separated parts of a print.</p>
+      <pre>Temperature tower: compare commanded temperatures
+Retraction test: compare one retraction setting
+Calibration cube: inspect dimensions and wall consistency
+Motion test: compare one speed or acceleration setting</pre>
+      <p>Flow, also called extrusion multiplier in some slicers, scales the requested extrusion
+      amount. Follow the slicer's documented calibration method instead of changing flow from one
+      wall measurement alone. Ringing is a repeating ripple that can appear after a direction change.</p>
+      <p>Change one variable, print the same test, read the result, and record the printer, filament,
+      nozzle, profile, and changed value. Results apply to those conditions; they are not universal.</p>
     `,
     visual: "program-structure",
     quiz: [
       { type: "multiple-choice", question: "What is the best tuning habit?", options: ["Change one variable at a time", "Change every variable at once", "Change settings without recording them", "Use one profile for every material"], answer: 0, explanation: "One change at a time lets you connect cause and effect." },
       { type: "multiple-choice", question: "What does a temperature tower help tune?", options: ["Nozzle temperature", "Bed leveling", "Retraction distance", "Flow percentage only"], answer: 0, explanation: "A temperature tower compares print quality at different temperatures." },
       { type: "multiple-choice", question: "What does a retraction tower help tune?", options: ["Stringing and travel cleanup", "Bed size", "Z homing only", "Program end"], answer: 0, explanation: "Retraction tests reveal stringing and restart quality." },
-      { type: "multiple-choice", question: "What does a flow cube often help check?", options: ["Wall thickness and extrusion flow", "Nozzle temperature", "Retraction distance", "Fan speed"], answer: 0, explanation: "Flow tests help evaluate extrusion amount." },
+      { type: "multiple-choice", question: "What can a calibration cube help you inspect?", options: ["Dimensions and wall consistency", "Nozzle temperature changes", "Retraction distance only", "Firmware pause behavior"], answer: 0, explanation: "A cube can reveal dimensional or wall differences, but flow should be adjusted with the slicer's documented method rather than one wall measurement alone." },
       { type: "fill-blank", question: "Complete the habit: change one ____ at a time.", answer: "variable", hint: "One setting", explanation: "One variable at a time keeps tuning readable." },
       { type: "multiple-choice", question: "Why should you record tuning changes?", options: ["To repeat or undo the changes", "To increase print speed automatically", "To reset the firmware", "To change the filament profile"], answer: 0, explanation: "Records make tuning decisions traceable." },
       { type: "multiple-choice", question: "If stringing improves after changing temperature and retraction together, what is the problem?", options: ["You do not know which change helped", "The print cannot be used", "G-code stopped working", "The bed changed size"], answer: 0, explanation: "Multiple simultaneous changes hide the cause." },
-      { type: "multiple-choice", question: "Which test best targets ringing or motion quality?", options: ["Speed/acceleration test", "Temperature tower", "Flow cube", "Retraction tower"], answer: 0, explanation: "Motion quality is affected by speed and acceleration." },
+      { type: "multiple-choice", question: "Which test best targets ringing or motion quality?", options: ["A controlled motion test", "A temperature tower", "A flow cube", "A retraction tower"], answer: 0, explanation: "Use a controlled motion test and change one speed or acceleration setting at a time." },
       { type: "fill-blank", question: "A retraction tower mainly checks for ____.", answer: "stringing", hint: "Thin plastic hairs", explanation: "Retraction tuning targets stringing and restart artifacts." },
       { type: "multiple-choice", question: "What is the goal of slicer tuning?", options: ["Predictable print quality through measured changes", "Maximum speed regardless of quality", "Several simultaneous variable changes", "One profile for every material"], answer: 0, explanation: "Good tuning makes results more predictable." }
     ]

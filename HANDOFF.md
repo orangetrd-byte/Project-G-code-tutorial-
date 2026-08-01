@@ -31,12 +31,12 @@ The current learning model is similar to Duolingo or Mimo:
 
 ## Current Build State
 
-- App version: `MGP v2.58.19`
-- App build: `2026.08.01.07`
-- Service worker cache: `pgct-2026.08.01.07`
+- App version: `MGP v2.58.20`
+- App build: `2026.08.01.08`
+- Service worker cache: `pgct-2026.08.01.08`
 - CNC path: 11 units / 21 lessons
 - 3D printing path: 10 units / 18 lessons
-- Current release scope: beginner-readable, firmware-scoped Printing Unit 9
+- Current release scope: beginner-readable, controlled Printing Unit 10 tuning
 
 ## What Works Well
 
@@ -53,6 +53,8 @@ The current learning model is similar to Duolingo or Mimo:
 - Numeric fill-in answers request numeric or decimal keyboards on mobile.
 
 ## Recent Important Changes
+
+- Defined Printing Unit 10 tuning terms and limited calibration advice to controlled, documented methods.
 
 - Defined Printing Unit 9 recovery terms and made resume priming conditional on the printer's documented routine.
 

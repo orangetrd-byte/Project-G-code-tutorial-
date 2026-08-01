@@ -8,9 +8,9 @@ Phase 6: Retention Polish
 
 - Last updated: 2026-08-01.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest application-content release: beginner definitions and firmware-scoped resume guidance for Printing Unit 9.
-- Current app build: MGP | Version v2.58.19 | Build 2026.08.01.07.
-- Current service-worker cache: pgct-2026.08.01.07.
+- Latest application-content release: beginner definitions and controlled calibration guidance for Printing Unit 10.
+- Current app build: MGP | Version v2.58.20 | Build 2026.08.01.08.
+- Current service-worker cache: pgct-2026.08.01.08.
 - Local `main` is aligned with `origin/main`.
 
 ## Phase 5 Completion Summary
@@ -32,6 +32,9 @@ Phase 6: Retention Polish
 - Maintain safe educational language and clear CNC / 3D printing track separation.
 
 ## Completed In This Pass
+
+- Beginner language: defined slicer tuning, settings, variables, known tests, retraction, stringing, flow, and ringing in Printing Unit 10.
+- Accuracy: required commanded temperature changes, one-variable motion tests, and slicer-specific flow calibration.
 
 - Beginner language: defined print recovery, pause, resume, filament runout, priming, and clearance in Printing Unit 9.
 - Accuracy: kept Marlin pause commands scoped and made priming conditional on the printer's documented resume routine.
