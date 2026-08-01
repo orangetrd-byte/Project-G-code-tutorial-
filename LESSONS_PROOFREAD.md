@@ -2836,20 +2836,24 @@ ___
 
 **Theory:**
 
-Multi-material printing adds tool changes, filament changes, purge moves, and sometimes
- wipe towers. The G-code must manage which extruder or filament is active.
+Multi-material printing uses more than one filament or material path. A tool is a configured
+ nozzle, extruder, or material path that firmware can select. A tool change switches the active tool,
+ while a filament change replaces material in a path.
 
-This isolated Marlin example assumes that the surrounding file uses absolute extrusion mode:
+Purging pushes material through the nozzle to clear old material and restore steady flow.
+ A purge or wipe tower is a sacrificial printed structure that receives transition material away
+ from the part.
 
-T0 ; select tool 0
+These isolated Marlin examples assume that the surrounding file uses absolute extrusion mode:
+
+T1 ; select configured tool 1
 M83 ; temporarily use relative extrusion
-G1 E12 F300 ; example purge amount
+G1 E12 F300 ; demonstration purge amount
 M82 ; restore the surrounding file's absolute extrusion mode
-T1 ; select tool 1
-M600 ; Marlin filament change with Advanced Pause enabled
+M600 ; filament change when Advanced Pause is enabled
 
-Tool-change behavior is printer-specific. Some printers use multiple nozzles, some use one
- nozzle with filament switching, and some use slicer-managed purge systems.
+This is not a complete tool-change sequence. Purge distance, temperature, location, and tool
+ behavior are printer-specific. Verify safe clearance and the printer's documented workflow.
 
 
 **Quiz:**
@@ -2902,12 +2906,12 @@ ___
   - Correct answer: 0
   - Explanation: With M83 active, positive E12 commands 12 units of relative extruder movement for this example. M82 then restores the surrounding file's absolute extrusion mode.
 - Q8 [multiple-choice]: What is a purge tower used for?
-  - Cleaning and priming during color changes away from the part
+  - Receiving transition material away from the part
   - Leveling the bed
   - Cooling the hotend
   - Setting X zero
   - Correct answer: 0
-  - Explanation: A purge tower handles material/color transitions.
+  - Explanation: A purge tower is a sacrificial structure that receives purged material during tool or color changes.
 - Q9 [fill-blank]: Complete the Marlin filament-change command used when Advanced Pause is enabled:
 M___
   - Correct answer: 600

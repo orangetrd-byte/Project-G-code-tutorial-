@@ -429,6 +429,12 @@ function validateCurriculum(api) {
   assert.match(printingUnitSevenCopy, /A macro is a named command that runs a saved sequence/, 'Printing Unit 7 must define macro');
   assert.match(printingUnitSevenCopy, /A configuration section is a group of/, 'Printing Unit 7 must define configuration section');
   assert.match(printingUnitSevenCopy, /M486 S2.*identifies the current object; it does not cancel object 2/s, 'Printing Unit 7 must teach M486 S accurately');
+  const printingUnitEight = api.TRACKS.printing.lessons.find(lesson => lesson.unit === 8);
+  const printingUnitEightCopy = (printingUnitEight?.theory || '') + ' ' + (printingUnitEight?.quiz.map(question => question.question + ' ' + question.explanation).join(' ') || '');
+  assert.match(printingUnitEightCopy, /A tool is a configured\s+nozzle, extruder, or material path/, 'Printing Unit 8 must define tool');
+  assert.match(printingUnitEightCopy, /Purging pushes material through the nozzle/, 'Printing Unit 8 must define purging');
+  assert.match(printingUnitEightCopy, /A purge or wipe tower is a sacrificial printed structure/, 'Printing Unit 8 must define purge tower');
+  assert.match(printingUnitEightCopy, /This is not a complete tool-change sequence/, 'Printing Unit 8 must limit its example scope');
 
   const lessonIds = new Set();
   const questionIds = new Set();

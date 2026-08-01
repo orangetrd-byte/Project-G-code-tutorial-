@@ -8,9 +8,9 @@ Phase 6: Retention Polish
 
 - Last updated: 2026-08-01.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest application-content release: beginner definitions and corrected M486 scope for Printing Unit 7.
-- Current app build: MGP | Version v2.58.17 | Build 2026.08.01.05.
-- Current service-worker cache: pgct-2026.08.01.05.
+- Latest application-content release: beginner definitions and scoped tool-change examples for Printing Unit 8.
+- Current app build: MGP | Version v2.58.18 | Build 2026.08.01.06.
+- Current service-worker cache: pgct-2026.08.01.06.
 - Local `main` is aligned with `origin/main`.
 
 ## Phase 5 Completion Summary
@@ -32,6 +32,9 @@ Phase 6: Retention Polish
 - Maintain safe educational language and clear CNC / 3D printing track separation.
 
 ## Completed In This Pass
+
+- Beginner language: defined multi-material printing, tool, tool change, filament change, purging, and purge tower in Printing Unit 8.
+- Accuracy: separated the modeled tool-selection and purge sequence from M600 and added machine-specific safety scope.
 
 - Beginner language: defined firmware, firmware flavor, vendor firmware, macro, and configuration section in Printing Unit 7.
 - Accuracy: corrected M486 S2 from object cancellation to current-object identification and named required feature scope.

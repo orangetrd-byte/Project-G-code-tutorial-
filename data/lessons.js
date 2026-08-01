@@ -1684,17 +1684,20 @@ M486 S2   ; set current object index to 2 with Marlin CANCEL_OBJECTS</pre>
     icon: "T0",
     xp: 25,
     theory: `
-      <p>Multi-material printing adds tool changes, filament changes, purge moves, and sometimes
-      wipe towers. The G-code must manage which extruder or filament is active.</p>
-      <p>This isolated Marlin example assumes that the surrounding file uses absolute extrusion mode:</p>
-      <pre>T0 ; select tool 0
+      <p>Multi-material printing uses more than one filament or material path. A tool is a configured
+      nozzle, extruder, or material path that firmware can select. A tool change switches the active tool,
+      while a filament change replaces material in a path.</p>
+      <p>Purging pushes material through the nozzle to clear old material and restore steady flow.
+      A purge or wipe tower is a sacrificial printed structure that receives transition material away
+      from the part.</p>
+      <p>These isolated Marlin examples assume that the surrounding file uses absolute extrusion mode:</p>
+      <pre>T1 ; select configured tool 1
 M83 ; temporarily use relative extrusion
-G1 E12 F300 ; example purge amount
+G1 E12 F300 ; demonstration purge amount
 M82 ; restore the surrounding file's absolute extrusion mode
-T1 ; select tool 1
-M600 ; Marlin filament change with Advanced Pause enabled</pre>
-      <p>Tool-change behavior is printer-specific. Some printers use multiple nozzles, some use one
-      nozzle with filament switching, and some use slicer-managed purge systems.</p>
+M600 ; filament change when Advanced Pause is enabled</pre>
+      <p>This is not a complete tool-change sequence. Purge distance, temperature, location, and tool
+      behavior are printer-specific. Verify safe clearance and the printer's documented workflow.</p>
     `,
     visual: "block-anatomy",
     quiz: [
@@ -1705,7 +1708,7 @@ M600 ; Marlin filament change with Advanced Pause enabled</pre>
       { type: "fill-blank", question: "Select tool 1:\n___", answer: "T1", hint: "Tool command", explanation: "T1 selects tool/extruder 1 on many setups." },
       { type: "multiple-choice", question: "Why can tool-change G-code vary a lot?", options: ["Printer hardware and firmware differ", "All systems use the same tool count", "Filament color selects the syntax", "T commands are ignored"], answer: 0, explanation: "Multi-material systems use different hardware and firmware logic." },
       { type: "multiple-choice", question: "In the lesson's declared M83 example, which line commands the purge?", options: ["G1 E12 F300", "T0", "M600", "; select tool"], answer: 0, explanation: "With M83 active, positive E12 commands 12 units of relative extruder movement for this example. M82 then restores the surrounding file's absolute extrusion mode." },
-      { type: "multiple-choice", question: "What is a purge tower used for?", options: ["Cleaning and priming during color changes away from the part", "Leveling the bed", "Cooling the hotend", "Setting X zero"], answer: 0, explanation: "A purge tower handles material/color transitions." },
+      { type: "multiple-choice", question: "What is a purge tower used for?", options: ["Receiving transition material away from the part", "Leveling the bed", "Cooling the hotend", "Setting X zero"], answer: 0, explanation: "A purge tower is a sacrificial structure that receives purged material during tool or color changes." },
       { type: "fill-blank", question: "Complete the Marlin filament-change command used when Advanced Pause is enabled:\nM___", meta: { codes: ["M600"] }, answer: "600", hint: "Filament change", explanation: "M600 starts the configured Marlin filament-change procedure when Advanced Pause is enabled." },
       { type: "multiple-choice", question: "What should you verify before using M600?", meta: { codes: ["M600"] }, options: ["The firmware and required feature support it", "The slicer uses relative extrusion", "The printer has a probe", "X is always zero"], answer: 0, explanation: "M600 requires firmware support and, on Marlin, the configured Advanced Pause feature." }
     ]
