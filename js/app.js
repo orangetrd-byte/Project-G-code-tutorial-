@@ -5,7 +5,7 @@
 
 'use strict';
 
-const APP_BUILD = 'MGP | Version v2.58.18 | Build 2026.08.01.06';
+const APP_BUILD = 'MGP | Version v2.58.19 | Build 2026.08.01.07';
 
 // ─── ACCESS GATE ────────────────────────────────────────────
 const AccessGate = {

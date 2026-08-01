@@ -435,6 +435,14 @@ function validateCurriculum(api) {
   assert.match(printingUnitEightCopy, /Purging pushes material through the nozzle/, 'Printing Unit 8 must define purging');
   assert.match(printingUnitEightCopy, /A purge or wipe tower is a sacrificial printed structure/, 'Printing Unit 8 must define purge tower');
   assert.match(printingUnitEightCopy, /This is not a complete tool-change sequence/, 'Printing Unit 8 must limit its example scope');
+  const printingUnitNine = api.TRACKS.printing.lessons.find(lesson => lesson.unit === 9);
+  const printingUnitNineCopy = (printingUnitNine?.theory || '') + ' ' + (printingUnitNine?.quiz.map(question => question.question + ' ' + question.explanation).join(' ') || '');
+  assert.match(printingUnitNineCopy, /Print recovery is the process of returning/, 'Printing Unit 9 must define print recovery');
+  assert.match(printingUnitNineCopy, /A pause temporarily stops printing/, 'Printing Unit 9 must define pause');
+  assert.match(printingUnitNineCopy, /Filament runout means/, 'Printing Unit 9 must define filament runout');
+  assert.match(printingUnitNineCopy, /Priming means pushing filament/, 'Printing Unit 9 must define priming');
+  assert.match(printingUnitNineCopy, /Clearance is open space/, 'Printing Unit 9 must define clearance');
+  assert.doesNotMatch(printingUnitNineCopy, /Why should you prime the nozzle before resuming/, 'Printing Unit 9 must not prescribe priming for every pause');
 
   const lessonIds = new Set();
   const questionIds = new Set();

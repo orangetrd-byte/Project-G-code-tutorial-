@@ -2934,13 +2934,21 @@ M___
 
 **Theory:**
 
-Print recovery is about pausing safely, keeping heat controlled, and resuming without
- crashing into the part or leaving blobs.
+Print recovery is the process of returning a stopped or interrupted print to a safe state.
+ A pause temporarily stops printing while preserving a path to continue. Resume means
+ continuing from that paused state. Filament runout means the printer detects that usable
+ filament is no longer feeding into the print.
 
 M0 ; Marlin unconditional stop
 M25 ; Marlin pause an SD-card print
 
-Pause behavior is firmware-specific. Use the printer's documented pause and resume flow. Do not assume that a bare Z move creates a relative lift or that a bare E move creates a relative prime; both depend on the active modes and current positions.
+Priming means pushing filament until flow is ready again. Clearance is open space that lets
+ the nozzle move without hitting the print or printer. A documented resume routine may restore
+ heat, position, clearance, and flow, but the required steps are printer-specific.
+
+Use the printer's documented pause and resume flow. Do not assume that a bare Z move creates
+ a relative lift or that a bare E move creates a relative prime; both depend on the active modes
+ and current positions.
 
 
 **Quiz:**
@@ -2987,13 +2995,13 @@ Pause behavior is firmware-specific. Use the printer's documented pause and resu
   - Layer number only
   - Correct answer: 0
   - Explanation: Safe resume needs the printer ready to continue without a blob or crash.
-- Q7 [multiple-choice]: Why should you prime the nozzle before resuming a paused print?
+- Q7 [multiple-choice]: Why might a documented resume routine prime the nozzle?
   - To restore filament flow
   - To home the bed
   - To turn off motors
   - To delete strings
   - Correct answer: 0
-  - Explanation: Pauses can leave the nozzle under-primed.
+  - Explanation: Some pauses reduce filament flow, so the printer's documented routine may prime before printing continues.
 - Q8 [multiple-choice]: Why can G1 E3 not be assumed to command a 3 mm prime?
   - Its result depends on M82 or M83 and the current E position
   - E values always set fan speed
