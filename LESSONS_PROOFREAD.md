@@ -2743,14 +2743,20 @@ M106 S___
 
 **Theory:**
 
-Printer G-code is not perfectly universal. Marlin, Klipper, RepRapFirmware, and vendor
- firmware may handle commands, macros, and comments differently.
+Firmware is the control software running on the printer. A firmware flavor is a particular
+ command family or implementation, such as Marlin, Klipper, or RepRapFirmware. Vendor firmware
+ is a printer maker's own version or modification.
 
-G29 ; bed leveling on many Marlin setups
-BED_MESH_CALIBRATE ; Klipper command provided by a configured [bed_mesh] section
-M486 S2 ; object cancel support on some setups
+A macro is a named command that runs a saved sequence. A configuration section is a group of
+ settings that enables or controls a firmware feature.
 
-When a command seems right but fails, check the firmware flavor, enabled configuration sections, and printer documentation.
+G29 ; leveling behavior depends on the enabled Marlin system
+BED_MESH_CALIBRATE ; available when Klipper [bed_mesh] is configured
+M486 S2 ; set current object index to 2 with Marlin CANCEL_OBJECTS
+
+`M486 S2` identifies the current object; it does not cancel object 2. Marlin uses
+ `M486 P2` to cancel that indexed object. Support requires the relevant firmware feature
+ or a compatible configured macro. Verify commands against the printer's firmware documentation.
 
 
 **Quiz:**

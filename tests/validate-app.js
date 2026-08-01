@@ -423,6 +423,12 @@ function validateCurriculum(api) {
   assert.match(printingUnitSixCopy, /Support distance is the planned gap/, 'Printing Unit 6 must define support distance');
   assert.match(printingUnitSixCopy, /M83 ; relative extrusion mode/, 'Printing Unit 6 must declare extrusion mode');
   assert.doesNotMatch(printingUnitSixCopy, /Why should you reduce the bridge speed/, 'Printing Unit 6 must not prescribe one universal bridge speed');
+  const printingUnitSeven = api.TRACKS.printing.lessons.find(lesson => lesson.unit === 7);
+  const printingUnitSevenCopy = (printingUnitSeven?.theory || '') + ' ' + (printingUnitSeven?.quiz.map(question => question.question + ' ' + question.explanation).join(' ') || '');
+  assert.match(printingUnitSevenCopy, /Firmware is the control software running on the printer/, 'Printing Unit 7 must define firmware');
+  assert.match(printingUnitSevenCopy, /A macro is a named command that runs a saved sequence/, 'Printing Unit 7 must define macro');
+  assert.match(printingUnitSevenCopy, /A configuration section is a group of/, 'Printing Unit 7 must define configuration section');
+  assert.match(printingUnitSevenCopy, /M486 S2.*identifies the current object; it does not cancel object 2/s, 'Printing Unit 7 must teach M486 S accurately');
 
   const lessonIds = new Set();
   const questionIds = new Set();

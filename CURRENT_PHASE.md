@@ -8,9 +8,9 @@ Phase 6: Retention Polish
 
 - Last updated: 2026-08-01.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest application-content release: beginner definitions and scoped examples for Printing Unit 6.
-- Current app build: MGP | Version v2.58.16 | Build 2026.08.01.04.
-- Current service-worker cache: pgct-2026.08.01.04.
+- Latest application-content release: beginner definitions and corrected M486 scope for Printing Unit 7.
+- Current app build: MGP | Version v2.58.17 | Build 2026.08.01.05.
+- Current service-worker cache: pgct-2026.08.01.05.
 - Local `main` is aligned with `origin/main`.
 
 ## Phase 5 Completion Summary
@@ -32,6 +32,9 @@ Phase 6: Retention Polish
 - Maintain safe educational language and clear CNC / 3D printing track separation.
 
 ## Completed In This Pass
+
+- Beginner language: defined firmware, firmware flavor, vendor firmware, macro, and configuration section in Printing Unit 7.
+- Accuracy: corrected M486 S2 from object cancellation to current-object identification and named required feature scope.
 
 - Beginner language: defined overhang, support, bridge, and support distance in Printing Unit 6.
 - Accuracy: declared relative extrusion, scoped the fan example, and removed universal bridge-speed advice.
