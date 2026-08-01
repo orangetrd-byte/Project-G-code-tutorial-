@@ -1463,25 +1463,30 @@ G1 X30 Y40 E0.22 F1500
     icon: "Z",
     xp: 20,
     theory: `
-      <p>A good first layer gives the rest of the print a fair chance. Check the nozzle height,
-      line shape, and bed adhesion before changing settings at random.</p>
-      <pre>G28
+      <p>Bed adhesion means how well the first layer sticks to the print surface. Check adhesion,
+      line shape, and nozzle-to-bed distance before changing settings.</p>
+      <p>The Z offset is the configured difference between the printer's Z reference and the nozzle's
+      working height. Bed leveling compensates for tilt or small height differences across the bed.</p>
+      <pre>G90 ; absolute XYZ positioning
+M83 ; relative extrusion mode
+G28 ; home all axes
 G1 Z0.20 F600
 G1 X60 Y60 E0.8 F1200</pre>
-      <p>A good first layer is slightly squished, continuous, and stuck to the bed. If the nozzle
-      is too high, lines look round and may not stick. If it is too low, plastic can smear, click,
-      or stop flowing.</p>
+      <p>This modeled sequence declares both positioning modes. <code>Z0.20</code> requests a Z-axis
+      position; the real nozzle-to-bed gap also depends on homing, Z offset, leveling, and machine setup.
+      A good first-layer line is slightly flattened, continuous, and firmly attached. A high nozzle can
+      leave round, loose lines. A low nozzle can smear plastic or restrict flow.</p>
     `,
-    visual: "lathe-axes",
+    visual: "linear-feed",
     quiz: [
-      { type: "multiple-choice", question: "Model first-layer move:\nG1 Z0.20 F600\nG1 X60 Y60 E0.8 F1200\n\nWhat does Z0.20 set here?", meta: { codes: ["G1"] }, options: ["Nozzle height above the bed", "Nozzle temperature", "Fan speed", "Bed temperature"], answer: 0, explanation: "Z controls height. A first layer often starts near 0.20 mm depending on setup." },
+      { type: "multiple-choice", question: "Modeled first-layer move:\nG90\nG1 Z0.20 F600\n\nWhat does Z0.20 request?", meta: { codes: ["G1", "G90"] }, options: ["Z-axis position 0.20", "Nozzle temperature 0.20", "Fan speed 0.20", "Bed temperature 0.20"], answer: 0, explanation: "With G90 active, Z0.20 requests absolute Z position 0.20. The actual nozzle-to-bed gap also depends on homing, Z offset, leveling, and setup." },
       { type: "multiple-choice", question: "If first-layer lines are round and barely stick, what is the most likely problem?", options: ["The nozzle is too high", "The nozzle is too low", "The nozzle is at the correct height", "The fan speed is the only problem"], answer: 0, explanation: "A high nozzle lays plastic on top of the bed instead of pressing it down." },
       { type: "multiple-choice", question: "If the nozzle scrapes and plastic barely comes out, what is the most likely problem?", options: ["The nozzle is too low", "The nozzle is too high", "The nozzle temperature is the only problem", "The nozzle is too far from the bed"], answer: 0, explanation: "A low nozzle can block flow by pressing too close to the bed." },
       { type: "multiple-choice", question: "Which line homes the printer before first-layer checks?\nG28\nG1 Z0.20 F600", options: ["G28", "G1 Z0.20 F600", "F600", "Z0.20"], answer: 0, explanation: "G28 homes the printer so it starts from known positions." },
-      { type: "fill-blank", question: "Complete a safe first-layer height move:\nG1 ___0.20 F600", meta: { codes: ["G1"] }, answer: "Z", hint: "Vertical axis", explanation: "Z controls vertical nozzle height." },
+      { type: "fill-blank", question: "Complete this modeled Z-position move:\nG1 ___0.20 F600", meta: { codes: ["G1"] }, answer: "Z", hint: "Vertical axis", explanation: "Z controls the vertical axis. Verify the printer setup before using a specific first-layer position." },
       { type: "multiple-choice", question: "How should a good first-layer line look?", options: ["Slightly flattened and continuous", "Round and loose", "Transparent and scraped away", "Separated by wide gaps"], answer: 0, explanation: "A slightly flattened line usually means the nozzle is close enough to bond." },
-      { type: "multiple-choice", question: "What should you adjust first for a bad first layer height?", options: ["Z offset or bed leveling", "Flow percentage only", "Retraction distance", "Travel speed"], answer: 0, explanation: "Z offset and bed leveling directly affect first-layer height." },
-      { type: "multiple-choice", question: "Which value is extrusion amount in this line?\nG1 X60 Y60 E0.8 F1200", meta: { codes: ["G1"] }, options: ["E0.8", "X60", "Y60", "F1200"], answer: 0, explanation: "E is the extruder amount in most printer G-code." },
+      { type: "multiple-choice", question: "Which setup areas directly affect first-layer height?", options: ["Z offset and bed leveling", "Flow percentage only", "Retraction distance", "Travel speed"], answer: 0, explanation: "Z offset sets the nozzle reference height, while bed leveling compensates for height differences across the bed. Follow the printer-specific setup procedure before adjusting either." },
+      { type: "multiple-choice", question: "With M83 active, which value requests 0.8 of forward extruder movement?\nG1 X60 Y60 E0.8 F1200", meta: { codes: ["G1", "M83"] }, options: ["E0.8", "X60", "Y60", "F1200"], answer: 0, explanation: "M83 makes E values relative, so E0.8 requests 0.8 of forward extruder movement in the active units." },
       { type: "fill-blank", question: "Type the common command that homes all axes before checking the first layer:", answer: "G28", hint: "Home command", explanation: "G28 homes the printer axes." },
       { type: "multiple-choice", question: "Why should you correct first-layer problems before tuning print speed?", options: ["Poor adhesion can ruin the whole print early", "Retraction controls bed flatness", "Fan speed sets nozzle height", "End G-code corrects the first layer"], answer: 0, explanation: "If the first layer fails, later layers do not matter." }
     ]
@@ -1530,23 +1535,26 @@ G1 E0.8 F1800 ; prime</pre>
     icon: "FLOW",
     xp: 20,
     theory: `
-      <p>Flow problems show up as gaps, thin walls, blobs, heavy seams, or rough top surfaces.
-      G-code movement helps you read what the slicer asked the printer to do.</p>
-      <pre>G1 X100 E5.0 F1200 ; extrude while moving
-M221 S95           ; Marlin flow percentage example</pre>
-      <p>Before changing flow, check basics: nozzle size, filament diameter, temperature, and whether
-      the extruder is slipping. Flow changes should be small and intentional. Marlin documents M221; Klipper also supports M221 with an S percentage.</p>
+      <p>Flow describes how much filament the printer pushes compared with the requested amount.
+      Under-extrusion means too little material is deposited; over-extrusion means too much. These
+      problems can appear as gaps, thin walls, blobs, heavy seams, or rough top surfaces.</p>
+      <pre>M83                ; relative extrusion mode
+G1 X100 E0.5 F1200 ; move X while pushing 0.5 of filament
+M221 S95           ; set extrusion factor to 95 percent</pre>
+      <p>An extrusion-factor override scales commanded E movement. Marlin and Klipper both document
+      <code>M221 S&lt;percent&gt;</code>; other firmware may differ. Before changing it, check nozzle size,
+      filament diameter, temperature, and whether the extruder is slipping. Make small, measured changes.</p>
     `,
     visual: "block-anatomy",
     quiz: [
-      { type: "multiple-choice", question: "Model extrusion move:\nG1 X100 E5.0 F1200\n\nWhich value asks for extrusion?", meta: { codes: ["G1"] }, options: ["E5.0", "X100", "F1200", "G1"], answer: 0, explanation: "E5.0 is the extrusion amount in this move." },
+      { type: "multiple-choice", question: "With M83 active, which value requests forward extruder movement?\nG1 X100 E0.5 F1200", meta: { codes: ["G1", "M83"] }, options: ["E0.5", "X100", "F1200", "G1"], answer: 0, explanation: "M83 makes E relative, so E0.5 requests 0.5 of forward extruder movement in the active units." },
       { type: "multiple-choice", question: "What can under-extrusion look like?", options: ["Gaps and thin lines", "Blobs and heavy seams", "Warped corners", "Layer shifts"], answer: 0, explanation: "Under-extrusion often leaves gaps, weak walls, or missing top-surface material." },
       { type: "multiple-choice", question: "What can over-extrusion look like?", options: ["Blobs, heavy seams, rough top surfaces", "Gaps and thin walls", "Layer shifts without excess material", "No extrusion after travel"], answer: 0, explanation: "Too much plastic can build up as blobs or rough, crowded lines." },
       { type: "multiple-choice", question: "In Marlin, what does M221 S95 adjust?", meta: { codes: ["M221"] }, options: ["Flow percentage to 95 percent", "Bed temperature to 95 C always", "Fan off", "Home all axes"], answer: 0, explanation: "Marlin and Klipper support M221 S95 as a 95 percent extrusion-factor override." },
       { type: "fill-blank", question: "Complete this Marlin flow command:\nM221 S___", meta: { codes: ["M221"] }, answer: "95", hint: "95 percent flow", explanation: "M221 S95 sets Marlin flow to 95 percent. Other firmware may use a different command." },
       { type: "multiple-choice", question: "Before changing flow, what should you check?", options: ["Nozzle size and filament diameter", "Retraction distance only", "Bed mesh only", "Travel acceleration only"], answer: 0, explanation: "Wrong hardware or filament settings can look like a flow problem." },
-      { type: "multiple-choice", question: "Which line both moves and extrudes?", options: ["G1 X100 E5.0 F1200", "M221 S95", "; set flow", "G28"], answer: 0, explanation: "G1 with X and E moves while extruding." },
-      { type: "fill-blank", question: "Type the command word in this move:\n___ X100 E5.0 F1200", answer: "G1", hint: "Controlled move", explanation: "G1 is the controlled movement command used for many print paths." },
+      { type: "multiple-choice", question: "With M83 active, which line moves X while pushing filament forward?", options: ["G1 X100 E0.5 F1200", "M221 S95", "; set flow", "G28"], answer: 0, explanation: "With M83 active, the positive E0.5 value requests forward extruder movement while X moves." },
+      { type: "fill-blank", question: "Type the command word in this move:\n___ X100 E0.5 F1200", answer: "G1", hint: "Controlled move", explanation: "G1 is the controlled movement command used for many print paths." },
       { type: "multiple-choice", question: "Why should flow adjustments remain small?", options: ["Large changes can create new print defects", "Flow changes only travel speed", "Flow resets the home position", "Flow affects only the first layer"], answer: 0, explanation: "Flow affects every extrusion path, so big changes can create new problems." },
       { type: "multiple-choice", question: "What should you do if the extruder clicks or slips?", options: ["Check mechanical feed and nozzle restrictions", "Increase flow without testing", "Raise travel speed", "Disable retraction without diagnosing the cause"], answer: 0, explanation: "Skipping or slipping can come from a clog, pressure, temperature, or extruder tension issue." }
     ]

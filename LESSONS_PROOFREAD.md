@@ -2259,31 +2259,37 @@ Marlin does not execute the text after the semicolon. Labels such as `;TYPE:WALL
 
 **Theory:**
 
-A good first layer gives the rest of the print a fair chance. Check the nozzle height,
- line shape, and bed adhesion before changing settings at random.
+Bed adhesion means how well the first layer sticks to the print surface. Check adhesion,
+ line shape, and nozzle-to-bed distance before changing settings.
 
-G28
+The Z offset is the configured difference between the printer's Z reference and the nozzle's
+ working height. Bed leveling compensates for tilt or small height differences across the bed.
+
+G90 ; absolute XYZ positioning
+M83 ; relative extrusion mode
+G28 ; home all axes
 G1 Z0.20 F600
 G1 X60 Y60 E0.8 F1200
 
-A good first layer is slightly squished, continuous, and stuck to the bed. If the nozzle
- is too high, lines look round and may not stick. If it is too low, plastic can smear, click,
- or stop flowing.
+This modeled sequence declares both positioning modes. `Z0.20` requests a Z-axis
+ position; the real nozzle-to-bed gap also depends on homing, Z offset, leveling, and machine setup.
+ A good first-layer line is slightly flattened, continuous, and firmly attached. A high nozzle can
+ leave round, loose lines. A low nozzle can smear plastic or restrict flow.
 
 
 **Quiz:**
 
-- Q1 [multiple-choice]: Model first-layer move:
+- Q1 [multiple-choice]: Modeled first-layer move:
+G90
 G1 Z0.20 F600
-G1 X60 Y60 E0.8 F1200
 
-What does Z0.20 set here?
-  - Nozzle height above the bed
-  - Nozzle temperature
-  - Fan speed
-  - Bed temperature
+What does Z0.20 request?
+  - Z-axis position 0.20
+  - Nozzle temperature 0.20
+  - Fan speed 0.20
+  - Bed temperature 0.20
   - Correct answer: 0
-  - Explanation: Z controls height. A first layer often starts near 0.20 mm depending on setup.
+  - Explanation: With G90 active, Z0.20 requests absolute Z position 0.20. The actual nozzle-to-bed gap also depends on homing, Z offset, leveling, and setup.
 - Q2 [multiple-choice]: If first-layer lines are round and barely stick, what is the most likely problem?
   - The nozzle is too high
   - The nozzle is too low
@@ -2307,11 +2313,11 @@ G1 Z0.20 F600
   - Z0.20
   - Correct answer: 0
   - Explanation: G28 homes the printer so it starts from known positions.
-- Q5 [fill-blank]: Complete a safe first-layer height move:
+- Q5 [fill-blank]: Complete this modeled Z-position move:
 G1 ___0.20 F600
   - Correct answer: Z
   - Hint: Vertical axis
-  - Explanation: Z controls vertical nozzle height.
+  - Explanation: Z controls the vertical axis. Verify the printer setup before using a specific first-layer position.
 - Q6 [multiple-choice]: How should a good first-layer line look?
   - Slightly flattened and continuous
   - Round and loose
@@ -2319,21 +2325,21 @@ G1 ___0.20 F600
   - Separated by wide gaps
   - Correct answer: 0
   - Explanation: A slightly flattened line usually means the nozzle is close enough to bond.
-- Q7 [multiple-choice]: What should you adjust first for a bad first layer height?
-  - Z offset or bed leveling
+- Q7 [multiple-choice]: Which setup areas directly affect first-layer height?
+  - Z offset and bed leveling
   - Flow percentage only
   - Retraction distance
   - Travel speed
   - Correct answer: 0
-  - Explanation: Z offset and bed leveling directly affect first-layer height.
-- Q8 [multiple-choice]: Which value is extrusion amount in this line?
+  - Explanation: Z offset sets the nozzle reference height, while bed leveling compensates for height differences across the bed. Follow the printer-specific setup procedure before adjusting either.
+- Q8 [multiple-choice]: With M83 active, which value requests 0.8 of forward extruder movement?
 G1 X60 Y60 E0.8 F1200
   - E0.8
   - X60
   - Y60
   - F1200
   - Correct answer: 0
-  - Explanation: E is the extruder amount in most printer G-code.
+  - Explanation: M83 makes E values relative, so E0.8 requests 0.8 of forward extruder movement in the active units.
 - Q9 [fill-blank]: Type the common command that homes all axes before checking the first layer:
   - Correct answer: G28
   - Hint: Home command
@@ -2454,28 +2460,29 @@ G1 E___0.8 F1800
 
 **Theory:**
 
-Flow problems show up as gaps, thin walls, blobs, heavy seams, or rough top surfaces.
- G-code movement helps you read what the slicer asked the printer to do.
+Flow describes how much filament the printer pushes compared with the requested amount.
+ Under-extrusion means too little material is deposited; over-extrusion means too much. These
+ problems can appear as gaps, thin walls, blobs, heavy seams, or rough top surfaces.
 
-G1 X100 E5.0 F1200 ; extrude while moving
-M221 S95 ; Marlin flow percentage example
+M83 ; relative extrusion mode
+G1 X100 E0.5 F1200 ; move X while pushing 0.5 of filament
+M221 S95 ; set extrusion factor to 95 percent
 
-Before changing flow, check basics: nozzle size, filament diameter, temperature, and whether
- the extruder is slipping. Flow changes should be small and intentional. Marlin documents M221; Klipper also supports M221 with an S percentage.
+An extrusion-factor override scales commanded E movement. Marlin and Klipper both document
+ `M221 S&lt;percent&gt;`; other firmware may differ. Before changing it, check nozzle size,
+ filament diameter, temperature, and whether the extruder is slipping. Make small, measured changes.
 
 
 **Quiz:**
 
-- Q1 [multiple-choice]: Model extrusion move:
-G1 X100 E5.0 F1200
-
-Which value asks for extrusion?
-  - E5.0
+- Q1 [multiple-choice]: With M83 active, which value requests forward extruder movement?
+G1 X100 E0.5 F1200
+  - E0.5
   - X100
   - F1200
   - G1
   - Correct answer: 0
-  - Explanation: E5.0 is the extrusion amount in this move.
+  - Explanation: M83 makes E relative, so E0.5 requests 0.5 of forward extruder movement in the active units.
 - Q2 [multiple-choice]: What can under-extrusion look like?
   - Gaps and thin lines
   - Blobs and heavy seams
@@ -2509,15 +2516,15 @@ M221 S___
   - Travel acceleration only
   - Correct answer: 0
   - Explanation: Wrong hardware or filament settings can look like a flow problem.
-- Q7 [multiple-choice]: Which line both moves and extrudes?
-  - G1 X100 E5.0 F1200
+- Q7 [multiple-choice]: With M83 active, which line moves X while pushing filament forward?
+  - G1 X100 E0.5 F1200
   - M221 S95
   - ; set flow
   - G28
   - Correct answer: 0
-  - Explanation: G1 with X and E moves while extruding.
+  - Explanation: With M83 active, the positive E0.5 value requests forward extruder movement while X moves.
 - Q8 [fill-blank]: Type the command word in this move:
-___ X100 E5.0 F1200
+___ X100 E0.5 F1200
   - Correct answer: G1
   - Hint: Controlled move
   - Explanation: G1 is the controlled movement command used for many print paths.

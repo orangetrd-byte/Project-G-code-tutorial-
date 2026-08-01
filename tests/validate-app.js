@@ -400,6 +400,15 @@ function validateCurriculum(api) {
   assert.match(printingUnitThreeTheory, /comments—notes for people reading the file/, 'Printing Unit 3 must define comments');
   assert.match(printingUnitThreeCopy, /Whether its E value deposits filament depends on the active extrusion mode and current E position/, 'Printing Unit 3 must keep executable motion separate from mode-dependent extrusion');
   assert.doesNotMatch(printingUnitThreeCopy, /G1 with X\/Y\/E\/F is an executable motion\/extrusion line/, 'Printing Unit 3 must not treat every E word as universal extrusion');
+  const printingUnitFour = api.TRACKS.printing.lessons.filter(lesson => lesson.unit === 4);
+  const printingUnitFourTheory = printingUnitFour.map(lesson => lesson.theory).join(' ');
+  const printingUnitFourCopy = printingUnitFour.map(lesson => lesson.theory + ' ' + lesson.quiz.map(question => question.question + ' ' + question.explanation).join(' ')).join(' ');
+  assert.match(printingUnitFourTheory, /Bed adhesion means how well/, 'Printing Unit 4 must define bed adhesion');
+  assert.match(printingUnitFourTheory, /The Z offset is the configured difference/, 'Printing Unit 4 must define Z offset');
+  assert.match(printingUnitFourTheory, /Under-extrusion means too little material.*over-extrusion means too much/s, 'Printing Unit 4 must define under- and over-extrusion');
+  assert.match(printingUnitFourTheory, /An extrusion-factor override scales commanded E movement/, 'Printing Unit 4 must define extrusion-factor override');
+  assert.match(printingUnitFourTheory, /M83[\s\S]*G1 X100 E0\.5/, 'Printing Unit 4 flow example must declare relative extrusion mode');
+  assert.doesNotMatch(printingUnitFourCopy, /Complete a safe first-layer height move|G1 X100 E5\.0/, 'Printing Unit 4 must not teach unscoped first-layer or extrusion moves');
 
   const lessonIds = new Set();
   const questionIds = new Set();

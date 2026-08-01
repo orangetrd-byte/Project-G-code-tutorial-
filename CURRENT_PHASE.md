@@ -8,9 +8,9 @@ Phase 6: Retention Polish
 
 - Last updated: 2026-08-01.
 - Continue from CURRENT_PHASE.md, PHASE_PLAN.md, and BACKLOG.md.
-- Latest application-content release: beginner definitions and firmware-scoped wording for Printing Unit 3.
-- Current app build: MGP | Version v2.58.13 | Build 2026.08.01.01.
-- Current service-worker cache: pgct-2026.08.01.01.
+- Latest application-content release: beginner definitions and mode-scoped examples for Printing Unit 4.
+- Current app build: MGP | Version v2.58.14 | Build 2026.08.01.02.
+- Current service-worker cache: pgct-2026.08.01.02.
 - Local `main` is aligned with `origin/main`.
 
 ## Phase 5 Completion Summary
@@ -32,6 +32,9 @@ Phase 6: Retention Polish
 - Maintain safe educational language and clear CNC / 3D printing track separation.
 
 ## Completed In This Pass
+
+- Beginner language: defined adhesion, Z offset, bed leveling, under-extrusion, over-extrusion, and extrusion-factor override in Printing Unit 4.
+- Accuracy: declared XYZ and extrusion modes in modeled Unit 4 moves and replaced the printing lesson's lathe-axis visual.
 
 - Beginner language: defined start/end G-code, probing, priming, target temperatures, parking, stepper motors, coordinate mode, axis limits, clearance, comments, and toolpaths before use in Printing Unit 3.
 - Accuracy: scoped Unit 3 examples to Marlin and removed the assumption that every coordinated move containing an E value deposits filament.
